@@ -1,6 +1,8 @@
 package conflictsAnalyzer;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Map;
 
 import de.ovgu.cide.fstgen.ast.FSTTerminal;
 
@@ -10,6 +12,8 @@ public class ConflictsController {
 
 	
 	private ArrayList<Conflict> conflictsList;
+	
+	private Hashtable<String, Integer> conflictsReport;
 	
 	
 	public ConflictsController(String revisionFilePath){
@@ -22,8 +26,14 @@ public class ConflictsController {
 		this.conflictsList = new ArrayList<Conflict>();
 		this.identifyConflictsPatterns(conflictingNodes);
 		
-		//write the report
+		//compute the report
+		this.conflictsReport = new Hashtable<String, Integer>();
 		this.reportConflicts();
+		
+		//print the report
+		ConflictPrinter cp = new ConflictPrinter();
+		cp.writeConflictsReport(this.conflictsReport);
+		
 	}
 	
 	
@@ -40,7 +50,7 @@ public class ConflictsController {
 		
 		for (FSTTerminal node : conflictingNodes){
 			
-			String type = node.getType();
+			
 			Conflict conflict = this.matchConflict(node);
 			
 			if(conflict.type != null){
@@ -49,7 +59,6 @@ public class ConflictsController {
 			}
 			
 		}
-		System.out.println("aqui");
 		
 	}
 	
@@ -108,11 +117,51 @@ public class ConflictsController {
 	
 
 	
-	public void reportConflicts(){}
+	public void reportConflicts(){
+		
+		for(SSMergeConflicts c : SSMergeConflicts.values()){
+			
+			String type = c.toString();
+			int quantity = this.countConflicts(type);
+			this.conflictsReport.put(type, quantity);
+		}
+		
+	}
+	
+	public int countConflicts(String type){
+		
+		int result = 0;
+		
+		for(Conflict c : this.conflictsList){
+			
+			if(c.type.equals(type)){
+				
+				result++;
+			}
+			
+		}
+		
+		return result;
+	}
+	
+	
+
+	public Map<String, Integer> getConflictsReport() {
+		return conflictsReport;
+	}
+
+
+
+	public void setConflictsReport(Hashtable<String, Integer> conflictsReport) {
+		this.conflictsReport = conflictsReport;
+	}
+
+
 
 	public static void main(String[] args) {
 		String file = "/Users/paolaaccioly/gitClones/fse_2011_artifacts/examples/SSMergeCatalog/6/rev_6.revisions";
 		ConflictsController cc = new ConflictsController(file);
+		System.out.println(cc.getConflictsReport().toString());
 		
 		
 	}
