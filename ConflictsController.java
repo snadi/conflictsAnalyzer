@@ -9,30 +9,40 @@ import de.ovgu.cide.fstgen.ast.FSTTerminal;
 
 public class ConflictsController {
 	
-
+	private ArrayList<FSTTerminal> conflictingNodes;
 	
 	private ArrayList<Conflict> conflictsList;
 	
 	private Hashtable<String, Integer> conflictsReport;
 	
 	
+	
 	public ConflictsController(String revisionFilePath){
 		
-		//identify conflicting nodes
-		FSTNodeParser parser = new FSTNodeParser();
-		ArrayList<FSTTerminal> conflictingNodes = parser.identifyConflictingNodes(revisionFilePath);
+		this.identifyConflictingNodes(revisionFilePath);
 		
-		//match the conflicting nodes with their respective pattern
-		this.conflictsList = new ArrayList<Conflict>();
-		this.identifyConflictsPatterns(conflictingNodes);
+		this.identifyConflictsPatterns();
+	
+		this.computeConflictsReport();
 		
-		//compute the report
-		this.conflictsReport = new Hashtable<String, Integer>();
-		this.reportConflicts();
+		this.printConflictsReport();
 		
-		//print the report
+	}
+	
+	
+	public void printConflictsReport(){
+		
 		ConflictPrinter cp = new ConflictPrinter();
 		cp.writeConflictsReport(this.conflictsReport);
+		
+		
+	}
+	
+	public void identifyConflictingNodes(String revisionFilePath){
+		
+		FSTNodeParser parser = new FSTNodeParser();
+		this.conflictingNodes = parser.identifyConflictingNodes(revisionFilePath);
+		
 		
 	}
 	
@@ -46,17 +56,17 @@ public class ConflictsController {
 		this.conflictsList = conflictsList;
 	}
 	
-	public void identifyConflictsPatterns(ArrayList<FSTTerminal> conflictingNodes){
+	public void identifyConflictsPatterns(){
 		
-		for (FSTTerminal node : conflictingNodes){
+		this.conflictsList = new ArrayList<Conflict>();
+		
+		for (FSTTerminal node : this.conflictingNodes){
 			
 			
 			Conflict conflict = this.matchConflict(node);
 			
-			if(conflict.type != null){
-			conflict.setBody(node.getBody());
 			this.conflictsList.add(conflict);
-			}
+			
 			
 		}
 		
@@ -65,59 +75,84 @@ public class ConflictsController {
 	public Conflict matchConflict(FSTTerminal node){
 		Conflict conflict = new Conflict();
 		
-		String type = node.getType();
+		String nodeType = node.getType();
 		
-		if(type.equals("Modifiers")){
-			
-			conflict.setType(SSMergeConflicts.ModifierList.toString());
+		String nodeBody = node.getBody();
 		
-		}else if(type.equals("AnnotationMethodDecl")){
+		String conflictType = "";
+		
+		if(nodeType.equals("Modifiers")){
 			
-			conflict.setType(SSMergeConflicts.DefaultValue.toString());
+			conflictType = SSMergeConflicts.ModifierList.toString();
+		
+		}else if(nodeType.equals("AnnotationMethodDecl")){
 			
-		}else if(type.equals("ImplementsList")){
+			conflictType = SSMergeConflicts.DefaultValueAnnotation.toString();
 			
-			conflict.setType(SSMergeConflicts.ImplementList.toString());
+		}else if(nodeType.equals("ImplementsList")){
 			
-		}else if(type.equals("FieldDecl") ){
+			conflictType = SSMergeConflicts.ImplementList.toString();
 			
-			String [] fd = node.getBody().split(FSTNodeParser.SSMERGE_SEPARATOR);
+		}else if(nodeType.equals("FieldDecl") ){
 			
-			if(fd[1].equals(" ")){
-				
-				conflict.setType(SSMergeConflicts.SameIdFd.toString());
-				
-			}else{
-				conflict.setType(SSMergeConflicts.LineBasedMCFd.toString());
-			}
+			conflictType = this.setFieldDeclPattern(nodeBody);
 			
 		}
 		
-		else if(type.equals("MethodDecl") || type.equals("ConstructorDecl")){
+		else if(nodeType.equals("MethodDecl") || nodeType.equals("ConstructorDecl")){
 			
-			String body = node.getBody();
-			String [] p1 = body.split("\\|\\|\\|\\|\\|\\|\\|");
-			String [] p2 = p1[1].split("=======");
-			String a = p2[0].substring(1, p2[0].length()-1);
-			
-			if(a.contains(" ")){
-				
-				conflict.setType(SSMergeConflicts.LineBasedMCFd.toString());
-			}else{
-				
-				conflict.setType(SSMergeConflicts.SameSignatureCM.toString());
-				
-			}
+			conflictType = this.setMCPattern(nodeBody);
 			
 		}
-
+		
+		conflict.setType(conflictType);
+		conflict.setBody(nodeBody);
 		
 		return conflict;
 	}
 	
-
 	
-	public void reportConflicts(){
+	public String setFieldDeclPattern(String nodeBody){
+		
+		String type = "";
+		String [] fd = nodeBody.split(FSTNodeParser.SSMERGE_SEPARATOR);
+		
+		if(fd[1].equals(" ")){
+			
+			type = SSMergeConflicts.SameIdFd.toString();
+			
+		}else{
+			type = SSMergeConflicts.LineBasedMCFd.toString();
+		}
+		
+		return type;
+		
+	}
+	
+	public String setMCPattern(String nodeBody){
+		
+		String type = "";
+		
+		String [] p1 = nodeBody.split("\\|\\|\\|\\|\\|\\|\\|");
+		String [] p2 = p1[1].split("=======");
+		String a = p2[0].substring(1, p2[0].length()-1);
+		
+		if(a.contains(" ")){
+			
+			type = SSMergeConflicts.LineBasedMCFd.toString();
+		}else{
+			
+			type = SSMergeConflicts.SameSignatureCM.toString();
+			
+		}
+		
+		return type;
+		
+	}
+	
+	public void computeConflictsReport(){
+		
+		this.conflictsReport = new Hashtable<String, Integer>();
 		
 		for(SSMergeConflicts c : SSMergeConflicts.values()){
 			
@@ -157,6 +192,14 @@ public class ConflictsController {
 	}
 
 
+
+	public ArrayList<FSTTerminal> getConflictingNodes() {
+		return conflictingNodes;
+	}
+
+	public void setConflictingNodes(ArrayList<FSTTerminal> conflictingNodes) {
+		this.conflictingNodes = conflictingNodes;
+	}
 
 	public static void main(String[] args) {
 		String file = "/Users/paolaaccioly/gitClones/fse_2011_artifacts/examples/SSMergeCatalog/6/rev_6.revisions";
