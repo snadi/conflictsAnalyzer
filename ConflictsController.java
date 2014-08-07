@@ -41,7 +41,8 @@ public class ConflictsController {
 	public void identifyConflictingNodes(String revisionFilePath){
 		
 		FSTNodeParser parser = new FSTNodeParser();
-		this.conflictingNodes = parser.identifyConflictingNodes(revisionFilePath);
+		parser.runFSTMerger(revisionFilePath);
+		this.conflictingNodes = parser.getConflictingNodes();
 		
 		
 	}

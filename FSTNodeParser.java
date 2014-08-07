@@ -1,86 +1,71 @@
 package conflictsAnalyzer;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.Observable;
+import java.util.Observer;
 
 import merger.FSTGenMerger;
+import merger.MergeVisitor;
 
-import de.ovgu.cide.fstgen.ast.FSTNode;
-import de.ovgu.cide.fstgen.ast.FSTNonTerminal;
 import de.ovgu.cide.fstgen.ast.FSTTerminal;
 
-public class FSTNodeParser {
+public class FSTNodeParser implements Observer{
 	
 	static final String SSMERGE_SEPARATOR = "##FSTMerge##";
-	static final String DIFF3MERGE_SEPARATOR = "|||||||";
+	public static final String DIFF3MERGE_SEPARATOR = "|||||||";
+	
+	private ArrayList<FSTTerminal> conflictingNodes;
 	
 	public FSTNodeParser(){
+			
+		this.conflictingNodes = new ArrayList<FSTTerminal>();
+	}
+	
+	public void getConflictingNodes (String revisionFilePath){
+		
+		this.runFSTMerger(revisionFilePath);
 		
 		
 	}
 	
-	public ArrayList<FSTTerminal> identifyConflictingNodes (String revisionFilePath){
-		
-		ArrayList<FSTTerminal> result = null;
-		
-		FSTNonTerminal mergedNode = this.getMergedNode(revisionFilePath);
-		LinkedList<FSTNode> terminalNodes = this.getTerminalNodes(mergedNode);
-		result = this.getConflictingNodes(terminalNodes);
-		
-		return result;
-		
-	}
 	
-	
-	public FSTNonTerminal getMergedNode(String revisionFilePath){
+	public void runFSTMerger(String revisionFilePath){
 		
 		FSTGenMerger merger = new FSTGenMerger();
-		
+		merger.getMergeVisitor().addObserver(this);
 		String files[] = {"--expression", revisionFilePath}; 
 		merger.run(files);
-		FSTNonTerminal mergedNode = (FSTNonTerminal) merger.getMergedNode();
-		
-		return mergedNode;
+
 		
 		
 	}
 	
-	public  LinkedList<FSTNode> getTerminalNodes(FSTNonTerminal mergedNode) {
-		//FSTNode node
-		boolean reachedTerminalNodes = false;
-		FSTNonTerminal node = mergedNode;
-		LinkedList<FSTNode> result = null;
-		
-		while(!reachedTerminalNodes){
-			
-			if( (!node.getChildren().isEmpty()) && (node.getChildren().get(0)instanceof FSTTerminal)){
-				
-				result = (LinkedList<FSTNode>) node.getChildren();
-				reachedTerminalNodes = true;
-				
-			}else{
-				node = (FSTNonTerminal) node.getChildren().get(0);
-			}
-			
-		}
-		
-		return result;
-		
+
+
+
+	public ArrayList<FSTTerminal> getConflictingNodes() {
+		return conflictingNodes;
 	}
-	
-	public ArrayList<FSTTerminal> getConflictingNodes(LinkedList<FSTNode> terminalNodes){
-		
-		ArrayList<FSTTerminal> result = new ArrayList<FSTTerminal>();
-		FSTTerminal temp = null;
-		for(FSTNode node : terminalNodes){
+
+
+	public void setConflictingNodes(ArrayList<FSTTerminal> conflictingNodes) {
+		this.conflictingNodes = conflictingNodes;
+	}
+
+
+	@Override
+	public void update(Observable o, Object arg) {
+		// TODO Auto-generated method stub
+		if(o instanceof MergeVisitor && arg instanceof FSTTerminal){
 			
-			temp = (FSTTerminal) node;
-			if(temp.getBody().contains(SSMERGE_SEPARATOR) || temp.getBody().contains(DIFF3MERGE_SEPARATOR) ){
-				result.add(temp);
+			FSTTerminal node = (FSTTerminal) arg;
+			
+			if(!node.getType().contains("-Content")){
+				
+				this.conflictingNodes.add(node);
 			}
 			
+			
 		}
-		
-		return result;
 	}
 }
