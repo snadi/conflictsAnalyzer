@@ -40,7 +40,7 @@ public class ConflictsController {
 	
 	public void identifyConflictingNodes(String revisionFilePath){
 		
-		FSTNodeParser parser = new FSTNodeParser();
+		ConflictsObserver parser = new ConflictsObserver();
 		parser.runFSTMerger(revisionFilePath);
 		this.conflictingNodes = parser.getConflictingNodes();
 		
@@ -116,7 +116,7 @@ public class ConflictsController {
 	public String setFieldDeclPattern(String nodeBody){
 		
 		String type = "";
-		String [] fd = nodeBody.split(FSTNodeParser.SSMERGE_SEPARATOR);
+		String [] fd = nodeBody.split(ConflictsObserver.SSMERGE_SEPARATOR);
 		
 		if(fd[1].equals(" ")){
 			
@@ -203,7 +203,7 @@ public class ConflictsController {
 	}
 
 	public static void main(String[] args) {
-		String file = "/Users/paolaaccioly/gitClones/fse_2011_artifacts/examples/SSMergeCatalog/6/rev_6.revisions";
+		String file = "/Users/paolaaccioly/gitClones/fse_2011_artifacts/examples/netty/rev_0a99e_5cb86/rev_0a99e-5cb86.revisions";
 		ConflictsController cc = new ConflictsController(file);
 		System.out.println(cc.getConflictsReport().toString());
 		

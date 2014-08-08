@@ -9,14 +9,14 @@ import merger.MergeVisitor;
 
 import de.ovgu.cide.fstgen.ast.FSTTerminal;
 
-public class FSTNodeParser implements Observer{
+public class ConflictsObserver implements Observer{
 	
 	static final String SSMERGE_SEPARATOR = "##FSTMerge##";
 	public static final String DIFF3MERGE_SEPARATOR = "|||||||";
 	
 	private ArrayList<FSTTerminal> conflictingNodes;
 	
-	public FSTNodeParser(){
+	public ConflictsObserver(){
 			
 		this.conflictingNodes = new ArrayList<FSTTerminal>();
 	}
