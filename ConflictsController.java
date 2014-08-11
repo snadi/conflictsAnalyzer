@@ -17,7 +17,13 @@ public class ConflictsController {
 	
 	
 	
-	public ConflictsController(String revisionFilePath){
+	public ConflictsController(){
+		
+		
+		
+	}
+	
+	public void run(String revisionFilePath){
 		
 		this.identifyConflictingNodes(revisionFilePath);
 		
@@ -25,7 +31,8 @@ public class ConflictsController {
 	
 		this.computeConflictsReport();
 		
-		this.printConflictsReport();
+		//this.printConflictsReport();
+		
 		
 	}
 	
@@ -204,7 +211,8 @@ public class ConflictsController {
 
 	public static void main(String[] args) {
 		String file = "/Users/paolaaccioly/gitClones/fse_2011_artifacts/examples/netty/rev_0a99e_5cb86/rev_0a99e-5cb86.revisions";
-		ConflictsController cc = new ConflictsController(file);
+		ConflictsController cc = new ConflictsController();
+		cc.run(file);
 		System.out.println(cc.getConflictsReport().toString());
 		
 		
