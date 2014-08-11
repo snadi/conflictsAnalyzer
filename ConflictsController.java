@@ -31,7 +31,7 @@ public class ConflictsController {
 	
 		this.computeConflictsReport();
 		
-		//this.printConflictsReport();
+		this.printConflictsReport();
 		
 		
 	}

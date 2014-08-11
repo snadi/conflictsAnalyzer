@@ -47,7 +47,24 @@ class ProjectController {
 	}
 	
 	
-	def printProjectReport(){}
+	def printProjectReport(){
+		
+		def out = new File('ProjectReport.csv')
+		
+		// deleting old files if it exists
+		out.delete()
+		
+		out = new File('ProjectReport.csv')
+		
+		Set<String> keys = projectReport.keySet();
+		for(String key: keys){
+			
+			def row = [key+": "+ projectReport.get(key)]
+			out.append row.join(',')
+			out.append '\n'
+			
+		}
+	}
 	
 	def initializeProjectReport(){
 		
