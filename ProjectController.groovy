@@ -11,7 +11,11 @@ class ProjectController {
 		
 		mergeRevisions.eachLine {
 			
+			if(!it.empty){
+			println ('Running the following revision: ' + it)
 			runMerge(it)
+			}
+			
 			
 		}
 		
@@ -88,9 +92,12 @@ class ProjectController {
 	}
 	
 	public static void main (String[] args){
-		String revisionFiles = ''
+		String revisionFiles = '/Users/paolaaccioly/gitClones/fse_2011_artifacts/examples/test/revs.revisions'
 		ProjectController pc = new ProjectController()
 		pc.analyzeProjectConflicts(revisionFiles)
+		
+		
+		
 	}
 	
 	

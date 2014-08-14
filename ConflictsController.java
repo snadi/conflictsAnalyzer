@@ -31,16 +31,20 @@ public class ConflictsController {
 	
 		this.computeConflictsReport();
 		
-		this.printConflictsReport();
+		this.printConflictsReport(revisionFilePath);
+		
 		
 		
 	}
 	
 	
-	public void printConflictsReport(){
+	
+	public void printConflictsReport(String revisionFilePath){
 		
 		ConflictPrinter cp = new ConflictPrinter();
-		cp.writeConflictsReport(this.conflictsReport);
+		cp.printConflictsReport(this.conflictsReport, revisionFilePath);
+		cp.printConflictsList(this.conflictsList, revisionFilePath);
+		
 		
 		
 	}

@@ -1,18 +1,17 @@
 package conflictsAnalyzer
 
+import java.util.ArrayList;
+
 class ConflictPrinter {
 	
 	public void writeConflicts(ArrayList<Conflict> conflictsList){}
 	
 	
-	public void writeConflictsReport(Hashtable<String, Integer> conflictsReport){
+	public void printConflictsReport(Hashtable<String, Integer> conflictsReport, String revisionFilePath){
 		
 		def out = new File('conflictReport.csv')
 		
-		// deleting old files if it exists
-		out.delete()
-		
-		out = new File('conflictReport.csv')
+		out.append('Revision: ' + revisionFilePath + '\n')
 		
 		Set<String> keys = conflictsReport.keySet();
         for(String key: keys){
@@ -22,6 +21,25 @@ class ConflictPrinter {
 			out.append '\n'
             
         }
+		
+	}
+	
+	def printConflictsList(ArrayList<Conflict> conflictsList, String revisionFilePath){
+		
+		def out = new File('conflictList.csv')
+		
+		out.append('Revision: ' + revisionFilePath + '\n')
+		
+		
+		for(Conflict conflict : conflictsList){
+			
+			def row = [conflict.getType()+": "+ '\n' + conflict.getBody()]
+			out.append row.join(',')
+			out.append '\n'
+			
+		}
+		
+		out.append '\n'
 		
 	}
 	
