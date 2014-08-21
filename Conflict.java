@@ -2,9 +2,13 @@ package conflictsAnalyzer;
 
 public  class Conflict {
 		
-	String type;
+	private String type;
 	
-	String body;
+	private String body;
+	
+	private String filePath;
+	
+	private String nodeType;
 
 	public String getType() {
 		return type;
@@ -20,6 +24,22 @@ public  class Conflict {
 
 	public void setBody(String body) {
 		this.body = body;
+	}
+
+	public String getFilePath() {
+		return filePath;
+	}
+
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
+	}
+
+	public String getNodeType() {
+		return nodeType;
+	}
+
+	public void setNodeType(String nodeType) {
+		this.nodeType = nodeType;
 	}
 	
 	

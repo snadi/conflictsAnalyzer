@@ -14,11 +14,14 @@ public class ConflictsObserver implements Observer{
 	static final String SSMERGE_SEPARATOR = "##FSTMerge##";
 	public static final String DIFF3MERGE_SEPARATOR = "|||||||";
 	
-	private ArrayList<FSTTerminal> conflictingNodes;
+	private ArrayList<Conflict> conflictsList;
+	
+	private FSTGenMerger fstgenmerger;
 	
 	public ConflictsObserver(){
 			
-		this.conflictingNodes = new ArrayList<FSTTerminal>();
+		this.conflictsList = new ArrayList<Conflict>();
+		this.fstgenmerger = new FSTGenMerger();
 	}
 	
 	public void getConflictingNodes (String revisionFilePath){
@@ -31,10 +34,10 @@ public class ConflictsObserver implements Observer{
 	
 	public void runFSTMerger(String revisionFilePath){
 		
-		FSTGenMerger merger = new FSTGenMerger();
-		merger.getMergeVisitor().addObserver(this);
+		
+		this.fstgenmerger.getMergeVisitor().addObserver(this);
 		String files[] = {"--expression", revisionFilePath}; 
-		merger.run(files);
+		this.fstgenmerger.run(files);
 
 		
 		
@@ -43,13 +46,13 @@ public class ConflictsObserver implements Observer{
 
 
 
-	public ArrayList<FSTTerminal> getConflictingNodes() {
-		return conflictingNodes;
+	public ArrayList<Conflict> getConflictingNodes() {
+		return conflictsList;
 	}
 
 
-	public void setConflictingNodes(ArrayList<FSTTerminal> conflictingNodes) {
-		this.conflictingNodes = conflictingNodes;
+	public void setConflictingNodes(ArrayList<Conflict> conflictingNodes) {
+		this.conflictsList = conflictingNodes;
 	}
 
 
@@ -62,10 +65,31 @@ public class ConflictsObserver implements Observer{
 			
 			if(!node.getType().contains("-Content")){
 				
-				this.conflictingNodes.add(node);
+				Conflict conflict = this.createConflict(node);			
+				this.conflictsList.add(conflict);
+				
 			}
 			
 			
 		}
+	}
+	
+	public Conflict createConflict(FSTTerminal node){
+		
+		Conflict conflict = new Conflict();
+		conflict.setType("");
+		conflict.setNodeType(node.getType());
+		conflict.setBody(node.getBody());
+		String filePath = this.retrieveFilePath(node);
+		conflict.setFilePath(filePath);
+		
+		return conflict;
+	}
+	
+	public String retrieveFilePath(FSTTerminal node){
+		String filePath = "";
+		
+		
+		return filePath;
 	}
 }

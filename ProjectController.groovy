@@ -13,7 +13,7 @@ class ProjectController {
 			
 			if(!it.empty){
 			println ('Running the following revision: ' + it)
-			runMerge(it)
+			runMerge(it.trim())
 			}
 			
 			
@@ -92,7 +92,7 @@ class ProjectController {
 	}
 	
 	public static void main (String[] args){
-		String revisionFiles = '/Users/paolaaccioly/gitClones/fse_2011_artifacts/examples/test/revs.revisions'
+		String revisionFiles = '/Users/paolaaccioly/gitClones/fse_2011_artifacts/examples/SSMergeCatalog/catalog.revisions'
 		ProjectController pc = new ProjectController()
 		pc.analyzeProjectConflicts(revisionFiles)
 		

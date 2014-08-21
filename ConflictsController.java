@@ -4,12 +4,11 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Map;
 
-import de.ovgu.cide.fstgen.ast.FSTTerminal;
 
 
 public class ConflictsController {
 	
-	private ArrayList<FSTTerminal> conflictingNodes;
+	
 	
 	private ArrayList<Conflict> conflictsList;
 	
@@ -53,7 +52,7 @@ public class ConflictsController {
 		
 		ConflictsObserver parser = new ConflictsObserver();
 		parser.runFSTMerger(revisionFilePath);
-		this.conflictingNodes = parser.getConflictingNodes();
+		this.conflictsList = parser.getConflictingNodes();
 		
 		
 	}
@@ -70,27 +69,23 @@ public class ConflictsController {
 	
 	public void identifyConflictsPatterns(){
 		
-		this.conflictsList = new ArrayList<Conflict>();
 		
-		for (FSTTerminal node : this.conflictingNodes){
+		
+		for (Conflict conflict : this.conflictsList){
 			
 			
-			Conflict conflict = this.matchConflict(node);
+			this.matchConflict(conflict);
 			
-			this.conflictsList.add(conflict);
 			
 			
 		}
 		
 	}
 	
-	public Conflict matchConflict(FSTTerminal node){
-		Conflict conflict = new Conflict();
+	public void matchConflict(Conflict conflict){
 		
-		String nodeType = node.getType();
-		
-		String nodeBody = node.getBody();
-		
+		String nodeType = conflict.getNodeType();
+		String body = conflict.getBody();
 		String conflictType = "";
 		
 		if(nodeType.equals("Modifiers")){
@@ -107,20 +102,19 @@ public class ConflictsController {
 			
 		}else if(nodeType.equals("FieldDecl") ){
 			
-			conflictType = this.setFieldDeclPattern(nodeBody);
+			conflictType = this.setFieldDeclPattern(body);
 			
 		}
 		
 		else if(nodeType.equals("MethodDecl") || nodeType.equals("ConstructorDecl")){
 			
-			conflictType = this.setMCPattern(nodeBody);
+			conflictType = this.setMCPattern(body);
 			
 		}
 		
-		conflict.setType(conflictType);
-		conflict.setBody(nodeBody);
 		
-		return conflict;
+		conflict.setType(conflictType);
+		
 	}
 	
 	
@@ -181,7 +175,7 @@ public class ConflictsController {
 		
 		for(Conflict c : this.conflictsList){
 			
-			if(c.type.equals(type)){
+			if(c.getType().equals(type)){
 				
 				result++;
 			}
@@ -205,13 +199,6 @@ public class ConflictsController {
 
 
 
-	public ArrayList<FSTTerminal> getConflictingNodes() {
-		return conflictingNodes;
-	}
-
-	public void setConflictingNodes(ArrayList<FSTTerminal> conflictingNodes) {
-		this.conflictingNodes = conflictingNodes;
-	}
 
 	public static void main(String[] args) {
 		String file = "/Users/paolaaccioly/gitClones/fse_2011_artifacts/examples/netty/rev_0a99e_5cb86/rev_0a99e-5cb86.revisions";
