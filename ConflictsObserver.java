@@ -1,5 +1,6 @@
 package conflictsAnalyzer;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
@@ -7,6 +8,7 @@ import java.util.Observer;
 import merger.FSTGenMerger;
 import merger.MergeVisitor;
 
+import de.ovgu.cide.fstgen.ast.FSTNode;
 import de.ovgu.cide.fstgen.ast.FSTTerminal;
 
 public class ConflictsObserver implements Observer{
@@ -86,10 +88,39 @@ public class ConflictsObserver implements Observer{
 		return conflict;
 	}
 	
-	public String retrieveFilePath(FSTTerminal node){
+	
+	public String retrieveFilePath(FSTNode node){
+		
+		StringBuffer sb = new StringBuffer(this.fstgenmerger.getFeaturePrintVisitor().getExpressionName());
+		sb.setLength(sb.lastIndexOf("."));
+		sb.delete(0, sb.lastIndexOf(File.separator) + 1);
+		String featurePath = this.fstgenmerger.getFeaturePrintVisitor().getWorkingDir() + File.separator + sb.toString() + this.retrieveFolderPath(node);
+		
+		return featurePath;
+	}
+	
+	public String retrieveFolderPath(FSTNode node){
 		String filePath = "";
+		String nodetype = node.getType();
+		
+		if(nodetype.equals("Java-File") || nodetype.equals("Folder")){
+			
+			filePath = this.retrieveFolderPath(node.getParent()) + File.separator + node.getName();
+			
+			return filePath;
+			
+		}else if(nodetype.equals("Feature")){
+			
+			return "";
+			
+		}else{
+			
+			
+			return this.retrieveFolderPath(node.getParent());
+		}
 		
 		
-		return filePath;
+		
+		
 	}
 }

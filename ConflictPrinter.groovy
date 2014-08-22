@@ -28,18 +28,26 @@ class ConflictPrinter {
 		
 		def out = new File('conflictList.csv')
 		
+		def delimiter = '========================================================='
+		out.append(delimiter)
+		out.append '\n'
+		
 		out.append('Revision: ' + revisionFilePath + '\n')
 		
 		
 		for(Conflict conflict : conflictsList){
 			
-			def row = [conflict.getType()+": "+ '\n' + conflict.getBody()]
+			def row = ['Conflict type: '+ conflict.getType() + '\n' + 'Conflict body: ' + '\n' +conflict.getBody() ]
+			out.append row.join(',')
+			out.append '\n'
+			row = ['File path: ' + conflict.getFilePath()]
 			out.append row.join(',')
 			out.append '\n'
 			
 		}
 		
 		out.append '\n'
+		out.append(delimiter)
 		
 	}
 	
