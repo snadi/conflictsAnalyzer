@@ -92,7 +92,7 @@ class ProjectController {
 	}
 	
 	public static void main (String[] args){
-		String revisionFiles = '/Users/paolaaccioly/gitClones/fse_2011_artifacts/examples/SSMergeCatalog/catalog.revisions'
+		String revisionFiles = '/Users/paolaaccioly/gitClones/fse_2011_artifacts/examples/testFolders/folders.revisions'
 		ProjectController pc = new ProjectController()
 		pc.analyzeProjectConflicts(revisionFiles)
 		

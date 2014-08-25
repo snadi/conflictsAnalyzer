@@ -13,17 +13,17 @@ import de.ovgu.cide.fstgen.ast.FSTTerminal;
 
 public class ConflictsObserver implements Observer{
 	
-	static final String SSMERGE_SEPARATOR = "##FSTMerge##";
-	public static final String DIFF3MERGE_SEPARATOR = "|||||||";
-	
 	private ArrayList<Conflict> conflictsList;
 	
 	private FSTGenMerger fstgenmerger;
 	
-	public ConflictsObserver(){
+	private String revisionFilePath;
+	
+	public ConflictsObserver(String filePath){
 			
 		this.conflictsList = new ArrayList<Conflict>();
 		this.fstgenmerger = new FSTGenMerger();
+		this.revisionFilePath = filePath;
 	}
 	
 	public void getConflictingNodes (String revisionFilePath){
@@ -91,10 +91,10 @@ public class ConflictsObserver implements Observer{
 	
 	public String retrieveFilePath(FSTNode node){
 		
-		StringBuffer sb = new StringBuffer(this.fstgenmerger.getFeaturePrintVisitor().getExpressionName());
-		sb.setLength(sb.lastIndexOf("."));
-		sb.delete(0, sb.lastIndexOf(File.separator) + 1);
-		String featurePath = this.fstgenmerger.getFeaturePrintVisitor().getWorkingDir() + File.separator + sb.toString() + this.retrieveFolderPath(node);
+		int endIndex = this.revisionFilePath.length() - 10;
+		String systemDir = this.revisionFilePath.substring(0, endIndex);
+		
+		String featurePath = systemDir + this.retrieveFolderPath(node);
 		
 		return featurePath;
 	}

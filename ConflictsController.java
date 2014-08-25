@@ -9,6 +9,8 @@ import java.util.Map;
 public class ConflictsController {
 	
 	
+	static final String SSMERGE_SEPARATOR = "##FSTMerge##";
+	public static final String DIFF3MERGE_SEPARATOR = "|||||||";
 	
 	private ArrayList<Conflict> conflictsList;
 	
@@ -50,7 +52,7 @@ public class ConflictsController {
 	
 	public void identifyConflictingNodes(String revisionFilePath){
 		
-		ConflictsObserver parser = new ConflictsObserver();
+		ConflictsObserver parser = new ConflictsObserver(revisionFilePath);
 		parser.runFSTMerger(revisionFilePath);
 		this.conflictsList = parser.getConflictingNodes();
 		
@@ -121,7 +123,7 @@ public class ConflictsController {
 	public String setFieldDeclPattern(String nodeBody){
 		
 		String type = "";
-		String [] fd = nodeBody.split(ConflictsObserver.SSMERGE_SEPARATOR);
+		String [] fd = nodeBody.split(ConflictsController.SSMERGE_SEPARATOR);
 		
 		if(fd[1].equals(" ")){
 			
