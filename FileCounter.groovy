@@ -35,7 +35,10 @@ class FileCounter {
 			
 			def dirName = revPath.substring(0, (revPath.length() - 10))
 			def dir = new File(dirName)
-			count += countFiles(dir)
+			println dir.toString()
+			def revCount = countFiles(dir)
+			println revCount
+			count += revCount
 			
 		}
 		
@@ -47,10 +50,10 @@ class FileCounter {
 
 	public static void main (String[] args){
 
-		def file = new File('/Users/paolaaccioly/gitClones/dropwizard/revisions/rev_2ac8b_cb5b7/rev_2ac8b-cb5b7')
+		def file = new File('/Users/paolaaccioly/Documents/Doutorado/study_data/dropwizard/RevisionsFiles.csv')
 		def fc = new FileCounter()
-		def count = fc.countFiles(file)
-		println count
+		def count = fc.countRevFiles(file)
+		println 'Final count: ' + count
 		
 
 	}

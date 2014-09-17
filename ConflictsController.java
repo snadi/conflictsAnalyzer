@@ -6,6 +6,8 @@ import java.util.Map;
 
 
 
+
+
 public class ConflictsController {
 	
 	
@@ -179,7 +181,14 @@ public class ConflictsController {
 			
 			if(c.getType().equals(type)){
 				
-				result++;
+				if(c.getType().equals(SSMergeConflicts.LineBasedMCFd.toString())){
+					result = result + (c.getBody().split("\\|\\|\\|\\|\\|\\|\\|", -1).length-1);
+				}else{
+					result++;
+				}
+				
+				
+				
 			}
 			
 		}
@@ -203,10 +212,15 @@ public class ConflictsController {
 
 
 	public static void main(String[] args) {
-		String file = "/Users/paolaaccioly/gitClones/fse_2011_artifacts/examples/netty/rev_0a99e_5cb86/rev_0a99e-5cb86.revisions";
+		/*String file = "/Users/paolaaccioly/gitClones/fse_2011_artifacts/examples/netty/rev_0a99e_5cb86/rev_0a99e-5cb86.revisions";
 		ConflictsController cc = new ConflictsController();
 		cc.run(file);
-		System.out.println(cc.getConflictsReport().toString());
+		System.out.println(cc.getConflictsReport().toString());*/
+		
+		String str = "helloslkhellodjladfjhello";
+		String findStr = "hello";
+
+		System.out.println(str.split(findStr, -1).length-1);
 		
 		
 	}
