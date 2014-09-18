@@ -12,12 +12,31 @@ class ProjectController {
 		mergeRevisions.eachLine {
 			
 			if(!it.empty){
-			println ('Running the following revision: ' + it)
+			String revision = it.substring(0, it.length()-25)
+			println ('Running the following revision: ' + revision)
+			//replaceUnwantedStrings(revision)
 			runMerge(it.trim())
 			}
 			
 			
 		}
+		
+		
+		
+	}
+	
+	def replaceUnwantedStrings(String dir){
+		
+		//replace ... by []
+		String c1 = "grep -rl '\\.\\.\\.' " + dir + " | xargs sed -i '' 's/\\.\\.\\./[]/g'" 
+		c1.execute()
+		
+		//replace u0000 by u
+		def c2 = "grep -rl '\\u0000' " + dir + " | xargs sed -i '' 's/\\u0000/u/g'"
+		c2.execute()
+		
+		def c3 = "grep -rl '\\u07FF' " + dir + " | xargs sed -i '' 's/\\u07FF/u/g'"
+		c3.execute()
 		
 		
 		
@@ -92,7 +111,7 @@ class ProjectController {
 	}
 	
 	public static void main (String[] args){
-		String revisionFiles = '/Users/paolaaccioly/gitClones/fse_2011_artifacts/examples/SSMergeCatalog/catalog.revisions'
+		String revisionFiles = '/Users/paolaaccioly/Documents/Doutorado/study_data/mockito/2nd_round/RevisionsFiles.csv'
 		ProjectController pc = new ProjectController()
 		pc.analyzeProjectConflicts(revisionFiles)
 		
