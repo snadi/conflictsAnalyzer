@@ -36,13 +36,11 @@ public class ConflictsObserver implements Observer{
 	
 	public void runFSTMerger(String revisionFilePath){
 		
-		
 		this.fstgenmerger.getMergeVisitor().addObserver(this);
-		String files[] = {"--expression", revisionFilePath}; 
-		this.fstgenmerger.run(files);
+		String files[] = {"--expression", revisionFilePath};
+		
+			this.fstgenmerger.run(files);
 
-		
-		
 	}
 	
 

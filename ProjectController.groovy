@@ -111,10 +111,20 @@ class ProjectController {
 	}
 	
 	public static void main (String[] args){
-		String revisionFiles = '/Users/paolaaccioly/Documents/Doutorado/study_data/mockito/2nd_round/RevisionsFiles.csv'
+		String revisionFiles = '/Users/paolaaccioly/Documents/Doutorado/study_data/netty/teste.csv'
 		ProjectController pc = new ProjectController()
 		pc.analyzeProjectConflicts(revisionFiles)
 		
+		/*def dir = '/Users/paolaaccioly/Desktop/teste/'
+		
+		String c1 = "grep -rl \\.\\.\\. /Users/paolaaccioly/Desktop/teste/ | xargs sed -i  s/\\.\\.\\./[]/g"
+		
+		def proc = c1.execute()
+		def b = new StringBuffer()
+		proc.consumeProcessErrorStream(b)
+		
+		println proc.text
+		println b.toString()*/
 		
 		
 	}
