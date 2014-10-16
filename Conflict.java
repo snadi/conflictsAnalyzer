@@ -1,13 +1,20 @@
 package conflictsAnalyzer;
 
+
+enum SSMergeConflicts {
+
+	ModifierList, DefaultValueAnnotation, ImplementList, LineBasedMCFd, SameIdFd, SameSignatureCM
+
+}
+
 public  class Conflict {
-		
+
 	private String type;
-	
+
 	private String body;
-	
+
 	private String filePath;
-	
+
 	private String nodeType;
 
 	public String getType() {
@@ -41,6 +48,6 @@ public  class Conflict {
 	public void setNodeType(String nodeType) {
 		this.nodeType = nodeType;
 	}
-	
-	
+
+
 }
