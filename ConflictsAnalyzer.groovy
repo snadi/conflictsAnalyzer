@@ -6,13 +6,8 @@ class ConflictsAnalyzer {
 
 	private ArrayList<Project> projects;
 
-	private FSTGenMerger fstGenMerger
-
 	public ConflictsAnalyzer(){
-
 		this.projects = new ArrayList<Project>()
-		this.fstGenMerger = new FSTGenMerger()
-
 	}
 
 	public ArrayList<Project> getProjects(){
@@ -23,11 +18,33 @@ class ConflictsAnalyzer {
 		this.projects = p
 	}
 	
-	public FSTGenMerger getFstGenMerger(){
-		return this.fstGenMerger
+	public void analyzeConflicts(args){
+		
+		this.createProjects(args)
+		
+		for(Project p : this.projects){
+			
+			p.analyzeConflicts()
+				
+		}
 	}
 	
-	public void setFstGenMerger(FSTGenMerger fstgm){
-		this.fstGenMerger = fstgm
+	public void createProjects(args){
+		def projectData = new File(args[0])
+		projectData.eachLine {
+			String[] p = it.split(',')
+			String projectName = p[0].trim()
+			String projectMergeScenarios = p[1].trim()
+			Project project = new Project(projectName, projectMergeScenarios)
+			this.projects = project
+			
+		}
+	}
+	
+	public static void main (String[] args){
+		
+		ConflictsAnalyzer ca = new ConflictsAnalyzer()
+		ca.analyzeConflicts(args)
+		
 	}
 }

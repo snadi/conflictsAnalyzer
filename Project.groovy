@@ -6,7 +6,7 @@ class Project {
 
 	private String name
 
-	public Project(String projectName){
+	public Project(String projectName, String mergeScenariosPath){
 
 		this.mergeScenarios = new ArrayList<MergeScenario>()
 
@@ -46,6 +46,13 @@ class Project {
 		return projectSummary
 		
 	}
+	
+	public void analyzeConflicts(){
+		for(MergeScenario ms : this.mergeScenarios){
+			ms.analyzeConflicts()
+		}
+	}
+	
 	
 	private Hashtable<String, Integer> initializeProjectSummary(){
 		
