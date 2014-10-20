@@ -16,15 +16,18 @@ class MergeScenario implements Observer {
 
 	private Map<String,Integer> mergeScenarioSummary
 
-
+	private boolean hasConflicts
+	
 	MergeScenario(String path){
 		this.path = path
 		this.conflicts = new ArrayList<Conflict>()
+		this.hasConflicts = false
 		this.createMergeScenarioSummary()
 	}
 
 	public void analyzeConflicts(){
 		this.runFstGenMerger()
+		this.updateHasConflicts()
 	}
 
 	public void runFstGenMerger(){
@@ -84,5 +87,14 @@ class MergeScenario implements Observer {
 
 	public void setConflicts(ArrayList<Conflict> conflicts){
 		this.conflicts = conflicts
+	}
+	
+	public boolean getHasConflicts(){
+		return this.hasConflicts
+	}
+	
+	private void updateHasConflicts(){
+		if(!this.conflicts.isEmpty())
+		this.hasConflicts = true
 	}
 }
