@@ -14,10 +14,13 @@ class MergeScenario implements Observer {
 
 	private ArrayList<Conflict> conflicts
 
+	private Map<String,Integer> mergeScenarioSummary
+
 
 	MergeScenario(String path){
 		this.path = path
 		this.conflicts = new ArrayList<Conflict>()
+		this.createMergeScenarioSummary()
 	}
 
 	public void analyzeConflicts(){
@@ -46,8 +49,25 @@ class MergeScenario implements Observer {
 	}
 
 	public void createConflict(FSTTerminal node){
-		Conflict conflict = new Conflict(node);
+		Conflict conflict = new Conflict(node, this.path);
 		this.conflicts.add(conflict)
+		this.updateMergeScenarioSummary(conflict.getType())
+	}
+
+	public void createMergeScenarioSummary(){
+		this.mergeScenarioSummary = new HashMap<String, Integer>()
+		for(SSMergeConflicts c : SSMergeConflicts.values()){
+
+			String type = c.toString();
+			this.mergeScenarioSummary.put(type, 0)
+		}
+	}
+	
+	public void updateMergeScenarioSummary(String type){
+		Integer typeQuantity = this.mergeScenarioSummary.get(type).value
+		typeQuantity++
+		this.mergeScenarioSummary.put(type, typeQuantity)
+		
 	}
 
 	public String getId(){
