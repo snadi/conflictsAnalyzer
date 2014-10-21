@@ -54,7 +54,7 @@ class MergeScenario implements Observer {
 	public void createConflict(FSTTerminal node){
 		Conflict conflict = new Conflict(node, this.path);
 		this.conflicts.add(conflict)
-		this.updateMergeScenarioSummary(conflict.getType())
+		this.updateMergeScenarioSummary(conflict)
 	}
 
 	public void createMergeScenarioSummary(){
@@ -66,10 +66,17 @@ class MergeScenario implements Observer {
 		}
 	}
 	
-	public void updateMergeScenarioSummary(String type){
-		Integer typeQuantity = this.mergeScenarioSummary.get(type).value
-		typeQuantity++
-		this.mergeScenarioSummary.put(type, typeQuantity)
+	public void updateMergeScenarioSummary(Conflict conflict){
+		String conflictType = conflict.getType()
+		Integer typeQuantity = this.mergeScenarioSummary.get(conflictType).value
+		
+		if(conflict.methodOrConstructor && conflict.isInsideMethod()){
+			typeQuantity = typeQuantity + conflict.countConflictsInsideMethods()
+			}else{
+			typeQuantity++
+			}
+		
+		this.mergeScenarioSummary.put(conflictType, typeQuantity)
 		
 	}
 
