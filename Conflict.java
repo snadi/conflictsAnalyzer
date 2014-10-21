@@ -23,7 +23,7 @@ public  class Conflict {
 	private String nodeType;
 
 	public Conflict(FSTTerminal node, String path){
-
+		this.body = node.getBody();
 		this.matchPattern(node);
 		this.retrieveFilePath(node, path);
 
@@ -59,7 +59,7 @@ public  class Conflict {
 
 		else if(nodeType.equals("MethodDecl") || nodeType.equals("ConstructorDecl")){
 
-			conflictType = this.setMCPattern(body);
+			conflictType = this.setMethodPattern(body);
 
 		}
 
@@ -85,10 +85,22 @@ public  class Conflict {
 
 	}
 
-	public String setMCPattern(String nodeBody){
+	public String setMethodPattern(String nodeBody){
 
 		String type = "";
+		
+		if(conflictIsInsideMethod(nodeBody)){
+			type = SSMergeConflicts.LineBasedMCFd.toString();
+		}else{
+			type = matchConflictOutsideMethod(nodeBody);
+		}
 
+		return type;
+
+	}
+	
+	private String matchConflictOutsideMethod(String nodeBody) {
+		String type;
 		String [] p1 = nodeBody.split("\\|\\|\\|\\|\\|\\|\\|");
 		String [] p2 = p1[1].split("=======");
 		String a = p2[0].substring(1, p2[0].length()-1);
@@ -101,9 +113,18 @@ public  class Conflict {
 			type = SSMergeConflicts.SameSignatureCM.toString();
 
 		}
-
 		return type;
+	}
 
+	private boolean conflictIsInsideMethod(String nodeBody){
+		boolean isInsideMethod = false;
+
+		String [] p1 = nodeBody.split("<<<<<<<");
+		if(p1.length>1){
+			isInsideMethod = true;
+		}
+
+		return isInsideMethod;
 	}
 
 	public void retrieveFilePath(FSTNode node, String path){

@@ -67,7 +67,7 @@ class Project {
 
 		for(MergeScenario ms : this.mergeScenarios){
 			ms.analyzeConflicts()
-			updateConflictingRate()
+			updateConflictingRate(ms)
 
 			if(ms.hasConflicts){
 				updateProjectSummary(ms)
@@ -109,7 +109,7 @@ class Project {
 	}
 
 	private void updateProjectSummary(MergeScenario ms){
-		Set<String> keys = this.projectSummary
+		Set<String> keys = this.projectSummary.keySet();
 
 		for(String key: keys){
 			int mergeQuantity = ms.mergeScenarioSummary.get(key).value
