@@ -70,7 +70,7 @@ public class ConflictPrinter {
 		
 		out = new File(fileName)
 		
-		Set<String> keys = project.projectSummary.keySet
+		Set<String> keys = project.projectSummary.keySet()
 		for(String key: keys){
 			
 			def row = [key+": "+ project.projectSummary.get(key)]
@@ -85,7 +85,7 @@ public class ConflictPrinter {
 
 		out.append('Merge scenario: ' + mergeScenario.path + '\n')
 
-		Set<String> keys = mergeScenario.mergeScenarioSummary.keySet();
+		Set<String> keys = mergeScenario.mergeScenarioSummary.keySet()
 		for(String key: keys){
 
 			def row = [key+": "+ mergeScenario.mergeScenarioSummary.get(key)]
