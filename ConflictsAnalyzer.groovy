@@ -4,10 +4,13 @@ import merger.FSTGenMerger
 
 class ConflictsAnalyzer {
 
-	private ArrayList<Project> projects;
+	private ArrayList<Project> projects
+	
+	private int projectsAnalyzed
 
 	public ConflictsAnalyzer(String projectData){
 		this.createProjects(projectData)
+		this.projectsAnalyzed = 0
 	}
 
 	public ArrayList<Project> getProjects(){
@@ -22,9 +25,10 @@ class ConflictsAnalyzer {
 
 		for(Project p : this.projects){
 			p.analyzeConflicts()
+			
 		}
 	}
-
+	
 	public void createProjects(String pData){
 		this.projects = new ArrayList<Project>()
 		def projectData = new File(pData)

@@ -23,6 +23,12 @@ public class ConflictPrinter {
 		
 		out = new File(fileName)
 		
+		String projectSummary = 'Project ' + project.name + '\nAnalyzed merge scenarios: ' +
+		project.analyzedMergeScenarios + '\nConflicting merge scenarios: ' + 
+		project.conflictingMergeScenarios + '\nProject conflicting rate: ' +
+		project.conflictingRate + '%\nSummary of conflict patterns found:\n'
+		
+		out.append(projectSummary)
 		Set<String> keys = project.projectSummary.keySet()
 		for(String key: keys){
 			

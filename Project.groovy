@@ -68,11 +68,10 @@ class Project {
 		for(MergeScenario ms : this.mergeScenarios){
 			ms.analyzeConflicts()
 			updateConflictingRate(ms)
-
 			if(ms.hasConflicts){
 				updateProjectSummary(ms)
-				printResults(ms)
 			}
+			printResults(ms)
 		}
 	}
 
