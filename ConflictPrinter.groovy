@@ -5,12 +5,37 @@ import java.util.ArrayList;
 public class ConflictPrinter {
 
 	
-	public static void printProjectsReport(ArrayList<Project> projects){
-
-		for(Project p: projects){
-
+	public static void printProjectsReport(ConflictsAnalyzer ca){
+		
+		def fileName = 'ProjectsSummary.csv'
+		def out = new File(fileName)
+		// deleting old files if it exists
+		out.delete()
+		out = new File(fileName)
+		
+		def content = ca.analyzedProjects + ' projects analyzed so far.' +
+		'\nBelow you will find the list of analyzed projects and their conflict rate.\n'
+		
+		out.append(content)
+		
+		for(int i = 0; i < ca.analyzedProjects; i++){
+			def row = ca.getProjects().get(i).getName() + ': ' +
+			ca.getProjects().get(i).getConflictRate() + '%\n'
+			out.append(row)
 		}
-
+		
+		content = 'Total conflict rate: ' + ca.getProjectsConflictRate() +
+		'%\nSummary of conflict patterns found:\n'
+		out.append(content)
+		
+		Set<String> keys = ca.getProjectsSummary().keySet()
+		for(String key: keys){
+			
+			def row = [key+": "+ ca.getProjectsSummary().get(key)]
+			out.append row.join(',')
+			out.append '\n'
+			
+		}
 
 	}
 	
@@ -25,8 +50,8 @@ public class ConflictPrinter {
 		
 		String projectSummary = 'Project ' + project.name + '\nAnalyzed merge scenarios: ' +
 		project.analyzedMergeScenarios + '\nConflicting merge scenarios: ' + 
-		project.conflictingMergeScenarios + '\nProject conflicting rate: ' +
-		project.conflictingRate + '%\nSummary of conflict patterns found:\n'
+		project.conflictingMergeScenarios + '\nProject conflict rate: ' +
+		project.conflictRate + '%\nSummary of conflict patterns found:\n'
 		
 		out.append(projectSummary)
 		Set<String> keys = project.projectSummary.keySet()

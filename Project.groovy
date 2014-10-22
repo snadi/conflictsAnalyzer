@@ -10,7 +10,7 @@ class Project {
 
 	private int conflictingMergeScenarios
 
-	private int conflictingRate
+	private double conflictRate
 
 	private Hashtable<String, Integer> projectSummary
 
@@ -19,14 +19,14 @@ class Project {
 		this.name = projectName
 		initializeProjectSummary()
 		createMergeScenarios(mergeScenariosPath)
-		initializeProjectMetrics()		
+		initializeProjectMetrics()
 
 	}
 
 	private initializeProjectMetrics() {
 		this.analyzedMergeScenarios = 0
 		this.conflictingMergeScenarios = 0
-		this.conflictingRate = 0
+		this.conflictRate = 0.0
 	}
 
 	public void createMergeScenarios(String mergeScenariosPath){
@@ -63,21 +63,33 @@ class Project {
 
 	}
 
+	public double getConflictRate(){
+		return this.conflictRate
+	}
+
+	public Hashtable<String, Integer> getProjectSummary(){
+		return this.projectSummary
+	}
+
 	public void analyzeConflicts(){
 
 		for(MergeScenario ms : this.mergeScenarios){
 			ms.analyzeConflicts()
-			updateConflictingRate(ms)
-			if(ms.hasConflicts){
-				updateProjectSummary(ms)
-			}
-			printResults(ms)
+			updateAndPrintSummary(ms)
 		}
 	}
 
 	private printResults(MergeScenario ms) {
 		ConflictPrinter.printMergeScenarioReport(ms)
 		ConflictPrinter.printProjectReport(this)
+	}
+
+	private void updateAndPrintSummary(MergeScenario ms){
+		updateConflictingRate(ms)
+		if(ms.hasConflicts){
+			updateProjectSummary(ms)
+		}
+		printResults(ms)
 	}
 
 	private updateConflictingRate(MergeScenario ms) {
@@ -90,8 +102,10 @@ class Project {
 
 	private void computeConflictingRate(){
 
-		this.conflictingRate = (this.conflictingMergeScenarios/
+		double cr = (this.conflictingMergeScenarios/
 				this.analyzedMergeScenarios) * 100
+		this.conflictRate = cr.round(2)
+
 	}
 
 	private void initializeProjectSummary(){
