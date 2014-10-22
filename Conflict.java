@@ -14,6 +14,10 @@ enum SSMergeConflicts {
 
 public  class Conflict {
 
+	public static final String SSMERGE_SEPARATOR = "##FSTMerge##";
+
+	public static final String DIFF3MERGE_SEPARATOR = "|||||||";
+
 	private String type;
 
 	private String body;
@@ -25,19 +29,13 @@ public  class Conflict {
 	public Conflict(FSTTerminal node, String path){
 		this.body = node.getBody();
 		this.nodeType = node.getType();
-		this.matchPattern(node);
+		this.matchPattern();
 		this.retrieveFilePath(node, path);
-
-
-
 	}
 
-	public Conflict(){}
+	public void matchPattern(){
 
-	public void matchPattern(FSTTerminal node){
-
-		String nodeType = node.getType();
-		String body = node.getBody();
+		String nodeType = this.nodeType;
 		String conflictType = "";
 
 		if(nodeType.equals("Modifiers")){
@@ -54,13 +52,13 @@ public  class Conflict {
 
 		}else if(nodeType.equals("FieldDecl") ){
 
-			conflictType = this.setFieldDeclPattern(body);
+			conflictType = this.setFieldDeclPattern();
 
 		}
 
 		else if(isMethodOrConstructor()){
 
-			conflictType = this.setMethodPattern(body);
+			conflictType = this.setMethodPattern();
 
 		}
 
@@ -68,16 +66,16 @@ public  class Conflict {
 		this.setType(conflictType);
 
 	}
-	
+
 	public boolean isMethodOrConstructor(){
 		boolean result = nodeType.equals("MethodDecl") || nodeType.equals("ConstructorDecl");	
 		return result;
 	}
-	
-	public String setFieldDeclPattern(String nodeBody){
+
+	public String setFieldDeclPattern(){
 
 		String type = "";
-		String [] fd = nodeBody.split(ConflictsController.SSMERGE_SEPARATOR);
+		String [] fd = this.body.split(Conflict.SSMERGE_SEPARATOR);
 
 		if(fd[1].equals(" ")){
 
@@ -91,23 +89,23 @@ public  class Conflict {
 
 	}
 
-	public String setMethodPattern(String nodeBody){
+	public String setMethodPattern(){
 
 		String type = "";
-		
+
 		if(isInsideMethod()){
 			type = SSMergeConflicts.LineBasedMCFd.toString();
 		}else{
-			type = matchConflictOutsideMethod(nodeBody);
+			type = matchConflictOutsideMethod();
 		}
 
 		return type;
 
 	}
-	
-	private String matchConflictOutsideMethod(String nodeBody) {
+
+	private String matchConflictOutsideMethod() {
 		String type;
-		String [] p1 = nodeBody.split("\\|\\|\\|\\|\\|\\|\\|");
+		String [] p1 = this.body.split("\\|\\|\\|\\|\\|\\|\\|");
 		String [] p2 = p1[1].split("=======");
 		String a = p2[0].substring(1, p2[0].length()-1);
 
@@ -164,7 +162,7 @@ public  class Conflict {
 
 
 	}
-	
+
 	public int countConflictsInsideMethods(){
 		String[] p = this.body.split("<<<<<<<");
 		int result = p.length - 1;
