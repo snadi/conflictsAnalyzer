@@ -7,13 +7,16 @@ class RunStudy {
 	//this class is supposed to integrate all the 4 steps involved to run the study
 	
 	private String configurationProperties = 'configuration.properties'
+	private String projectName
+	private String projectRepo
 	public Study(){}
 	
 	public void run(String projectData){
 		
 		def projectsList = new File(projectData)
 		projectsList.eachLine {
-			runGitMiner(it)
+			setProjectNameAndRepo(it)
+			runGitMiner()
 			/*runGremlinQuery()
 			runSedCommands()
 			runConflictsAnalyzer()*/
@@ -22,11 +25,15 @@ class RunStudy {
 		
 	}
 	
-	public void runGitMiner(String project){
+	public void setProjectNameAndRepo(String project){
 		String[] projectData = project.split('/')
-		String projectName = projectData[1].trim()
-		String projectRepo = project
-		updateConfigurationFile(projectRepo)
+		this.projectName = projectData[1].trim()
+		this.projectRepo = project
+	}
+	
+	
+	public void runGitMiner(){
+		updateConfigurationFile()
 		runGithub()
 		runApp()
 	}
@@ -43,12 +50,12 @@ class RunStudy {
 		a.run(files)
 	}
 	
-	private void updateConfigurationFile(String projectRepo){
+	private void updateConfigurationFile(){
 		
 		def myFile = new File(this.configurationProperties)
 		def fileText = myFile.text
-		String replace1 = 'projects=' + projectRepo
-		String replace2 = 'git.repositories=' + projectRepo
+		String replace1 = 'projects=' + this.projectRepo
+		String replace2 = 'git.repositories=' + this.projectRepo
 		def regex1 = /projects=.*/
 		def regex2 = /git.repositories=.*/
 	
