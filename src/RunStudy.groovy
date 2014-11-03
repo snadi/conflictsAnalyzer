@@ -104,7 +104,8 @@ class RunStudy {
 	}
 	
 	public void runGremlinQuery(String graphBase){
-		
+		GremlinQueryApp gq = new GremlinQueryApp()
+		gq.run(projectName, projectRepo, graphBase)
 	}
 	
 	public void runSedCommands(String dir){
