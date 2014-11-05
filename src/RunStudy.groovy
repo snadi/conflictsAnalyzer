@@ -19,8 +19,11 @@ class RunStudy {
 		updateGitMinerConfig(args[1])
 		projectsList.eachLine {
 			setProjectNameAndRepo(it)
+			println "Starting project " + this.projectName
+			println "Running gitminer"
 			String graphBase = runGitMiner()
-			//String revisionFile = runGremlinQuery(graphBase)
+			println "Finished running gitminer and starting to download revisions from github"
+			String revisionFile = runGremlinQuery(graphBase)
 			/*runSedCommands(revisionFile)
 			runConflictsAnalyzer(revisionFile)*/
 		}
@@ -106,8 +109,8 @@ class RunStudy {
 	}
 	
 	public void runGremlinQuery(String graphBase){
-		//GremlinQueryApp gq = new GremlinQueryApp()
-		//gq.run(projectName, projectRepo, graphBase)
+		GremlinQueryApp gq = new GremlinQueryApp()
+		gq.run(projectName, projectRepo, graphBase)
 		
 	}
 	
