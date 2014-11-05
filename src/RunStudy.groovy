@@ -1,7 +1,7 @@
 import composer.FileLoader.MyFileFilter;
 
-import edu.unl.cse.git.App;
-import net.wagstrom.research.github.Github;
+//import edu.unl.cse.git.App;
+//import net.wagstrom.research.github.Github;
 
 
 
@@ -11,6 +11,7 @@ class RunStudy {
 	private String gitminerConfigProps = 'gitminerConfiguration.properties'
 	private String projectName
 	private String projectRepo
+	private String gitminerLocation
 	public Study(){}
 	
 	public void run(String[] args){
@@ -19,9 +20,9 @@ class RunStudy {
 		projectsList.eachLine {
 			setProjectNameAndRepo(it)
 			String graphBase = runGitMiner()
-			runGremlinQuery(graphBase)
-			/*runSedCommands()
-			runConflictsAnalyzer()*/
+			//String revisionFile = runGremlinQuery(graphBase)
+			/*runSedCommands(revisionFile)
+			runConflictsAnalyzer(revisionFile)*/
 		}
 	
 	}
@@ -36,9 +37,9 @@ class RunStudy {
 		File propsFile = new File(configFile)
 		configProps.load(propsFile.newDataInputStream())
 		
-		String gitminerPath = configProps.getProperty('gitminer.path')
-		String graphDb = gitminerPath + File.separator + 'graph.db'
-		String repo_Loader = gitminerPath + File.separator + 'repo_loader'
+		this.gitminerLocation = configProps.getProperty('gitminer.path')
+		String graphDb = this.gitminerLocation + File.separator + 'graph.db'
+		String repo_Loader = this.gitminerLocation + File.separator + 'repo_loader'
 		
 		gitminerProps.setProperty('net.wagstrom.research.github.dburl', graphDb)
 		gitminerProps.setProperty('edu.unl.cse.git.localStore', repo_Loader)
@@ -63,36 +64,37 @@ class RunStudy {
 	
 	public String runGitMiner(){
 		updateProjectRepo()
-		runGithub()
-		runApp()
+		runGithubAPI()
+		runRepoLoaderApp()
 		String graphBase = renameGraph()
-		
 		return graphBase
 	}
 	
 	
 	private String renameGraph(){
-		Properties props = new Properties()
-		File myfile = new File(this.gitminerConfigProps)
-		props.load(myfile.newDataInputStream())
-		String oldFile = props.getProperty('edu.unl.cse.git.dburl')
-		String newFile = oldFile.substring(0, (oldFile.length() - 8) ) + this.projectName + 'graph.db'
+		
+		String oldFile = this.gitminerLocation + File.separator + 'graph.db'
+		String newFile = this.gitminerLocation + File.separator + this.projectName + 'graph.db'
 		new File(oldFile).renameTo(new File(newFile))
 		
 		return newFile
 	}
 	
-	private void runGithub(){
-		Github g = new Github()
-		String[] files = ['-c', this.gitminerConfigProps]
-		g.run(files)
-	}
+	public void runGithubAPI(){
+		ProcessBuilder pb = new ProcessBuilder("./gitminer.sh", "-c", this.gitminerConfigProps)
+		pb.directory(new File(this.gitminerLocation))
+		Process p = pb.start()
+		p.waitFor()
+		
+		}
 	
-	private void runApp(){
-		App a = new App()
-		String[] files = ["-c", this.gitminerConfigProps]
-		a.run(files)
-	}
+	public void runRepoLoaderApp(){
+		ProcessBuilder pb = new ProcessBuilder("./repository_loader.sh", "-c", this.gitminerConfigProps)
+		pb.directory(new File(this.gitminerLocation))
+		Process p = pb.start()
+		p.waitFor()
+		}
+			
 	
 	private void updateProjectRepo(){	
 		Properties gitminerProps = new Properties()
@@ -104,8 +106,9 @@ class RunStudy {
 	}
 	
 	public void runGremlinQuery(String graphBase){
-		GremlinQueryApp gq = new GremlinQueryApp()
-		gq.run(projectName, projectRepo, graphBase)
+		//GremlinQueryApp gq = new GremlinQueryApp()
+		//gq.run(projectName, projectRepo, graphBase)
+		
 	}
 	
 	public void runSedCommands(String dir){
@@ -123,8 +126,7 @@ class RunStudy {
 	public static void main (String[] args){
 		RunStudy study = new RunStudy()
 		String[] files= ['projectsList', 'configuration.properties']
-		study.run(files)
-		
+		study.run(files)		
 	}
 
 }
