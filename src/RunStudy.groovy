@@ -22,6 +22,7 @@ class RunStudy {
 			println "Starting project " + this.projectName
 			println "Running gitminer"
 			String graphBase = runGitMiner()
+			println graphBase
 			println "Finished running gitminer and starting to download revisions from github"
 			String revisionFile = runGremlinQuery(graphBase)
 			/*runSedCommands(revisionFile)
@@ -84,18 +85,36 @@ class RunStudy {
 	}
 	
 	public void runGithubAPI(){
-		ProcessBuilder pb = new ProcessBuilder("./gitminer.sh", "-c", this.gitminerConfigProps)
+		String propsFile = new File("").getAbsolutePath() + File.separator + this.gitminerConfigProps
+		ProcessBuilder pb = new ProcessBuilder("./gitminer.sh", "-c", propsFile)
 		pb.directory(new File(this.gitminerLocation))
-		Process p = pb.start()
-		p.waitFor()
+		pb.redirectOutput(ProcessBuilder.Redirect.INHERIT)
+		// Start the process.
+		try {
+		  Process p = pb.start()
+		  p.waitFor()
+		} catch (IOException e) {
+		  e.printStackTrace();
+		} catch (InterruptedException e) {
+		  e.printStackTrace();
+		}
 		
 		}
 	
 	public void runRepoLoaderApp(){
-		ProcessBuilder pb = new ProcessBuilder("./repository_loader.sh", "-c", this.gitminerConfigProps)
+		String propsFile = new File("").getAbsolutePath() + File.separator + this.gitminerConfigProps
+		ProcessBuilder pb = new ProcessBuilder("./repository_loader.sh", "-c", propsFile)
 		pb.directory(new File(this.gitminerLocation))
-		Process p = pb.start()
-		p.waitFor()
+		pb.redirectOutput(ProcessBuilder.Redirect.INHERIT)
+		// Start the process.
+		try {
+		  Process p = pb.start()
+		  p.waitFor()
+		} catch (IOException e) {
+		  e.printStackTrace();
+		} catch (InterruptedException e) {
+		  e.printStackTrace();
+		}
 		}
 			
 	
@@ -111,7 +130,6 @@ class RunStudy {
 	public void runGremlinQuery(String graphBase){
 		GremlinQueryApp gq = new GremlinQueryApp()
 		gq.run(projectName, projectRepo, graphBase)
-		
 	}
 	
 	public void runSedCommands(String dir){
@@ -129,7 +147,9 @@ class RunStudy {
 	public static void main (String[] args){
 		RunStudy study = new RunStudy()
 		String[] files= ['projectsList', 'configuration.properties']
-		study.run(files)		
+		study.run(files)	
+		
+		
 	}
 
 }
