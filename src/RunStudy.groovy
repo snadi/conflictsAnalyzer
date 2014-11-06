@@ -68,8 +68,8 @@ class RunStudy {
 	
 	public String runGitMiner(){
 		updateProjectRepo()
-		runGithubAPI()
-		runRepoLoaderApp()
+		runGitminerCommand('./gitminer.sh')
+		runGitminerCommand('./repository_loader.sh')
 		String graphBase = renameGraph()
 		return graphBase
 	}
@@ -84,9 +84,9 @@ class RunStudy {
 		return newFile
 	}
 	
-	public void runGithubAPI(){
+	public void runGitminerCommand(String command){
 		String propsFile = new File("").getAbsolutePath() + File.separator + this.gitminerConfigProps
-		ProcessBuilder pb = new ProcessBuilder("./gitminer.sh", "-c", propsFile)
+		ProcessBuilder pb = new ProcessBuilder(command, "-c", propsFile)
 		pb.directory(new File(this.gitminerLocation))
 		pb.redirectOutput(ProcessBuilder.Redirect.INHERIT)
 		// Start the process.
@@ -99,24 +99,7 @@ class RunStudy {
 		  e.printStackTrace();
 		}
 		
-		}
-	
-	public void runRepoLoaderApp(){
-		String propsFile = new File("").getAbsolutePath() + File.separator + this.gitminerConfigProps
-		ProcessBuilder pb = new ProcessBuilder("./repository_loader.sh", "-c", propsFile)
-		pb.directory(new File(this.gitminerLocation))
-		pb.redirectOutput(ProcessBuilder.Redirect.INHERIT)
-		// Start the process.
-		try {
-		  Process p = pb.start()
-		  p.waitFor()
-		} catch (IOException e) {
-		  e.printStackTrace();
-		} catch (InterruptedException e) {
-		  e.printStackTrace();
-		}
-		}
-			
+		}		
 	
 	private void updateProjectRepo(){	
 		Properties gitminerProps = new Properties()
