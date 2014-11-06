@@ -1,34 +1,56 @@
-import composer.FileLoader.MyFileFilter;
+import java.util.Hashtable
 
-//import edu.unl.cse.git.App;
-//import net.wagstrom.research.github.Github;
-
-
+/*this class is supposed to integrate all the 3 steps involved to run the study
+ * gitminer/gremlinQuery/ConflictsAnalyzer
+ */
 
 class RunStudy {
-	//this class is supposed to integrate all the 4 steps involved to run the study
+	
 	
 	private String gitminerConfigProps = 'gitminerConfiguration.properties'
 	private String projectName
 	private String projectRepo
 	private String gitminerLocation
-	public Study(){}
+	private ArrayList<Project> projects
+	private int analyzedProjects, analyzedMergeScenarios,
+	conflictingMergeScenarios
+
+	private double projectsConflictRate
+
+	private Hashtable<String, Integer> projectsSummary
+	
+	public RunStudy(){
+		this.projects = new ArrayList<Project>()
+		initializeProjectsSummary()
+		initializeProjectsMetrics()
+	}
 	
 	public void run(String[] args){
 		def projectsList = new File(args[0])
 		updateGitMinerConfig(args[1])
 		projectsList.eachLine {
 			setProjectNameAndRepo(it)
-			println "Starting project " + this.projectName
-			println "Running gitminer"
 			String graphBase = runGitMiner()
-			println graphBase
-			println "Finished running gitminer and starting to download revisions from github"
 			String revisionFile = runGremlinQuery(graphBase)
-			/*runSedCommands(revisionFile)
-			runConflictsAnalyzer(revisionFile)*/
+			runConflictsAnalyzer(this.projectName, revisionFile)
 		}
 	
+	}
+	
+	public void initializeProjectsSummary(){
+		this.projectsSummary = new Hashtable<String, Integer>()
+
+		for(SSMergeConflicts c : SSMergeConflicts.values()){
+
+			String type = c.toString()
+			projectsSummary.put(type, 0)
+		}
+	}
+	
+	public void initializeProjectsMetrics(){
+		this.analyzedProjects; this.analyzedMergeScenarios;
+		this.conflictingMergeScenarios = 0
+		this.projectsConflictRate = 0.0
 	}
 	
 	public void updateGitMinerConfig(String configFile){
@@ -63,14 +85,17 @@ class RunStudy {
 		String[] projectData = project.split('/')
 		this.projectName = projectData[1].trim()
 		this.projectRepo = project
+		println "Starting project " + this.projectName
 	}
 	
 	
 	public String runGitMiner(){
 		updateProjectRepo()
+		println "Running gitminer"
 		runGitminerCommand('./gitminer.sh')
 		runGitminerCommand('./repository_loader.sh')
 		String graphBase = renameGraph()
+		println "Finished running gitminer"
 		return graphBase
 	}
 	
@@ -110,20 +135,50 @@ class RunStudy {
 		gitminerProps.store(gitminerPropsFile.newWriter(), null)
 	}
 	
-	public void runGremlinQuery(String graphBase){
+	public String runGremlinQuery(String graphBase){
+		println "starting to query the gremlin database and download merge revision"
 		GremlinQueryApp gq = new GremlinQueryApp()
-		gq.run(projectName, projectRepo, graphBase)
+		String revisionFile = gq.run(projectName, projectRepo, graphBase)
 	}
 	
-	public void runSedCommands(String dir){
-		//replace ... by []
-		String c1 = "grep -rl '\\.\\.\\.' " + dir + " | xargs sed -i '' 's#\\.\\.\\.#[]#g'"
-		c1.execute()
+	public void runConflictsAnalyzer(String projectName, String revisionFile){
+		println "starting to run the conflicts analyzer on project " + projectName
+			Project project = new Project(projectName, revisionFile)
+			project.analyzeConflicts()
+			this.projects.add(project)
+			updateAndPrintResults(project)
+			
 	}
 	
-	public void runConflictsAnalyzer(String projectData){
-		ConflictsAnalyzer ca = new ConflictsAnalyzer(projectData)
-		ca.analyzeConflicts()
+	public void updateAndPrintResults(Project p){
+		updateConflictRate(p)
+		updateProjectsSummary(p)
+		ConflictPrinter.printAnalizedProjectsReport(this)
+	}
+	
+	public double getProjectsConflictRate(){
+		return this.projectsConflictRate
+	}
+	
+	public void updateConflictRate(Project p){
+		this.analyzedProjects++
+		this.analyzedMergeScenarios += p.analyzedMergeScenarios
+		this.conflictingMergeScenarios += p.conflictingMergeScenarios
+
+		double cr = (this.conflictingMergeScenarios/
+				this.analyzedMergeScenarios) * 100
+		this.projectsConflictRate = cr.round(2)
+	}
+
+	public void updateProjectsSummary(Project p){
+		Set<String> keys = this.projectsSummary.keySet();
+
+		for(String key: keys){
+			int mergeQuantity = p.getProjectSummary().get(key).value
+			int projectsQuantity = this.projectsSummary.get(key).value
+			projectsQuantity = projectsQuantity + mergeQuantity
+			this.projectsSummary.put(key, projectsQuantity)
+		}
 	}
 	
 	

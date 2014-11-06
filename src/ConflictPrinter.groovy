@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class ConflictPrinter {
 
 	
-	public static void printProjectsReport(ConflictsAnalyzer ca){
+/*	public static void printProjectsReport(ConflictsAnalyzer ca){
 		
 		def fileName = 'ProjectsSummary.csv'
 		def out = new File(fileName)
@@ -32,6 +32,40 @@ public class ConflictPrinter {
 		for(String key: keys){
 			
 			def row = [key+": "+ ca.getProjectsSummary().get(key)]
+			out.append row.join(',')
+			out.append '\n'
+			
+		}
+
+	}*/
+	
+	public static void printAnalizedProjectsReport(RunStudy rs){
+		
+		def fileName = 'ProjectsSummary.csv'
+		def out = new File(fileName)
+		// deleting old files if it exists
+		out.delete()
+		out = new File(fileName)
+		
+		def content = rs.projects.size + ' projects analyzed so far.' +
+		'\nBelow you will find the list of analyzed projects and their conflict rate.\n'
+		
+		out.append(content)
+		
+		for(Project project : rs.projects){
+			def row = project.getName() + ': ' +
+			project.getConflictRate() + '%\n'
+			out.append(row)
+		}
+		
+		content = 'Total conflict rate: ' + rs.getProjectsConflictRate() +
+		'%\nSummary of conflict patterns found:\n'
+		out.append(content)
+		
+		Set<String> keys = rs.projectsSummary.keySet()
+		for(String key: keys){
+			
+			def row = [key+": "+ rs.projectsSummary.get(key)]
 			out.append row.join(',')
 			out.append '\n'
 			
