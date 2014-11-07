@@ -11,6 +11,7 @@ class RunStudy {
 	private String projectName
 	private String projectRepo
 	private String gitminerLocation
+	private String downloadPath
 	private ArrayList<Project> projects
 	private int analyzedProjects, analyzedMergeScenarios,
 	conflictingMergeScenarios
@@ -64,6 +65,7 @@ class RunStudy {
 		configProps.load(propsFile.newDataInputStream())
 		
 		this.gitminerLocation = configProps.getProperty('gitminer.path')
+		this.downloadPath = configProps.getProperty('downloads.path')
 		String graphDb = this.gitminerLocation + File.separator + 'graph.db'
 		String repo_Loader = this.gitminerLocation + File.separator + 'repo_loader'
 		
@@ -138,7 +140,7 @@ class RunStudy {
 	public String runGremlinQuery(String graphBase){
 		println "starting to query the gremlin database and download merge revision"
 		GremlinQueryApp gq = new GremlinQueryApp()
-		String revisionFile = gq.run(projectName, projectRepo, graphBase)
+		String revisionFile = gq.run(projectName, projectRepo, graphBase, this.downloadPath)
 	}
 	
 	public void runConflictsAnalyzer(String projectName, String revisionFile){
