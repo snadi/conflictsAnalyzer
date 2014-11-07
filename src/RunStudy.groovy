@@ -33,9 +33,14 @@ class RunStudy {
 			setProjectNameAndRepo(it)
 			String graphBase = runGitMiner()
 			String revisionFile = runGremlinQuery(graphBase)
+			
 			runConflictsAnalyzer(this.projectName, revisionFile)
 		}
 	
+	}
+	
+	public void removeUnwantedCharacters(ArrayList<String> unwantedStrings){
+		
 	}
 	
 	public void initializeProjectsSummary(){
