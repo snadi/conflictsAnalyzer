@@ -75,6 +75,8 @@ class Project {
 		for(MergeScenario ms : this.mergeScenarios){
 			ms.analyzeConflicts()
 			updateAndPrintSummary(ms)
+			ms.deleteMSDir()
+			
 		}
 	}
 

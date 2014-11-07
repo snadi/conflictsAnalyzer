@@ -29,6 +29,18 @@ class MergeScenario implements Observer {
 		this.runFstGenMerger()
 		this.updateHasConflicts()
 	}
+	
+	public void deleteMSDir(){
+		String msPath = this.path.substring(0, (this.path.length()-26))
+		def dir = new File(msPath)
+		boolean deleted = dir.deleteDir()
+		if(deleted){
+			println 'Merge scenario ' + this.path + ' deleted!'
+		}else{
+		
+			println 'Merge scenario ' + this.path + ' not deleted!'
+		}
+	}
 
 	public void runFstGenMerger(){
 		FSTGenMerger fstGenMerge = new FSTGenMerger()
