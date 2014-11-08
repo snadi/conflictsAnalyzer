@@ -46,7 +46,12 @@ class MergeScenario implements Observer {
 		FSTGenMerger fstGenMerge = new FSTGenMerger()
 		fstGenMerge.getMergeVisitor().addObserver(this)
 		String[] files = ["--expression", this.path]
-		fstGenMerge.run(files);
+		try {
+			fstGenMerge.run(files)
+		} catch (Exception e) {
+			e.printStackTrace()
+		}
+		
 	}
 
 
