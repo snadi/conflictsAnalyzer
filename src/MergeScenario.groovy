@@ -20,6 +20,7 @@ class MergeScenario implements Observer {
 
 	MergeScenario(String path){
 		this.path = path
+		this.removeVarArgs()
 		this.conflicts = new ArrayList<Conflict>()
 		this.hasConflicts = false
 		this.createMergeScenarioSummary()
@@ -115,5 +116,32 @@ class MergeScenario implements Observer {
 	private void updateHasConflicts(){
 		if(!this.conflicts.isEmpty())
 			this.hasConflicts = true
+	}
+
+	public void removeVarArgs(){
+		String OS = System.getProperty("os.name").toLowerCase()
+		String sSed = ""
+		if (OS.contains('mac')){
+			sSed = "xargs sed -i \'\' s/\\.\\.\\./[]/g"
+		}else if(OS.contains('nix')){
+			sSed = "xargs sed -i s/\\.\\.\\./[]/g"
+		}
+		String msPath = this.path.substring(0, (this.path.length()-26))
+		String command = "grep -rl ... " + msPath
+		def procGrep = command.execute()
+		def procSed = sSed.execute()
+		procGrep | procSed
+		procSed.waitFor()
+	}
+	
+	public static void main (String[] args){
+		String OS = System.getProperty("os.name").toLowerCase()
+		if (OS.contains('win')) {
+			System.out.println("This is Windows");
+		} else if (OS.contains('mac')) {
+			System.out.println("This is Mac");
+		} else if (OS.contains('nix')) {
+			System.out.println("This is Unix or Linux");
+		} 
 	}
 }
