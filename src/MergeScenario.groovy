@@ -20,14 +20,19 @@ class MergeScenario implements Observer {
 
 	MergeScenario(String path){
 		this.path = path
-		this.removeVarArgs()
+		//this.removeVarArgs()
 		this.conflicts = new ArrayList<Conflict>()
 		this.hasConflicts = false
 		this.createMergeScenarioSummary()
 	}
 
 	public void analyzeConflicts(){
-		this.runFstGenMerger()
+		try {
+			this.runFstGenMerger()
+		} catch (Exception e) {
+			e.printStackTrace()
+		}
+		
 		this.updateHasConflicts()
 	}
 
