@@ -133,15 +133,5 @@ class MergeScenario implements Observer {
 		procGrep | procSed
 		procSed.waitFor()
 	}
-	
-	public static void main (String[] args){
-		String OS = System.getProperty("os.name").toLowerCase()
-		if (OS.contains('win')) {
-			System.out.println("This is Windows");
-		} else if (OS.contains('mac')) {
-			System.out.println("This is Mac");
-		} else if (OS.contains('nix')) {
-			System.out.println("This is Unix or Linux");
-		} 
-	}
+
 }
