@@ -123,7 +123,7 @@ class MergeScenario implements Observer {
 		String sSed = ""
 		if (OS.contains('mac')){
 			sSed = "xargs sed -i \'\' s/\\.\\.\\./[]/g"
-		}else if(OS.contains('nix')){
+		}else if(OS.contains('linux')){
 			sSed = "xargs sed -i s/\\.\\.\\./[]/g"
 		}
 		String msPath = this.path.substring(0, (this.path.length()-26))
