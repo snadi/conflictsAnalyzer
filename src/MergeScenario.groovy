@@ -17,7 +17,7 @@ class MergeScenario implements Observer {
 	private Map<String,Integer> mergeScenarioSummary
 
 	private boolean hasConflicts
-	
+
 	MergeScenario(String path){
 		this.path = path
 		this.conflicts = new ArrayList<Conflict>()
@@ -29,7 +29,7 @@ class MergeScenario implements Observer {
 		this.runFstGenMerger()
 		this.updateHasConflicts()
 	}
-	
+
 	public void deleteMSDir(){
 		String msPath = this.path.substring(0, (this.path.length()-26))
 		def dir = new File(msPath)
@@ -37,7 +37,7 @@ class MergeScenario implements Observer {
 		if(deleted){
 			println 'Merge scenario ' + this.path + ' deleted!'
 		}else{
-		
+
 			println 'Merge scenario ' + this.path + ' not deleted!'
 		}
 	}
@@ -46,12 +46,7 @@ class MergeScenario implements Observer {
 		FSTGenMerger fstGenMerge = new FSTGenMerger()
 		fstGenMerge.getMergeVisitor().addObserver(this)
 		String[] files = ["--expression", this.path]
-		try {
-			fstGenMerge.run(files)
-		} catch (Exception e) {
-			e.printStackTrace()
-		}
-		
+		fstGenMerge.run(files)
 	}
 
 
@@ -82,19 +77,19 @@ class MergeScenario implements Observer {
 			this.mergeScenarioSummary.put(type, 0)
 		}
 	}
-	
+
 	public void updateMergeScenarioSummary(Conflict conflict){
 		String conflictType = conflict.getType()
 		Integer typeQuantity = this.mergeScenarioSummary.get(conflictType).value
-		
+
 		if(conflict.methodOrConstructor && conflict.isInsideMethod()){
 			typeQuantity = typeQuantity + conflict.countConflictsInsideMethods()
-			}else{
+		}else{
 			typeQuantity++
-			}
-		
+		}
+
 		this.mergeScenarioSummary.put(conflictType, typeQuantity)
-		
+
 	}
 
 	public String getId(){
@@ -112,13 +107,13 @@ class MergeScenario implements Observer {
 	public void setConflicts(ArrayList<Conflict> conflicts){
 		this.conflicts = conflicts
 	}
-	
+
 	public boolean getHasConflicts(){
 		return this.hasConflicts
 	}
-	
+
 	private void updateHasConflicts(){
 		if(!this.conflicts.isEmpty())
-		this.hasConflicts = true
+			this.hasConflicts = true
 	}
 }
