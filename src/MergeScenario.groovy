@@ -27,12 +27,7 @@ class MergeScenario implements Observer {
 	}
 
 	public void analyzeConflicts(){
-		try {
-			this.runFstGenMerger()
-		} catch (Exception e) {
-			e.printStackTrace()
-		}
-		
+		this.runFstGenMerger()
 		this.updateHasConflicts()
 	}
 

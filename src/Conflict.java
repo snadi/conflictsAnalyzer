@@ -8,7 +8,7 @@ import de.ovgu.cide.fstgen.ast.FSTTerminal;
 
 enum SSMergeConflicts {
 
-	ModifierList, DefaultValueAnnotation, ImplementList, LineBasedMCFd, SameIdFd, SameSignatureCM
+	ModifierList, DefaultValueAnnotation, ImplementList, LineBasedMCFd, SameIdFd, SameSignatureCM, NOPATTERN
 
 }
 
@@ -62,7 +62,10 @@ public  class Conflict {
 
 		}
 
-
+		if (conflictType.equals("")){
+			conflictType = SSMergeConflicts.NOPATTERN.toString();
+		}
+		
 		this.setType(conflictType);
 
 	}
