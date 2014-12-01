@@ -31,10 +31,10 @@ class RunStudy {
 		updateGitMinerConfig(args[1])
 		projectsList.eachLine {
 			setProjectNameAndRepo(it)
-			//String graphBase = runGitMiner()
-			//String revisionFile = runGremlinQuery(graphBase)
+			String graphBase = runGitMiner()
+			String revisionFile = runGremlinQuery(graphBase)
 			
-			runConflictsAnalyzer(this.projectName, 'teste')
+			runConflictsAnalyzer(this.projectName, revisionFile)
 		}
 	
 	}
