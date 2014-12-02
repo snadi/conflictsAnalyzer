@@ -137,4 +137,20 @@ public class ConflictPrinter {
 		out.append '\n'
 		out.append(delimiter)
 	}
+	
+	public static void main (String[] args){
+		String propsFile = "/Users/paolaaccioly/Documents/Doutorado/conflictsStudy/script_R/meuscript.r"
+		ProcessBuilder pb = new ProcessBuilder("Rscript", propsFile)
+		//pb.directory(new File(this.gitminerLocation))
+		pb.redirectOutput(ProcessBuilder.Redirect.INHERIT)
+		// Start the process.
+		try {
+		  Process p = pb.start()
+		  p.waitFor()
+		} catch (IOException e) {
+		  e.printStackTrace();
+		} catch (InterruptedException e) {
+		  e.printStackTrace();
+		}
+	}
 }
