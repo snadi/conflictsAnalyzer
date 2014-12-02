@@ -139,7 +139,7 @@ public class ConflictPrinter {
 	}
 	
 	public static void main (String[] args){
-		String propsFile = "/Users/paolaaccioly/Documents/Doutorado/conflictsStudy/script_R/meuscript.r"
+		String propsFile = "meuscript.r"
 		ProcessBuilder pb = new ProcessBuilder("Rscript", propsFile)
 		//pb.directory(new File(this.gitminerLocation))
 		pb.redirectOutput(ProcessBuilder.Redirect.INHERIT)
