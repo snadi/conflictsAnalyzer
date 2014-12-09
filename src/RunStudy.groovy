@@ -38,7 +38,14 @@ class RunStudy {
 	}
 
 
-
+	public ArrayList<Project> getProjects(){
+		return this.projects
+	}
+	
+	public Hashtable<String, Integer> getProjectsSummary(){
+		return this.projectsSummary
+	}
+	
 	public void initializeProjectsSummary(){
 		this.projectsSummary = new Hashtable<String, Integer>()
 
@@ -83,7 +90,7 @@ class RunStudy {
 		def projectFile = new File("projectsData.csv")
 		boolean header = true
 		projectFile.eachLine {
-			if(!header){
+			if((!header) && (!it.empty)){
 				initializeProject(it)
 			}
 			header = false
@@ -103,7 +110,7 @@ class RunStudy {
 		def patternFile = new File("patternsData.csv")
 		boolean header = true
 		patternFile.eachLine {
-			if(!header){
+			if((!header) && (!it.empty)){
 				loadPreviousPatterns(it)
 			}
 			header = false
