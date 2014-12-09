@@ -73,6 +73,9 @@ public class ConflictPrinter {
 
 	}
 	
+	private void printInputDataToScriptR(){
+		
+	}
 	public static void printProjectReport(Project project){
 		String fileName = 'Project' + project.getName() + 'Report.csv'
 		def out = new File(fileName)

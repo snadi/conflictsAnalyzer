@@ -21,6 +21,17 @@ class Project {
 		initializeProjectMetrics()
 
 	}
+	
+	/*The following constructor is used to initialize projects
+	 * that were already analyzed
+	 */
+	public Project(String projectName, int totalScenarios, int conflictingscenarios){
+		this.name = projectName
+		this.analyzedMergeScenarios = totalScenarios
+		this.conflictingMergeScenarios = conflictingscenarios
+		this.computeConflictingRate()
+	}
+	
 
 	private initializeProjectMetrics() {
 		this.analyzedMergeScenarios = 0
@@ -123,7 +134,7 @@ class Project {
 	}
 
 	private void updateProjectSummary(MergeScenario ms){
-		Set<String> keys = this.projectSummary.keySet();
+		Set<String> keys = this.projectSummary.keySet()
 
 		for(String key: keys){
 			int mergeQuantity = ms.mergeScenarioSummary.get(key).value
