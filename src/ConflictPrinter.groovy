@@ -106,8 +106,10 @@ public class ConflictPrinter {
 		Set<String> keys = rs.getProjectsSummary().keySet();
 
 		for(String key: keys){
-			row = key + ' ' + rs.getProjectsSummary().get(key).value + '\n'
-			out.append(row)
+			if(!key.equals("NOPATTERN")){
+				row = key + ' ' + rs.getProjectsSummary().get(key).value + '\n'
+				out.append(row)
+			}	
 		}
 	}
 
