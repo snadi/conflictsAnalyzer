@@ -22,7 +22,11 @@ class RunStudy {
 
 	public RunStudy(){
 		this.projects = new ArrayList<Project>()
-		loadPreviousResults()
+		initializeProjectsSummary()
+		initializeProjectsMetrics()
+		if(previousResultsExists()){
+			loadPreviousResults()
+		}
 	}
 
 	public void run(String[] args){
@@ -37,7 +41,16 @@ class RunStudy {
 
 	}
 
-
+	public boolean previousResultsExists(){
+		boolean result = false
+		File projects = new File('projectsData.csv')
+		File patterns = new File('patternsData.csv')
+		if(projects.exists() && patterns.exists()){
+			result = true
+		}
+		return result
+	}
+	
 	public ArrayList<Project> getProjects(){
 		return this.projects
 	}
@@ -80,7 +93,6 @@ class RunStudy {
 	}
 	
 	public void loadPreviousResults(){
-		initializeProjectsSummary()
 		readProjectData()
 		readPatternsData()
 		initializeProjectsMetrics()
@@ -243,9 +255,15 @@ class RunStudy {
 	}
 
 	private computeConflictRate() {
-		double cr = (this.conflictingMergeScenarios/
-				this.analyzedMergeScenarios) * 100
-		this.projectsConflictRate = cr.round(2)
+
+		if(this.analyzedMergeScenarios!=0){
+			double cr = (this.conflictingMergeScenarios/
+					this.analyzedMergeScenarios) * 100
+			this.projectsConflictRate = cr.round(2)
+		}
+		else{
+			this.projectsConflictRate = 0
+		}
 	}
 
 	public void updateProjectsSummary(Project p){
@@ -264,8 +282,6 @@ class RunStudy {
 		RunStudy study = new RunStudy()
 		String[] files= ['projectsList', 'configuration.properties']
 		study.run(files)
-
-
 	}
 
 }
