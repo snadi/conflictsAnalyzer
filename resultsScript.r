@@ -65,6 +65,9 @@ HTML(conflictRate, file=htmlFile, append=TRUE)
 
 HTML("<hr><h2>Graphics - Conflict Patterns Occurrences</h2>", file=htmlFile, append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=barChartFileName, Align="center", append=TRUE)
+time = Sys.time()
+HTML("<hr><h2>Last Time Updated:</h2>", file=htmlFile, append=TRUE)
+HTML(time, file=htmlFile, append=TRUE)
 
 }
 
