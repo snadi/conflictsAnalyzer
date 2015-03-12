@@ -49,30 +49,17 @@ public class ConflictPrinter {
 			out.append(row)
 		}
 
-		content = 'Total conflict rate: ' + rs.getProjectsConflictRate() +
-				'%\nSummary of conflict patterns found:\n'
-		out.append(content)
-
-		Set<String> keys = rs.projectsSummary.keySet()
-		for(String key: keys){
-
-			def row = [key+": "+ rs.projectsSummary.get(key)]
-			out.append row.join(',')
-			out.append '\n'
-
-		}
 		printInputDataToScriptR(rs)
 	}
 
 	private static void printInputDataToScriptR(RunStudy rs){
 		printProjectsData(rs)
-		printPatternsData(rs)
 		callRScript()
 	}
 
 
 	private static void printProjectsData(RunStudy rs){
-		String fileName = 'projectsData.csv'
+		String fileName = 'projectsPatternData.csv'
 		def out = new File(fileName)
 
 		// deleting old files if it exists
@@ -80,38 +67,23 @@ public class ConflictPrinter {
 
 		out = new File(fileName)
 
-		def row = 'Project Merge_Scenarios Conflicting_Scenarios\n'
+		def row = 'Project Merge_Scenarios Conflicting_Scenarios DefaultValueAnnotation ImplementList ModifierList LineBasedMCFd SameSignatureCM SameIdFd\n'
 
 		out.append(row)
 
 		for(Project p : rs.getProjects()){
-			row = p.name + ' ' + p.analyzedMergeScenarios + ' ' + p.conflictingMergeScenarios + '\n'
+			int DefaultValueAnnotation = p.projectSummary.get("DefaultValueAnnotation")
+			int ImplementList = p.projectSummary.get("ImplementList")
+			int ModifierList = p.projectSummary.get("ModifierList")
+			int LineBasedMCFd = p.projectSummary.get("LineBasedMCFd")
+			int SameSignatureCM = p.projectSummary.get("SameSignatureCM")
+			int SameIdFd = p.projectSummary.get("SameIdFd")
+			String conflicts = ' ' + DefaultValueAnnotation + ' ' + ImplementList + ' ' + ModifierList + ' ' + LineBasedMCFd + ' ' + SameSignatureCM + ' ' + SameIdFd
+			row = p.name + ' ' + p.analyzedMergeScenarios + ' ' + p.conflictingMergeScenarios + conflicts + '\n'
 			out.append(row)
 		}
 	}
 
-	private static void printPatternsData(RunStudy rs){
-		String fileName = 'patternsData.csv'
-		def out = new File(fileName)
-
-		// deleting old files if it exists
-		out.delete()
-
-		out = new File(fileName)
-
-		def row = 'Pattern Occurrences\n'
-
-		out.append(row)
-
-		Set<String> keys = rs.getProjectsSummary().keySet();
-
-		for(String key: keys){
-			if(!key.equals("NOPATTERN")){
-				row = key + ' ' + rs.getProjectsSummary().get(key).value + '\n'
-				out.append(row)
-			}	
-		}
-	}
 
 	private static void callRScript(){
 		String propsFile = "resultsScript.r"

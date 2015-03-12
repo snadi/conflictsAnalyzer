@@ -21,17 +21,20 @@ class Project {
 		initializeProjectMetrics()
 
 	}
-	
+
 	/*The following constructor is used to initialize projects
 	 * that were already analyzed
 	 */
-	public Project(String projectName, int totalScenarios, int conflictingscenarios){
+	public Project(String projectName, int totalScenarios, int conflictingscenarios, 
+		Hashtable<String, Integer> projectSummary){
+		
 		this.name = projectName
 		this.analyzedMergeScenarios = totalScenarios
 		this.conflictingMergeScenarios = conflictingscenarios
 		this.computeConflictingRate()
+		this.projectSummary = projectSummary
 	}
-	
+
 
 	private initializeProjectMetrics() {
 		this.analyzedMergeScenarios = 0
@@ -87,7 +90,7 @@ class Project {
 			ms.analyzeConflicts()
 			updateAndPrintSummary(ms)
 			ms.deleteMSDir()
-			
+
 		}
 	}
 

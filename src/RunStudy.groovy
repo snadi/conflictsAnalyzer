@@ -22,7 +22,6 @@ class RunStudy {
 
 	public RunStudy(){
 		this.projects = new ArrayList<Project>()
-		initializeProjectsSummary()
 		initializeProjectsMetrics()
 		if(previousResultsExists()){
 			loadPreviousResults()
@@ -43,9 +42,8 @@ class RunStudy {
 
 	public boolean previousResultsExists(){
 		boolean result = false
-		File projects = new File('projectsData.csv')
-		File patterns = new File('patternsData.csv')
-		if(projects.exists() && patterns.exists()){
+		File projects = new File('projectsPatternData.csv')
+		if(projects.exists()){
 			result = true
 		}
 		return result
@@ -57,16 +55,6 @@ class RunStudy {
 	
 	public Hashtable<String, Integer> getProjectsSummary(){
 		return this.projectsSummary
-	}
-	
-	public void initializeProjectsSummary(){
-		this.projectsSummary = new Hashtable<String, Integer>()
-
-		for(SSMergeConflicts c : SSMergeConflicts.values()){
-
-			String type = c.toString()
-			projectsSummary.put(type, 0)
-		}
 	}
 
 	public void initializeProjectsMetrics(){
@@ -94,12 +82,11 @@ class RunStudy {
 	
 	public void loadPreviousResults(){
 		readProjectData()
-		readPatternsData()
 		initializeProjectsMetrics()
 	}
 
 	public void readProjectData(){
-		def projectFile = new File("projectsData.csv")
+		def projectFile = new File("projectsPatternData.csv")
 		boolean header = true
 		projectFile.eachLine {
 			if((!header) && (!it.empty)){
@@ -107,6 +94,7 @@ class RunStudy {
 			}
 			header = false
 		}
+
 	}
 
 	public void initializeProject(String line){
@@ -114,29 +102,21 @@ class RunStudy {
 		String projectName = data[0]
 		int totalScenarios = Integer.parseInt(data[1])
 		int conflictingScenarios = Integer.parseInt(data[2])
-		Project project = new Project(projectName, totalScenarios, conflictingScenarios)
+		int DefaultValueAnnotation = Integer.parseInt(data[3])
+		int ImplementList = Integer.parseInt(data[4])
+		int ModifierList = Integer.parseInt(data[5])
+		int LineBasedMCFd = Integer.parseInt(data[6])
+		int SameSignatureCM = Integer.parseInt(data[7])
+		int SameIdFd = Integer.parseInt(data[8])
+		Hashtable<String, Integer> projectSummary = new Hashtable<String, Integer>()
+		projectSummary.put("DefaultValueAnnotation", DefaultValueAnnotation)
+		projectSummary.put("ImplementList", ImplementList)
+		projectSummary.put("ModifierList", ModifierList)
+		projectSummary.put("LineBasedMCFd", LineBasedMCFd)
+		projectSummary.put("SameSignatureCM", SameSignatureCM)
+		projectSummary.put("SameIdFd", SameIdFd)
+		Project project = new Project(projectName, totalScenarios, conflictingScenarios, projectSummary)
 		this.projects.add(project)
-	}
-
-	public void readPatternsData(){
-		def patternFile = new File("patternsData.csv")
-		boolean header = true
-		patternFile.eachLine {
-			if((!header) && (!it.empty)){
-				loadPreviousPatterns(it)
-			}
-			header = false
-		}
-
-	}
-
-	public void loadPreviousPatterns(String line){
-		String[] data = line.split(" ")
-		String pattern = data[0]
-		int occurrences = Integer.parseInt(data[1])
-		int actualValue = this.projectsSummary.get(pattern).value
-		actualValue = actualValue + occurrences
-		this.projectsSummary.put(pattern, actualValue)
 	}
 
 	public void updateGitMinerConfig(String configFile){
@@ -239,7 +219,6 @@ class RunStudy {
 
 	public void updateAndPrintResults(Project p){
 		updateConflictRate(p)
-		updateProjectsSummary(p)
 		ConflictPrinter.printAnalizedProjectsReport(this)
 	}
 
@@ -265,18 +244,6 @@ class RunStudy {
 			this.projectsConflictRate = 0
 		}
 	}
-
-	public void updateProjectsSummary(Project p){
-		Set<String> keys = this.projectsSummary.keySet();
-
-		for(String key: keys){
-			int mergeQuantity = p.getProjectSummary().get(key).value
-			int projectsQuantity = this.projectsSummary.get(key).value
-			projectsQuantity = projectsQuantity + mergeQuantity
-			this.projectsSummary.put(key, projectsQuantity)
-		}
-	}
-
 
 	public static void main (String[] args){
 		RunStudy study = new RunStudy()
