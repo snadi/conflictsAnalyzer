@@ -45,6 +45,12 @@ conflictRate = rbind(conflictRate2, total)
 conflictRate["Conflict_Rate(%)"] <- (conflictRate$Conflicting_Scenarios/conflictRate$Merge_Scenarios)*100
 attach(conflictRate)
 
+#boxplot conflicting rate
+boxplotCRFileName = paste("BoxplotCR.png")
+png(paste(exportPath, boxplotCRFileName, sep=""))
+boxplot(conflictRate$Conflict_Rate,xlab="Projects", ylab="Conflict Rate %", col="darkgreen")
+dev.off
+
 #read conflict patterns values 
 DefaultValueAnnotation <- sum(conflictRateTemp$DefaultValueAnnotation)
 ImplementList <- sum(conflictRateTemp$ImplementList)
@@ -112,10 +118,15 @@ HTML.title(title, file=htmlFile, append=TRUE)
 HTML("<hr><h2>Conflict Rate</h2>", file=htmlFile, append=TRUE)
 HTML(conflictRate, file=htmlFile, append=TRUE)
 
-HTML("<hr><h2>Graphics - Conflict Patterns Occurrences</h2>", file=htmlFile, append=TRUE)
+HTML("<hr><h2>Conflict Rate Boxplot</h2>", file=htmlFile, append=TRUE)
+HTMLInsertGraph(file=htmlFile, GraphFileName=boxplotCRFileName, Align="center", append=TRUE)
+
+HTML("<hr><h2>Conflict Patterns Occurrences</h2>", file=htmlFile, append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=barChartFileName, Align="center", append=TRUE)
+
 HTML("<hr><h2>Conflict Patterns Boxplot</h2>", file=htmlFile, append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=boxPlotFileName, Align="center", append=TRUE)
+
 time = Sys.time()
 HTML("<hr><h2>Last Time Updated:</h2>", file=htmlFile, append=TRUE)
 HTML(time, file=htmlFile, append=TRUE)
