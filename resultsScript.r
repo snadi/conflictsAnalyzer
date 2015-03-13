@@ -22,7 +22,7 @@ deleteAllFiles <- function(exportPath) {
 
 main<-function(){
 importPath = "/Users/paolaaccioly/Documents/Doutorado/conflictsStudy/ConflictsAnalyzer/"
-exportPath = "/Users/paolaaccioly/Dropbox/Doutorado/resultados_experimento/scriptResults/"
+exportPath = "/Users/paolaaccioly/Dropbox/Public/conflictpattern/"
 
 conflictRateFile="projectsPatternData.csv"
 #conflictPatternFile="patternsData.csv"
@@ -68,6 +68,12 @@ par(las=2)
 par(mar=c(5,8,4,2))
 barplot(slices, horiz=TRUE, names.arg=labels, xlim=c(0,4500), cex.names=0.8, col=c("darkviolet","chocolate4", "darkgreen", "darkblue", "red" , "darkgoldenrod2"))
 dev.off
+
+#conflicts table
+Conflicts_Patterns <- c("DefaultValueAnnotation", "ImplementList", "ModifierList", "LineBasedMCFd", "SameSignatureCM", "SameIdFd", "TOTAL")
+conflictsSum <- sum(DefaultValueAnnotation, ImplementList, ModifierList, LineBasedMCFd, SameSignatureCM,SameIdFd)
+Occurrences <- c(DefaultValueAnnotation, ImplementList, ModifierList, LineBasedMCFd, SameSignatureCM,SameIdFd, conflictsSum)
+conflictsTable <- data.frame(Conflicts_Patterns, Occurrences)
 
 #read all patterns again
 DefaultValueAnnotation <- conflictRateTemp$DefaultValueAnnotation
@@ -123,6 +129,9 @@ HTMLInsertGraph(file=htmlFile, GraphFileName=boxplotCRFileName, Align="center", 
 
 HTML("<hr><h2>Conflict Patterns Occurrences</h2>", file=htmlFile, append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=barChartFileName, Align="center", append=TRUE)
+
+HTML("<hr><h2>Conflicts Table</h2>", file=htmlFile, append=TRUE)
+HTML(conflictsTable, file=htmlFile, append=TRUE)
 
 HTML("<hr><h2>Conflict Patterns Boxplot</h2>", file=htmlFile, append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=boxPlotFileName, Align="center", append=TRUE)
