@@ -1,6 +1,32 @@
 #to do list:
 #place new column with conflict rate percentage
 
+computePatternPercentages <- function(conflicts, patternName){
+  
+  patternPercentages <- c()
+  
+  numberOfRows <- nrow(conflicts)
+  
+  for(i in 1:numberOfRows){
+    sumConflicts <- 0
+    
+    for(j in 4:9){
+      sumConflicts <- sum(sumConflicts, conflicts[i,j])
+    }
+    
+    value <- conflicts[i, patternName]
+    if(sumConflicts == 0){
+      percentage <- 0
+    }else{
+      percentage <- (value/sumConflicts)*100
+    }
+    
+    patternPercentages  <- append(patternPercentages, percentage)
+    
+  }
+  return(patternPercentages)
+}
+
 deleteAllFiles <- function(exportPath) {
   
   fileToRemove = paste(exportPath, "conflictResults.html", sep="")
@@ -63,10 +89,15 @@ SameIdFd <- sum(conflictRateTemp$SameIdFd)
 barChartFileName = paste("BarChart.png")
 png(paste(exportPath, barChartFileName, sep=""))
 slices <- c(DefaultValueAnnotation, ImplementList, ModifierList, LineBasedMCFd, SameSignatureCM, SameIdFd )
-labels <- c("DefaultValueAnnotation", "ImplementList", "ModifierList", "LineBasedMCFd", "SameSignatureCM", "SameIdFd" ) 
-par(las=2)
-par(mar=c(5,8,4,2))
-barplot(slices, horiz=TRUE, names.arg=labels, xlim=c(0,4500), cex.names=0.8, col=c("darkviolet","chocolate4", "darkgreen", "darkblue", "red" , "darkgoldenrod2"))
+labels <- c("DefaultValueA", "ImplementList", "ModifierList", "LineBasedMCFd", "SameSignatureCM", "SameIdFd" ) 
+dat <- data.frame(Frequency = slices,Conflicts = labels)
+library(ggplot2)
+p <- ggplot(dat, aes(x = Conflicts, y = Frequency)) +
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = sprintf("%.2f%%", Frequency/sum(Frequency) * 100)), 
+            vjust = -.5)
+
+print(p)
 dev.off
 
 #conflicts table
@@ -75,25 +106,50 @@ conflictsSum <- sum(DefaultValueAnnotation, ImplementList, ModifierList, LineBas
 Occurrences <- c(DefaultValueAnnotation, ImplementList, ModifierList, LineBasedMCFd, SameSignatureCM,SameIdFd, conflictsSum)
 conflictsTable <- data.frame(Conflicts_Patterns, Occurrences)
 
-#read all patterns again
-DefaultValueAnnotation <- conflictRateTemp$DefaultValueAnnotation
-ImplementList <- conflictRateTemp$ImplementList
-ModifierList <- conflictRateTemp$ModifierList
-LineBasedMCFd <- conflictRateTemp$LineBasedMCFd
-SameSignatureCM <- conflictRateTemp$SameSignatureCM
-SameIdFd <- conflictRateTemp$SameIdFd
+#boxplot for each conflict pattern percentages along all projects
 
-#boxplot all conflicts
-boxPlotFileName = paste("BoxplotConflicts.png")
-png(paste(exportPath, boxPlotFileName, sep=""))
-par(las=2)
-#par(cex.lab=0.8)
-#par(mar=c(5,8,4,2))
-op <- par(mar = c(8, 4, 4, 2) + 0.1)
-boxplot(DefaultValueAnnotation, ImplementList, ModifierList, LineBasedMCFd, SameSignatureCM, SameIdFd, 
-        names=labels, cex.axis = 0.8, outline=FALSE, ylim=c(0,200), col=c("darkviolet","chocolate4", "darkgreen", "darkblue", "red" , "darkgoldenrod2"))
-par(op)
+#LineBasedMCFd 
+boxplotLBMCF = paste("BoxplotLBMCF.png")
+png(paste(exportPath, boxplotLBMCF, sep=""))
+percentages <- computePatternPercentages(conflictRateTemp, "LineBasedMCFd")
+boxplot(percentages,xlab="Projects", ylab="LineBasedMCFd (%)", col="blue", outline=FALSE)
 dev.off
+
+#SameSignatureCM
+BoxplotSSCM = paste("BoxplotSSCM.png")
+png(paste(exportPath, BoxplotSSCM, sep=""))
+percentages <- computePatternPercentages(conflictRateTemp, "SameSignatureCM")
+boxplot(percentages,xlab="Projects", ylab="SameSignatureCM (%)", col="red", outline=FALSE)
+dev.off
+
+#ImplementList
+BoxplotIL = paste("BoxplotIL.png")
+png(paste(exportPath, BoxplotIL, sep=""))
+percentages <- computePatternPercentages(conflictRateTemp, "ImplementList")
+boxplot(percentages,xlab="Projects", ylab="ImplementList (%)", col="chocolate4", outline=FALSE)
+dev.off
+
+#ModifierList
+BoxplotML = paste("BoxplotML.png")
+png(paste(exportPath, BoxplotML, sep=""))
+percentages <- computePatternPercentages(conflictRateTemp, "ModifierList")
+boxplot(percentages,xlab="Projects", ylab="ModifierList (%)", col="green", outline=FALSE)
+dev.off
+
+#SameIdFd
+BoxplotSIF = paste("BoxplotSIF.png")
+png(paste(exportPath, BoxplotSIF, sep=""))
+percentages <- computePatternPercentages(conflictRateTemp, "SameIdFd")
+boxplot(percentages,xlab="Projects", ylab="SameIdFd (%)", col="darkgoldenrod2", outline=FALSE)
+dev.off
+
+#DefaultValueAnnotation
+BoxplotDVA = paste("BoxplotDVA.png")
+png(paste(exportPath, BoxplotDVA, sep=""))
+percentages <- computePatternPercentages(conflictRateTemp, "DefaultValueAnnotation")
+boxplot(percentages,xlab="Projects", ylab="DefaultValueAnnotation (%)", col="darkviolet", outline=FALSE)
+dev.off
+
 
 #bar plot last project
 numberOfRows <- length(conflictRateTemp[,1])
@@ -133,8 +189,13 @@ HTMLInsertGraph(file=htmlFile, GraphFileName=barChartFileName, Align="center", a
 HTML("<hr><h2>Conflicts Table</h2>", file=htmlFile, append=TRUE)
 HTML(conflictsTable, file=htmlFile, append=TRUE)
 
-HTML("<hr><h2>Conflict Patterns Boxplot</h2>", file=htmlFile, append=TRUE)
-HTMLInsertGraph(file=htmlFile, GraphFileName=boxPlotFileName, Align="center", append=TRUE)
+HTML("<hr><h2>Conflict Patterns Percentages by Project Boxplots</h2>", file=htmlFile, append=TRUE)
+HTMLInsertGraph(file=htmlFile, GraphFileName=boxplotLBMCF, Align="center", append=TRUE)
+HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotSSCM, Align="center", append=TRUE)
+HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotIL, Align="center", append=TRUE)
+HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotML, Align="center", append=TRUE)
+HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotSIF, Align="center", append=TRUE)
+HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotDVA, Align="center", append=TRUE)
 
 time = Sys.time()
 HTML("<hr><h2>Last Time Updated:</h2>", file=htmlFile, append=TRUE)
