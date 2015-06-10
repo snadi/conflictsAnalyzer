@@ -19,15 +19,15 @@ class Project {
 		initializeProjectSummary()
 		createMergeScenarios(mergeScenariosPath)
 		initializeProjectMetrics()
-
+		this.createProjectDir()
 	}
 
 	/*The following constructor is used to initialize projects
 	 * that were already analyzed
 	 */
-	public Project(String projectName, int totalScenarios, int conflictingscenarios, 
-		Hashtable<String, Integer> projectSummary){
-		
+	public Project(String projectName, int totalScenarios, int conflictingscenarios,
+	Hashtable<String, Integer> projectSummary){
+
 		this.name = projectName
 		this.analyzedMergeScenarios = totalScenarios
 		this.conflictingMergeScenarios = conflictingscenarios
@@ -35,6 +35,13 @@ class Project {
 		this.projectSummary = projectSummary
 	}
 
+	private void createProjectDir(){
+		File projectDir = new File( "ResultData" + File.separator + this.name)
+		if(!projectDir.exists()){
+			projectDir.mkdir()
+		}
+
+	}
 
 	private initializeProjectMetrics() {
 		this.analyzedMergeScenarios = 0
@@ -95,7 +102,7 @@ class Project {
 	}
 
 	private printResults(MergeScenario ms) {
-		ConflictPrinter.printMergeScenarioReport(ms)
+		ConflictPrinter.printMergeScenarioReport(ms, this.name)
 		ConflictPrinter.printProjectReport(this)
 	}
 

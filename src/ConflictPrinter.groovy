@@ -102,7 +102,7 @@ public class ConflictPrinter {
 	}
 
 	public static void printProjectReport(Project project){
-		String fileName = 'Project' + project.getName() + 'Report.csv'
+		String fileName = "ResultData" + File.separator + project.getName() + File.separator + 'Project' + project.getName() + 'Report.csv'
 		def out = new File(fileName)
 
 		// deleting old files if it exists
@@ -126,8 +126,10 @@ public class ConflictPrinter {
 		}
 	}
 
-	public static void printMergeScenarioReport(MergeScenario mergeScenario){
-		def out = new File('MergeScenariosReport.csv')
+	public static void printMergeScenarioReport(MergeScenario mergeScenario, String projectName){
+		
+		
+		def out = new File("ResultData" + File.separator + projectName + File.separator + 'MergeScenariosReport.csv')
 
 		out.append('Merge scenario: ' + mergeScenario.path + '\n')
 
@@ -140,12 +142,12 @@ public class ConflictPrinter {
 
 		}
 
-		printConflictsReport(mergeScenario.getConflicts(), mergeScenario.path)
+		printConflictsReport(mergeScenario.getConflicts(), mergeScenario.path, projectName)
 	}
 
-	public static void printConflictsReport(ArrayList<Conflict> conflicts, String mergeScenarioPath){
+	public static void printConflictsReport(ArrayList<Conflict> conflicts, String mergeScenarioPath, String projectName){
 
-		def out = new File('ConflictsReport.csv')
+		def out = new File("ResultData" + File.separator + projectName + File.separator + 'ConflictsReport.csv')
 
 		def delimiter = '========================================================='
 		out.append(delimiter)
