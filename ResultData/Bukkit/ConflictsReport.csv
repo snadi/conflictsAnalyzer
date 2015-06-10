@@ -1,0 +1,1022 @@
+=========================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Bukkit/revisions/rev_72812_e96b6/rev_72812-e96b6.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Bukkit/revisions/rev_9c820_1d1b0/rev_9c820-1d1b0.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Bukkit/revisions/rev_90340_0bdad/rev_90340-0bdad.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Bukkit/revisions/rev_caad7_c2465/rev_caad7-c2465.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Bukkit/revisions/rev_f46d9_61bea/rev_f46d9-61bea.revisions
+Conflict type: LineBasedMCFd
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582866925/fstmerge_var1_5129705523531653119
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582866925/fstmerge_base_2102995488655734866
+public Type getType() {
+    	return type;
+    }
+=======
+public Type getType() {
+        return type;
+    }
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582866925/fstmerge_var2_3685620310603549744
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Bukkit/revisions/rev_f46d9_61bea/rev_f46d9-61bea/src/org/bukkit/event/Event.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582866950/fstmerge_var1_5238932313717777862
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582866950/fstmerge_base_7134730470076116840
+private Type(Category category) {
+        	this.category = category;
+        }
+=======
+private Type(Category category) {
+            this.category = category;
+        }
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582866950/fstmerge_var2_8617625685255185325
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Bukkit/revisions/rev_f46d9_61bea/rev_f46d9-61bea/src/org/bukkit/event/Event.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582866954/fstmerge_var1_3673812336806792260
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582866954/fstmerge_base_6696607510334040851
+public Category getCategory() {
+        	return category;
+        }
+=======
+public Category getCategory() {
+            return category;
+        }
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582866954/fstmerge_var2_1195516183501113898
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Bukkit/revisions/rev_f46d9_61bea/rev_f46d9-61bea/src/org/bukkit/event/Event.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582866966/fstmerge_var1_4289459959215375646
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582866966/fstmerge_base_4475443286719812109
+public EventException(Throwable cause, String message) {
+    	super(message);
+    	this.cause = cause;
+    }
+=======
+public EventException(Throwable cause, String message) {
+        super(message);
+        this.cause = cause;
+    }
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582866966/fstmerge_var2_1714582889564562989
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Bukkit/revisions/rev_f46d9_61bea/rev_f46d9-61bea/src/org/bukkit/event/EventException.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582866969/fstmerge_var1_1237552471550457721
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582866969/fstmerge_base_1130060373260131152
+public EventException(String message) {
+    	super(message);
+    	cause = null;
+    }
+=======
+public EventException(String message) {
+        super(message);
+        cause = null;
+    }
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582866969/fstmerge_var2_7764098726625637075
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Bukkit/revisions/rev_f46d9_61bea/rev_f46d9-61bea/src/org/bukkit/event/EventException.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867101/fstmerge_var1_8642487684758245480
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867101/fstmerge_base_6938178658421926631
+public BlockIgniteEvent(Type type) {
+		super(type);
+		// TODO Auto-generated constructor stub
+	}
+=======
+public BlockIgniteEvent(Type type) {
+        super(type);
+        // TODO Auto-generated constructor stub
+    }
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867101/fstmerge_var2_3981457600226907784
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Bukkit/revisions/rev_f46d9_61bea/rev_f46d9-61bea/src/org/bukkit/event/block/BlockIgniteEvent.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867107/fstmerge_var1_2153771855539237639
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867107/fstmerge_base_4287340269532501205
+public BlockPlacedEvent(Type type, Block theBlock) {
+		super(type, theBlock);
+		cancel = false;
+	}
+=======
+public BlockPlacedEvent(Type type, Block theBlock) {
+        super(type, theBlock);
+        cancel = false;
+    }
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867107/fstmerge_var2_4535986865106956623
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Bukkit/revisions/rev_f46d9_61bea/rev_f46d9-61bea/src/org/bukkit/event/block/BlockPlacedEvent.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867112/fstmerge_var1_5327349120030595696
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867112/fstmerge_base_2380228089014246039
+@Override
+	public boolean isCancelled() {
+		// TODO Auto-generated method stub
+		return cancel;
+	}
+=======
+@Override
+    public boolean isCancelled() {
+        // TODO Auto-generated method stub
+        return cancel;
+    }
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867112/fstmerge_var2_2470423225555438603
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Bukkit/revisions/rev_f46d9_61bea/rev_f46d9-61bea/src/org/bukkit/event/block/BlockPlacedEvent.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867118/fstmerge_var1_2356441757382297845
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867118/fstmerge_base_6573472812768189435
+@Override
+	public void setCancelled(boolean cancel) {
+		this.cancel = cancel;
+	}
+=======
+@Override
+    public void setCancelled(boolean cancel) {
+        this.cancel = cancel;
+    }
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867118/fstmerge_var2_6258783473798418139
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Bukkit/revisions/rev_f46d9_61bea/rev_f46d9-61bea/src/org/bukkit/event/block/BlockPlacedEvent.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867129/fstmerge_var1_8205262575776146190
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867129/fstmerge_base_3118465542781153474
+public Block getFromBlock() {
+    	return from; 
+    }
+=======
+public Block getFromBlock() {
+        return from; 
+    }
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867129/fstmerge_var2_1680820067125881108
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Bukkit/revisions/rev_f46d9_61bea/rev_f46d9-61bea/src/org/bukkit/event/block/BlockFromToEvent.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867132/fstmerge_var1_7950975048057183953
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867132/fstmerge_base_1530436003702913356
+@Override
+	public boolean isCancelled() {
+		return cancel;
+	}
+=======
+public boolean isCancelled() {
+        return cancel;
+    }
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867132/fstmerge_var2_3792262641351176775
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Bukkit/revisions/rev_f46d9_61bea/rev_f46d9-61bea/src/org/bukkit/event/block/BlockFromToEvent.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867138/fstmerge_var1_2086595839735053658
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867138/fstmerge_base_946987019898588054
+@Override
+	public void setCancelled(boolean cancel) {
+		this.cancel = cancel;
+	}
+=======
+public void setCancelled(boolean cancel) {
+        this.cancel = cancel;
+    }
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867138/fstmerge_var2_7817395275444822656
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Bukkit/revisions/rev_f46d9_61bea/rev_f46d9-61bea/src/org/bukkit/event/block/BlockFromToEvent.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867143/fstmerge_var1_5898898410312696333
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867143/fstmerge_base_198888730925515227
+public BlockCanBuildEvent(Type type, Block block, int id, boolean canBuild) {
+		super(type, block);
+		buildable = canBuild;
+		material = id;
+	}
+=======
+public BlockCanBuildEvent(Type type, Block block, int id, boolean canBuild) {
+        super(type, block);
+        buildable = canBuild;
+        material = id;
+    }
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867143/fstmerge_var2_2778242898919875939
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Bukkit/revisions/rev_f46d9_61bea/rev_f46d9-61bea/src/org/bukkit/event/block/BlockCanBuildEvent.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867150/fstmerge_var1_1811869793049888743
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867150/fstmerge_base_4528132206312243630
+public boolean isBuildable() {
+		return buildable;
+	}
+=======
+public boolean isBuildable() {
+        return buildable;
+    }
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867150/fstmerge_var2_6000302825265274460
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Bukkit/revisions/rev_f46d9_61bea/rev_f46d9-61bea/src/org/bukkit/event/block/BlockCanBuildEvent.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867155/fstmerge_var1_1977804400860314405
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867155/fstmerge_base_807685939789397896
+public void setBuildable(boolean cancel) {
+		this.buildable = cancel;
+	}
+=======
+public void setBuildable(boolean cancel) {
+        this.buildable = cancel;
+    }
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867155/fstmerge_var2_426471821173626512
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Bukkit/revisions/rev_f46d9_61bea/rev_f46d9-61bea/src/org/bukkit/event/block/BlockCanBuildEvent.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867159/fstmerge_var1_3529152751504644905
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867159/fstmerge_base_3336403885248138327
+public Material getMaterial() {
+		return Material.getMaterial(material);
+	}
+=======
+public Material getMaterial() {
+        return Material.getMaterial(material);
+    }
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867159/fstmerge_var2_4441556058606666126
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Bukkit/revisions/rev_f46d9_61bea/rev_f46d9-61bea/src/org/bukkit/event/block/BlockCanBuildEvent.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867166/fstmerge_var1_4404899255294138803
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867166/fstmerge_base_443636168702196195
+public int getMaterialID() {
+		return material;
+	}
+=======
+public int getMaterialID() {
+        return material;
+    }
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867166/fstmerge_var2_1603178533926494833
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Bukkit/revisions/rev_f46d9_61bea/rev_f46d9-61bea/src/org/bukkit/event/block/BlockCanBuildEvent.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867171/fstmerge_var1_9179299697060226258
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867171/fstmerge_base_6213453674779464684
+public BlockRightClickedEvent(Type type, Block theBlock, BlockFace direction, Player clicker, ItemStack clickedWith) {
+		super(type, theBlock);
+		this.direction = direction;
+		this.clicker = clicker;
+		this.clickedWith = clickedWith;
+	}
+=======
+public BlockRightClickedEvent(Type type, Block theBlock, BlockFace direction, Player clicker, ItemStack clickedWith) {
+        super(type, theBlock);
+        this.direction = direction;
+        this.clicker = clicker;
+        this.clickedWith = clickedWith;
+    }
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867171/fstmerge_var2_3588866306576397091
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Bukkit/revisions/rev_f46d9_61bea/rev_f46d9-61bea/src/org/bukkit/event/block/BlockRightClickedEvent.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867176/fstmerge_var1_4041214206178380915
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867176/fstmerge_base_4554304370000761494
+public Player getClicker() {
+		return clicker;
+	}
+=======
+public Player getClicker() {
+        return clicker;
+    }
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867176/fstmerge_var2_8179808253115172944
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Bukkit/revisions/rev_f46d9_61bea/rev_f46d9-61bea/src/org/bukkit/event/block/BlockRightClickedEvent.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867182/fstmerge_var1_440978686098265466
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867182/fstmerge_base_1261316147534460303
+public BlockFace getDirection() {
+		return direction;
+	}
+=======
+public BlockFace getDirection() {
+        return direction;
+    }
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867182/fstmerge_var2_3391445662484589524
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Bukkit/revisions/rev_f46d9_61bea/rev_f46d9-61bea/src/org/bukkit/event/block/BlockRightClickedEvent.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867187/fstmerge_var1_7422369409355593868
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867187/fstmerge_base_3708688564899245487
+public ItemStack getClickedWith() {
+		return clickedWith;
+	}
+=======
+public ItemStack getClickedWith() {
+        return clickedWith;
+    }
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867187/fstmerge_var2_5920285402546236803
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Bukkit/revisions/rev_f46d9_61bea/rev_f46d9-61bea/src/org/bukkit/event/block/BlockRightClickedEvent.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867193/fstmerge_var1_2838214266464942420
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867193/fstmerge_base_3663881509734349478
+public BlockBrokenEvent(Type type, Block block ) {
+		super(type, block);
+	}
+=======
+public BlockBrokenEvent(Type type, Block block ) {
+        super(type, block);
+    }
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867193/fstmerge_var2_5443613361249489776
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Bukkit/revisions/rev_f46d9_61bea/rev_f46d9-61bea/src/org/bukkit/event/block/BlockBrokenEvent.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867330/fstmerge_var1_1169940335805736632
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867330/fstmerge_base_1109114462100167615
+public Plugin[] loadPlugins(File directory) {
+        List<Plugin> result = new ArrayList<Plugin>();
+        File[] files = directory.listFiles();
+
+        for (File file : files) {
+            Plugin plugin = null;
+
+            try {
+                plugin = loadPlugin(file);
+            } catch (InvalidPluginException ex) {
+                Logger.getLogger(SimplePluginManager.class.getName()).log(Level.SEVERE, "Could not load " + file.getPath() + " in " + directory.getPath(), ex);
+            }
+            
+            if (plugin != null) {
+                result.add(plugin);
+            }
+        }
+
+        return result.toArray(new Plugin[result.size()]);
+    }
+=======
+public Plugin[] loadPlugins(File directory) {
+        List<Plugin> result = new ArrayList<Plugin>();
+        File[] files = directory.listFiles();
+
+        for (File file : files) {
+            Plugin plugin = null;
+
+            try {
+                plugin = loadPlugin(file);
+            } catch (InvalidPluginException ex) {
+                Logger.getLogger(SimplePluginManager.class.getName()).log(Level.SEVERE, "Could not load " + file.getPath() + " in " + directory.getPath(), ex);
+            }
+
+            if (plugin != null) {
+                result.add(plugin);
+            }
+        }
+
+        return result.toArray(new Plugin[result.size()]);
+    }
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867330/fstmerge_var2_2140166732688909093
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Bukkit/revisions/rev_f46d9_61bea/rev_f46d9-61bea/src/org/bukkit/plugin/SimplePluginManager.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867358/fstmerge_var1_4385789774447885098
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867358/fstmerge_base_4959329189119004372
+public void registerEvent(Event.Type type, Listener listener, Priority priority, Plugin plugin) {
+        List<RegisteredListener> eventListeners = listeners.get(type);
+        int position = 0;
+
+        if (eventListeners != null) {
+            for (RegisteredListener registration : eventListeners) {
+                if (registration.getPriority().compareTo(priority) < 0) {
+                    break;
+                }
+                
+                position++;
+            }
+        } else {
+            eventListeners = new ArrayList<RegisteredListener>();
+            listeners.put(type, eventListeners);
+        }
+
+        eventListeners.add(position, new RegisteredListener(listener, priority, plugin));
+    }
+=======
+public void registerEvent(Event.Type type, Listener listener, Priority priority, Plugin plugin) {
+        List<RegisteredListener> eventListeners = listeners.get(type);
+        int position = 0;
+
+        if (eventListeners != null) {
+            for (RegisteredListener registration : eventListeners) {
+                if (registration.getPriority().compareTo(priority) < 0) {
+                    break;
+                }
+
+                position++;
+            }
+        } else {
+            eventListeners = new ArrayList<RegisteredListener>();
+            listeners.put(type, eventListeners);
+        }
+
+        eventListeners.add(position, new RegisteredListener(listener, priority, plugin));
+    }
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867358/fstmerge_var2_1084855212815919999
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Bukkit/revisions/rev_f46d9_61bea/rev_f46d9-61bea/src/org/bukkit/plugin/SimplePluginManager.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+~~FSTMerge~~ ##FSTMerge## private final Pattern[] fileFilters = new Pattern[] {
+        Pattern.compile("\\.jar$"),
+    }; ##FSTMerge## private final Pattern[] fileFilters = new Pattern[] {
+            Pattern.compile("\\.jar$"),
+    };
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Bukkit/revisions/rev_f46d9_61bea/rev_f46d9-61bea/src/org/bukkit/plugin/java/JavaPluginLoader.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867489/fstmerge_var1_3612856605960184141
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867489/fstmerge_base_1435105653442871215
+public void callEvent(RegisteredListener registration, Event event) {
+        Listener listener = registration.getListener();
+
+        if (listener instanceof PlayerListener) {
+            PlayerListener trueListener = (PlayerListener)listener;
+
+            switch (event.getType()) {
+                case PLAYER_JOIN:
+                    trueListener.onPlayerJoin((PlayerEvent)event);
+                    break;
+                case PLAYER_QUIT:
+                    trueListener.onPlayerQuit((PlayerEvent)event);
+                    break;
+                case PLAYER_COMMAND:
+                    trueListener.onPlayerCommand((PlayerChatEvent)event);
+                    break;
+                case PLAYER_CHAT:
+                    trueListener.onPlayerChat((PlayerChatEvent)event);
+                    break;
+                case PLAYER_MOVE:
+                    trueListener.onPlayerMove((PlayerMoveEvent)event);
+                    break;
+                case PLAYER_TELEPORT:
+                    trueListener.onPlayerTeleport((PlayerMoveEvent)event);
+                    break;
+                case PLAYER_LOGIN:
+                    trueListener.onPlayerLogin((PlayerLoginEvent)event);
+                    break;
+            }
+        } else if (listener instanceof BlockListener) {
+            BlockListener trueListener = (BlockListener)listener;
+
+            switch (event.getType()) {
+                case BLOCK_PHYSICS:
+                    trueListener.onBlockPhysics((BlockPhysicsEvent)event);
+                    break;
+                case BLOCK_CANBUILD:
+                	trueListener.onBlockCanBuild((BlockCanBuildEvent)event);
+                	break;
+                case BLOCK_FLOW:
+                	trueListener.onBlockFlow((BlockFromToEvent)event);
+                	break;
+            }
+        }
+    }
+=======
+public void callEvent(RegisteredListener registration, Event event) {
+        Listener listener = registration.getListener();
+
+        if (listener instanceof PlayerListener) {
+            PlayerListener trueListener = (PlayerListener)listener;
+
+            switch (event.getType()) {
+            case PLAYER_JOIN:
+                trueListener.onPlayerJoin((PlayerEvent)event);
+                break;
+            case PLAYER_QUIT:
+                trueListener.onPlayerQuit((PlayerEvent)event);
+                break;
+            case PLAYER_COMMAND:
+                trueListener.onPlayerCommand((PlayerChatEvent)event);
+                break;
+            case PLAYER_CHAT:
+                trueListener.onPlayerChat((PlayerChatEvent)event);
+                break;
+            case PLAYER_MOVE:
+                trueListener.onPlayerMove((PlayerMoveEvent)event);
+                break;
+            case PLAYER_TELEPORT:
+                trueListener.onPlayerTeleport((PlayerMoveEvent)event);
+                break;
+            case PLAYER_LOGIN:
+                trueListener.onPlayerLogin((PlayerLoginEvent)event);
+                break;
+            }
+        } else if (listener instanceof BlockListener) {
+            BlockListener trueListener = (BlockListener)listener;
+
+            switch (event.getType()) {
+            case BLOCK_PHYSICS:
+                trueListener.onBlockPhysics((BlockPhysicsEvent)event);
+                break;
+            case BLOCK_CANBUILD:
+                trueListener.onBlockCanBuild((BlockCanBuildEvent)event);
+                break;
+            case BLOCK_FLOW:
+                trueListener.onBlockFlow((BlockFromToEvent)event);
+                break;
+            }
+        }
+    }
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582867489/fstmerge_var2_7335398037609323792
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Bukkit/revisions/rev_f46d9_61bea/rev_f46d9-61bea/src/org/bukkit/plugin/java/JavaPluginLoader.java
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Bukkit/revisions/rev_09633_7845f/rev_09633-7845f.revisions
+Conflict type: SameSignatureCM
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582869204/fstmerge_var1_8591959598021736095
+public void RegisterInterface(Class<? extends PluginLoader> loader) throws IllegalArgumentException {
+        PluginLoader instance;
+
+        if (PluginLoader.class.isAssignableFrom(loader)) {
+            Constructor<? extends PluginLoader> constructor;
+            try {
+                constructor = loader.getConstructor(Server.class);
+                instance = (PluginLoader) constructor.newInstance(server);
+            } catch (NoSuchMethodException ex) {
+                throw new IllegalArgumentException(String.format("Class %s does not have a public %s(Server) constructor", loader.getName()), ex);
+            } catch (Exception ex) {
+                throw new IllegalArgumentException(String.format("Unexpected exception %s while attempting to construct a new instance of %s", ex.getClass().getName(), loader.getName()), ex);
+            }
+        } else {
+            throw new IllegalArgumentException(String.format("Class %s does not implement interface PluginLoader", loader.getName()));
+        }
+
+        Pattern[] patterns = instance.getPluginFileFilters();
+
+        for (Pattern pattern : patterns) {
+            fileAssociations.put(pattern, instance);
+        }
+    }
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582869204/fstmerge_base_5218565289447011283
+=======
+public void RegisterInterface(Class<? extends PluginLoader> loader) throws IllegalArgumentException {
+        PluginLoader instance;
+
+        if (PluginLoader.class.isAssignableFrom(loader)) {
+            Constructor<? extends PluginLoader> constructor;
+            try {
+                constructor = loader.getConstructor(Server.class);
+                instance = constructor.newInstance(server);
+            } catch (NoSuchMethodException ex) {
+                throw new IllegalArgumentException(String.format("Class %s does not have a public %s(Server) constructor", loader.getName()), ex);
+            } catch (Exception ex) {
+                throw new IllegalArgumentException(String.format("Unexpected exception %s while attempting to construct a new instance of %s", ex.getClass().getName(), loader.getName()), ex);
+            }
+        } else {
+            throw new IllegalArgumentException(String.format("Class %s does not implement interface PluginLoader", loader.getName()));
+        }
+
+        Pattern[] patterns = instance.getPluginFileFilters();
+
+        for (Pattern pattern : patterns) {
+            fileAssociations.put(pattern, instance);
+        }
+    }
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582869204/fstmerge_var2_7957357179355216094
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Bukkit/revisions/rev_09633_7845f/rev_09633-7845f/src/main/java/org/bukkit/plugin/SimplePluginManager.java
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Bukkit/revisions/rev_6255d_d2656/rev_6255d-d2656.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Bukkit/revisions/rev_3a55c_de91a/rev_3a55c-de91a.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Bukkit/revisions/rev_4b07c_790c3/rev_4b07c-790c3.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Bukkit/revisions/rev_05499_98d6a/rev_05499-98d6a.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Bukkit/revisions/rev_6696c_3d948/rev_6696c-3d948.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Bukkit/revisions/rev_b29d4_10592/rev_b29d4-10592.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Bukkit/revisions/rev_b6a57_39922/rev_b6a57-39922.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Bukkit/revisions/rev_88560_b274a/rev_88560-b274a.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Bukkit/revisions/rev_578ab_cc404/rev_578ab-cc404.revisions
+Conflict type: SameSignatureCM
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582906762/fstmerge_var1_8534015985149338421
+public void onBlockBurn(BlockBurnEvent event) {
+    }
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582906762/fstmerge_base_6415358416241443413
+=======
+public void onBlockBurn(BlockBurnEvent event) {
+    }
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582906762/fstmerge_var2_4778123785639931561
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Bukkit/revisions/rev_578ab_cc404/rev_578ab-cc404/src/main/java/org/bukkit/event/block/BlockListener.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582907907/fstmerge_var1_2204746496955602994
+public void callEvent(RegisteredListener registration, Event event) {
+        Listener listener = registration.getListener();
+
+        if (listener instanceof PlayerListener) {
+            PlayerListener trueListener = (PlayerListener)listener;
+
+            switch (event.getType()) {
+                case PLAYER_JOIN:
+                    trueListener.onPlayerJoin((PlayerEvent)event);
+                    break;
+                case PLAYER_QUIT:
+                    trueListener.onPlayerQuit((PlayerEvent)event);
+                    break;
+                case PLAYER_COMMAND:
+                    trueListener.onPlayerCommand((PlayerChatEvent)event);
+                    break;
+                case PLAYER_CHAT:
+                    trueListener.onPlayerChat((PlayerChatEvent)event);
+                    break;
+                case PLAYER_MOVE:
+                    trueListener.onPlayerMove((PlayerMoveEvent)event);
+                    break;
+                case PLAYER_TELEPORT:
+                    trueListener.onPlayerTeleport((PlayerMoveEvent)event);
+                    break;
+                case PLAYER_ITEM:
+                    trueListener.onPlayerItem((PlayerItemEvent)event);
+                    break;
+                case PLAYER_LOGIN:
+                    trueListener.onPlayerLogin((PlayerLoginEvent)event);
+                    break;
+                case PLAYER_EGG_THROW:
+                    trueListener.onPlayerEggThrow((PlayerEggThrowEvent)event);
+                    break;
+                case PLAYER_ANIMATION:
+                    trueListener.onPlayerAnimation((PlayerAnimationEvent)event);
+                    break;                    
+            }
+        } else if (listener instanceof BlockListener) {
+            BlockListener trueListener = (BlockListener)listener;
+
+            switch (event.getType()) {
+                case BLOCK_PHYSICS:
+                    trueListener.onBlockPhysics((BlockPhysicsEvent)event);
+                    break;
+                case BLOCK_CANBUILD:
+                    trueListener.onBlockCanBuild((BlockCanBuildEvent)event);
+                    break;
+                case BLOCK_RIGHTCLICKED:
+                    trueListener.onBlockRightClick((BlockRightClickEvent) event);
+                    break;
+                case BLOCK_PLACED:
+                    trueListener.onBlockPlace((BlockPlaceEvent)event);
+                    break;
+                case BLOCK_DAMAGED:
+                    trueListener.onBlockDamage((BlockDamageEvent)event);
+                    break;
+                case BLOCK_INTERACT:
+                    trueListener.onBlockInteract((BlockInteractEvent)event);
+                    break;
+                case BLOCK_FLOW:
+                    trueListener.onBlockFlow((BlockFromToEvent)event);
+                    break;
+                case LEAVES_DECAY:
+                    trueListener.onLeavesDecay((LeavesDecayEvent)event);
+                    break;
+                case BLOCK_IGNITE:
+                    trueListener.onBlockIgnite((BlockIgniteEvent)event);
+                    break;
+                case REDSTONE_CHANGE:
+                    trueListener.onBlockRedstoneChange((BlockFromToEvent)event);
+                    break;
+                case BLOCK_BURN:
+                    trueListener.onBlockBurn((BlockBurnEvent)event);
+                    break;
+            }
+        } else if(listener instanceof ServerListener) {
+            ServerListener trueListener = (ServerListener)listener;
+
+            switch (event.getType()) {
+                case PLUGIN_ENABLE:
+                    trueListener.onPluginEnabled((PluginEvent)event);
+                    break;
+                case PLUGIN_DISABLE:
+                    trueListener.onPluginDisabled((PluginEvent)event);
+                    break;
+            }
+        } else if(listener instanceof WorldListener) {
+            WorldListener trueListener = (WorldListener)listener;
+
+            switch (event.getType()) {
+                case CHUNK_LOADED:
+                    trueListener.onChunkLoaded((ChunkLoadEvent)event);
+                    break;
+                case CHUNK_UNLOADED:
+                    trueListener.onChunkUnloaded((ChunkUnloadEvent)event);
+                    break;
+            }
+        } else if(listener instanceof EntityListener) {
+            EntityListener trueListener = (EntityListener) listener;
+            switch(event.getType())
+            {
+                case ENTITY_DAMAGEDBY_BLOCK:
+                    trueListener.onEntityDamageByBlock((EntityDamageByBlockEvent)event);
+                    break;
+                case ENTITY_DAMAGEDBY_ENTITY:
+                    trueListener.onEntityDamageByEntity((EntityDamageByEntityEvent)event);
+                    break;
+                case ENTITY_DAMAGEDBY_PROJECTILE:
+                    trueListener.onEntityDamageByProjectile((EntityDamageByProjectileEvent)event);
+                    break;
+                case ENTITY_DAMAGED:
+                    trueListener.onEntityDamage((EntityDamageEvent)event);
+                    break;
+                case ENTITY_DEATH:
+                    trueListener.onEntityDeath((EntityDeathEvent)event);
+                    break;
+                case ENTITY_COMBUST:
+                    trueListener.onEntityCombust((EntityCombustEvent)event);
+                    break;
+                case ENTITY_EXPLODE:
+                    trueListener.onEntityExplode((EntityExplodeEvent)event);
+                    break;
+                case ENTITY_TARGET:
+                    trueListener.onEntityTarget((EntityTargetEvent)event);
+                    break;
+            }
+        } else if (listener instanceof VehicleListener) {
+            VehicleListener trueListener = (VehicleListener)listener;
+
+            switch (event.getType()) {
+                case VEHICLE_CREATE:
+                    trueListener.onVehicleCreate((VehicleCreateEvent)event);
+                    break;
+                case VEHICLE_DAMAGE:
+                    trueListener.onVehicleDamage((VehicleDamageEvent)event);
+                    break;
+                case VEHICLE_COLLISION_BLOCK:
+                    trueListener.onVehicleBlockCollision((VehicleBlockCollisionEvent)event);
+                    break;
+                case VEHICLE_COLLISION_ENTITY:
+                    trueListener.onVehicleEntityCollision((VehicleEntityCollisionEvent)event);
+                    break;
+                case VEHICLE_ENTER:
+                    trueListener.onVehicleEnter((VehicleEnterEvent)event);
+                    break;
+                case VEHICLE_EXIT:
+                    trueListener.onVehicleExit((VehicleExitEvent)event);
+                    break;
+                case VEHICLE_MOVE:
+                    trueListener.onVehicleMove((VehicleMoveEvent)event);
+                    break;
+            }
+        } else if(listener instanceof CustomEventListener) {
+            if(event.getType()==Event.Type.CUSTOM_EVENT) {
+                ((CustomEventListener)listener).onCustomEvent(event);
+            }
+        }
+    }
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582907907/fstmerge_base_5729681463218198972
+public void callEvent(RegisteredListener registration, Event event) {
+        Listener listener = registration.getListener();
+
+        if (listener instanceof PlayerListener) {
+            PlayerListener trueListener = (PlayerListener)listener;
+
+            switch (event.getType()) {
+                case PLAYER_JOIN:
+                    trueListener.onPlayerJoin((PlayerEvent)event);
+                    break;
+                case PLAYER_QUIT:
+                    trueListener.onPlayerQuit((PlayerEvent)event);
+                    break;
+                case PLAYER_COMMAND:
+                    trueListener.onPlayerCommand((PlayerChatEvent)event);
+                    break;
+                case PLAYER_CHAT:
+                    trueListener.onPlayerChat((PlayerChatEvent)event);
+                    break;
+                case PLAYER_MOVE:
+                    trueListener.onPlayerMove((PlayerMoveEvent)event);
+                    break;
+                case PLAYER_TELEPORT:
+                    trueListener.onPlayerTeleport((PlayerMoveEvent)event);
+                    break;
+                case PLAYER_ITEM:
+                    trueListener.onPlayerItem((PlayerItemEvent)event);
+                    break;
+                case PLAYER_LOGIN:
+                    trueListener.onPlayerLogin((PlayerLoginEvent)event);
+                    break;
+                case PLAYER_EGG_THROW:
+                    trueListener.onPlayerEggThrow((PlayerEggThrowEvent)event);
+                    break;
+                case PLAYER_ANIMATION:
+                    trueListener.onPlayerAnimation((PlayerAnimationEvent)event);
+                    break;                    
+            }
+        } else if (listener instanceof BlockListener) {
+            BlockListener trueListener = (BlockListener)listener;
+
+            switch (event.getType()) {
+                case BLOCK_PHYSICS:
+                    trueListener.onBlockPhysics((BlockPhysicsEvent)event);
+                    break;
+                case BLOCK_CANBUILD:
+                    trueListener.onBlockCanBuild((BlockCanBuildEvent)event);
+                    break;
+                case BLOCK_RIGHTCLICKED:
+                    trueListener.onBlockRightClick((BlockRightClickEvent) event);
+                    break;
+                case BLOCK_PLACED:
+                    trueListener.onBlockPlace((BlockPlaceEvent)event);
+                    break;
+                case BLOCK_DAMAGED:
+                    trueListener.onBlockDamage((BlockDamageEvent)event);
+                    break;
+                case BLOCK_INTERACT:
+                    trueListener.onBlockInteract((BlockInteractEvent)event);
+                    break;
+                case BLOCK_FLOW:
+                    trueListener.onBlockFlow((BlockFromToEvent)event);
+                    break;
+                case LEAVES_DECAY:
+                    trueListener.onLeavesDecay((LeavesDecayEvent)event);
+                    break;
+                case BLOCK_IGNITE:
+                    trueListener.onBlockIgnite((BlockIgniteEvent)event);
+                    break;
+                case REDSTONE_CHANGE:
+                    trueListener.onBlockRedstoneChange((BlockFromToEvent)event);
+                    break;
+            }
+        } else if(listener instanceof ServerListener) {
+            ServerListener trueListener = (ServerListener)listener;
+
+            switch (event.getType()) {
+                case PLUGIN_ENABLE:
+                    trueListener.onPluginEnabled((PluginEvent)event);
+                    break;
+                case PLUGIN_DISABLE:
+                    trueListener.onPluginDisabled((PluginEvent)event);
+                    break;
+            }
+        } else if(listener instanceof WorldListener) {
+            WorldListener trueListener = (WorldListener)listener;
+
+            switch (event.getType()) {
+                case CHUNK_LOADED:
+                    trueListener.onChunkLoaded((ChunkLoadEvent)event);
+                    break;
+                case CHUNK_UNLOADED:
+                    trueListener.onChunkUnloaded((ChunkUnloadEvent)event);
+                    break;
+            }
+        } else if(listener instanceof EntityListener) {
+            EntityListener trueListener = (EntityListener) listener;
+            switch(event.getType())
+            {
+                case ENTITY_DAMAGEDBY_BLOCK:
+                    trueListener.onEntityDamageByBlock((EntityDamageByBlockEvent)event);
+                    break;
+                case ENTITY_DAMAGEDBY_ENTITY:
+                    trueListener.onEntityDamageByEntity((EntityDamageByEntityEvent)event);
+                    break;
+                case ENTITY_DAMAGEDBY_PROJECTILE:
+                    trueListener.onEntityDamageByProjectile((EntityDamageByProjectileEvent)event);
+                    break;
+                case ENTITY_DAMAGED:
+                    trueListener.onEntityDamage((EntityDamageEvent)event);
+                    break;
+                case ENTITY_DEATH:
+                    // TODO: ENTITY_DEATH hook
+                    break;
+                case ENTITY_COMBUST:
+                    trueListener.onEntityCombust((EntityCombustEvent)event);
+                    break;
+                case ENTITY_EXPLODE:
+                    trueListener.onEntityExplode((EntityExplodeEvent)event);
+                    break;
+            }
+        } else if (listener instanceof VehicleListener) {
+            VehicleListener trueListener = (VehicleListener)listener;
+
+            switch (event.getType()) {
+                case VEHICLE_CREATE:
+                    trueListener.onVehicleCreate((VehicleCreateEvent)event);
+                    break;
+                case VEHICLE_DAMAGE:
+                    trueListener.onVehicleDamage((VehicleDamageEvent)event);
+                    break;
+                case VEHICLE_COLLISION_BLOCK:
+                    trueListener.onVehicleBlockCollision((VehicleBlockCollisionEvent)event);
+                    break;
+                case VEHICLE_COLLISION_ENTITY:
+                    trueListener.onVehicleEntityCollision((VehicleEntityCollisionEvent)event);
+                    break;
+                case VEHICLE_ENTER:
+                    trueListener.onVehicleEnter((VehicleEnterEvent)event);
+                    break;
+                case VEHICLE_EXIT:
+                    trueListener.onVehicleExit((VehicleExitEvent)event);
+                    break;
+                case VEHICLE_MOVE:
+                    trueListener.onVehicleMove((VehicleMoveEvent)event);
+                    break;
+            }
+        } else if(listener instanceof CustomEventListener) {
+            if(event.getType()==Event.Type.CUSTOM_EVENT) {
+                ((CustomEventListener)listener).onCustomEvent(event);
+            }
+        }
+    }
+=======
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582907907/fstmerge_var2_8258441499695984822
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Bukkit/revisions/rev_578ab_cc404/rev_578ab-cc404/src/main/java/org/bukkit/plugin/java/JavaPluginLoader.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+public SimpleCommandMap(final Server server) {
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582907989/fstmerge_var1_421806173762463878
+        this.server = server;
+        setDefaultCommands(server);
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582907989/fstmerge_base_5514823766924876697
+        register("bukkit", new VersionCommand("version", server));
+
+        register("reload", "bukkit", new Command("reload") {
+            @Override
+            public boolean execute(Player player, String currentAlias, String[] args) {
+                if (player.isOp()) {
+                    server.reload();
+                    player.sendMessage(ChatColor.GREEN + "Reload complete.");
+                } else {
+                    player.sendMessage(ChatColor.RED + "You do not have sufficient access"
+                            + " to reload this server.");
+                }
+
+                return true;
+            }
+        });
+=======
+        register("bukkit", new VersionCommand("version", server));
+
+        register("reload", "bukkit", new Command("reload") {
+            @Override
+            public boolean execute(CommandSender sender, String currentAlias, String[] args) {
+                if (sender.isOp()) {
+                    server.reload();
+                    sender.sendMessage(ChatColor.GREEN + "Reload complete.");
+                } else {
+                    sender.sendMessage(ChatColor.RED + "You do not have sufficient access"
+                            + " to reload this server.");
+                }
+
+                return true;
+            }
+        });
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418582907989/fstmerge_var2_3268429047941921629
+    }
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Bukkit/revisions/rev_578ab_cc404/rev_578ab-cc404/src/main/java/org/bukkit/command/SimpleCommandMap.java
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Bukkit/revisions/rev_746b7_89865/rev_746b7-89865.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Bukkit/revisions/rev_c4ad4_0c420/rev_c4ad4-0c420.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Bukkit/revisions/rev_adeb9_33db4/rev_adeb9-33db4.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Bukkit/revisions/rev_069df_01a27/rev_069df-01a27.revisions
+
+=========================================================

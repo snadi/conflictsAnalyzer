@@ -1,0 +1,2091 @@
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_e81dd_63a49/rev_e81dd-63a49.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_145e0_d7e5b/rev_145e0-d7e5b.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_ba1a0_02166/rev_ba1a0-02166.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_a61ef_de15a/rev_a61ef-de15a.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_237c3_932e1/rev_237c3-932e1.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_d153c_8bd4d/rev_d153c-8bd4d.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_ad736_5d577/rev_ad736-5d577.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_fe0da_0221e/rev_fe0da-0221e.revisions
+Conflict type: LineBasedMCFd
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422686938457/fstmerge_var1_2983808108811381439
+private boolean generateMethods(Node typeNode, Node errorNode, List<String> excludes, 
+			boolean callSuper, boolean whineIfExists) {
+		boolean notAClass = true;
+		if ( typeNode.get() instanceof JCClassDecl ) {
+			long flags = ((JCClassDecl)typeNode.get()).mods.flags;
+			notAClass = (flags & (Flags.INTERFACE | Flags.ANNOTATION | Flags.ENUM)) != 0;
+		}
+		
+		if ( notAClass ) {
+			errorNode.addError("@EqualsAndHashCode is only supported on a class.");
+			return false;
+		}
+		
+		boolean isDirectDescendantOfObject = true;
+		
+		JCTree extending = ((JCClassDecl)typeNode.get()).extending;
+		if ( extending != null ) {
+			String p = extending.toString();
+			isDirectDescendantOfObject = p.equals("Object") || p.equals("java.lang.Object");
+		}
+		
+		if ( isDirectDescendantOfObject && callSuper ) {
+			errorNode.addError("Generating equals/hashCode with a supercall to java.lang.Object is pointless.");
+			return true;
+		}
+		
+		if ( !isDirectDescendantOfObject && !callSuper ) {
+			errorNode.addWarning("Generating equals/hashCode implementation but without a call to superclass, even though this class does not extend java.lang.Object.");
+		}
+		
+		List<Node> nodesForEquality = List.nil();
+		for ( Node child : typeNode.down() ) {
+			if ( child.getKind() != Kind.FIELD ) continue;
+			JCVariableDecl fieldDecl = (JCVariableDecl) child.get();
+			//Skip static fields.
+			if ( (fieldDecl.mods.flags & Flags.STATIC) != 0 ) continue;
+			//Skip transient fields.
+			if ( (fieldDecl.mods.flags & Flags.TRANSIENT) != 0 ) continue;
+			//Skip excluded fields.
+			if ( excludes.contains(fieldDecl.name.toString()) ) continue;
+			nodesForEquality = nodesForEquality.append(child);
+		}
+		
+		switch ( methodExists("hashCode", typeNode) ) {
+		case NOT_EXISTS:
+			JCMethodDecl method = createHashCode(typeNode, nodesForEquality, callSuper);
+			injectMethod(typeNode, method);
+			break;
+		case EXISTS_BY_LOMBOK:
+			break;
+		default:
+		case EXISTS_BY_USER:
+			if ( whineIfExists ) {
+				errorNode.addWarning("Not generating hashCode(): A method with that name already exists");
+			}
+			break;
+		}
+		
+		switch ( methodExists("equals", typeNode) ) {
+		case NOT_EXISTS:
+			JCMethodDecl method = createEquals(typeNode, nodesForEquality, callSuper);
+			injectMethod(typeNode, method);
+			break;
+		case EXISTS_BY_LOMBOK:
+			break;
+		default:
+		case EXISTS_BY_USER:
+			if ( whineIfExists ) {
+				errorNode.addWarning("Not generating equals(Object other): A method with that name already exists");
+			}
+			break;
+		}
+		
+		return true;
+	}
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422686938457/fstmerge_base_431968285401321333
+private boolean generateMethods(Node typeNode, Node errorNode, List<String> excludes, 
+			boolean callSuper, boolean whineIfExists) {
+		boolean notAClass = true;
+		if ( typeNode.get() instanceof JCClassDecl ) {
+			long flags = ((JCClassDecl)typeNode.get()).mods.flags;
+			notAClass = (flags & (Flags.INTERFACE | Flags.ANNOTATION | Flags.ENUM)) != 0;
+		}
+		
+		if ( notAClass ) {
+			errorNode.addError("@EqualsAndHashCode is only supported on a class.");
+			return false;
+		}
+		
+		boolean isDirectDescendentOfObject = true;
+		
+		JCTree extending = ((JCClassDecl)typeNode.get()).extending;
+		if ( extending != null ) {
+			String p = extending.toString();
+			isDirectDescendentOfObject = p.equals("Object") || p.equals("java.lang.Object");
+		}
+		
+		if ( isDirectDescendentOfObject && callSuper ) {
+			errorNode.addError("Generating equals/hashCode with a supercall to java.lang.Object is pointless.");
+			return true;
+		}
+		
+		if ( !isDirectDescendentOfObject && !callSuper ) {
+			errorNode.addWarning("Generating equals/hashCode implementation but without a call to superclass, even though this class does not extend java.lang.Object.");
+		}
+		
+		List<Node> nodesForEquality = List.nil();
+		for ( Node child : typeNode.down() ) {
+			if ( child.getKind() != Kind.FIELD ) continue;
+			JCVariableDecl fieldDecl = (JCVariableDecl) child.get();
+			//Skip static fields.
+			if ( (fieldDecl.mods.flags & Flags.STATIC) != 0 ) continue;
+			//Skip transient fields.
+			if ( (fieldDecl.mods.flags & Flags.TRANSIENT) != 0 ) continue;
+			//Skip excluded fields.
+			if ( excludes.contains(fieldDecl.name.toString()) ) continue;
+			nodesForEquality = nodesForEquality.append(child);
+		}
+		
+		switch ( methodExists("hashCode", typeNode) ) {
+		case NOT_EXISTS:
+			JCMethodDecl method = createHashCode(typeNode, nodesForEquality, callSuper);
+			injectMethod(typeNode, method);
+			break;
+		case EXISTS_BY_LOMBOK:
+			break;
+		default:
+		case EXISTS_BY_USER:
+			if ( whineIfExists ) {
+				errorNode.addWarning("Not generating hashCode(): A method with that name already exists");
+			}
+			break;
+		}
+		
+		switch ( methodExists("equals", typeNode) ) {
+		case NOT_EXISTS:
+			JCMethodDecl method = createEquals(typeNode, nodesForEquality, callSuper);
+			injectMethod(typeNode, method);
+			break;
+		case EXISTS_BY_LOMBOK:
+			break;
+		default:
+		case EXISTS_BY_USER:
+			if ( whineIfExists ) {
+				errorNode.addWarning("Not generating equals(Object other): A method with that name already exists");
+			}
+			break;
+		}
+		
+		return true;
+	}
+=======
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422686938457/fstmerge_var2_4416438264969427643
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_fe0da_0221e/rev_fe0da-0221e/src/lombok/javac/handlers/HandleEqualsAndHashCode.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+private JCMethodDecl createConstructor(boolean isPublic, Node typeNode, List<Node> fields) {
+		TreeMaker maker = typeNode.getTreeMaker();
+		JCClassDecl type = (JCClassDecl) typeNode.get();
+		
+		List<JCStatement> nullChecks = List.nil();
+		List<JCStatement> assigns = List.nil();
+		List<JCVariableDecl> params = List.nil();
+		
+		for ( Node fieldNode : fields ) {
+			JCVariableDecl field = (JCVariableDecl) fieldNode.get();
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422686938489/fstmerge_var1_1621929286902101676
+			
+			List<JCAnnotation> nonNulls = findAnnotations(fieldNode, NON_NULL_PATTERN);
+			List<JCAnnotation> nullables = findAnnotations(fieldNode, NULLABLE_PATTERN);
+			JCVariableDecl param = maker.VarDef(maker.Modifiers(0, nonNulls.appendList(nullables)), field.name, field.vartype, null);
+			
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422686938489/fstmerge_base_4817374916444846905
+			JCVariableDecl param = maker.VarDef(maker.Modifiers(0), field.name, field.vartype, null);
+=======
+			JCVariableDecl param = maker.VarDef(maker.Modifiers(Flags.FINAL), field.name, field.vartype, null);
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422686938489/fstmerge_var2_8404033993660444381
+			params = params.append(param);
+			JCFieldAccess thisX = maker.Select(maker.Ident(fieldNode.toName("this")), field.name);
+			JCAssign assign = maker.Assign(thisX, maker.Ident(field.name));
+			assigns = assigns.append(maker.Exec(assign));
+			
+			if (!nonNulls.isEmpty()) {
+				nullChecks = nullChecks.append(generateNullCheck(maker, fieldNode));
+			}
+		}
+		
+		JCModifiers mods = maker.Modifiers(isPublic ? Modifier.PUBLIC : Modifier.PRIVATE);
+		return maker.MethodDef(mods, typeNode.toName("<init>"),
+				null, type.typarams, params, List.<JCExpression>nil(), maker.Block(0L, nullChecks.appendList(assigns)), null);
+	}
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_fe0da_0221e/rev_fe0da-0221e/src/lombok/javac/handlers/HandleData.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+private JCMethodDecl createStaticConstructor(String name, Node typeNode, List<Node> fields) {
+		TreeMaker maker = typeNode.getTreeMaker();
+		JCClassDecl type = (JCClassDecl) typeNode.get();
+		
+		JCModifiers mods = maker.Modifiers(Flags.STATIC);
+		
+		JCExpression returnType, constructorType;
+		
+		List<JCTypeParameter> typeParams = List.nil();
+		List<JCVariableDecl> params = List.nil();
+		List<JCExpression> typeArgs1 = List.nil();
+		List<JCExpression> typeArgs2 = List.nil();
+		List<JCExpression> args = List.nil();
+		
+		if ( !type.typarams.isEmpty() ) {
+			for ( JCTypeParameter param : type.typarams ) {
+				typeArgs1 = typeArgs1.append(maker.Ident(param.name));
+				typeArgs2 = typeArgs2.append(maker.Ident(param.name));
+				typeParams = typeParams.append(maker.TypeParameter(param.name, param.bounds));
+			}
+			returnType = maker.TypeApply(maker.Ident(type.name), typeArgs1);
+			constructorType = maker.TypeApply(maker.Ident(type.name), typeArgs2);
+		} else {
+			returnType = maker.Ident(type.name);
+			constructorType = maker.Ident(type.name);
+		}
+		
+		for ( Node fieldNode : fields ) {
+			JCVariableDecl field = (JCVariableDecl) fieldNode.get();
+			JCExpression pType;
+			if ( field.vartype instanceof JCIdent ) pType = maker.Ident(((JCIdent)field.vartype).name);
+			else if ( field.vartype instanceof JCTypeApply ) {
+				JCTypeApply typeApply = (JCTypeApply) field.vartype;
+				List<JCExpression> tArgs = List.nil();
+				for ( JCExpression arg : typeApply.arguments ) tArgs = tArgs.append(arg);
+				pType = maker.TypeApply(typeApply.clazz, tArgs);
+			} else pType = field.vartype;
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422686938494/fstmerge_var1_4366116877293402644
+			
+			List<JCAnnotation> nonNulls = findAnnotations(fieldNode, NON_NULL_PATTERN);
+			List<JCAnnotation> nullables = findAnnotations(fieldNode, NULLABLE_PATTERN);
+			JCVariableDecl param = maker.VarDef(maker.Modifiers(0, nonNulls.appendList(nullables)), field.name, pType, null);
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422686938494/fstmerge_base_5594095695959885692
+			JCVariableDecl param = maker.VarDef(maker.Modifiers(0), field.name, pType, null);
+=======
+			JCVariableDecl param = maker.VarDef(maker.Modifiers(Flags.FINAL), field.name, pType, null);
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422686938494/fstmerge_var2_9201981778567154806
+			params = params.append(param);
+			args = args.append(maker.Ident(field.name));
+		}
+		JCReturn returnStatement = maker.Return(maker.NewClass(null, List.<JCExpression>nil(), constructorType, args, null));
+		JCBlock body = maker.Block(0, List.<JCStatement>of(returnStatement));
+		
+		return maker.MethodDef(mods, typeNode.toName(name), returnType, typeParams, params, List.<JCExpression>nil(), body, null);
+	}
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_fe0da_0221e/rev_fe0da-0221e/src/lombok/javac/handlers/HandleData.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+private JCMethodDecl createSetter(long access, JavacAST.Node field, TreeMaker treeMaker) {
+		JCVariableDecl fieldDecl = (JCVariableDecl) field.get();
+		
+		JCFieldAccess thisX = treeMaker.Select(treeMaker.Ident(field.toName("this")), fieldDecl.name);
+		JCAssign assign = treeMaker.Assign(thisX, treeMaker.Ident(fieldDecl.name));
+		
+		List<JCStatement> statements;
+		List<JCAnnotation> nonNulls = findAnnotations(field, NON_NULL_PATTERN);
+		List<JCAnnotation> nullables = findAnnotations(field, NULLABLE_PATTERN);
+		if (nonNulls.isEmpty()) {
+			statements = List.<JCStatement>of(treeMaker.Exec(assign));
+		}
+		else {
+			statements = List.<JCStatement>of(generateNullCheck(treeMaker, field), treeMaker.Exec(assign));
+		}
+		
+		JCBlock methodBody = treeMaker.Block(0, statements);
+		Name methodName = field.toName(toSetterName(fieldDecl));
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422686938513/fstmerge_var1_8285622761868221277
+		
+		JCVariableDecl param = treeMaker.VarDef(treeMaker.Modifiers(0, nonNulls.appendList(nullables)), fieldDecl.name, fieldDecl.vartype, null);
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422686938513/fstmerge_base_1391763639847342490
+		JCVariableDecl param = treeMaker.VarDef(treeMaker.Modifiers(0), fieldDecl.name, fieldDecl.vartype, null);
+=======
+		JCVariableDecl param = treeMaker.VarDef(treeMaker.Modifiers(Flags.FINAL), fieldDecl.name, fieldDecl.vartype, null);
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422686938513/fstmerge_var2_6019742446139567260
+		JCExpression methodType = treeMaker.Type(field.getSymbolTable().voidType);
+		
+		List<JCTypeParameter> methodGenericParams = List.nil();
+		List<JCVariableDecl> parameters = List.of(param);
+		List<JCExpression> throwsClauses = List.nil();
+		JCExpression annotationMethodDefaultValue = null;
+		
+		return treeMaker.MethodDef(treeMaker.Modifiers(access, List.<JCAnnotation>nil()), methodName, methodType,
+				methodGenericParams, parameters, throwsClauses, methodBody, annotationMethodDefaultValue);
+	}
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_fe0da_0221e/rev_fe0da-0221e/src/lombok/javac/handlers/HandleSetter.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422686939770/fstmerge_var1_174855300307205449
+public boolean generateMethods(Node typeNode, Node errorNode, List<String> excludes,
+			boolean callSuper, boolean whineIfExists) {
+		TypeDeclaration typeDecl = null;
+		
+		if ( typeNode.get() instanceof TypeDeclaration ) typeDecl = (TypeDeclaration) typeNode.get();
+		int modifiers = typeDecl == null ? 0 : typeDecl.modifiers;
+		boolean notAClass = (modifiers &
+				(ClassFileConstants.AccInterface | ClassFileConstants.AccAnnotation | ClassFileConstants.AccEnum)) != 0;
+		
+		if ( typeDecl == null || notAClass ) {
+			errorNode.addError("@EqualsAndHashCode is only supported on a class.");
+			return false;
+		}
+		
+		boolean isDirectDescendantOfObject = true;
+		
+		if ( typeDecl.superclass != null ) {
+			String p = typeDecl.superclass.toString();
+			isDirectDescendantOfObject = p.equals("Object") || p.equals("java.lang.Object");
+		}
+		
+		if ( isDirectDescendantOfObject && callSuper ) {
+			errorNode.addError("Generating equals/hashCode with a supercall to java.lang.Object is pointless.");
+			return true;
+		}
+		
+		if ( !isDirectDescendantOfObject && !callSuper ) {
+			errorNode.addWarning("Generating equals/hashCode implementation but without a call to superclass, even though this class does not extend java.lang.Object.");
+		}
+		
+		List<Node> nodesForEquality = new ArrayList<Node>();
+		for ( Node child : typeNode.down() ) {
+			if ( child.getKind() != Kind.FIELD ) continue;
+			FieldDeclaration fieldDecl = (FieldDeclaration) child.get();
+			//Skip static fields.
+			if ( (fieldDecl.modifiers & ClassFileConstants.AccStatic) != 0 ) continue;
+			//Skip transient fields.
+			if ( (fieldDecl.modifiers & ClassFileConstants.AccTransient) != 0 ) continue;
+			//Skip excluded fields.
+			if ( excludes.contains(new String(fieldDecl.name)) ) continue;
+			nodesForEquality.add(child);
+		}
+		
+		switch ( methodExists("hashCode", typeNode) ) {
+		case NOT_EXISTS:
+			MethodDeclaration hashCode = createHashCode(typeNode, nodesForEquality, callSuper, errorNode.get());
+			injectMethod(typeNode, hashCode);
+			break;
+		case EXISTS_BY_LOMBOK:
+			break;
+		default:
+		case EXISTS_BY_USER:
+			if ( whineIfExists ) {
+				errorNode.addWarning("Not generating hashCode(): A method with that name already exists");
+			}
+			break;
+		}
+		
+		switch ( methodExists("equals", typeNode) ) {
+		case NOT_EXISTS:
+			MethodDeclaration equals = createEquals(typeNode, nodesForEquality, callSuper, errorNode.get());
+			injectMethod(typeNode, equals);
+			break;
+		case EXISTS_BY_LOMBOK:
+			break;
+		default:
+		case EXISTS_BY_USER:
+			if ( whineIfExists ) {
+				errorNode.addWarning("Not generating equals(Object other): A method with that name already exists");
+			}
+			break;
+		}
+		
+		return true;
+	}
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422686939770/fstmerge_base_3779381205393577162
+public boolean generateMethods(Node typeNode, Node errorNode, List<String> excludes,
+			boolean callSuper, boolean whineIfExists) {
+		TypeDeclaration typeDecl = null;
+		
+		if ( typeNode.get() instanceof TypeDeclaration ) typeDecl = (TypeDeclaration) typeNode.get();
+		int modifiers = typeDecl == null ? 0 : typeDecl.modifiers;
+		boolean notAClass = (modifiers &
+				(ClassFileConstants.AccInterface | ClassFileConstants.AccAnnotation | ClassFileConstants.AccEnum)) != 0;
+		
+		if ( typeDecl == null || notAClass ) {
+			errorNode.addError("@EqualsAndHashCode is only supported on a class.");
+			return false;
+		}
+		
+		boolean isDirectDescendentOfObject = true;
+		
+		if ( typeDecl.superclass != null ) {
+			String p = typeDecl.superclass.toString();
+			isDirectDescendentOfObject = p.equals("Object") || p.equals("java.lang.Object");
+		}
+		
+		if ( isDirectDescendentOfObject && callSuper ) {
+			errorNode.addError("Generating equals/hashCode with a supercall to java.lang.Object is pointless.");
+			return true;
+		}
+		
+		if ( !isDirectDescendentOfObject && !callSuper ) {
+			errorNode.addWarning("Generating equals/hashCode implementation but without a call to superclass, even though this class does not extend java.lang.Object.");
+		}
+		
+		List<Node> nodesForEquality = new ArrayList<Node>();
+		for ( Node child : typeNode.down() ) {
+			if ( child.getKind() != Kind.FIELD ) continue;
+			FieldDeclaration fieldDecl = (FieldDeclaration) child.get();
+			//Skip static fields.
+			if ( (fieldDecl.modifiers & ClassFileConstants.AccStatic) != 0 ) continue;
+			//Skip transient fields.
+			if ( (fieldDecl.modifiers & ClassFileConstants.AccTransient) != 0 ) continue;
+			//Skip excluded fields.
+			if ( excludes.contains(new String(fieldDecl.name)) ) continue;
+			nodesForEquality.add(child);
+		}
+		
+		switch ( methodExists("hashCode", typeNode) ) {
+		case NOT_EXISTS:
+			MethodDeclaration hashCode = createHashCode(typeNode, nodesForEquality, callSuper, errorNode.get());
+			injectMethod(typeNode, hashCode);
+			break;
+		case EXISTS_BY_LOMBOK:
+			break;
+		default:
+		case EXISTS_BY_USER:
+			if ( whineIfExists ) {
+				errorNode.addWarning("Not generating hashCode(): A method with that name already exists");
+			}
+			break;
+		}
+		
+		switch ( methodExists("equals", typeNode) ) {
+		case NOT_EXISTS:
+			MethodDeclaration equals = createEquals(typeNode, nodesForEquality, callSuper, errorNode.get());
+			injectMethod(typeNode, equals);
+			break;
+		case EXISTS_BY_LOMBOK:
+			break;
+		default:
+		case EXISTS_BY_USER:
+			if ( whineIfExists ) {
+				errorNode.addWarning("Not generating equals(Object other): A method with that name already exists");
+			}
+			break;
+		}
+		
+		return true;
+	}
+=======
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422686939770/fstmerge_var2_4245328442299625574
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_fe0da_0221e/rev_fe0da-0221e/src/lombok/eclipse/handlers/HandleEqualsAndHashCode.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+private ConstructorDeclaration createConstructor(boolean isPublic, Node type, Collection<Node> fields, ASTNode pos) {
+		long p = (long)pos.sourceStart << 32 | pos.sourceEnd;
+		
+		ConstructorDeclaration constructor = new ConstructorDeclaration(
+				((CompilationUnitDeclaration) type.top().get()).compilationResult);
+		
+		constructor.modifiers = PKG.toModifier(isPublic ? AccessLevel.PUBLIC : AccessLevel.PRIVATE);
+		constructor.annotations = null;
+		constructor.selector = ((TypeDeclaration)type.get()).name;
+		constructor.constructorCall = new ExplicitConstructorCall(ExplicitConstructorCall.ImplicitSuper);
+		constructor.thrownExceptions = null;
+		constructor.typeParameters = null;
+		constructor.bits |= Eclipse.ECLIPSE_DO_NOT_TOUCH_FLAG;
+		constructor.bodyStart = constructor.declarationSourceStart = constructor.sourceStart = pos.sourceStart;
+		constructor.bodyEnd = constructor.declarationSourceEnd = constructor.sourceEnd = pos.sourceEnd;
+		constructor.arguments = null;
+		
+		List<Argument> args = new ArrayList<Argument>();
+		List<Statement> assigns = new ArrayList<Statement>();
+		List<Statement> nullChecks = new ArrayList<Statement>();
+		
+		for ( Node fieldNode : fields ) {
+			FieldDeclaration field = (FieldDeclaration) fieldNode.get();
+			FieldReference thisX = new FieldReference(("this." + new String(field.name)).toCharArray(), p);
+			thisX.receiver = new ThisReference((int)(p >> 32), (int)p);
+			thisX.token = field.name;
+			
+			assigns.add(new Assignment(thisX, new SingleNameReference(field.name, p), (int)p));
+			long fieldPos = (((long)field.sourceStart) << 32) | field.sourceEnd;
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422686939796/fstmerge_var1_3987992240681169998
+			Argument argument = new Argument(field.name, fieldPos, copyType(field.type), 0);
+			Annotation[] nonNulls = findAnnotations(field, NON_NULL_PATTERN);
+			Annotation[] nullables = findAnnotations(field, NULLABLE_PATTERN);
+			if (nonNulls.length != 0) nullChecks.add(generateNullCheck(field));
+			Annotation[] copiedAnnotations = copyAnnotations(nonNulls, nullables);
+			if (copiedAnnotations.length != 0) argument.annotations = copiedAnnotations;
+			args.add(argument);
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422686939796/fstmerge_base_5812216781736698943
+			args.add(new Argument(field.name, fieldPos, copyType(field.type), 0));
+=======
+			args.add(new Argument(field.name, fieldPos, copyType(field.type), Modifier.FINAL));
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422686939796/fstmerge_var2_8358541995140562836
+		}
+		
+		nullChecks.addAll(assigns);
+		constructor.statements = nullChecks.isEmpty() ? null : nullChecks.toArray(new Statement[nullChecks.size()]);
+		constructor.arguments = args.isEmpty() ? null : args.toArray(new Argument[args.size()]);
+		return constructor;
+	}
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_fe0da_0221e/rev_fe0da-0221e/src/lombok/eclipse/handlers/HandleData.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+private MethodDeclaration createStaticConstructor(String name, Node type, Collection<Node> fields, ASTNode pos) {
+		long p = (long)pos.sourceStart << 32 | pos.sourceEnd;
+		
+		MethodDeclaration constructor = new MethodDeclaration(
+				((CompilationUnitDeclaration) type.top().get()).compilationResult);
+		
+		constructor.modifiers = PKG.toModifier(AccessLevel.PUBLIC) | Modifier.STATIC;
+		TypeDeclaration typeDecl = (TypeDeclaration) type.get();
+		if ( typeDecl.typeParameters != null && typeDecl.typeParameters.length > 0 ) {
+			TypeReference[] refs = new TypeReference[typeDecl.typeParameters.length];
+			int idx = 0;
+			for ( TypeParameter param : typeDecl.typeParameters ) {
+				refs[idx++] = new SingleTypeReference(param.name, (long)param.sourceStart << 32 | param.sourceEnd);
+			}
+			constructor.returnType = new ParameterizedSingleTypeReference(typeDecl.name, refs, 0, p);
+		} else constructor.returnType = new SingleTypeReference(((TypeDeclaration)type.get()).name, p);
+		constructor.annotations = null;
+		constructor.selector = name.toCharArray();
+		constructor.thrownExceptions = null;
+		constructor.typeParameters = copyTypeParams(((TypeDeclaration)type.get()).typeParameters);
+		constructor.bits |= Eclipse.ECLIPSE_DO_NOT_TOUCH_FLAG;
+		constructor.bodyStart = constructor.declarationSourceStart = constructor.sourceStart = pos.sourceStart;
+		constructor.bodyEnd = constructor.declarationSourceEnd = constructor.sourceEnd = pos.sourceEnd;
+		
+		List<Argument> args = new ArrayList<Argument>();
+		List<Expression> assigns = new ArrayList<Expression>();
+		AllocationExpression statement = new AllocationExpression();
+		statement.type = copyType(constructor.returnType);
+		
+		for ( Node fieldNode : fields ) {
+			FieldDeclaration field = (FieldDeclaration) fieldNode.get();
+			long fieldPos = (((long)field.sourceStart) << 32) | field.sourceEnd;
+			assigns.add(new SingleNameReference(field.name, fieldPos));
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422686939797/fstmerge_var1_4687358339573569309
+			
+			Argument argument = new Argument(field.name, fieldPos, copyType(field.type), 0);
+			Annotation[] copiedAnnotations = copyAnnotations(
+					findAnnotations(field, NON_NULL_PATTERN), findAnnotations(field, NULLABLE_PATTERN));
+			if (copiedAnnotations.length != 0) argument.annotations = copiedAnnotations;
+			args.add(new Argument(field.name, fieldPos, copyType(field.type), 0));
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422686939797/fstmerge_base_889433731933777112
+			args.add(new Argument(field.name, fieldPos, copyType(field.type), 0));
+=======
+			args.add(new Argument(field.name, fieldPos, copyType(field.type), Modifier.FINAL));
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422686939797/fstmerge_var2_6661079887022093493
+		}
+		
+		statement.arguments = assigns.isEmpty() ? null : assigns.toArray(new Expression[assigns.size()]);
+		constructor.arguments = args.isEmpty() ? null : args.toArray(new Argument[args.size()]);
+		constructor.statements = new Statement[] { new ReturnStatement(statement, (int)(p >> 32), (int)p) };
+		return constructor;
+	}
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_fe0da_0221e/rev_fe0da-0221e/src/lombok/eclipse/handlers/HandleData.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+private MethodDeclaration generateSetter(TypeDeclaration parent, FieldDeclaration field, String name,
+			int modifier, ASTNode ast) {
+		
+		long pos = (((long)ast.sourceStart) << 32) | ast.sourceEnd;
+		MethodDeclaration method = new MethodDeclaration(parent.compilationResult);
+		method.modifiers = modifier;
+		method.returnType = TypeReference.baseTypeReference(TypeIds.T_void, 0);
+		method.annotations = null;
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422686939810/fstmerge_var1_3873589090047299327
+		Argument param = new Argument(field.name, pos, copyType(field.type), 0);
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422686939810/fstmerge_base_1437648340474674684
+		Argument param = new Argument(field.name, pos, Eclipse.copyType(field.type), 0);
+=======
+		Argument param = new Argument(field.name, pos, Eclipse.copyType(field.type), Modifier.FINAL);
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422686939810/fstmerge_var2_6494580878573785149
+		method.arguments = new Argument[] { param };
+		method.selector = name.toCharArray();
+		method.binding = null;
+		method.thrownExceptions = null;
+		method.typeParameters = null;
+		method.scope = parent.scope == null ? null : new MethodScope(parent.scope, method, false);
+		method.bits |= ECLIPSE_DO_NOT_TOUCH_FLAG;
+		FieldReference thisX = new FieldReference(field.name, pos);
+		thisX.receiver = new ThisReference(ast.sourceStart, ast.sourceEnd);
+		Assignment assignment = new Assignment(thisX, new SingleNameReference(field.name, pos), (int)pos);
+		method.bodyStart = method.declarationSourceStart = method.sourceStart = ast.sourceStart;
+		method.bodyEnd = method.declarationSourceEnd = method.sourceEnd = ast.sourceEnd;
+		
+		Annotation[] nonNulls = findAnnotations(field, NON_NULL_PATTERN);
+		Annotation[] nullables = findAnnotations(field, NULLABLE_PATTERN);
+		if (nonNulls.length == 0) {
+			method.statements = new Statement[] { assignment };
+		} else {
+			method.statements = new Statement[] { generateNullCheck(field), assignment };
+		}
+		Annotation[] copiedAnnotations = copyAnnotations(nonNulls, nullables);
+		if (copiedAnnotations.length != 0) param.annotations = copiedAnnotations;
+		return method;
+	}
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_fe0da_0221e/rev_fe0da-0221e/src/lombok/eclipse/handlers/HandleSetter.java
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_0ae11_dba1a/rev_0ae11-dba1a.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_23da5_c2f18/rev_23da5-c2f18.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_1b0d0_56616/rev_1b0d0-56616.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_2b61c_6838c/rev_2b61c-6838c.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_f1d33_645a0/rev_f1d33-645a0.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_e67e9_4a017/rev_e67e9-4a017.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_c646d_78c1f/rev_c646d-78c1f.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_eb1a5_96b7c/rev_eb1a5-96b7c.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_2a56f_28862/rev_2a56f-28862.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_5bd3a_2aeba/rev_5bd3a-2aeba.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_9f698_bc88c/rev_9f698-bc88c.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_29f8d_d4ed6/rev_29f8d-d4ed6.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_d5e7a_c3a3c/rev_d5e7a-c3a3c.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_83702_d9d7f/rev_83702-d9d7f.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_64e8e_f737c/rev_64e8e-f737c.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_3c754_25523/rev_3c754-25523.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_5f276_27fd5/rev_5f276-27fd5.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_6daa9_d7ee0/rev_6daa9-d7ee0.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_4c238_81cfc/rev_4c238-81cfc.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_17bcf_f1cf0/rev_17bcf-f1cf0.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_59150_384bf/rev_59150-384bf.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_3b58e_75e8c/rev_3b58e-75e8c.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_6e5ac_46fee/rev_6e5ac-46fee.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_98d8a_92b7e/rev_98d8a-92b7e.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_16f99_0951e/rev_16f99-0951e.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_57de0_186b1/rev_57de0-186b1.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_57de0_fe7f0/rev_57de0-fe7f0.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_63202_c8774/rev_63202-c8774.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_eae3e_1c323/rev_eae3e-1c323.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_3f00e_6c6f4/rev_3f00e-6c6f4.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_339ef_a3765/rev_339ef-a3765.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_1c255_80982/rev_1c255-80982.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_b3a9e_3c47e/rev_b3a9e-3c47e.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_67668_49b9d/rev_67668-49b9d.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_7dede_3a89c/rev_7dede-3a89c.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_4ba4a_f2582/rev_4ba4a-f2582.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_6d8ce_9e0da/rev_6d8ce-9e0da.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_12e4f_e5e35/rev_12e4f-e5e35.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_a24da_d4b4a/rev_a24da-d4b4a.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_82b14_41e58/rev_82b14-41e58.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_844b3_39d44/rev_844b3-39d44.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_3c4ca_e4bff/rev_3c4ca-e4bff.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_0fbe5_99e36/rev_0fbe5-99e36.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_fd736_0d75d/rev_fd736-0d75d.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_2a20f_68c38/rev_2a20f-68c38.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_b43cd_f3253/rev_b43cd-f3253.revisions
+Conflict type: LineBasedMCFd
+Conflict body: 
+private static void registerPatchScripts(Instrumentation instrumentation, boolean reloadExistingClasses, boolean ecjOnly) {
+		ScriptManager sm = new ScriptManager();
+		sm.registerTransformer(instrumentation);
+		if (!ecjOnly) {
+			EquinoxClassLoader.addPrefix("lombok.");
+			EquinoxClassLoader.registerScripts(sm);
+		}
+		
+		patchAvoidReparsingGeneratedCode(sm);
+		
+		if (!ecjOnly) {
+			patchCatchReparse(sm);
+			patchIdentifierEndReparse(sm);
+			patchRetrieveEllipsisStartPosition(sm);
+			patchSetGeneratedFlag(sm);
+			patchDomAstReparseIssues(sm);
+			patchHideGeneratedNodes(sm);
+			patchPostCompileHookEclipse(sm);
+			patchFixSourceTypeConverter(sm);
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422688511776/fstmerge_var1_5025790926090858418
+			patchListRewriteHandleGeneratedMethods(sm);
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422688511776/fstmerge_base_3782357620426842668
+=======
+			patchDisableLombokForCodeFormatterAndCleanup(sm);
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422688511776/fstmerge_var2_4445894799487402518
+		} else {
+			patchPostCompileHookEcj(sm);
+		}
+		
+		patchLombokizeAST(sm);
+		patchEcjTransformers(sm, ecjOnly);
+		
+		if (reloadExistingClasses) sm.reloadClasses(instrumentation);
+	}
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_b43cd_f3253/rev_b43cd-f3253/src/eclipseAgent/lombok/eclipse/agent/EclipsePatcher.java
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_5cc92_1cdd4/rev_5cc92-1cdd4.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_d3b90_2cb61/rev_d3b90-2cb61.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_20b72_eb8af/rev_20b72-eb8af.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_53ce4_6d6a1/rev_53ce4-6d6a1.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_4e831_aaf31/rev_4e831-aaf31.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_6a136_e7020/rev_6a136-e7020.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_ae87a_232d5/rev_ae87a-232d5.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_b4768_232d5/rev_b4768-232d5.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_71c48_02340/rev_71c48-02340.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_de1bc_b25a6/rev_de1bc-b25a6.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_0a879_5ac90/rev_0a879-5ac90.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_02d7e_6f4f0/rev_02d7e-6f4f0.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_6c9b3_7d0b1/rev_6c9b3-7d0b1.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_8749b_6c9b3/rev_8749b-6c9b3.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_bf354_30276/rev_bf354-30276.revisions
+Conflict type: SameSignatureCM
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422689300883/fstmerge_var1_1151170860975676574
+private static void patchExtractInterface(ScriptManager sm) {
+		/* Fix sourceEnding for generated nodes to avoid null pointer */
+		sm.addScript(ScriptBuilder.wrapMethodCall()
+				.target(new MethodTarget("org.eclipse.jdt.internal.compiler.SourceElementNotifier", "notifySourceElementRequestor", "void", "org.eclipse.jdt.internal.compiler.ast.AbstractMethodDeclaration", "org.eclipse.jdt.internal.compiler.ast.TypeDeclaration", "org.eclipse.jdt.internal.compiler.ast.ImportReference"))
+				.methodToWrap(new Hook("org.eclipse.jdt.internal.compiler.util.HashtableOfObjectToInt", "get", "int", "java.lang.Object"))
+				.wrapMethod(new Hook("lombok.eclipse.agent.PatchFixes", "getSourceEndFixed", "int", "int", "org.eclipse.jdt.internal.compiler.ast.ASTNode"))
+				.requestExtra(StackRequest.PARAM1)
+				.transplant().build());
+
+		/* Make sure the generated source element is found instead of the annotation */
+		sm.addScript(ScriptBuilder.wrapMethodCall()
+		.target(new MethodTarget("org.eclipse.jdt.internal.corext.refactoring.structure.ExtractInterfaceProcessor", "createMethodDeclaration", "void",
+				"org.eclipse.jdt.internal.corext.refactoring.structure.CompilationUnitRewrite", 
+				"org.eclipse.jdt.core.dom.rewrite.ASTRewrite",
+				"org.eclipse.jdt.core.dom.AbstractTypeDeclaration", 
+				"org.eclipse.jdt.core.dom.MethodDeclaration"
+			))
+			.methodToWrap(new Hook("org.eclipse.jface.text.IDocument", "get", "java.lang.String", "int", "int"))
+			.wrapMethod(new Hook("lombok.eclipse.agent.PatchFixes", "getRealMethodDeclarationSource", "java.lang.String", "java.lang.String", "org.eclipse.jdt.core.dom.MethodDeclaration"))
+			.requestExtra(StackRequest.PARAM4)
+			.build());
+
+		/* get real generated node in stead of a random one generated by the annotation */
+		sm.addScript(ScriptBuilder.replaceMethodCall()
+				.target(new MethodTarget("org.eclipse.jdt.internal.corext.refactoring.structure.ExtractInterfaceProcessor", "createMemberDeclarations"))
+				.target(new MethodTarget("org.eclipse.jdt.internal.corext.refactoring.structure.ExtractInterfaceProcessor", "createMethodComments"))
+				.methodToReplace(new Hook("org.eclipse.jdt.internal.corext.refactoring.structure.ASTNodeSearchUtil", "getMethodDeclarationNode", "org.eclipse.jdt.core.dom.MethodDeclaration", "org.eclipse.jdt.core.IMethod", "org.eclipse.jdt.core.dom.CompilationUnit"))
+				.replacementMethod(new Hook("lombok.eclipse.agent.PatchFixes", "getRealMethodDeclarationNode", "org.eclipse.jdt.core.dom.MethodDeclaration", "org.eclipse.jdt.core.IMethod", "org.eclipse.jdt.core.dom.CompilationUnit"))
+				.build());
+
+		/* Do not add @Override's for generated methods */
+		sm.addScript(ScriptBuilder.exitEarly()
+				.target(new MethodTarget("org.eclipse.jdt.core.dom.rewrite.ListRewrite", "insertFirst"))
+				.decisionMethod(new Hook("lombok.eclipse.agent.PatchFixes", "isListRewriteOnGeneratedNode", "boolean", "org.eclipse.jdt.core.dom.rewrite.ListRewrite"))
+				.request(StackRequest.THIS)
+				.build());
+		
+		/* Do not add comments for generated methods */
+		sm.addScript(ScriptBuilder.exitEarly()
+				.target(new MethodTarget("org.eclipse.jdt.internal.corext.refactoring.structure.ExtractInterfaceProcessor", "createMethodComment"))
+				.decisionMethod(new Hook("lombok.eclipse.agent.PatchFixes", "isGenerated", "boolean", "org.eclipse.jdt.core.dom.ASTNode"))
+				.request(StackRequest.PARAM2)
+				.build());
+
+	}
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422689300883/fstmerge_base_5571278632729009477
+=======
+private static void patchExtractInterface(ScriptManager sm) {
+		/* get real generated node in stead of a random one generated by the annotation */
+		sm.addScript(ScriptBuilder.replaceMethodCall()
+				.target(new MethodTarget("org.eclipse.jdt.internal.corext.refactoring.structure.ExtractInterfaceProcessor", "createMemberDeclarations"))
+				.target(new MethodTarget("org.eclipse.jdt.internal.corext.refactoring.structure.ExtractInterfaceProcessor", "createMethodComments"))
+				.methodToReplace(new Hook("org.eclipse.jdt.internal.corext.refactoring.structure.ASTNodeSearchUtil", "getMethodDeclarationNode", "org.eclipse.jdt.core.dom.MethodDeclaration", "org.eclipse.jdt.core.IMethod", "org.eclipse.jdt.core.dom.CompilationUnit"))
+				.replacementMethod(new Hook("lombok.eclipse.agent.PatchFixes", "getRealMethodDeclarationNode", "org.eclipse.jdt.core.dom.MethodDeclaration", "org.eclipse.jdt.core.IMethod", "org.eclipse.jdt.core.dom.CompilationUnit"))
+				.build());
+
+		/* Do not add  @Override's for generated methods */
+		sm.addScript(ScriptBuilder.exitEarly()
+				.target(new MethodTarget("org.eclipse.jdt.core.dom.rewrite.ListRewrite", "insertFirst"))
+				.decisionMethod(new Hook("lombok.eclipse.agent.PatchFixes", "isListRewriteOnGeneratedNode", "boolean", "org.eclipse.jdt.core.dom.rewrite.ListRewrite"))
+				.request(StackRequest.THIS)
+				.build());
+		
+	}
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422689300883/fstmerge_var2_7931054097927197040
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_bf354_30276/rev_bf354-30276/src/eclipseAgent/lombok/eclipse/agent/EclipsePatcher.java
+Conflict type: SameSignatureCM
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422689301170/fstmerge_var1_6374364943949087418
+public static org.eclipse.jdt.core.dom.MethodDeclaration getRealMethodDeclarationNode(org.eclipse.jdt.core.IMethod sourceMethod, org.eclipse.jdt.core.dom.CompilationUnit cuUnit) throws JavaModelException {
+		MethodDeclaration methodDeclarationNode = ASTNodeSearchUtil.getMethodDeclarationNode(sourceMethod, cuUnit);
+		if (isGenerated(methodDeclarationNode)) {
+			IType declaringType = sourceMethod.getDeclaringType();
+			Stack<IType> typeStack = new Stack<IType>();
+			while (declaringType != null) {
+				typeStack.push(declaringType);
+				declaringType = declaringType.getDeclaringType();
+			}
+			
+			IType rootType = typeStack.pop();
+			org.eclipse.jdt.core.dom.AbstractTypeDeclaration typeDeclaration = findTypeDeclaration(rootType, cuUnit.types());
+			while (!typeStack.isEmpty() && typeDeclaration != null) {
+				typeDeclaration = findTypeDeclaration(typeStack.pop(), typeDeclaration.bodyDeclarations());
+			}
+
+			if (typeStack.isEmpty() && typeDeclaration != null) {
+				String methodName = sourceMethod.getElementName();
+				for (Object declaration : typeDeclaration.bodyDeclarations()) {
+					if (declaration instanceof org.eclipse.jdt.core.dom.MethodDeclaration) {
+						org.eclipse.jdt.core.dom.MethodDeclaration methodDeclaration = (org.eclipse.jdt.core.dom.MethodDeclaration) declaration;
+						if (methodDeclaration.getName().toString().equals(methodName)) {
+							return methodDeclaration;
+						}
+					}
+				}
+			}
+		}
+		return methodDeclarationNode;
+	}
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422689301170/fstmerge_base_3383876870225647466
+=======
+public static org.eclipse.jdt.core.dom.MethodDeclaration getRealMethodDeclarationNode(org.eclipse.jdt.core.IMethod sourceMethod, org.eclipse.jdt.core.dom.CompilationUnit cuUnit) throws JavaModelException {
+		MethodDeclaration methodDeclarationNode = ASTNodeSearchUtil.getMethodDeclarationNode(sourceMethod, cuUnit);
+		if (isGenerated(methodDeclarationNode)) {
+			String typeName = sourceMethod.getTypeRoot().getElementName();
+			String methodName = sourceMethod.getElementName();
+			for (Object type : cuUnit.types()) {
+				org.eclipse.jdt.core.dom.AbstractTypeDeclaration typeDeclaration = (AbstractTypeDeclaration)type;
+				if ((typeDeclaration.getName()+".java").equals(typeName)) {
+					for (Object declaration : typeDeclaration.bodyDeclarations()) {
+						if (declaration instanceof org.eclipse.jdt.core.dom.MethodDeclaration) {
+							org.eclipse.jdt.core.dom.MethodDeclaration methodDeclaration = (org.eclipse.jdt.core.dom.MethodDeclaration) declaration;
+							if (methodDeclaration.getName().toString().equals(methodName)) {
+								return methodDeclaration;
+							}
+						}
+					}
+				}
+			}
+		}
+		return methodDeclarationNode;
+	}
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422689301170/fstmerge_var2_7843054078138329843
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_bf354_30276/rev_bf354-30276/src/eclipseAgent/lombok/eclipse/agent/PatchFixes.java
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_1085c_2ea92/rev_1085c-2ea92.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_a59a2_57fbc/rev_a59a2-57fbc.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_1a08a_15143/rev_1a08a-15143.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_5185f_0774c/rev_5185f-0774c.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_fc7ca_98875/rev_fc7ca-98875.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_20c7d_42ea2/rev_20c7d-42ea2.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_73dab_7988f/rev_73dab-7988f.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_b01f5_4c8cc/rev_b01f5-4c8cc.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_1ac79_f1e67/rev_1ac79-f1e67.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_eb317_389db/rev_eb317-389db.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_0c927_aa5d3/rev_0c927-aa5d3.revisions
+Conflict type: LineBasedMCFd
+Conflict body: 
+private void createGetterForField(AccessLevel level,
+			JavacNode fieldNode, JavacNode source, boolean whineIfExists, boolean lazy) {
+		if (fieldNode.getKind() != Kind.FIELD) {
+			source.addError("@Getter is only supported on a class or a field.");
+			return;
+		}
+		
+		JCVariableDecl fieldDecl = (JCVariableDecl)fieldNode.get();
+		
+		if (lazy) {
+			if ((fieldDecl.mods.flags & Flags.PRIVATE) == 0 || (fieldDecl.mods.flags & Flags.FINAL) == 0) {
+				source.addError("'lazy' requires the field to be private and final.");
+				return;
+			}
+			if (fieldDecl.init == null) {
+				source.addError("'lazy' requires field initialization.");
+				return;
+			}
+		}
+		
+		String methodName = toGetterName(fieldNode);
+		
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422689887484/fstmerge_var1_5196520706336907063
+		for (String altName : toAllGetterNames(fieldDecl)) {
+			switch (methodExists(altName, fieldNode, false, 0)) {
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422689887484/fstmerge_base_3642533537565505999
+		for (String altName : toAllGetterNames(fieldDecl)) {
+			switch (methodExists(altName, fieldNode, false)) {
+=======
+		if (methodName == null) {
+			source.addWarning("Not generating getter for this field: It does not fit your @Accessors prefix list.");
+			return;
+		}
+		
+		for (String altName : toAllGetterNames(fieldNode)) {
+			switch (methodExists(altName, fieldNode, false)) {
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422689887484/fstmerge_var2_5728554961073380972
+			case EXISTS_BY_LOMBOK:
+				return;
+			case EXISTS_BY_USER:
+				if (whineIfExists) {
+					String altNameExpl = "";
+					if (!altName.equals(methodName)) altNameExpl = String.format(" (%s)", altName);
+					source.addWarning(
+						String.format("Not generating %s(): A method with that name already exists%s", methodName, altNameExpl));
+				}
+				return;
+			default:
+			case NOT_EXISTS:
+				//continue scanning the other alt names.
+			}
+		}
+		
+		long access = toJavacModifier(level) | (fieldDecl.mods.flags & Flags.STATIC);
+		
+		injectMethod(fieldNode.up(), createGetter(access, fieldNode, fieldNode.getTreeMaker(), lazy, source.get()));
+	}
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_0c927_aa5d3/rev_0c927-aa5d3/src/core/lombok/javac/handlers/HandleGetter.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+private void createSetterForField(AccessLevel level,
+			JavacNode fieldNode, JavacNode source, boolean whineIfExists) {
+		
+		if (fieldNode.getKind() != Kind.FIELD) {
+			fieldNode.addError("@Setter is only supported on a class or a field.");
+			return;
+		}
+		
+		JCVariableDecl fieldDecl = (JCVariableDecl)fieldNode.get();
+		String methodName = toSetterName(fieldNode);
+		
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422689887584/fstmerge_var1_1744482561296209972
+		for (String altName : toAllSetterNames(fieldDecl)) {
+			switch (methodExists(altName, fieldNode, false, 1)) {
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422689887584/fstmerge_base_6856587306198462184
+		for (String altName : toAllSetterNames(fieldDecl)) {
+			switch (methodExists(altName, fieldNode, false)) {
+=======
+		if (methodName == null) {
+			source.addWarning("Not generating setter for this field: It does not fit your @Accessors prefix list.");
+			return;
+		}
+		
+		for (String altName : toAllSetterNames(fieldNode)) {
+			switch (methodExists(altName, fieldNode, false)) {
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422689887584/fstmerge_var2_5618283697288887366
+			case EXISTS_BY_LOMBOK:
+				return;
+			case EXISTS_BY_USER:
+				if (whineIfExists) {
+					String altNameExpl = "";
+					if (!altName.equals(methodName)) altNameExpl = String.format(" (%s)", altName);
+					source.addWarning(
+						String.format("Not generating %s(): A method with that name already exists%s", methodName, altNameExpl));
+				}
+				return;
+			default:
+			case NOT_EXISTS:
+				//continue scanning the other alt names.
+			}
+		}
+		
+		long access = toJavacModifier(level) | (fieldDecl.mods.flags & Flags.STATIC);
+		
+		JCMethodDecl createdSetter = createSetter(access, fieldNode, fieldNode.getTreeMaker(), source.get());
+		injectMethod(fieldNode.up(), createdSetter);
+	}
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_0c927_aa5d3/rev_0c927-aa5d3/src/core/lombok/javac/handlers/HandleSetter.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+private void createGetterForField(AccessLevel level,
+			EclipseNode fieldNode, EclipseNode errorNode, ASTNode source, boolean whineIfExists, boolean lazy) {
+		if (fieldNode.getKind() != Kind.FIELD) {
+			errorNode.addError("@Getter is only supported on a class or a field.");
+			return;
+		}
+		
+		FieldDeclaration field = (FieldDeclaration) fieldNode.get();
+		if (lazy) {
+			if ((field.modifiers & ClassFileConstants.AccPrivate) == 0 || (field.modifiers & ClassFileConstants.AccFinal) == 0) {
+				errorNode.addError("'lazy' requires the field to be private and final.");
+				return;
+			}
+			if (field.initialization == null) {
+				errorNode.addError("'lazy' requires field initialization.");
+				return;
+			}
+		}
+		
+		TypeReference fieldType = copyType(field.type, source);
+		boolean isBoolean = nameEquals(fieldType.getTypeName(), "boolean") && fieldType.dimensions() == 0;
+		String getterName = toGetterName(fieldNode, isBoolean);
+		
+		if (getterName == null) {
+			errorNode.addWarning("Not generating getter for this field: It does not fit your @Accessors prefix list.");
+			return;
+		}
+		
+		int modifier = toEclipseModifier(level) | (field.modifiers & ClassFileConstants.AccStatic);
+		
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422689889846/fstmerge_var1_6724992447844385032
+		for (String altName : TransformationsUtil.toAllGetterNames(fieldName, isBoolean)) {
+			switch (methodExists(altName, fieldNode, false, 0)) {
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422689889846/fstmerge_base_8922031978670053287
+		for (String altName : TransformationsUtil.toAllGetterNames(fieldName, isBoolean)) {
+			switch (methodExists(altName, fieldNode, false)) {
+=======
+		for (String altName : toAllGetterNames(fieldNode, isBoolean)) {
+			switch (methodExists(altName, fieldNode, false)) {
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422689889846/fstmerge_var2_2592200370977422663
+			case EXISTS_BY_LOMBOK:
+				return;
+			case EXISTS_BY_USER:
+				if (whineIfExists) {
+					String altNameExpl = "";
+					if (!altName.equals(getterName)) altNameExpl = String.format(" (%s)", altName);
+					errorNode.addWarning(
+						String.format("Not generating %s(): A method with that name already exists%s", getterName, altNameExpl));
+				}
+				return;
+			default:
+			case NOT_EXISTS:
+				//continue scanning the other alt names.
+			}
+		}
+		
+		MethodDeclaration method = generateGetter((TypeDeclaration) fieldNode.up().get(), fieldNode, getterName, modifier, source, lazy);
+		
+		Annotation[] deprecated = null;
+		if (isFieldDeprecated(fieldNode)) {
+			deprecated = new Annotation[] { generateDeprecatedAnnotation(source) };
+		}
+		
+		Annotation[] copiedAnnotations = copyAnnotations(source, findAnnotations(field, TransformationsUtil.NON_NULL_PATTERN), findAnnotations(field, TransformationsUtil.NULLABLE_PATTERN), findDelegatesAndMarkAsHandled(fieldNode), deprecated);
+		if (copiedAnnotations.length != 0) {
+			method.annotations = copiedAnnotations;
+		}
+		
+		injectMethod(fieldNode.up(), method);
+	}
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_0c927_aa5d3/rev_0c927-aa5d3/src/core/lombok/eclipse/handlers/HandleGetter.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+private void createSetterForField(AccessLevel level,
+			EclipseNode fieldNode, EclipseNode errorNode, ASTNode source, boolean whineIfExists) {
+		if (fieldNode.getKind() != Kind.FIELD) {
+			errorNode.addError("@Setter is only supported on a class or a field.");
+			return;
+		}
+		
+		FieldDeclaration field = (FieldDeclaration) fieldNode.get();
+		TypeReference fieldType = copyType(field.type, source);
+		boolean isBoolean = nameEquals(fieldType.getTypeName(), "boolean") && fieldType.dimensions() == 0;
+		String setterName = toSetterName(fieldNode, isBoolean);
+		if (setterName == null) {
+			errorNode.addWarning("Not generating setter for this field: It does not fit your @Accessors prefix list.");
+			return;
+		}
+		
+		int modifier = toEclipseModifier(level) | (field.modifiers & ClassFileConstants.AccStatic);
+		
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422689890128/fstmerge_var1_7427484590458300315
+		for (String altName : TransformationsUtil.toAllSetterNames(new String(field.name), isBoolean)) {
+			switch (methodExists(altName, fieldNode, false, 1)) {
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422689890128/fstmerge_base_2213064855030260756
+		for (String altName : TransformationsUtil.toAllSetterNames(new String(field.name), isBoolean)) {
+			switch (methodExists(altName, fieldNode, false)) {
+=======
+		for (String altName : toAllSetterNames(fieldNode, isBoolean)) {
+			switch (methodExists(altName, fieldNode, false)) {
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422689890128/fstmerge_var2_1899573008253780367
+			case EXISTS_BY_LOMBOK:
+				return;
+			case EXISTS_BY_USER:
+				if (whineIfExists) {
+					String altNameExpl = "";
+					if (!altName.equals(setterName)) altNameExpl = String.format(" (%s)", altName);
+					errorNode.addWarning(
+						String.format("Not generating %s(): A method with that name already exists%s", setterName, altNameExpl));
+				}
+				return;
+			default:
+			case NOT_EXISTS:
+				//continue scanning the other alt names.
+			}
+		}
+		
+		MethodDeclaration method = generateSetter((TypeDeclaration) fieldNode.up().get(), fieldNode, setterName, modifier, source);
+		injectMethod(fieldNode.up(), method);
+	}
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_0c927_aa5d3/rev_0c927-aa5d3/src/core/lombok/eclipse/handlers/HandleSetter.java
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_4689d_c4984/rev_4689d-c4984.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_704b8_45ebe/rev_704b8-45ebe.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_a2646_e98d2/rev_a2646-e98d2.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_89b82_8e24e/rev_89b82-8e24e.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_eb22b_3c0ed/rev_eb22b-3c0ed.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_34055_eb4cb/rev_34055-eb4cb.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_66f32_d7776/rev_66f32-d7776.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_a8fe7_fb32d/rev_a8fe7-fb32d.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_e531b_420e0/rev_e531b-420e0.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_deed9_4c03e/rev_deed9-4c03e.revisions
+Conflict type: LineBasedMCFd
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422690483832/fstmerge_var1_8074081571468476541
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422690483832/fstmerge_base_1385880965391174247
+private JCMethodDecl createToString(JavacNode typeNode, List<JavacNode> fields, boolean includeFieldNames, boolean callSuper, FieldAccess fieldAccess, JCTree source) {
+		TreeMaker maker = typeNode.getTreeMaker();
+		
+		JCAnnotation overrideAnnotation = maker.Annotation(chainDots(typeNode, "java", "lang", "Override"), List.<JCExpression>nil());
+		JCModifiers mods = maker.Modifiers(Flags.PUBLIC, List.of(overrideAnnotation));
+		JCExpression returnType = chainDots(typeNode, "java", "lang", "String");
+		
+		boolean first = true;
+		
+		String typeName = getTypeName(typeNode);
+		String infix = ", ";
+		String suffix = ")";
+		String prefix;
+		if (callSuper) {
+			prefix = typeName + "(super=";
+		} else if (fields.isEmpty()) {
+			prefix = typeName + "()";
+		} else if (includeFieldNames) {
+			prefix = typeName + "(" + ((JCVariableDecl)fields.iterator().next().get()).name.toString() + "=";
+		} else {
+			prefix = typeName + "(";
+		}
+		
+		JCExpression current = maker.Literal(prefix);
+		
+		if (callSuper) {
+			JCMethodInvocation callToSuper = maker.Apply(List.<JCExpression>nil(),
+					maker.Select(maker.Ident(typeNode.toName("super")), typeNode.toName("toString")),
+					List.<JCExpression>nil());
+			current = maker.Binary(CTC_PLUS, current, callToSuper);
+			first = false;
+		}
+		
+		for (JavacNode fieldNode : fields) {
+			JCVariableDecl field = (JCVariableDecl) fieldNode.get();
+			JCExpression expr;
+			
+			JCExpression fieldAccessor = createFieldAccessor(maker, fieldNode, fieldAccess);
+			
+			if (getFieldType(fieldNode, fieldAccess) instanceof JCArrayTypeTree) {
+				boolean multiDim = ((JCArrayTypeTree)field.vartype).elemtype instanceof JCArrayTypeTree;
+				boolean primitiveArray = ((JCArrayTypeTree)field.vartype).elemtype instanceof JCPrimitiveTypeTree;
+				boolean useDeepTS = multiDim || !primitiveArray;
+				
+				JCExpression hcMethod = chainDots(typeNode, "java", "util", "Arrays", useDeepTS ? "deepToString" : "toString");
+				expr = maker.Apply(List.<JCExpression>nil(), hcMethod, List.<JCExpression>of(fieldAccessor));
+			} else expr = fieldAccessor;
+			
+			if (first) {
+				current = maker.Binary(CTC_PLUS, current, expr);
+				first = false;
+				continue;
+			}
+			
+			if (includeFieldNames) {
+				current = maker.Binary(CTC_PLUS, current, maker.Literal(infix + fieldNode.getName() + "="));
+			} else {
+				current = maker.Binary(CTC_PLUS, current, maker.Literal(infix));
+			}
+			
+			current = maker.Binary(CTC_PLUS, current, expr);
+		}
+		
+		if (!first) current = maker.Binary(CTC_PLUS, current, maker.Literal(suffix));
+		
+		JCStatement returnStatement = maker.Return(current);
+		
+		JCBlock body = maker.Block(0, List.of(returnStatement));
+		
+		return recursiveSetGeneratedBy(maker.MethodDef(mods, typeNode.toName("toString"), returnType,
+				List.<JCTypeParameter>nil(), List.<JCVariableDecl>nil(), List.<JCExpression>nil(), body, null), source);
+	}
+=======
+private JCMethodDecl createToString(JavacNode typeNode, List<JavacNode> fields, boolean includeFieldNames, boolean callSuper, FieldAccess fieldAccess, JCTree source) {
+		TreeMaker maker = typeNode.getTreeMaker();
+		
+		JCAnnotation overrideAnnotation = maker.Annotation(chainDots(typeNode, "java", "lang", "Override"), List.<JCExpression>nil());
+		JCModifiers mods = maker.Modifiers(Flags.PUBLIC, List.of(overrideAnnotation));
+		JCExpression returnType = chainDots(typeNode, "java", "lang", "String");
+		
+		boolean first = true;
+		
+		String typeName = getTypeName(typeNode);
+		String infix = ", ";
+		String suffix = ")";
+		String prefix;
+		if (callSuper) {
+			prefix = typeName + "(super=";
+		} else if (fields.isEmpty()) {
+			prefix = typeName + "()";
+		} else if (includeFieldNames) {
+			prefix = typeName + "(" + ((JCVariableDecl)fields.iterator().next().get()).name.toString() + "=";
+		} else {
+			prefix = typeName + "(";
+		}
+		
+		JCExpression current = maker.Literal(prefix);
+		
+		if (callSuper) {
+			JCMethodInvocation callToSuper = maker.Apply(List.<JCExpression>nil(),
+					maker.Select(maker.Ident(typeNode.toName("super")), typeNode.toName("toString")),
+					List.<JCExpression>nil());
+			current = Javac.makeBinary(maker, CTC_PLUS, current, callToSuper);
+			first = false;
+		}
+		
+		for (JavacNode fieldNode : fields) {
+			JCVariableDecl field = (JCVariableDecl) fieldNode.get();
+			JCExpression expr;
+			
+			JCExpression fieldAccessor = createFieldAccessor(maker, fieldNode, fieldAccess);
+			
+			if (getFieldType(fieldNode, fieldAccess) instanceof JCArrayTypeTree) {
+				boolean multiDim = ((JCArrayTypeTree)field.vartype).elemtype instanceof JCArrayTypeTree;
+				boolean primitiveArray = ((JCArrayTypeTree)field.vartype).elemtype instanceof JCPrimitiveTypeTree;
+				boolean useDeepTS = multiDim || !primitiveArray;
+				
+				JCExpression hcMethod = chainDots(typeNode, "java", "util", "Arrays", useDeepTS ? "deepToString" : "toString");
+				expr = maker.Apply(List.<JCExpression>nil(), hcMethod, List.<JCExpression>of(fieldAccessor));
+			} else expr = fieldAccessor;
+			
+			if (first) {
+				current = Javac.makeBinary(maker, CTC_PLUS, current, expr);
+				first = false;
+				continue;
+			}
+			
+			if (includeFieldNames) {
+				current = Javac.makeBinary(maker, CTC_PLUS, current, maker.Literal(infix + fieldNode.getName() + "="));
+			} else {
+				current = Javac.makeBinary(maker, CTC_PLUS, current, maker.Literal(infix));
+			}
+			
+			current = Javac.makeBinary(maker, CTC_PLUS, current, expr);
+		}
+		
+		if (!first) current = Javac.makeBinary(maker, CTC_PLUS, current, maker.Literal(suffix));
+		
+		JCStatement returnStatement = maker.Return(current);
+		
+		JCBlock body = maker.Block(0, List.of(returnStatement));
+		
+		return recursiveSetGeneratedBy(maker.MethodDef(mods, typeNode.toName("toString"), returnType,
+				List.<JCTypeParameter>nil(), List.<JCVariableDecl>nil(), List.<JCExpression>nil(), body, null), source);
+	}
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422690483832/fstmerge_var2_745397866658239306
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_deed9_4c03e/rev_deed9-4c03e/src/core/lombok/javac/handlers/HandleToString.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+public static JCStatement generateNullCheck(TreeMaker maker, JavacNode variable) {
+		JCVariableDecl varDecl = (JCVariableDecl) variable.get();
+		if (isPrimitive(varDecl.vartype)) return null;
+		Name fieldName = varDecl.name;
+		JCExpression npe = chainDots(variable, "java", "lang", "NullPointerException");
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422690484086/fstmerge_var1_4524774396009272958
+		JCTree exception = treeMaker.NewClass(null, List.<JCExpression>nil(), npe, List.<JCExpression>of(treeMaker.Literal(fieldName.toString())), null);
+		JCStatement throwStatement = treeMaker.Throw(exception);
+		JCBlock throwBlock = treeMaker.Block(0, List.of(throwStatement));
+		return treeMaker.If(treeMaker.Binary(CTC_EQUAL, treeMaker.Ident(fieldName), treeMaker.Literal(CTC_BOT, null)), throwBlock, null);
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422690484086/fstmerge_base_608475465779004525
+		JCTree exception = treeMaker.NewClass(null, List.<JCExpression>nil(), npe, List.<JCExpression>of(treeMaker.Literal(fieldName.toString())), null);
+		JCStatement throwStatement = treeMaker.Throw(exception);
+		return treeMaker.If(treeMaker.Binary(CTC_EQUAL, treeMaker.Ident(fieldName), treeMaker.Literal(CTC_BOT, null)), throwStatement, null);
+=======
+		JCTree exception = maker.NewClass(null, List.<JCExpression>nil(), npe, List.<JCExpression>of(maker.Literal(fieldName.toString())), null);
+		JCStatement throwStatement = maker.Throw(exception);
+		return maker.If(Javac.makeBinary(maker, CTC_EQUAL, maker.Ident(fieldName), Javac.makeLiteral(maker, CTC_BOT, null)), throwStatement, null);
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422690484086/fstmerge_var2_1900272368717013990
+	}
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_deed9_4c03e/rev_deed9-4c03e/src/core/lombok/javac/handlers/JavacHandlerUtil.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+private static void setInCompiler(JavaCompiler compiler, Context context, Map<JCCompilationUnit, List<CommentInfo>> commentsMap) {
+		
+		try {
+			if (Javac.getJavaCompilerVersion() <= 6) {
+				Class<?> parserFactory = Class.forName("lombok.javac.java6.CommentCollectingParserFactory");
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422690488031/fstmerge_var1_684594724236499455
+				parserFactory.getMethod("setInCompiler", JavaCompiler.class, Context.class, Map.class).invoke(null, compiler, context, commentsMap);
+			} else {
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422690488031/fstmerge_base_736431791149984621
+				parserFactory.getMethod("setInCompiler",JavaCompiler.class, Context.class, Map.class).invoke(null, compiler, context, commentsMap);
+			} else {
+=======
+				parserFactory.getMethod("setInCompiler",JavaCompiler.class, Context.class, Map.class).invoke(null, compiler, context, commentsMap);
+			} else if (JavaCompiler.version().startsWith("1.7") || JavaCompiler.version().startsWith("1.8")) {
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422690488031/fstmerge_var2_5242199222883585218
+				Class<?> parserFactory = Class.forName("lombok.javac.java7.CommentCollectingParserFactory");
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422690488031/fstmerge_var1_684594724236499455
+				parserFactory.getMethod("setInCompiler", JavaCompiler.class, Context.class, Map.class).invoke(null, compiler, context, commentsMap);
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422690488031/fstmerge_base_736431791149984621
+				parserFactory.getMethod("setInCompiler",JavaCompiler.class, Context.class, Map.class).invoke(null, compiler, context, commentsMap);
+=======
+				parserFactory.getMethod("setInCompiler",JavaCompiler.class, Context.class, Map.class).invoke(null, compiler, context, commentsMap);
+			} else {
+				throw new IllegalStateException("No comments parser for compiler version " + JavaCompiler.version());
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422690488031/fstmerge_var2_5242199222883585218
+			}
+			
+		} catch (Exception e) {
+			if (e instanceof RuntimeException) throw (RuntimeException)e;
+			throw new RuntimeException(e);
+		}
+	}
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_deed9_4c03e/rev_deed9-4c03e/src/utils/lombok/javac/CommentCatcher.java
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_df694_3619f/rev_df694-3619f.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_05b85_deed9/rev_05b85-deed9.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_95cf8_1eaaf/rev_95cf8-1eaaf.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_72b55_7ee86/rev_72b55-7ee86.revisions
+Conflict type: LineBasedMCFd
+Conflict body: 
+static JCMethodDecl createConstructor(AccessLevel level, List<JCAnnotation> onConstructor, JavacNode typeNode, List<JavacNode> fields, boolean suppressConstructorProperties, JCTree source) {
+		JavacTreeMaker maker = typeNode.getTreeMaker();
+		
+		boolean isEnum = (((JCClassDecl) typeNode.get()).mods.flags & Flags.ENUM) != 0;
+		if (isEnum) level = AccessLevel.PRIVATE;
+		
+		ListBuffer<JCStatement> nullChecks = ListBuffer.lb();
+		ListBuffer<JCStatement> assigns = ListBuffer.lb();
+		ListBuffer<JCVariableDecl> params = ListBuffer.lb();
+		
+		for (JavacNode fieldNode : fields) {
+			JCVariableDecl field = (JCVariableDecl) fieldNode.get();
+			Name fieldName = removePrefixFromField(fieldNode);
+			Name rawName = field.name;
+			List<JCAnnotation> nonNulls = findAnnotations(fieldNode, TransformationsUtil.NON_NULL_PATTERN);
+			List<JCAnnotation> nullables = findAnnotations(fieldNode, TransformationsUtil.NULLABLE_PATTERN);
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422690773795/fstmerge_var1_5964636481292468023
+			JCVariableDecl param = maker.VarDef(maker.Modifiers(Flags.FINAL, nonNulls.appendList(nullables)), fieldName, field.vartype, null);
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422690773795/fstmerge_base_9052773667533627933
+			JCVariableDecl param = maker.VarDef(maker.Modifiers(Flags.FINAL, nonNulls.appendList(nullables)), field.name, field.vartype, null);
+=======
+			JCVariableDecl param = maker.VarDef(maker.Modifiers(Flags.FINAL | Flags.PARAMETER, nonNulls.appendList(nullables)), field.name, field.vartype, null);
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422690773795/fstmerge_var2_8900741866175918712
+			params.append(param);
+			JCFieldAccess thisX = maker.Select(maker.Ident(fieldNode.toName("this")), rawName);
+			JCAssign assign = maker.Assign(thisX, maker.Ident(fieldName));
+			assigns.append(maker.Exec(assign));
+			
+			if (!nonNulls.isEmpty()) {
+				JCStatement nullCheck = generateNullCheck(maker, fieldNode);
+				if (nullCheck != null) nullChecks.append(nullCheck);
+			}
+		}
+		
+		JCModifiers mods = maker.Modifiers(toJavacModifier(level), List.<JCAnnotation>nil());
+		if (!suppressConstructorProperties && level != AccessLevel.PRIVATE && !isLocalType(typeNode)) {
+			addConstructorProperties(mods, typeNode, fields);
+		}
+		if (onConstructor != null) mods.annotations = mods.annotations.appendList(copyAnnotations(onConstructor));
+		
+		return recursiveSetGeneratedBy(maker.MethodDef(mods, typeNode.toName("<init>"),
+				null, List.<JCTypeParameter>nil(), params.toList(), List.<JCExpression>nil(), maker.Block(0L, nullChecks.appendList(assigns).toList()), null), source);
+	}
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_72b55_7ee86/rev_72b55-7ee86/src/core/lombok/javac/handlers/HandleConstructor.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+private JCMethodDecl createStaticConstructor(String name, AccessLevel level, JavacNode typeNode, List<JavacNode> fields, JCTree source) {
+		JavacTreeMaker maker = typeNode.getTreeMaker();
+		JCClassDecl type = (JCClassDecl) typeNode.get();
+		
+		JCModifiers mods = maker.Modifiers(Flags.STATIC | toJavacModifier(level));
+		
+		JCExpression returnType, constructorType;
+		
+		ListBuffer<JCTypeParameter> typeParams = ListBuffer.lb();
+		ListBuffer<JCVariableDecl> params = ListBuffer.lb();
+		ListBuffer<JCExpression> typeArgs1 = ListBuffer.lb();
+		ListBuffer<JCExpression> typeArgs2 = ListBuffer.lb();
+		ListBuffer<JCExpression> args = ListBuffer.lb();
+		
+		if (!type.typarams.isEmpty()) {
+			for (JCTypeParameter param : type.typarams) {
+				typeArgs1.append(maker.Ident(param.name));
+				typeArgs2.append(maker.Ident(param.name));
+				typeParams.append(maker.TypeParameter(param.name, param.bounds));
+			}
+			returnType = maker.TypeApply(maker.Ident(type.name), typeArgs1.toList());
+			constructorType = maker.TypeApply(maker.Ident(type.name), typeArgs2.toList());
+		} else {
+			returnType = maker.Ident(type.name);
+			constructorType = maker.Ident(type.name);
+		}
+		
+		for (JavacNode fieldNode : fields) {
+			JCVariableDecl field = (JCVariableDecl) fieldNode.get();
+			Name fieldName = removePrefixFromField(fieldNode);
+			JCExpression pType = cloneType(maker, field.vartype, source);
+			List<JCAnnotation> nonNulls = findAnnotations(fieldNode, TransformationsUtil.NON_NULL_PATTERN);
+			List<JCAnnotation> nullables = findAnnotations(fieldNode, TransformationsUtil.NULLABLE_PATTERN);
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422690773804/fstmerge_var1_7173643990359530435
+			JCVariableDecl param = maker.VarDef(maker.Modifiers(Flags.FINAL, nonNulls.appendList(nullables)), fieldName, pType, null);
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422690773804/fstmerge_base_3948246945533055743
+			JCVariableDecl param = maker.VarDef(maker.Modifiers(Flags.FINAL, nonNulls.appendList(nullables)), field.name, pType, null);
+=======
+			JCVariableDecl param = maker.VarDef(maker.Modifiers(Flags.FINAL | Flags.PARAMETER, nonNulls.appendList(nullables)), field.name, pType, null);
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422690773804/fstmerge_var2_8387371349916803618
+			params.append(param);
+			args.append(maker.Ident(fieldName));
+		}
+		JCReturn returnStatement = maker.Return(maker.NewClass(null, List.<JCExpression>nil(), constructorType, args.toList(), null));
+		JCBlock body = maker.Block(0, List.<JCStatement>of(returnStatement));
+		
+		return recursiveSetGeneratedBy(maker.MethodDef(mods, typeNode.toName(name), returnType, typeParams.toList(), params.toList(), List.<JCExpression>nil(), body, null), source);
+	}
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_72b55_7ee86/rev_72b55-7ee86/src/core/lombok/javac/handlers/HandleConstructor.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+~~FSTMerge~~ private static final String RELEASE_NAME = "Angry Butterfly"; ##FSTMerge## private static final String RELEASE_NAME = "Angry Butterfy"; ##FSTMerge## private static final String RELEASE_NAME = "Edgy Guinea Pig";
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_72b55_7ee86/rev_72b55-7ee86/src/core/lombok/core/Version.java
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_83b7e_5deb1/rev_83b7e-5deb1.revisions
+Conflict type: LineBasedMCFd
+Conflict body: 
+public static Class<?> loadDelombok(List<String> args) throws Exception {
+		//tools.jar is probably not on the classpath. We're going to try and find it, and then load the rest via a ClassLoader that includes tools.jar.
+		final File toolsJar = findToolsJar();
+		if (toolsJar == null) {
+			String examplePath = "/path/to/tools.jar";
+			if (File.separator.equals("\\")) examplePath = "C:\\path\\to\\tools.jar";
+			StringBuilder sb = new StringBuilder();
+			for (String arg : args) {
+				if (sb.length() > 0) sb.append(' ');
+				if (arg.contains(" ")) {
+					sb.append('"').append(arg).append('"');
+				} else {
+					sb.append(arg);
+				}
+			}
+			
+			System.err.printf("Can't find tools.jar. Rerun delombok as: java -cp lombok.jar%1$s%2$s lombok.core.Main delombok %3$s\n",
+					File.pathSeparator, examplePath, sb.toString());
+			return null;
+		}
+		
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422690849884/fstmerge_var1_1991984324456687956
+		@SuppressWarnings({"resource", "all"}) final JarFile toolsJarFile = new JarFile(toolsJar);
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422690849884/fstmerge_base_554938995053687985
+		final JarFile toolsJarFile = new JarFile(toolsJar);
+=======
+		@SuppressWarnings("resource") 
+		// The jar file is used for the lifetime of the classLoader, therefore the lifetime of delombok.
+		// Since we only read from it, not closing it should not be a problem.
+		final JarFile toolsJarFile = new JarFile(toolsJar);
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422690849884/fstmerge_var2_6871623716517898451
+		
+		ClassLoader loader = new ClassLoader() {
+			private Class<?> loadStreamAsClass(String name, boolean resolve, InputStream in) throws ClassNotFoundException {
+				try {
+					try {
+						byte[] b = new byte[65536];
+						ByteArrayOutputStream out = new ByteArrayOutputStream();
+						while (true) {
+							int r = in.read(b);
+							if (r == -1) break;
+							out.write(b, 0, r);
+						}
+						in.close();
+						byte[] data = out.toByteArray();
+						Class<?> c = defineClass(name, data, 0, data.length);
+						if (resolve) resolveClass(c);
+						return c;
+					} finally {
+						in.close();
+					}
+				} catch (IOException e2) {
+					throw new ClassNotFoundException(name, e2);
+				}
+			}
+			
+			@Override protected synchronized Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
+				String rawName = name.replace(".", "/") + ".class";
+				JarEntry entry = toolsJarFile.getJarEntry(rawName);
+				if (entry == null) {
+					if (name.startsWith("lombok.")) return loadStreamAsClass(name, resolve, super.getResourceAsStream(rawName));
+					return super.loadClass(name, resolve);
+				}
+				
+				try {
+					return loadStreamAsClass(name, resolve, toolsJarFile.getInputStream(entry));
+				} catch (IOException e2) {
+					throw new ClassNotFoundException(name, e2);
+				}
+			}
+			
+			@Override public URL getResource(String name) {
+				JarEntry entry = toolsJarFile.getJarEntry(name);
+				if (entry == null) return super.getResource(name);
+				try {
+					return new URL("jar:file:" + toolsJar.getAbsolutePath() + "!" + name);
+				} catch (MalformedURLException ignore) {
+					return null;
+				}
+			}
+			
+			@Override public Enumeration<URL> getResources(final String name) throws IOException {
+				JarEntry entry = toolsJarFile.getJarEntry(name);
+				final Enumeration<URL> parent = super.getResources(name);
+				if (entry == null) return super.getResources(name);
+				return new Enumeration<URL>() {
+					private boolean first = false;
+					@Override public boolean hasMoreElements() {
+						return !first || parent.hasMoreElements();
+					}
+					
+					@Override public URL nextElement() {
+						if (!first) {
+							first = true;
+							try {
+								return new URL("jar:file:" + toolsJar.getAbsolutePath() + "!" + name);
+							} catch (MalformedURLException ignore) {
+								return parent.nextElement();
+							}
+						}
+						return parent.nextElement();
+					}
+				};
+			}
+		};
+		return loader.loadClass("lombok.delombok.Delombok");
+	}
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_83b7e_5deb1/rev_83b7e-5deb1/src/delombok/lombok/delombok/DelombokApp.java
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_9760b_fa1d7/rev_9760b-fa1d7.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_71a22_ed822/rev_71a22-ed822.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_d1182_e1344/rev_d1182-e1344.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_52bb7_89358/rev_52bb7-89358.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_fbab1_e5574/rev_fbab1-e5574.revisions
+Conflict type: LineBasedMCFd
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422691234573/fstmerge_var1_9136101867375125050
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422691234573/fstmerge_base_8664666834094158187
+public static void processAnnotation(LoggingFramework framework, AnnotationValues<?> annotation, JavacNode annotationNode) {
+		deleteAnnotationIfNeccessary(annotationNode, framework.getAnnotationClass());
+		
+		JavacNode typeNode = annotationNode.up();
+		switch (typeNode.getKind()) {
+		case TYPE:
+			if ((((JCClassDecl)typeNode.get()).mods.flags & Flags.INTERFACE)!= 0) {
+				annotationNode.addError("@Log is legal only on classes and enums.");
+				return;
+			}
+			
+			if (fieldExists("log", typeNode)!= MemberExistsResult.NOT_EXISTS) {
+				annotationNode.addWarning("Field 'log' already exists.");
+				return;
+			}
+			
+			JCFieldAccess loggingType = selfType(typeNode);
+			createField(framework, typeNode, loggingType, annotationNode.get());
+			break;
+		default:
+			annotationNode.addError("@Log is legal only on types.");
+			break;
+		}
+	}
+=======
+public static void processAnnotation(LoggingFramework framework, AnnotationValues<?> annotation, JavacNode annotationNode) {
+		deleteAnnotationIfNeccessary(annotationNode, framework.getAnnotationClass());
+		
+		JavacNode typeNode = annotationNode.up();
+		switch (typeNode.getKind()) {
+		case TYPE:
+			String logFieldName = annotationNode.getAst().readConfiguration(ConfigurationKeys.LOG_ANY_FIELD_NAME);
+			if (logFieldName == null) logFieldName = "log";
+			
+			boolean useStatic = !Boolean.FALSE.equals(annotationNode.getAst().readConfiguration(ConfigurationKeys.LOG_ANY_FIELD_IS_STATIC));
+			
+			if ((((JCClassDecl)typeNode.get()).mods.flags & Flags.INTERFACE) != 0) {
+				annotationNode.addError("@Log is legal only on classes and enums.");
+				return;
+			}
+			
+			if (fieldExists(logFieldName, typeNode)!= MemberExistsResult.NOT_EXISTS) {
+				annotationNode.addWarning("Field '" + logFieldName + "' already exists.");
+				return;
+			}
+			
+			JCFieldAccess loggingType = selfType(typeNode);
+			createField(framework, typeNode, loggingType, annotationNode.get(), logFieldName, useStatic);
+			break;
+		default:
+			annotationNode.addError("@Log is legal only on types.");
+			break;
+		}
+	}
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422691234573/fstmerge_var2_4563914740123755174
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_fbab1_e5574/rev_fbab1-e5574/src/core/lombok/javac/handlers/HandleLog.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+@Override public void handle(AnnotationValues<lombok.extern.apachecommons.CommonsLog> annotation, JCAnnotation ast, JavacNode annotationNode) {
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422691234582/fstmerge_var1_1085150463237652336
+			processAnnotation(LoggingFramework.COMMONS, annotation, annotationNode, annotation.getInstance().topic());
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422691234582/fstmerge_base_3584335448558271501
+			processAnnotation(LoggingFramework.COMMONS, annotation, annotationNode);
+=======
+			handleFlagUsage(annotationNode, ConfigurationKeys.LOG_COMMONS_FLAG_USAGE, "@apachecommons.CommonsLog", ConfigurationKeys.LOG_ANY_FLAG_USAGE, "any @Log");
+			
+			processAnnotation(LoggingFramework.COMMONS, annotation, annotationNode);
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422691234582/fstmerge_var2_8374561849058817818
+		}
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_fbab1_e5574/rev_fbab1-e5574/src/core/lombok/javac/handlers/HandleLog.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+@Override public void handle(AnnotationValues<lombok.extern.java.Log> annotation, JCAnnotation ast, JavacNode annotationNode) {
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422691234586/fstmerge_var1_7764737942904471912
+			processAnnotation(LoggingFramework.JUL, annotation, annotationNode, annotation.getInstance().topic());
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422691234586/fstmerge_base_2358637135687931322
+			processAnnotation(LoggingFramework.JUL, annotation, annotationNode);
+=======
+			handleFlagUsage(annotationNode, ConfigurationKeys.LOG_JUL_FLAG_USAGE, "@java.Log", ConfigurationKeys.LOG_ANY_FLAG_USAGE, "any @Log");
+			
+			processAnnotation(LoggingFramework.JUL, annotation, annotationNode);
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422691234586/fstmerge_var2_8076623541005667467
+		}
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_fbab1_e5574/rev_fbab1-e5574/src/core/lombok/javac/handlers/HandleLog.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+@Override public void handle(AnnotationValues<lombok.extern.log4j.Log4j> annotation, JCAnnotation ast, JavacNode annotationNode) {
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422691234590/fstmerge_var1_4094147814689593590
+			processAnnotation(LoggingFramework.LOG4J, annotation, annotationNode, annotation.getInstance().topic());
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422691234590/fstmerge_base_2698947918454005628
+			processAnnotation(LoggingFramework.LOG4J, annotation, annotationNode);
+=======
+			handleFlagUsage(annotationNode, ConfigurationKeys.LOG_LOG4J_FLAG_USAGE, "@Log4j", ConfigurationKeys.LOG_ANY_FLAG_USAGE, "any @Log");
+			
+			processAnnotation(LoggingFramework.LOG4J, annotation, annotationNode);
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422691234590/fstmerge_var2_560930117657186447
+		}
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_fbab1_e5574/rev_fbab1-e5574/src/core/lombok/javac/handlers/HandleLog.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+@Override public void handle(AnnotationValues<lombok.extern.log4j.Log4j2> annotation, JCAnnotation ast, JavacNode annotationNode) {
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422691234595/fstmerge_var1_513538379516719277
+			processAnnotation(LoggingFramework.LOG4J2, annotation, annotationNode, annotation.getInstance().topic());
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422691234595/fstmerge_base_5401016627117523860
+			processAnnotation(LoggingFramework.LOG4J2, annotation, annotationNode);
+=======
+			handleFlagUsage(annotationNode, ConfigurationKeys.LOG_LOG4J2_FLAG_USAGE, "@Log4j2", ConfigurationKeys.LOG_ANY_FLAG_USAGE, "any @Log");
+			
+			processAnnotation(LoggingFramework.LOG4J2, annotation, annotationNode);
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422691234595/fstmerge_var2_1151606177913690747
+		}
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_fbab1_e5574/rev_fbab1-e5574/src/core/lombok/javac/handlers/HandleLog.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+@Override public void handle(AnnotationValues<lombok.extern.slf4j.Slf4j> annotation, JCAnnotation ast, JavacNode annotationNode) {
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422691234599/fstmerge_var1_8789067342267602380
+			processAnnotation(LoggingFramework.SLF4J, annotation, annotationNode, annotation.getInstance().topic());
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422691234599/fstmerge_base_5128682974692047104
+			processAnnotation(LoggingFramework.SLF4J, annotation, annotationNode);
+=======
+			handleFlagUsage(annotationNode, ConfigurationKeys.LOG_SLF4J_FLAG_USAGE, "@Slf4j", ConfigurationKeys.LOG_ANY_FLAG_USAGE, "any @Log");
+			
+			processAnnotation(LoggingFramework.SLF4J, annotation, annotationNode);
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422691234599/fstmerge_var2_3194818905174479567
+		}
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_fbab1_e5574/rev_fbab1-e5574/src/core/lombok/javac/handlers/HandleLog.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+@Override public void handle(AnnotationValues<lombok.extern.slf4j.XSlf4j> annotation, JCAnnotation ast, JavacNode annotationNode) {
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422691234604/fstmerge_var1_2833983718151802251
+			processAnnotation(LoggingFramework.XSLF4J, annotation, annotationNode, annotation.getInstance().topic());
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422691234604/fstmerge_base_75134829996313187
+			processAnnotation(LoggingFramework.XSLF4J, annotation, annotationNode);
+=======
+			handleFlagUsage(annotationNode, ConfigurationKeys.LOG_XSLF4J_FLAG_USAGE, "@XSlf4j", ConfigurationKeys.LOG_ANY_FLAG_USAGE, "any @Log");
+			
+			processAnnotation(LoggingFramework.XSLF4J, annotation, annotationNode);
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422691234604/fstmerge_var2_3428971437782790263
+		}
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_fbab1_e5574/rev_fbab1-e5574/src/core/lombok/javac/handlers/HandleLog.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422691237354/fstmerge_var1_7369755003033002760
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422691237354/fstmerge_base_4017751061662362634
+public static void processAnnotation(LoggingFramework framework, AnnotationValues<? extends java.lang.annotation.Annotation> annotation, Annotation source, EclipseNode annotationNode) {
+		EclipseNode owner = annotationNode.up();
+		switch (owner.getKind()) {
+		case TYPE:
+			TypeDeclaration typeDecl = null;
+			if (owner.get() instanceof TypeDeclaration) typeDecl = (TypeDeclaration) owner.get();
+			int modifiers = typeDecl == null ? 0 : typeDecl.modifiers;
+			
+			boolean notAClass = (modifiers &
+					(ClassFileConstants.AccInterface | ClassFileConstants.AccAnnotation)) != 0;
+			
+			if (typeDecl == null || notAClass) {
+				annotationNode.addError(framework.getAnnotationAsString() + " is legal only on classes and enums.");
+				return;
+			}
+			
+			if (fieldExists("log", owner) != MemberExistsResult.NOT_EXISTS) {
+				annotationNode.addWarning("Field 'log' already exists.");
+				return;
+			}
+			
+			ClassLiteralAccess loggingType = selfType(owner, source);
+			
+			FieldDeclaration fieldDeclaration = createField(framework, source, loggingType);
+			fieldDeclaration.traverse(new SetGeneratedByVisitor(source), typeDecl.staticInitializerScope);
+			// TODO temporary workaround for issue 217. http://code.google.com/p/projectlombok/issues/detail?id=217
+			// injectFieldSuppressWarnings(owner, fieldDeclaration);
+			injectField(owner, fieldDeclaration);
+			owner.rebuild();
+			break;
+		default:
+			break;
+		}
+	}
+=======
+public static void processAnnotation(LoggingFramework framework, AnnotationValues<? extends java.lang.annotation.Annotation> annotation, Annotation source, EclipseNode annotationNode) {
+		EclipseNode owner = annotationNode.up();
+		
+		switch (owner.getKind()) {
+		case TYPE:
+			String logFieldName = annotationNode.getAst().readConfiguration(ConfigurationKeys.LOG_ANY_FIELD_NAME);
+			if (logFieldName == null) logFieldName = "log";
+			
+			boolean useStatic = !Boolean.FALSE.equals(annotationNode.getAst().readConfiguration(ConfigurationKeys.LOG_ANY_FIELD_IS_STATIC));
+			
+			TypeDeclaration typeDecl = null;
+			if (owner.get() instanceof TypeDeclaration) typeDecl = (TypeDeclaration) owner.get();
+			int modifiers = typeDecl == null ? 0 : typeDecl.modifiers;
+			
+			boolean notAClass = (modifiers &
+					(ClassFileConstants.AccInterface | ClassFileConstants.AccAnnotation)) != 0;
+			
+			if (typeDecl == null || notAClass) {
+				annotationNode.addError(framework.getAnnotationAsString() + " is legal only on classes and enums.");
+				return;
+			}
+			
+			if (fieldExists(logFieldName, owner) != MemberExistsResult.NOT_EXISTS) {
+				annotationNode.addWarning("Field '" + logFieldName + "' already exists.");
+				return;
+			}
+			
+			ClassLiteralAccess loggingType = selfType(owner, source);
+			
+			FieldDeclaration fieldDeclaration = createField(framework, source, loggingType, logFieldName, useStatic);
+			fieldDeclaration.traverse(new SetGeneratedByVisitor(source), typeDecl.staticInitializerScope);
+			// TODO temporary workaround for issue 217. http://code.google.com/p/projectlombok/issues/detail?id=217
+			// injectFieldSuppressWarnings(owner, fieldDeclaration);
+			injectField(owner, fieldDeclaration);
+			owner.rebuild();
+			break;
+		default:
+			break;
+		}
+	}
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422691237354/fstmerge_var2_1392748804241464901
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_fbab1_e5574/rev_fbab1-e5574/src/core/lombok/eclipse/handlers/HandleLog.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+@Override public void handle(AnnotationValues<lombok.extern.apachecommons.CommonsLog> annotation, Annotation source, EclipseNode annotationNode) {
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422691237364/fstmerge_var1_5343204651681993547
+			processAnnotation(LoggingFramework.COMMONS, annotation, source, annotationNode, annotation.getInstance().topic());
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422691237364/fstmerge_base_1770650727396851971
+			processAnnotation(LoggingFramework.COMMONS, annotation, source, annotationNode);
+=======
+			handleFlagUsage(annotationNode, ConfigurationKeys.LOG_COMMONS_FLAG_USAGE, "@apachecommons.CommonsLog", ConfigurationKeys.LOG_ANY_FLAG_USAGE, "any @Log");
+			
+			processAnnotation(LoggingFramework.COMMONS, annotation, source, annotationNode);
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422691237364/fstmerge_var2_5381834431968638142
+		}
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_fbab1_e5574/rev_fbab1-e5574/src/core/lombok/eclipse/handlers/HandleLog.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+@Override public void handle(AnnotationValues<lombok.extern.java.Log> annotation, Annotation source, EclipseNode annotationNode) {
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422691237367/fstmerge_var1_9067751439725644070
+			processAnnotation(LoggingFramework.JUL, annotation, source, annotationNode, annotation.getInstance().topic());
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422691237367/fstmerge_base_3550191704483321991
+			processAnnotation(LoggingFramework.JUL, annotation, source, annotationNode);
+=======
+			handleFlagUsage(annotationNode, ConfigurationKeys.LOG_JUL_FLAG_USAGE, "@java.Log", ConfigurationKeys.LOG_ANY_FLAG_USAGE, "any @Log");
+			
+			processAnnotation(LoggingFramework.JUL, annotation, source, annotationNode);
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422691237367/fstmerge_var2_1348337942194621767
+		}
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_fbab1_e5574/rev_fbab1-e5574/src/core/lombok/eclipse/handlers/HandleLog.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+@Override public void handle(AnnotationValues<lombok.extern.log4j.Log4j> annotation, Annotation source, EclipseNode annotationNode) {
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422691237370/fstmerge_var1_8769380766829857974
+			processAnnotation(LoggingFramework.LOG4J, annotation, source, annotationNode, annotation.getInstance().topic());
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422691237370/fstmerge_base_516913846456570272
+			processAnnotation(LoggingFramework.LOG4J, annotation, source, annotationNode);
+=======
+			handleFlagUsage(annotationNode, ConfigurationKeys.LOG_LOG4J_FLAG_USAGE, "@Log4j", ConfigurationKeys.LOG_ANY_FLAG_USAGE, "any @Log");
+			
+			processAnnotation(LoggingFramework.LOG4J, annotation, source, annotationNode);
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422691237370/fstmerge_var2_166528225132572402
+		}
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_fbab1_e5574/rev_fbab1-e5574/src/core/lombok/eclipse/handlers/HandleLog.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+@Override public void handle(AnnotationValues<lombok.extern.log4j.Log4j2> annotation, Annotation source, EclipseNode annotationNode) {
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422691237375/fstmerge_var1_8994224907519463965
+			processAnnotation(LoggingFramework.LOG4J2, annotation, source, annotationNode, annotation.getInstance().topic());
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422691237375/fstmerge_base_5894486839914377451
+			processAnnotation(LoggingFramework.LOG4J2, annotation, source, annotationNode);
+=======
+			handleFlagUsage(annotationNode, ConfigurationKeys.LOG_LOG4J2_FLAG_USAGE, "@Log4j2", ConfigurationKeys.LOG_ANY_FLAG_USAGE, "any @Log");
+			
+			processAnnotation(LoggingFramework.LOG4J2, annotation, source, annotationNode);
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422691237375/fstmerge_var2_8126187021672844348
+		}
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_fbab1_e5574/rev_fbab1-e5574/src/core/lombok/eclipse/handlers/HandleLog.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+@Override public void handle(AnnotationValues<lombok.extern.slf4j.Slf4j> annotation, Annotation source, EclipseNode annotationNode) {
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422691237378/fstmerge_var1_8407378803430412458
+			processAnnotation(LoggingFramework.SLF4J, annotation, source, annotationNode, annotation.getInstance().topic());
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422691237378/fstmerge_base_1320004774290480673
+			processAnnotation(LoggingFramework.SLF4J, annotation, source, annotationNode);
+=======
+			handleFlagUsage(annotationNode, ConfigurationKeys.LOG_SLF4J_FLAG_USAGE, "@Slf4j", ConfigurationKeys.LOG_ANY_FLAG_USAGE, "any @Log");
+			
+			processAnnotation(LoggingFramework.SLF4J, annotation, source, annotationNode);
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422691237378/fstmerge_var2_1644917553769393418
+		}
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_fbab1_e5574/rev_fbab1-e5574/src/core/lombok/eclipse/handlers/HandleLog.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+@Override public void handle(AnnotationValues<lombok.extern.slf4j.XSlf4j> annotation, Annotation source, EclipseNode annotationNode) {
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422691237383/fstmerge_var1_8974371350234066581
+			processAnnotation(LoggingFramework.XSLF4J, annotation, source, annotationNode, annotation.getInstance().topic());
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422691237383/fstmerge_base_8732449898169801173
+			processAnnotation(LoggingFramework.XSLF4J, annotation, source, annotationNode);
+=======
+			handleFlagUsage(annotationNode, ConfigurationKeys.LOG_XSLF4J_FLAG_USAGE, "@XSlf4j", ConfigurationKeys.LOG_ANY_FLAG_USAGE, "any @Log");
+			
+			processAnnotation(LoggingFramework.XSLF4J, annotation, source, annotationNode);
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1422691237383/fstmerge_var2_2293471021582674095
+		}
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_fbab1_e5574/rev_fbab1-e5574/src/core/lombok/eclipse/handlers/HandleLog.java
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_6c199_f956b/rev_6c199-f956b.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_17972_0de56/rev_17972-0de56.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_b1ffd_be4ed/rev_b1ffd-be4ed.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_68c5b_288a2/rev_68c5b-288a2.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_31567_29e8e/rev_31567-29e8e.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_a1c70_eba2a/rev_a1c70-eba2a.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_9e7c7_815f7/rev_9e7c7-815f7.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_296d1_19de8/rev_296d1-19de8.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_43a95_a312a/rev_43a95-a312a.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_343e5_f8acd/rev_343e5-f8acd.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/lombok/revisions/rev_8a6c5_8ed49/rev_8a6c5-8ed49.revisions

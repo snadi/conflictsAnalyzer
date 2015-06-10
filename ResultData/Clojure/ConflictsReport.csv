@@ -1,0 +1,632 @@
+=========================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/clojure/revisions/rev_16420_fcb4f/rev_16420-fcb4f.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/clojure/revisions/rev_f79e7_73059/rev_f79e7-73059.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/clojure/revisions/rev_6ee62_0ac48/rev_6ee62-0ac48.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/clojure/revisions/rev_12888_9b6b5/rev_12888-9b6b5.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/clojure/revisions/rev_cfd61_10665/rev_cfd61-10665.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/clojure/revisions/rev_96174_30916/rev_96174-30916.revisions
+Conflict type: LineBasedMCFd
+Conflict body: 
+Object run(Callable fn) throws Exception{
+	boolean done = false;
+	Object ret = null;
+	ArrayList<Ref> locked = new ArrayList<Ref>();
+	ArrayList<Notify> notify = new ArrayList<Notify>();
+
+	for(int i = 0; !done && i < RETRY_LIMIT; i++)
+		{
+		try
+			{
+			getReadPoint();
+			if(i == 0)
+				{
+				startPoint = readPoint;
+				startTime = System.nanoTime();
+				}
+			info = new Info(RUNNING, startPoint);
+			ret = fn.call();
+			//make sure no one has killed us before this point, and can't from now on
+			if(info.status.compareAndSet(RUNNING, COMMITTING))
+				{
+				for(Map.Entry<Ref, ArrayList<CFn>> e : commutes.entrySet())
+					{
+					Ref ref = e.getKey();
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418600332009/fstmerge_var1_5109810850239740137
+					boolean wasEnsured = ensures.contains(ref);
+					//can't upgrade readLock, so release it
+					releaseIfEnsured(ref);
+					tryWriteLock(ref);
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418600332009/fstmerge_base_5183248954049403347
+					ref.lock.writeLock().lock();
+=======
+					if(sets.contains(ref)) continue;
+
+					ref.lock.writeLock().lock();
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418600332009/fstmerge_var2_5735523686703738621
+					locked.add(ref);
+					if(wasEnsured && ref.tvals != null && ref.tvals.point > readPoint)
+						throw retryex;
+
+					Info refinfo = ref.tinfo;
+					if(refinfo != null && refinfo != info && refinfo.running())
+						{
+						if(!barge(refinfo))
+							throw retryex;
+						}
+					Object val = ref.tvals == null ? null : ref.tvals.val;
+					vals.put(ref, val);
+					for(CFn f : e.getValue())
+						{
+						vals.put(ref, f.fn.applyTo(RT.cons(vals.get(ref), f.args)));
+						}
+					}
+				for(Ref ref : sets)
+					{
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418600332009/fstmerge_var1_5109810850239740137
+					if(!commutes.containsKey(ref))
+						{
+						tryWriteLock(ref);
+						locked.add(ref);
+						}
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418600332009/fstmerge_base_5183248954049403347
+					if(!commutes.containsKey(ref))
+						{
+						ref.lock.writeLock().lock();
+						locked.add(ref);
+						}
+=======
+					ref.lock.writeLock().lock();
+					locked.add(ref);
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418600332009/fstmerge_var2_5735523686703738621
+					}
+
+				//validate and enqueue notifications
+				for(Map.Entry<Ref, Object> e : vals.entrySet())
+					{
+					Ref ref = e.getKey();
+					ref.validate(ref.getValidator(), e.getValue());
+					}
+
+				//at this point, all values calced, all refs to be written locked
+				//no more client code to be called
+				long msecs = System.currentTimeMillis();
+				long commitPoint = getCommitPoint();
+				for(Map.Entry<Ref, Object> e : vals.entrySet())
+					{
+					Ref ref = e.getKey();
+					Object oldval = ref.tvals == null ? null : ref.tvals.val;
+					Object newval = e.getValue();
+					int hcount = ref.histCount();
+
+					if(ref.tvals == null)
+						{
+						ref.tvals = new Ref.TVal(newval, commitPoint, msecs);
+						}
+					else if((ref.faults.get() > 0 && hcount < ref.maxHistory)
+							|| hcount < ref.minHistory)
+						{
+						ref.tvals = new Ref.TVal(newval, commitPoint, msecs, ref.tvals);
+						ref.faults.set(0);
+						}
+					else
+						{
+						ref.tvals = ref.tvals.next;
+						ref.tvals.val = newval;
+						ref.tvals.point = commitPoint;
+						ref.tvals.msecs = msecs;
+						}
+					if(ref.getWatches().count() > 0)
+						notify.add(new Notify(ref, oldval, newval));
+					}
+
+				done = true;
+				info.status.set(COMMITTED);
+				}
+			}
+		catch(RetryEx retry)
+			{
+			//eat this so we retry rather than fall out
+			}
+		finally
+			{
+			for(int k = locked.size() - 1; k >= 0; --k)
+				{
+				locked.get(k).lock.writeLock().unlock();
+				}
+			locked.clear();
+			for(Ref r : ensures)
+				{
+				r.lock.readLock().unlock();
+				}
+			ensures.clear();
+			stop(done ? COMMITTED : RETRY);
+			try
+				{
+				if(done) //re-dispatch out of transaction
+					{
+					for(Notify n : notify)
+						{
+						n.ref.notifyWatches(n.oldval, n.newval);
+						}
+					for(Agent.Action action : actions)
+						{
+						Agent.dispatchAction(action);
+						}
+					}
+				}
+			finally
+				{
+				notify.clear();
+				actions.clear();
+				}
+			}
+		}
+	if(!done)
+		throw new Exception("Transaction failed after reaching retry limit");
+	return ret;
+}
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/clojure/revisions/rev_96174_30916/rev_96174-30916/src/jvm/clojure/lang/LockingTransaction.java
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/clojure/revisions/rev_6e2ff_c8711/rev_6e2ff-c8711.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/clojure/revisions/rev_5cdda_1abb7/rev_5cdda-1abb7.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/clojure/revisions/rev_e4504_23529/rev_e4504-23529.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/clojure/revisions/rev_d910b_3d697/rev_d910b-3d697.revisions
+Conflict type: LineBasedMCFd
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418600679453/fstmerge_var1_3758189400986413702
+void emitValue(Object value, GeneratorAdapter gen){
+		boolean partial = true;
+		//System.out.println(value.getClass().toString());
+
+		if(value instanceof String)
+			{
+			gen.push((String) value);
+			}
+		else if(value instanceof Integer)
+			{
+			gen.push(((Integer) value).intValue());
+			gen.invokeStatic(Type.getType(Integer.class), Method.getMethod("Integer valueOf(int)"));
+			}
+		else if(value instanceof Double)
+				{
+				gen.push(((Double) value).doubleValue());
+				gen.invokeStatic(Type.getType(Double.class), Method.getMethod("Double valueOf(double)"));
+				}
+			else if(value instanceof Character)
+					{
+					gen.push(((Character) value).charValue());
+					gen.invokeStatic(Type.getType(Character.class), Method.getMethod("Character valueOf(char)"));
+					}
+				else if(value instanceof Class)
+						{
+                                                Class cc = (Class)value;
+                                                if(cc.isPrimitive())
+                                                        {
+                                                        Type bt;
+                                                        if ( cc == boolean.class ) bt = Type.getType(Boolean.class);
+                                                        else if ( cc == byte.class ) bt = Type.getType(Byte.class);
+                                                        else if ( cc == char.class ) bt = Type.getType(Character.class);
+                                                        else if ( cc == double.class ) bt = Type.getType(Double.class);
+                                                        else if ( cc == float.class ) bt = Type.getType(Float.class);
+                                                        else if ( cc == int.class ) bt = Type.getType(Integer.class);
+                                                        else if ( cc == long.class ) bt = Type.getType(Long.class);
+                                                        else if ( cc == short.class ) bt = Type.getType(Short.class);
+                                                        else throw new RuntimeException(
+                                                                "Can't embed unknown primitive in code: " + value);
+                                                        gen.getStatic( bt, "TYPE", Type.getType(Class.class) );
+                                                        }
+                                                else
+                                                        {
+                                                        gen.push(cc.getName());
+                                                        gen.invokeStatic(Type.getType(Class.class), Method.getMethod("Class forName(String)"));
+                                                        }
+						}
+					else if(value instanceof Symbol)
+							{
+							gen.push(((Symbol) value).ns);
+							gen.push(((Symbol) value).name);
+							gen.invokeStatic(Type.getType(Symbol.class),
+							                 Method.getMethod("clojure.lang.Symbol create(String,String)"));
+							}
+						else if(value instanceof Keyword)
+								{
+								emitValue(((Keyword) value).sym, gen);
+								gen.invokeStatic(Type.getType(Keyword.class),
+								                 Method.getMethod("clojure.lang.Keyword intern(clojure.lang.Symbol)"));
+								}
+							else if(value instanceof Var)
+									{
+									Var var = (Var) value;
+									gen.push(var.ns.name.toString());
+									gen.push(var.sym.toString());
+									gen.invokeStatic(RT_TYPE, Method.getMethod("clojure.lang.Var var(String,String)"));
+									}
+								else if(value instanceof IPersistentMap)
+										{
+										List entries = new ArrayList();
+										for(Map.Entry entry : (Set<Map.Entry>) ((Map) value).entrySet())
+											{
+											entries.add(entry.getKey());
+											entries.add(entry.getValue());
+											}
+										emitListAsObjectArray(entries, gen);
+										gen.invokeStatic(RT_TYPE,
+										                 Method.getMethod("clojure.lang.IPersistentMap map(Object[])"));
+										}
+									else if(value instanceof IPersistentVector)
+											{
+											emitListAsObjectArray(value, gen);
+											gen.invokeStatic(RT_TYPE, Method.getMethod(
+													"clojure.lang.IPersistentVector vector(Object[])"));
+											}
+										else if(value instanceof ISeq || value instanceof IPersistentList)
+												{
+												emitListAsObjectArray(value, gen);
+												gen.invokeStatic(Type.getType(java.util.Arrays.class),
+												                 Method.getMethod("java.util.List asList(Object[])"));
+												gen.invokeStatic(Type.getType(PersistentList.class),
+												                 Method.getMethod(
+														                 "clojure.lang.IPersistentList create(java.util.List)"));
+												}
+											else
+												{
+												String cs = null;
+												try
+													{
+													cs = RT.printString(value);
+													//System.out.println("WARNING SLOW CODE: " + value.getClass() + " -> " + cs);
+													}
+												catch(Exception e)
+													{
+													throw new RuntimeException(
+															"Can't embed object in code, maybe print-dup not defined: " +
+															value);
+													}
+												if(cs.length() == 0)
+													throw new RuntimeException(
+															"Can't embed unreadable object in code: " + value);
+
+												if(cs.startsWith("#<"))
+													throw new RuntimeException(
+															"Can't embed unreadable object in code: " + cs);
+
+												gen.push(cs);
+												gen.invokeStatic(RT_TYPE, readStringMethod);
+												partial = false;
+												}
+
+		if(partial)
+			{
+			if(value instanceof Obj && RT.count(((Obj) value).meta()) > 0)
+				{
+				gen.checkCast(IOBJ_TYPE);
+				emitValue(((Obj) value).meta(), gen);
+				gen.checkCast(IPERSISTENTMAP_TYPE);
+				gen.invokeInterface(IOBJ_TYPE,
+				                    Method.getMethod("clojure.lang.IObj withMeta(clojure.lang.IPersistentMap)"));
+				}
+			}
+	}
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418600679453/fstmerge_base_4570012906460556759
+void emitValue(Object value, GeneratorAdapter gen){
+		boolean partial = true;
+		//System.out.println(value.getClass().toString());
+
+		if(value instanceof String)
+			{
+			gen.push((String) value);
+			}
+		else if(value instanceof Integer)
+			{
+			gen.push(((Integer) value).intValue());
+			gen.invokeStatic(Type.getType(Integer.class), Method.getMethod("Integer valueOf(int)"));
+			}
+		else if(value instanceof Double)
+				{
+				gen.push(((Double) value).doubleValue());
+				gen.invokeStatic(Type.getType(Double.class), Method.getMethod("Double valueOf(double)"));
+				}
+			else if(value instanceof Character)
+					{
+					gen.push(((Character) value).charValue());
+					gen.invokeStatic(Type.getType(Character.class), Method.getMethod("Character valueOf(char)"));
+					}
+				else if(value instanceof Class)
+						{
+						gen.push(((Class) value).getName());
+						gen.invokeStatic(Type.getType(Class.class), Method.getMethod("Class forName(String)"));
+						}
+					else if(value instanceof Symbol)
+							{
+							gen.push(((Symbol) value).ns);
+							gen.push(((Symbol) value).name);
+							gen.invokeStatic(Type.getType(Symbol.class),
+							                 Method.getMethod("clojure.lang.Symbol create(String,String)"));
+							}
+						else if(value instanceof Keyword)
+								{
+								emitValue(((Keyword) value).sym, gen);
+								gen.invokeStatic(Type.getType(Keyword.class),
+								                 Method.getMethod("clojure.lang.Keyword intern(clojure.lang.Symbol)"));
+								}
+							else if(value instanceof Var)
+									{
+									Var var = (Var) value;
+									gen.push(var.ns.name.toString());
+									gen.push(var.sym.toString());
+									gen.invokeStatic(RT_TYPE, Method.getMethod("clojure.lang.Var var(String,String)"));
+									}
+								else if(value instanceof IPersistentMap)
+										{
+										List entries = new ArrayList();
+										for(Map.Entry entry : (Set<Map.Entry>) ((Map) value).entrySet())
+											{
+											entries.add(entry.getKey());
+											entries.add(entry.getValue());
+											}
+										emitListAsObjectArray(entries, gen);
+										gen.invokeStatic(RT_TYPE,
+										                 Method.getMethod("clojure.lang.IPersistentMap map(Object[])"));
+										}
+									else if(value instanceof IPersistentVector)
+											{
+											emitListAsObjectArray(value, gen);
+											gen.invokeStatic(RT_TYPE, Method.getMethod(
+													"clojure.lang.IPersistentVector vector(Object[])"));
+											}
+										else if(value instanceof ISeq || value instanceof IPersistentList)
+												{
+												emitListAsObjectArray(value, gen);
+												gen.invokeStatic(Type.getType(java.util.Arrays.class),
+												                 Method.getMethod("java.util.List asList(Object[])"));
+												gen.invokeStatic(Type.getType(PersistentList.class),
+												                 Method.getMethod(
+														                 "clojure.lang.IPersistentList create(java.util.List)"));
+												}
+											else
+												{
+												String cs = null;
+												try
+													{
+													cs = RT.printString(value);
+													//System.out.println("WARNING SLOW CODE: " + value.getClass() + " -> " + cs);
+													}
+												catch(Exception e)
+													{
+													throw new RuntimeException(
+															"Can't embed object in code, maybe print-dup not defined: " +
+															value);
+													}
+												if(cs.length() == 0)
+													throw new RuntimeException(
+															"Can't embed unreadable object in code: " + value);
+
+												if(cs.startsWith("#<"))
+													throw new RuntimeException(
+															"Can't embed unreadable object in code: " + cs);
+
+												gen.push(cs);
+												gen.invokeStatic(RT_TYPE, readStringMethod);
+												partial = false;
+												}
+
+		if(partial)
+			{
+			if(value instanceof Obj && RT.count(((Obj) value).meta()) > 0)
+				{
+				gen.checkCast(IOBJ_TYPE);
+				emitValue(((Obj) value).meta(), gen);
+				gen.checkCast(IPERSISTENTMAP_TYPE);
+				gen.invokeInterface(IOBJ_TYPE,
+				                    Method.getMethod("clojure.lang.IObj withMeta(clojure.lang.IPersistentMap)"));
+				}
+			}
+	}
+=======
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418600679453/fstmerge_var2_5990740492415347720
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/clojure/revisions/rev_d910b_3d697/rev_d910b-3d697/src/jvm/clojure/lang/Compiler.java
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/clojure/revisions/rev_5f9df_4d084/rev_5f9df-4d084.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/clojure/revisions/rev_17f5c_c88ba/rev_17f5c-c88ba.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/clojure/revisions/rev_76e7c_4d3c5/rev_76e7c-4d3c5.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/clojure/revisions/rev_60738_1da63/rev_60738-1da63.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/clojure/revisions/rev_6109d_42e45/rev_6109d-42e45.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/clojure/revisions/rev_855f3_d3fe3/rev_855f3-d3fe3.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/clojure/revisions/rev_afc30_16e04/rev_afc30-16e04.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/clojure/revisions/rev_f4c58_3ae9e/rev_f4c58-3ae9e.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/clojure/revisions/rev_92e9c_12b5c/rev_92e9c-12b5c.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/clojure/revisions/rev_93fec_ee9fc/rev_93fec-ee9fc.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/clojure/revisions/rev_0d1b2_eba23/rev_0d1b2-eba23.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/clojure/revisions/rev_57b32_a55df/rev_57b32-a55df.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/clojure/revisions/rev_2c2ed_b1de0/rev_2c2ed-b1de0.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/clojure/revisions/rev_4651e_46d00/rev_4651e-46d00.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/clojure/revisions/rev_fbe01_c37c1/rev_fbe01-c37c1.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/clojure/revisions/rev_77be1_07f05/rev_77be1-07f05.revisions
+Conflict type: LineBasedMCFd
+Conflict body: 
+public InvokeExpr(String source, int line, Symbol tag, Expr fexpr, IPersistentVector args) throws Exception{
+		this.source = source;
+		this.fexpr = fexpr;
+		this.args = args;
+		this.line = line;
+		if(fexpr instanceof VarExpr)
+			{
+			Var fvar = ((VarExpr)fexpr).var;
+			Var pvar =  (Var)RT.get(fvar.meta(), protocolKey);
+			if(pvar != null && PROTOCOL_CALLSITES.isBound())
+				{
+				this.isProtocol = true;
+				this.siteIndex = registerProtocolCallsite(((VarExpr)fexpr).var);
+				Object pon = RT.get(pvar.get(), onKey);
+				this.protocolOn = HostExpr.maybeClass(pon,false);
+				if(this.protocolOn != null)
+					{
+					IPersistentMap mmap = (IPersistentMap) RT.get(pvar.get(), methodMapKey);
+                    Keyword mmapVal = (Keyword) mmap.valAt(Keyword.intern(fvar.sym));
+                    if (mmapVal == null) {
+                        throw new IllegalArgumentException(
+                              "No method of interface: " + protocolOn.getName() +
+                              " found for function: " + fvar.sym + " of protocol: " + pvar.sym +
+                              " (The protocol method may have been defined before and removed.)");
+                    }
+                    String mname = munge(mmapVal.sym.toString());
+ 					List methods = Reflector.getMethods(protocolOn, args.count() - 1, mname, false);
+					if(methods.size() != 1)
+						throw new IllegalArgumentException(
+								"No single method: " + mname + " of interface: " + protocolOn.getName() +
+								" found for function: " + fvar.sym + " of protocol: " + pvar.sym);
+					this.onMethod = (java.lang.reflect.Method) methods.get(0);
+					}
+				}
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418602399551/fstmerge_var1_5758783544201975671
+//			else if(pvar == null && VAR_CALLSITES.isBound()
+//			        && fvar.ns.name.name.startsWith("clojure")
+//					&& !RT.booleanCast(RT.get(RT.meta(fvar),dynamicKey))
+//					)
+//				{
+//				//todo - more specific criteria for binding these
+//				this.isDirect = true;
+//				this.siteIndex = registerVarCallsite(((VarExpr) fexpr).var);
+//				}
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418602399551/fstmerge_base_1858912870115808734
+			else if(pvar == null && VAR_CALLSITES.isBound()
+			        && fvar.ns.name.name.startsWith("clojure")
+					&& !RT.booleanCast(RT.get(RT.meta(fvar),dynamicKey))
+//			        && !fvar.sym.name.equals("report")
+//			        && fvar.isBound() && fvar.get() instanceof IFn
+					)
+				{
+				//todo - more specific criteria for binding these
+				this.isDirect = true;
+				this.siteIndex = registerVarCallsite(((VarExpr) fexpr).var);
+				}
+=======
+			else if(pvar == null && VAR_CALLSITES.isBound()
+			        && fvar.ns.name.name.startsWith("clojure")
+					&& !RT.booleanCast(RT.get(RT.meta(fvar),dynamicKey))
+//			        && !fvar.sym.name.equals("report")
+//			        && fvar.isBound() && fvar.get() instanceof IFn
+					)
+				{
+				//todo - more specific criteria for binding these
+//				this.isDirect = true;
+//				this.siteIndex = registerVarCallsite(((VarExpr) fexpr).var);
+				}
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418602399551/fstmerge_var2_9193543509656860932
+			}
+		this.tag = tag != null ? tag : (fexpr instanceof VarExpr ? ((VarExpr) fexpr).tag : null);
+	}
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/clojure/revisions/rev_77be1_07f05/rev_77be1-07f05/src/jvm/clojure/lang/Compiler.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+static public boolean equiv(Object k1, Object k2){
+	if(k1 == k2)
+		return true;
+	if(k1 != null)
+		{
+		if(k1 instanceof Number && k2 instanceof Number)
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418602404127/fstmerge_var1_2425654749210176903
+			return Numbers.equiv(k1, k2);
+		else if(k1 instanceof IPersistentCollection || k2 instanceof IPersistentCollection)
+			return pcequiv(k1,k2);
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418602404127/fstmerge_base_1884798937893049949
+			return Numbers.equiv(k1, k2);
+		else if(k1 instanceof IPersistentCollection && k2 instanceof IPersistentCollection)
+			return ((IPersistentCollection)k1).equiv(k2);
+=======
+			return Numbers.equal((Number)k1, (Number)k2);
+		else if(k1 instanceof IPersistentCollection && k2 instanceof IPersistentCollection)
+			return ((IPersistentCollection)k1).equiv(k2);
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418602404127/fstmerge_var2_8958174714726297338
+		return k1.equals(k2);
+		}
+	return false;
+}
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/clojure/revisions/rev_77be1_07f05/rev_77be1-07f05/src/jvm/clojure/lang/Util.java
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/clojure/revisions/rev_b1bed_479bb/rev_b1bed-479bb.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/clojure/revisions/rev_23746_2987b/rev_23746-2987b.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/clojure/revisions/rev_7ee4a_38a12/rev_7ee4a-38a12.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/clojure/revisions/rev_c763a_b2750/rev_c763a-b2750.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/clojure/revisions/rev_4281a_e5df4/rev_4281a-e5df4.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/clojure/revisions/rev_93071_229bf/rev_93071-229bf.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/clojure/revisions/rev_5d55a_04e63/rev_5d55a-04e63.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/clojure/revisions/rev_2a091_c9e70/rev_2a091-c9e70.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/clojure/revisions/rev_75f96_e7215/rev_75f96-e7215.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/clojure/revisions/rev_46be4_ad7d9/rev_46be4-ad7d9.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/clojure/revisions/rev_0ceb4_ba41f/rev_0ceb4-ba41f.revisions
+
+=========================================================

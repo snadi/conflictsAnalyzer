@@ -1,0 +1,12 @@
+Project wildfly
+Analyzed merge scenarios: 308
+Conflicting merge scenarios: 32
+Project conflict rate: 10.39%
+Summary of conflict patterns found:
+DefaultValueAnnotation: 0
+ImplementList: 2
+ModifierList: 0
+LineBasedMCFd: 45
+SameSignatureCM: 20
+SameIdFd: 7
+NOPATTERN: 0

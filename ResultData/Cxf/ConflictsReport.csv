@@ -1,0 +1,2879 @@
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_92597_1eb69/rev_92597-1eb69.revisions
+Conflict type: LineBasedMCFd
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646575681/fstmerge_var1_4042973467415684976
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646575681/fstmerge_base_2093358638246658420
+public static void validateSAMLResults(
+        List<WSSecurityEngineResult> results,
+        Message message,
+        Element body
+    ) throws WSSecurityException {
+        List<WSSecurityEngineResult> samlResults = new ArrayList<WSSecurityEngineResult>();
+        WSSecurityUtil.fetchAllActionResults(results, WSConstants.ST_SIGNED, samlResults);
+        WSSecurityUtil.fetchAllActionResults(results, WSConstants.ST_UNSIGNED, samlResults);
+        
+        if (samlResults.isEmpty()) {
+            return;
+        }
+        
+        List<WSSecurityEngineResult> signedResults = new ArrayList<WSSecurityEngineResult>();
+        WSSecurityUtil.fetchAllActionResults(results, WSConstants.SIGN, signedResults);
+        WSSecurityUtil.fetchAllActionResults(results, WSConstants.UT_SIGN, signedResults);
+        
+        for (WSSecurityEngineResult samlResult : samlResults) {
+            AssertionWrapper assertionWrapper = 
+                (AssertionWrapper)samlResult.get(WSSecurityEngineResult.TAG_SAML_ASSERTION);
+            
+            TLSSessionInfo tlsInfo = message.get(TLSSessionInfo.class);
+            Certificate[] tlsCerts = null;
+            if (tlsInfo != null) {
+                tlsCerts = tlsInfo.getPeerCertificates();
+            }
+            if (!SAMLUtils.checkHolderOfKey(assertionWrapper, signedResults, tlsCerts)) {
+                LOG.warning("Assertion fails holder-of-key requirements");
+                throw new WSSecurityException(WSSecurityException.INVALID_SECURITY);
+            }
+            if (!SAMLUtils.checkSenderVouches(assertionWrapper, tlsCerts, body, signedResults)) {
+                LOG.warning("Assertion fails sender-vouches requirements");
+                throw new WSSecurityException(WSSecurityException.INVALID_SECURITY);
+            }
+        }
+        
+    }
+=======
+public static void validateSAMLResults(
+        List<WSSecurityEngineResult> results,
+        Message message,
+        Element body
+    ) throws WSSecurityException {
+        final List<Integer> samlActions = new ArrayList<Integer>(2);
+        samlActions.add(WSConstants.ST_SIGNED);
+        samlActions.add(WSConstants.ST_UNSIGNED);
+        List<WSSecurityEngineResult> samlResults = 
+            WSS4JUtils.fetchAllActionResults(results, samlActions);
+        
+        if (samlResults.isEmpty()) {
+            return;
+        }
+        
+        final List<Integer> signedActions = new ArrayList<Integer>(2);
+        signedActions.add(WSConstants.SIGN);
+        signedActions.add(WSConstants.UT_SIGN);
+        List<WSSecurityEngineResult> signedResults = 
+            WSS4JUtils.fetchAllActionResults(results, signedActions);
+        
+        for (WSSecurityEngineResult samlResult : samlResults) {
+            AssertionWrapper assertionWrapper = 
+                (AssertionWrapper)samlResult.get(WSSecurityEngineResult.TAG_SAML_ASSERTION);
+            
+            TLSSessionInfo tlsInfo = message.get(TLSSessionInfo.class);
+            Certificate[] tlsCerts = null;
+            if (tlsInfo != null) {
+                tlsCerts = tlsInfo.getPeerCertificates();
+            }
+            if (!SAMLUtils.checkHolderOfKey(assertionWrapper, signedResults, tlsCerts)) {
+                LOG.warning("Assertion fails holder-of-key requirements");
+                throw new WSSecurityException(WSSecurityException.INVALID_SECURITY);
+            }
+            if (!SAMLUtils.checkSenderVouches(assertionWrapper, tlsCerts, body, signedResults)) {
+                LOG.warning("Assertion fails sender-vouches requirements");
+                throw new WSSecurityException(WSSecurityException.INVALID_SECURITY);
+            }
+        }
+        
+    }
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646575681/fstmerge_var2_6512800585634700718
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_92597_1eb69/rev_92597-1eb69/rt/ws/security/src/main/java/org/apache/cxf/ws/security/wss4j/SAMLUtils.java
+Conflict type: SameSignatureCM
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646576010/fstmerge_var1_3051220247698529134
+public void handleMessage(SoapMessage msg) throws Fault {
+        AssertionInfoMap aim = msg.get(AssertionInfoMap.class);
+        boolean enableStax = 
+            MessageUtils.isTrue(msg.getContextualProperty(SecurityConstants.ENABLE_STREAMING_SECURITY));
+        if (aim != null && !enableStax) {
+            super.handleMessage(msg);
+        }
+    }
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646576010/fstmerge_base_6064766991792011019
+=======
+public void handleMessage(SoapMessage msg) throws Fault {
+        AssertionInfoMap aim = msg.get(AssertionInfoMap.class);
+        if (aim != null) {
+            super.handleMessage(msg);
+        }
+    }
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646576010/fstmerge_var2_3058812708527660832
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_92597_1eb69/rev_92597-1eb69/rt/ws/security/src/main/java/org/apache/cxf/ws/security/wss4j/PolicyBasedWSS4JInInterceptor.java
+Conflict type: SameSignatureCM
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646576045/fstmerge_var1_5618903693350452728
+private String checkDefaultBinding(
+        AssertionInfoMap aim, String action, SoapMessage message
+    ) throws WSSecurityException {
+        action = addToAction(action, "Signature", true);
+        action = addToAction(action, "Encrypt", true);
+        Object s = message.getContextualProperty(SecurityConstants.SIGNATURE_CRYPTO);
+        if (s == null) {
+            s = message.getContextualProperty(SecurityConstants.SIGNATURE_PROPERTIES);
+        }
+        Object e = message.getContextualProperty(SecurityConstants.ENCRYPT_CRYPTO);
+        if (e == null) {
+            e = message.getContextualProperty(SecurityConstants.ENCRYPT_PROPERTIES);
+        }
+        
+        Crypto encrCrypto = getEncryptionCrypto(e, message);
+        Crypto signCrypto = null;
+        if (e != null && e.equals(s)) {
+            signCrypto = encrCrypto;
+        } else {
+            signCrypto = getSignatureCrypto(s, message);
+        }
+        
+        if (signCrypto != null) {
+            message.put(WSHandlerConstants.DEC_PROP_REF_ID, "RefId-" + signCrypto.hashCode());
+            message.put("RefId-" + signCrypto.hashCode(), signCrypto);
+        }
+        
+        if (encrCrypto != null) {
+            message.put(WSHandlerConstants.SIG_VER_PROP_REF_ID, "RefId-" + encrCrypto.hashCode());
+            message.put("RefId-" + encrCrypto.hashCode(), (Crypto)encrCrypto);
+        } else if (signCrypto != null) {
+            message.put(WSHandlerConstants.SIG_VER_PROP_REF_ID, "RefId-" + signCrypto.hashCode());
+            message.put("RefId-" + signCrypto.hashCode(), (Crypto)signCrypto);
+        }
+
+        return action;
+    }
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646576045/fstmerge_base_8015970408862406428
+=======
+private String checkDefaultBinding(
+        AssertionInfoMap aim, String action, SoapMessage message
+    ) throws WSSecurityException {
+        action = addToAction(action, "Signature", true);
+        action = addToAction(action, "Encrypt", true);
+        Object s = message.getContextualProperty(SecurityConstants.SIGNATURE_CRYPTO);
+        if (s == null) {
+            s = message.getContextualProperty(SecurityConstants.SIGNATURE_PROPERTIES);
+        }
+        Object e = message.getContextualProperty(SecurityConstants.ENCRYPT_CRYPTO);
+        if (e == null) {
+            e = message.getContextualProperty(SecurityConstants.ENCRYPT_PROPERTIES);
+        }
+        
+        Crypto encrCrypto = getEncryptionCrypto(e, message);
+        Crypto signCrypto = null;
+        if (e != null && e.equals(s)) {
+            signCrypto = encrCrypto;
+        } else {
+            signCrypto = getSignatureCrypto(s, message);
+        }
+        
+        if (signCrypto != null) {
+            message.put(WSHandlerConstants.DEC_PROP_REF_ID, "RefId-" + signCrypto.hashCode());
+            message.put("RefId-" + signCrypto.hashCode(), signCrypto);
+        }
+        
+        if (encrCrypto != null) {
+            message.put(WSHandlerConstants.SIG_PROP_REF_ID, "RefId-" + encrCrypto.hashCode());
+            message.put("RefId-" + encrCrypto.hashCode(), (Crypto)encrCrypto);
+        } else if (signCrypto != null) {
+            message.put(WSHandlerConstants.SIG_PROP_REF_ID, "RefId-" + signCrypto.hashCode());
+            message.put("RefId-" + signCrypto.hashCode(), (Crypto)signCrypto);
+        }
+
+        return action;
+    }
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646576045/fstmerge_var2_6607267963166007030
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_92597_1eb69/rev_92597-1eb69/rt/ws/security/src/main/java/org/apache/cxf/ws/security/wss4j/PolicyBasedWSS4JInInterceptor.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+@Override
+    protected void doResults(
+        SoapMessage msg, 
+        String actor,
+        Element soapHeader,
+        Element soapBody,
+        List<WSSecurityEngineResult> results, 
+        boolean utWithCallbacks
+    ) throws SOAPException, XMLStreamException, WSSecurityException {
+        AssertionInfoMap aim = msg.get(AssertionInfoMap.class);
+        Collection<WSDataRef> signed = new HashSet<WSDataRef>();
+        Collection<WSDataRef> encrypted = new HashSet<WSDataRef>();
+        
+        //
+        // Pre-fetch various results
+        //
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646576089/fstmerge_var1_72869027492265493
+        final List<Integer> actions = new ArrayList<Integer>(2);
+        actions.add(WSConstants.SIGN);
+        actions.add(WSConstants.UT_SIGN);
+        List<WSSecurityEngineResult> signedResults = 
+            WSSecurityUtil.fetchAllActionResults(results, actions);
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646576089/fstmerge_base_3456035749008704265
+        List<WSSecurityEngineResult> signedResults = new ArrayList<WSSecurityEngineResult>();
+        WSSecurityUtil.fetchAllActionResults(results, WSConstants.SIGN, signedResults);
+        WSSecurityUtil.fetchAllActionResults(results, WSConstants.UT_SIGN, signedResults);
+=======
+        final List<Integer> actions = new ArrayList<Integer>(2);
+        actions.add(WSConstants.SIGN);
+        actions.add(WSConstants.UT_SIGN);
+        List<WSSecurityEngineResult> signedResults = 
+            WSS4JUtils.fetchAllActionResults(results, actions);
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646576089/fstmerge_var2_8010833170170572380
+        for (WSSecurityEngineResult result : signedResults) {
+            List<WSDataRef> sl = 
+                CastUtils.cast((List<?>)result.get(WSSecurityEngineResult.TAG_DATA_REF_URIS));
+            if (sl != null) {
+                for (WSDataRef r : sl) {
+                    signed.add(r);
+                }
+            }
+        }
+        
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646576089/fstmerge_var1_72869027492265493
+        List<WSSecurityEngineResult> encryptResults = 
+            WSSecurityUtil.fetchAllActionResults(results, WSConstants.ENCR);
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646576089/fstmerge_base_3456035749008704265
+        List<WSSecurityEngineResult> encryptResults = new ArrayList<WSSecurityEngineResult>();
+        WSSecurityUtil.fetchAllActionResults(results, WSConstants.ENCR, encryptResults);
+=======
+        List<WSSecurityEngineResult> encryptResults = 
+            WSS4JUtils.fetchAllActionResults(results, WSConstants.ENCR);
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646576089/fstmerge_var2_8010833170170572380
+        for (WSSecurityEngineResult result : encryptResults) {
+            List<WSDataRef> sl = 
+                CastUtils.cast((List<?>)result.get(WSSecurityEngineResult.TAG_DATA_REF_URIS));
+            if (sl != null) {
+                for (WSDataRef r : sl) {
+                    encrypted.add(r);
+                }
+            }
+        }
+        
+        //
+        // Check policies
+        //
+        if (!checkSignedEncryptedCoverage(aim, msg, soapHeader, soapBody, signed, encrypted)) {
+            LOG.fine("Incoming request failed signed-encrypted policy validation");
+        }
+        
+        if (!checkTokenCoverage(aim, msg, soapBody, results, signedResults)) {
+            LOG.fine("Incoming request failed token policy validation");
+        }
+        
+        if (!checkBindingCoverage(aim, msg, soapBody, results, signedResults, encryptResults)) {
+            LOG.fine("Incoming request failed binding policy validation");
+        }
+
+        if (!checkSupportingTokenCoverage(aim, msg, results, signedResults, 
+            encryptResults, utWithCallbacks)) {
+            LOG.fine("Incoming request failed supporting token policy validation");
+        }
+        
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646576089/fstmerge_var1_72869027492265493
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646576089/fstmerge_base_3456035749008704265
+        // relatively irrelevant stuff from a verification standpoint
+        assertPolicy(aim, SP12Constants.LAYOUT);
+        assertPolicy(aim, SP12Constants.WSS10);
+        assertPolicy(aim, SP12Constants.TRUST_13);
+        assertPolicy(aim, SP11Constants.TRUST_10);
+        
+=======
+        // relatively irrelevant stuff from a verification standpoint
+        assertPolicy(aim, SP12Constants.WSS10);
+        assertPolicy(aim, SP12Constants.TRUST_13);
+        assertPolicy(aim, SP11Constants.TRUST_10);
+        
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646576089/fstmerge_var2_8010833170170572380
+        super.doResults(msg, actor, soapHeader, soapBody, results, utWithCallbacks);
+    }
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_92597_1eb69/rev_92597-1eb69/rt/ws/security/src/main/java/org/apache/cxf/ws/security/wss4j/PolicyBasedWSS4JInInterceptor.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+private boolean checkSupportingTokenCoverage(
+        AssertionInfoMap aim,
+        SoapMessage msg,
+        List<WSSecurityEngineResult> results, 
+        List<WSSecurityEngineResult> signedResults,
+        List<WSSecurityEngineResult> encryptedResults,
+        boolean utWithCallbacks
+    ) {
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646576111/fstmerge_var1_8616673467118224102
+        final List<Integer> utActions = new ArrayList<Integer>(2);
+        utActions.add(WSConstants.UT);
+        utActions.add(WSConstants.UT_NOPASSWORD);
+        List<WSSecurityEngineResult> utResults = 
+            WSSecurityUtil.fetchAllActionResults(results, utActions);
+        
+        final List<Integer> samlActions = new ArrayList<Integer>(2);
+        samlActions.add(WSConstants.ST_SIGNED);
+        samlActions.add(WSConstants.ST_UNSIGNED);
+        List<WSSecurityEngineResult> samlResults = 
+            WSSecurityUtil.fetchAllActionResults(results, samlActions);
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646576111/fstmerge_base_5013733420551102301
+        List<WSSecurityEngineResult> utResults = new ArrayList<WSSecurityEngineResult>();
+        WSSecurityUtil.fetchAllActionResults(results, WSConstants.UT, utResults);
+        WSSecurityUtil.fetchAllActionResults(results, WSConstants.UT_NOPASSWORD, utResults);
+        
+        List<WSSecurityEngineResult> samlResults = new ArrayList<WSSecurityEngineResult>();
+        WSSecurityUtil.fetchAllActionResults(results, WSConstants.ST_SIGNED, samlResults);
+        WSSecurityUtil.fetchAllActionResults(results, WSConstants.ST_UNSIGNED, samlResults);
+=======
+        final List<Integer> utActions = new ArrayList<Integer>(2);
+        utActions.add(WSConstants.UT);
+        utActions.add(WSConstants.UT_NOPASSWORD);
+        List<WSSecurityEngineResult> utResults = 
+            WSS4JUtils.fetchAllActionResults(results, utActions);
+        
+        final List<Integer> samlActions = new ArrayList<Integer>(2);
+        samlActions.add(WSConstants.ST_SIGNED);
+        samlActions.add(WSConstants.ST_UNSIGNED);
+        List<WSSecurityEngineResult> samlResults = 
+            WSS4JUtils.fetchAllActionResults(results, samlActions);
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646576111/fstmerge_var2_1623548408440017509
+        
+        // Store the timestamp element
+        WSSecurityEngineResult tsResult = WSSecurityUtil.fetchActionResult(results, WSConstants.TS);
+        Element timestamp = null;
+        if (tsResult != null) {
+            Timestamp ts = (Timestamp)tsResult.get(WSSecurityEngineResult.TAG_TIMESTAMP);
+            timestamp = ts.getElement();
+        }
+        
+        boolean check = true;
+        
+        SupportingTokenPolicyValidator validator = new ConcreteSupportingTokenPolicyValidator();
+        validator.setUsernameTokenResults(utResults, utWithCallbacks);
+        validator.setSAMLTokenResults(samlResults);
+        validator.setTimestampElement(timestamp);
+        check &= validator.validatePolicy(aim, msg, results, signedResults, encryptedResults);
+        
+        validator = new SignedTokenPolicyValidator();
+        validator.setUsernameTokenResults(utResults, utWithCallbacks);
+        validator.setSAMLTokenResults(samlResults);
+        validator.setTimestampElement(timestamp);
+        check &= validator.validatePolicy(aim, msg, results, signedResults, encryptedResults);
+
+        validator = new EndorsingTokenPolicyValidator();
+        validator.setUsernameTokenResults(utResults, utWithCallbacks);
+        validator.setSAMLTokenResults(samlResults);
+        validator.setTimestampElement(timestamp);
+        check &= validator.validatePolicy(aim, msg, results, signedResults, encryptedResults);
+
+        validator = new SignedEndorsingTokenPolicyValidator();
+        validator.setUsernameTokenResults(utResults, utWithCallbacks);
+        validator.setSAMLTokenResults(samlResults);
+        validator.setTimestampElement(timestamp);
+        check &= validator.validatePolicy(aim, msg, results, signedResults, encryptedResults);
+
+        validator = new SignedEncryptedTokenPolicyValidator();
+        validator.setUsernameTokenResults(utResults, utWithCallbacks);
+        validator.setSAMLTokenResults(samlResults);
+        validator.setTimestampElement(timestamp);
+        check &= validator.validatePolicy(aim, msg, results, signedResults, encryptedResults);
+
+        validator = new EncryptedTokenPolicyValidator();
+        validator.setUsernameTokenResults(utResults, utWithCallbacks);
+        validator.setSAMLTokenResults(samlResults);
+        validator.setTimestampElement(timestamp);
+        check &= validator.validatePolicy(aim, msg, results, signedResults, encryptedResults);
+
+        validator = new EndorsingEncryptedTokenPolicyValidator();
+        validator.setUsernameTokenResults(utResults, utWithCallbacks);
+        validator.setSAMLTokenResults(samlResults);
+        validator.setTimestampElement(timestamp);
+        check &= validator.validatePolicy(aim, msg, results, signedResults, encryptedResults);
+
+        validator = new SignedEndorsingEncryptedTokenPolicyValidator();
+        validator.setUsernameTokenResults(utResults, utWithCallbacks);
+        validator.setSAMLTokenResults(samlResults);
+        validator.setTimestampElement(timestamp);
+        check &= validator.validatePolicy(aim, msg, results, signedResults, encryptedResults);
+        
+        return check;
+    }
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_92597_1eb69/rev_92597-1eb69/rt/ws/security/src/main/java/org/apache/cxf/ws/security/wss4j/PolicyBasedWSS4JInInterceptor.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+private void storeSignature(
+        SoapMessage msg, RequestData reqData, List<WSSecurityEngineResult> wsResult
+    ) throws WSSecurityException {
+        // Extract the signature action result from the action list
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646576489/fstmerge_var1_8152827103505525227
+        List<WSSecurityEngineResult> signatureResults = 
+            WSSecurityUtil.fetchAllActionResults(wsResult, WSConstants.SIGN);
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646576489/fstmerge_base_8879049426344415400
+        List<WSSecurityEngineResult> signatureResults = new ArrayList<WSSecurityEngineResult>();
+        signatureResults = 
+            WSSecurityUtil.fetchAllActionResults(wsResult, WSConstants.SIGN, signatureResults);
+=======
+        List<WSSecurityEngineResult> signatureResults = 
+            WSS4JUtils.fetchAllActionResults(wsResult, WSConstants.SIGN);
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646576489/fstmerge_var2_8736414910623682951
+
+        // Store the last signature result
+        if (!signatureResults.isEmpty()) {
+            msg.put(SIGNATURE_RESULT, signatureResults.get(signatureResults.size() - 1));
+        }
+    }
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_92597_1eb69/rev_92597-1eb69/rt/ws/security/src/main/java/org/apache/cxf/ws/security/wss4j/WSS4JInInterceptor.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+private void storeTimestamp(
+        SoapMessage msg, RequestData reqData, List<WSSecurityEngineResult> wsResult
+    ) throws WSSecurityException {
+        // Extract the timestamp action result from the action list
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646576494/fstmerge_var1_948836869339052731
+        List<WSSecurityEngineResult> timestampResults = 
+            WSSecurityUtil.fetchAllActionResults(wsResult, WSConstants.TS);
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646576494/fstmerge_base_7521233557564677875
+        List<WSSecurityEngineResult> timestampResults = new ArrayList<WSSecurityEngineResult>();
+        timestampResults = 
+            WSSecurityUtil.fetchAllActionResults(wsResult, WSConstants.TS, timestampResults);
+=======
+        List<WSSecurityEngineResult> timestampResults = 
+            WSS4JUtils.fetchAllActionResults(wsResult, WSConstants.TS);
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646576494/fstmerge_var2_5213450625213558117
+
+        if (!timestampResults.isEmpty()) {
+            msg.put(TIMESTAMP_RESULT, timestampResults.get(timestampResults.size() - 1));
+        }
+    }
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_92597_1eb69/rev_92597-1eb69/rt/ws/security/src/main/java/org/apache/cxf/ws/security/wss4j/WSS4JInInterceptor.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+public void handleMessage(SoapMessage message) throws Fault {
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646576616/fstmerge_base_9018776793667887341
+=======
+        if (this.xPaths == null || this.xPaths.isEmpty()) {
+            // return
+        }
+        
+        Element documentElement = null;
+        try {
+            SOAPMessage saajDoc = message.getContent(SOAPMessage.class);
+            SOAPEnvelope envelope = saajDoc.getSOAPPart().getEnvelope();
+            if (!checkFaults && envelope.getBody().hasFault()) {
+                return;
+            }
+            documentElement = envelope;
+        } catch (SOAPException e) {
+            throw new SoapFault("Error obtaining SOAP document", Fault.FAULT_CODE_CLIENT);
+        }
+        
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646576616/fstmerge_var2_7685775498612938988
+        final Collection<WSDataRef> signed = new HashSet<WSDataRef>();
+        final Collection<WSDataRef> encrypted = new HashSet<WSDataRef>();
+        
+        List<WSHandlerResult> results = CastUtils.cast(
+                (List<?>) message.get(WSHandlerConstants.RECV_RESULTS));
+        
+        for (final WSHandlerResult wshr : results) {
+            final List<WSSecurityEngineResult> wsSecurityEngineSignResults = 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646576616/fstmerge_var1_7366051284182641277
+                WSSecurityUtil.fetchAllActionResults(wshr.getResults(), WSConstants.SIGN);
+            
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646576616/fstmerge_base_9018776793667887341
+                new Vector<WSSecurityEngineResult>();
+=======
+                WSS4JUtils.fetchAllActionResults(wshr.getResults(), WSConstants.SIGN);
+            
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646576616/fstmerge_var2_7685775498612938988
+            final List<WSSecurityEngineResult> wsSecurityEngineEncResults = 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646576616/fstmerge_var1_7366051284182641277
+                WSSecurityUtil.fetchAllActionResults(wshr.getResults(), WSConstants.ENCR);
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646576616/fstmerge_base_9018776793667887341
+                new Vector<WSSecurityEngineResult>();
+            
+            WSSecurityUtil.fetchAllActionResults(wshr.getResults(),
+                    WSConstants.SIGN, wsSecurityEngineSignResults);
+            
+            WSSecurityUtil.fetchAllActionResults(wshr.getResults(),
+                    WSConstants.ENCR, wsSecurityEngineEncResults);
+=======
+                WSS4JUtils.fetchAllActionResults(wshr.getResults(), WSConstants.ENCR);
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646576616/fstmerge_var2_7685775498612938988
+            
+            for (WSSecurityEngineResult wser : wsSecurityEngineSignResults) {
+            
+                List<WSDataRef> sl = CastUtils.cast((List<?>) wser
+                        .get(WSSecurityEngineResult.TAG_DATA_REF_URIS));
+                if (sl != null) {
+                    if (sl.size() == 1
+                        && sl.get(0).getName().equals(new QName(WSConstants.SIG_NS, WSConstants.SIG_LN))) {
+                        //endorsing the signature so don't include
+                        break;
+                    }
+                    
+                    for (WSDataRef r : sl) {
+                        signed.add(r);
+                    }
+                }
+            }
+            
+            for (WSSecurityEngineResult wser : wsSecurityEngineEncResults) {
+                List<WSDataRef> el = CastUtils.cast((List<?>) wser
+                        .get(WSSecurityEngineResult.TAG_DATA_REF_URIS));
+
+                if (el != null) {
+                    for (WSDataRef r : el) {
+                        encrypted.add(r);
+                    }
+                }
+            }
+        }
+        
+        CryptoCoverageUtil.reconcileEncryptedSignedRefs(signed, encrypted);
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646576616/fstmerge_base_9018776793667887341
+        
+        if (this.xPaths != null && !this.xPaths.isEmpty()) {
+            // XPathFactory and XPath are not thread-safe so we must recreate them
+            // each request.
+            final XPathFactory factory = XPathFactory.newInstance();
+            final XPath xpath = factory.newXPath();
+            
+            if (this.prefixMap != null) {
+                xpath.setNamespaceContext(new MapNamespaceContext(this.prefixMap));
+=======
+
+        // XPathFactory and XPath are not thread-safe so we must recreate them
+        // each request.
+        final XPathFactory factory = XPathFactory.newInstance();
+        final XPath xpath = factory.newXPath();
+
+        if (this.prefixMap != null) {
+            xpath.setNamespaceContext(new MapNamespaceContext(this.prefixMap));
+        }
+
+        for (XPathExpression xPathExpression : this.xPaths) {
+            Collection<WSDataRef> refsToCheck = null;
+
+            switch (xPathExpression.getType()) {
+            case SIGNED:
+                refsToCheck = signed;
+                break;
+            case ENCRYPTED:
+                refsToCheck = encrypted;
+                break;
+            default:
+                throw new IllegalStateException("Unexpected crypto type: " 
+                    + xPathExpression.getType());
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646576616/fstmerge_var2_7685775498612938988
+            }
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646576616/fstmerge_base_9018776793667887341
+            
+            for (XPathExpression xPathExpression : this.xPaths) {
+                Collection<WSDataRef> refsToCheck = null;
+                
+                switch (xPathExpression.getType()) {
+                case SIGNED:
+                    refsToCheck = signed;
+                    break;
+                case ENCRYPTED:
+                    refsToCheck = encrypted;
+                    break;
+                default:
+                    throw new IllegalStateException("Unexpected crypto type: " 
+                            + xPathExpression.getType());
+                }
+                        
+                try {
+                    SOAPMessage saajDoc = message.getContent(SOAPMessage.class);
+                    Element documentElement = null;
+                    if (saajDoc != null && saajDoc.getSOAPPart() != null) {
+                        documentElement = saajDoc.getSOAPPart().getEnvelope();
+                    }
+                    
+                    CryptoCoverageUtil.checkCoverage(
+                            documentElement,
+                            refsToCheck,
+                            xpath, 
+                            Arrays.asList(xPathExpression.getXPath()),
+                            xPathExpression.getType(),
+                            xPathExpression.getScope());
+                } catch (WSSecurityException e) {
+                    throw new SoapFault("No " + xPathExpression.getType()
+                            + " element found matching XPath "
+                            + xPathExpression.getXPath(), Fault.FAULT_CODE_CLIENT);
+                } catch (SOAPException e) {
+                    throw new SoapFault("No " + xPathExpression.getType()
+                            + " element found matching XPath "
+                            + xPathExpression.getXPath(), Fault.FAULT_CODE_CLIENT);
+                }
+=======
+
+            try {
+                CryptoCoverageUtil.checkCoverage(
+                                                 documentElement,
+                                                 refsToCheck,
+                                                 xpath, 
+                                                 Arrays.asList(xPathExpression.getXPath()),
+                                                 xPathExpression.getType(),
+                                                 xPathExpression.getScope());
+            } catch (WSSecurityException e) {
+                throw new SoapFault("No " + xPathExpression.getType()
+                                    + " element found matching XPath "
+                                    + xPathExpression.getXPath(), Fault.FAULT_CODE_CLIENT);
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646576616/fstmerge_var2_7685775498612938988
+            }
+        }
+    }
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_92597_1eb69/rev_92597-1eb69/rt/ws/security/src/main/java/org/apache/cxf/ws/security/wss4j/CryptoCoverageChecker.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+public boolean validatePolicy(
+        AssertionInfoMap aim,
+        Message message,
+        Element soapBody,
+        List<WSSecurityEngineResult> results,
+        List<WSSecurityEngineResult> signedResults
+    ) {
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646576821/fstmerge_var1_8867711931202379694
+        Collection<AssertionInfo> ais = 
+            getAllAssertionsByLocalname(aim, SPConstants.SECURITY_CONTEXT_TOKEN);
+        if (!ais.isEmpty()) {
+            parsePolicies(aim, ais, message, results);
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646576821/fstmerge_base_6957070061557316476
+        Collection<AssertionInfo> ais = aim.get(SP12Constants.SECURITY_CONTEXT_TOKEN);
+        if (ais == null || ais.isEmpty()) {
+            return true;
+        }
+
+        List<WSSecurityEngineResult> sctResults = new ArrayList<WSSecurityEngineResult>();
+        WSSecurityUtil.fetchAllActionResults(results, WSConstants.SCT, sctResults);
+
+        for (AssertionInfo ai : ais) {
+            SecurityContextToken sctPolicy = (SecurityContextToken)ai.getAssertion();
+            ai.setAsserted(true);
+
+            if (!isTokenRequired(sctPolicy, message)) {
+                continue;
+            }
+
+            if (sctResults.isEmpty()) {
+                ai.setNotAsserted(
+                    "The received token does not match the token inclusion requirement"
+                );
+                continue;
+            }
+=======
+        Collection<AssertionInfo> ais = aim.get(SP12Constants.SECURITY_CONTEXT_TOKEN);
+        if (ais == null || ais.isEmpty()) {
+            return true;
+        }
+
+        List<WSSecurityEngineResult> sctResults = 
+            WSS4JUtils.fetchAllActionResults(results, WSConstants.SCT);
+
+        for (AssertionInfo ai : ais) {
+            SecurityContextToken sctPolicy = (SecurityContextToken)ai.getAssertion();
+            ai.setAsserted(true);
+
+            if (!isTokenRequired(sctPolicy, message)) {
+                continue;
+            }
+
+            if (sctResults.isEmpty()) {
+                ai.setNotAsserted(
+                    "The received token does not match the token inclusion requirement"
+                );
+                continue;
+            }
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646576821/fstmerge_var2_4778693249967241301
+        }
+        
+        return true;
+    }
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_92597_1eb69/rev_92597-1eb69/rt/ws/security/src/main/java/org/apache/cxf/ws/security/wss4j/policyvalidators/SecurityContextTokenPolicyValidator.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+protected boolean validateTimestamp(
+        boolean includeTimestamp,
+        boolean transportBinding,
+        List<WSSecurityEngineResult> results,
+        List<WSSecurityEngineResult> signedResults,
+        Message message
+    ) {
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577051/fstmerge_var1_8460608704885209390
+        List<WSSecurityEngineResult> timestampResults = 
+            WSSecurityUtil.fetchAllActionResults(results, WSConstants.TS);
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577051/fstmerge_base_3918421501476718733
+        List<WSSecurityEngineResult> timestampResults = new ArrayList<WSSecurityEngineResult>();
+        WSSecurityUtil.fetchAllActionResults(results, WSConstants.TS, timestampResults);
+=======
+        List<WSSecurityEngineResult> timestampResults = 
+            WSS4JUtils.fetchAllActionResults(results, WSConstants.TS);
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577051/fstmerge_var2_7380010018411775598
+        
+        // Check whether we received a timestamp and compare it to the policy
+        if (includeTimestamp && timestampResults.size() != 1) {
+            return false;
+        } else if (!includeTimestamp) {
+            if (timestampResults.isEmpty()) {
+                return true;
+            }
+            return false;
+        }
+        
+        // At this point we received a (required) Timestamp. Now check that it is integrity protected.
+        if (transportBinding) {
+            return true;
+        } else if (!signedResults.isEmpty()) {
+            Timestamp timestamp = 
+                (Timestamp)timestampResults.get(0).get(WSSecurityEngineResult.TAG_TIMESTAMP);
+            for (WSSecurityEngineResult signedResult : signedResults) {
+                List<WSDataRef> dataRefs = 
+                    CastUtils.cast((List<?>)signedResult.get(WSSecurityEngineResult.TAG_DATA_REF_URIS));
+                for (WSDataRef dataRef : dataRefs) {
+                    if (timestamp.getElement() == dataRef.getProtectedElement()) {
+                        return true;
+                    }
+                }
+            }
+        }
+        
+        return false;
+    }
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_92597_1eb69/rev_92597-1eb69/rt/ws/security/src/main/java/org/apache/cxf/ws/security/wss4j/policyvalidators/AbstractBindingPolicyValidator.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577061/fstmerge_var1_1736962643183119709
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577061/fstmerge_base_8357031720146604328
+protected boolean checkProperties(
+        SymmetricAsymmetricBindingBase binding, 
+        AssertionInfo ai,
+        AssertionInfoMap aim,
+        List<WSSecurityEngineResult> results,
+        List<WSSecurityEngineResult> signedResults,
+        Message message
+    ) {
+        // Check the AlgorithmSuite
+        AlgorithmSuitePolicyValidator algorithmValidator = new AlgorithmSuitePolicyValidator(results);
+        if (!algorithmValidator.validatePolicy(ai, binding.getAlgorithmSuite())) {
+            return false;
+        }
+        
+        // Check the IncludeTimestamp
+        if (!validateTimestamp(binding.isIncludeTimestamp(), false, results, signedResults, message)) {
+            String error = "Received Timestamp does not match the requirements";
+            notAssertPolicy(aim, SP12Constants.INCLUDE_TIMESTAMP, error);
+            ai.setNotAsserted(error);
+            return false;
+        }
+        assertPolicy(aim, SP12Constants.INCLUDE_TIMESTAMP);
+        
+        // Check the Layout
+        Layout layout = binding.getLayout();
+        boolean timestampFirst = layout.getValue() == SPConstants.Layout.LaxTimestampFirst;
+        boolean timestampLast = layout.getValue() == SPConstants.Layout.LaxTimestampLast;
+        if (!validateLayout(timestampFirst, timestampLast, results)) {
+            String error = "Layout does not match the requirements";
+            notAssertPolicy(aim, SP12Constants.LAYOUT, error);
+            ai.setNotAsserted(error);
+            return false;
+        }
+        assertPolicy(aim, SP12Constants.LAYOUT);
+        
+        // Check the EntireHeaderAndBodySignatures property
+        if (binding.isEntireHeadersAndBodySignatures()
+            && !validateEntireHeaderAndBodySignatures(signedResults)) {
+            String error = "OnlySignEntireHeadersAndBody does not match the requirements";
+            ai.setNotAsserted(error);
+            return false;
+        }
+        
+        // Check whether the signatures were encrypted or not
+        if (binding.isSignatureProtection() && !isSignatureEncrypted(results)) {
+            ai.setNotAsserted("The signature is not protected");
+            return false;
+        }
+        
+        return true;
+    }
+=======
+protected boolean checkProperties(
+        SymmetricAsymmetricBindingBase binding, 
+        AssertionInfo ai,
+        AssertionInfoMap aim,
+        List<WSSecurityEngineResult> results,
+        List<WSSecurityEngineResult> signedResults,
+        Message message
+    ) {
+        // Check the AlgorithmSuite
+        AlgorithmSuitePolicyValidator algorithmValidator = new AlgorithmSuitePolicyValidator(results);
+        if (!algorithmValidator.validatePolicy(ai, binding.getAlgorithmSuite())) {
+            return false;
+        }
+        
+        // Check the IncludeTimestamp
+        if (!validateTimestamp(binding.isIncludeTimestamp(), false, results, signedResults, message)) {
+            String error = "Received Timestamp does not match the requirements";
+            notAssertPolicy(aim, SP12Constants.INCLUDE_TIMESTAMP, error);
+            ai.setNotAsserted(error);
+            return false;
+        }
+        assertPolicy(aim, SP12Constants.INCLUDE_TIMESTAMP);
+        
+        // Check the Layout
+        Layout layout = binding.getLayout();
+        LayoutPolicyValidator layoutValidator = new LayoutPolicyValidator(results, signedResults);
+        if (!layoutValidator.validatePolicy(layout)) {
+            String error = "Layout does not match the requirements";
+            notAssertPolicy(aim, layout, error);
+            ai.setNotAsserted(error);
+            return false;
+        }
+        assertPolicy(aim, layout);
+        
+        // Check the EntireHeaderAndBodySignatures property
+        if (binding.isEntireHeadersAndBodySignatures()
+            && !validateEntireHeaderAndBodySignatures(signedResults)) {
+            String error = "OnlySignEntireHeadersAndBody does not match the requirements";
+            ai.setNotAsserted(error);
+            return false;
+        }
+        
+        // Check whether the signatures were encrypted or not
+        if (binding.isSignatureProtection() && !isSignatureEncrypted(results)) {
+            ai.setNotAsserted("The signature is not protected");
+            return false;
+        }
+        
+        /*
+        // Check ProtectTokens
+        if (binding.isTokenProtection() && !isTokenProtected(results, signedResults)) {
+            ai.setNotAsserted("The token protection property is not valid");
+            return false;
+        }
+        */
+        
+        return true;
+    }
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577061/fstmerge_var2_2729884305796849744
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_92597_1eb69/rev_92597-1eb69/rt/ws/security/src/main/java/org/apache/cxf/ws/security/wss4j/policyvalidators/AbstractBindingPolicyValidator.java
+Conflict type: SameSignatureCM
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577092/fstmerge_var1_1293153387207871910
+private WSSecurityEngineResult findCorrespondingToken(
+        WSSecurityEngineResult signatureResult,
+        List<WSSecurityEngineResult> results
+    ) {
+        // See what was used to sign this result
+        X509Certificate cert = 
+            (X509Certificate)signatureResult.get(WSSecurityEngineResult.TAG_X509_CERTIFICATE);
+        PublicKey publicKey = 
+            (PublicKey)signatureResult.get(WSSecurityEngineResult.TAG_PUBLIC_KEY);
+        
+        for (WSSecurityEngineResult token : results) {
+            Integer actInt = (Integer)token.get(WSSecurityEngineResult.TAG_ACTION);
+            if (actInt == WSConstants.SIGN) {
+                continue;
+            }
+            
+            BinarySecurity binarySecurity = 
+                (BinarySecurity)token.get(WSSecurityEngineResult.TAG_BINARY_SECURITY_TOKEN);
+            PublicKey foundPublicKey = 
+                (PublicKey)token.get(WSSecurityEngineResult.TAG_PUBLIC_KEY);
+            if (binarySecurity instanceof X509Security
+                || binarySecurity instanceof PKIPathSecurity) {
+                X509Certificate foundCert = 
+                    (X509Certificate)token.get(WSSecurityEngineResult.TAG_X509_CERTIFICATE);
+                if (foundCert.equals(cert)) {
+                    return token;
+                }
+            } else if (actInt.intValue() == WSConstants.ST_SIGNED
+                || actInt.intValue() == WSConstants.ST_UNSIGNED) {
+                SamlAssertionWrapper assertionWrapper = 
+                    (SamlAssertionWrapper)token.get(WSSecurityEngineResult.TAG_SAML_ASSERTION);
+                SAMLKeyInfo samlKeyInfo = assertionWrapper.getSubjectKeyInfo();
+                if (samlKeyInfo != null) {
+                    X509Certificate[] subjectCerts = samlKeyInfo.getCerts();
+                    PublicKey subjectPublicKey = samlKeyInfo.getPublicKey();
+                    if ((cert != null && subjectCerts != null 
+                        && cert.equals(subjectCerts[0]))
+                        || (subjectPublicKey != null && subjectPublicKey.equals(publicKey))) {
+                        return token;
+                    }
+                }
+            } else if (publicKey != null && publicKey.equals(foundPublicKey)) {
+                return token;
+            } 
+        }
+        return null;
+    }
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577092/fstmerge_base_6475702135340902002
+=======
+private WSSecurityEngineResult findCorrespondingToken(
+        WSSecurityEngineResult signatureResult,
+        List<WSSecurityEngineResult> results
+    ) {
+        // See what was used to sign this result
+        X509Certificate cert = 
+            (X509Certificate)signatureResult.get(WSSecurityEngineResult.TAG_X509_CERTIFICATE);
+        PublicKey publicKey = 
+            (PublicKey)signatureResult.get(WSSecurityEngineResult.TAG_PUBLIC_KEY);
+        
+        for (WSSecurityEngineResult token : results) {
+            Integer actInt = (Integer)token.get(WSSecurityEngineResult.TAG_ACTION);
+            if (actInt == WSConstants.SIGN) {
+                continue;
+            }
+            
+            BinarySecurity binarySecurity = 
+                (BinarySecurity)token.get(WSSecurityEngineResult.TAG_BINARY_SECURITY_TOKEN);
+            PublicKey foundPublicKey = 
+                (PublicKey)token.get(WSSecurityEngineResult.TAG_PUBLIC_KEY);
+            if (binarySecurity instanceof X509Security
+                || binarySecurity instanceof PKIPathSecurity) {
+                X509Certificate foundCert = 
+                    (X509Certificate)token.get(WSSecurityEngineResult.TAG_X509_CERTIFICATE);
+                if (foundCert.equals(cert)) {
+                    return token;
+                }
+            } else if (actInt.intValue() == WSConstants.ST_SIGNED
+                || actInt.intValue() == WSConstants.ST_UNSIGNED) {
+                AssertionWrapper assertionWrapper = 
+                    (AssertionWrapper)token.get(WSSecurityEngineResult.TAG_SAML_ASSERTION);
+                SAMLKeyInfo samlKeyInfo = assertionWrapper.getSubjectKeyInfo();
+                if (samlKeyInfo != null) {
+                    X509Certificate[] subjectCerts = samlKeyInfo.getCerts();
+                    PublicKey subjectPublicKey = samlKeyInfo.getPublicKey();
+                    if ((cert != null && subjectCerts != null 
+                        && cert.equals(subjectCerts[0]))
+                        || (subjectPublicKey != null && subjectPublicKey.equals(publicKey))) {
+                        return token;
+                    }
+                }
+            } else if (publicKey != null && publicKey.equals(foundPublicKey)) {
+                return token;
+            } 
+        }
+        return null;
+    }
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577092/fstmerge_var2_5322508379102236588
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_92597_1eb69/rev_92597-1eb69/rt/ws/security/src/main/java/org/apache/cxf/ws/security/wss4j/policyvalidators/AbstractBindingPolicyValidator.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+public boolean validatePolicy(
+        AssertionInfoMap aim,
+        Message message,
+        Element soapBody,
+        List<WSSecurityEngineResult> results,
+        List<WSSecurityEngineResult> signedResults
+    ) {
+        Collection<AssertionInfo> ais = getAllAssertionsByLocalname(aim, SPConstants.USERNAME_TOKEN);
+        if (!ais.isEmpty()) {
+            parsePolicies(ais, message, results);
+            
+            assertPolicy(aim, SP13Constants.CREATED);
+            assertPolicy(aim, SP13Constants.NONCE);
+            assertPolicy(aim, SPConstants.NO_PASSWORD);
+            assertPolicy(aim, SPConstants.HASH_PASSWORD);
+            assertPolicy(aim, SPConstants.USERNAME_TOKEN10);
+            assertPolicy(aim, SPConstants.USERNAME_TOKEN11);
+        }
+        
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577132/fstmerge_var1_1874599299036537789
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577132/fstmerge_base_9113919563274755136
+        List<WSSecurityEngineResult> utResults = new ArrayList<WSSecurityEngineResult>();
+        WSSecurityUtil.fetchAllActionResults(results, WSConstants.UT, utResults);
+        WSSecurityUtil.fetchAllActionResults(results, WSConstants.UT_NOPASSWORD, utResults);
+        
+        for (AssertionInfo ai : ais) {
+            org.apache.cxf.ws.security.policy.model.UsernameToken usernameTokenPolicy = 
+                (org.apache.cxf.ws.security.policy.model.UsernameToken)ai.getAssertion();
+            ai.setAsserted(true);
+
+            if (!isTokenRequired(usernameTokenPolicy, message)) {
+                continue;
+            }
+
+            if (utResults.isEmpty()) {
+                ai.setNotAsserted(
+                    "The received token does not match the token inclusion requirement"
+                );
+                continue;
+            }
+
+            if (!checkTokens(usernameTokenPolicy, ai, utResults)) {
+                continue;
+            }
+        }
+=======
+        final List<Integer> actions = new ArrayList<Integer>(2);
+        actions.add(WSConstants.UT);
+        actions.add(WSConstants.UT_NOPASSWORD);
+        List<WSSecurityEngineResult> utResults = 
+            WSS4JUtils.fetchAllActionResults(results, actions);
+        
+        for (AssertionInfo ai : ais) {
+            org.apache.cxf.ws.security.policy.model.UsernameToken usernameTokenPolicy = 
+                (org.apache.cxf.ws.security.policy.model.UsernameToken)ai.getAssertion();
+            ai.setAsserted(true);
+
+            if (!isTokenRequired(usernameTokenPolicy, message)) {
+                continue;
+            }
+
+            if (utResults.isEmpty()) {
+                ai.setNotAsserted(
+                    "The received token does not match the token inclusion requirement"
+                );
+                continue;
+            }
+
+            if (!checkTokens(usernameTokenPolicy, ai, utResults)) {
+                continue;
+            }
+        }
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577132/fstmerge_var2_5916314368396949333
+        return true;
+    }
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_92597_1eb69/rev_92597-1eb69/rt/ws/security/src/main/java/org/apache/cxf/ws/security/wss4j/policyvalidators/UsernameTokenPolicyValidator.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+public boolean validatePolicy(
+        AssertionInfoMap aim,
+        Message message,
+        Element soapBody,
+        List<WSSecurityEngineResult> results,
+        List<WSSecurityEngineResult> signedResults
+    ) {
+        Collection<AssertionInfo> ais = getAllAssertionsByLocalname(aim, SPConstants.X509_TOKEN);
+        if (!ais.isEmpty()) {
+            parsePolicies(ais, message, results);
+            
+            assertPolicy(aim, SPConstants.WSS_X509_PKI_PATH_V1_TOKEN10);
+            assertPolicy(aim, SPConstants.WSS_X509_PKI_PATH_V1_TOKEN11);
+            assertPolicy(aim, SPConstants.WSS_X509_V1_TOKEN10);
+            assertPolicy(aim, SPConstants.WSS_X509_V1_TOKEN11);
+            assertPolicy(aim, SPConstants.WSS_X509_V3_TOKEN10);
+            assertPolicy(aim, SPConstants.WSS_X509_V3_TOKEN11);
+        }
+        
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577235/fstmerge_var1_1761396769562127827
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577235/fstmerge_base_6353836354466609621
+        List<WSSecurityEngineResult> bstResults = new ArrayList<WSSecurityEngineResult>();
+        WSSecurityUtil.fetchAllActionResults(results, WSConstants.BST, bstResults);
+        
+        for (AssertionInfo ai : ais) {
+            X509Token x509TokenPolicy = (X509Token)ai.getAssertion();
+            ai.setAsserted(true);
+
+            if (!isTokenRequired(x509TokenPolicy, message)) {
+                continue;
+            }
+
+            if (bstResults.isEmpty()) {
+                ai.setNotAsserted(
+                    "The received token does not match the token inclusion requirement"
+                );
+                continue;
+            }
+
+            if (!checkTokenType(x509TokenPolicy.getTokenVersionAndType(), bstResults)) {
+                ai.setNotAsserted("An incorrect X.509 Token Type is detected");
+                continue;
+            }
+        }
+=======
+        List<WSSecurityEngineResult> bstResults = 
+            WSS4JUtils.fetchAllActionResults(results, WSConstants.BST);
+        
+        for (AssertionInfo ai : ais) {
+            X509Token x509TokenPolicy = (X509Token)ai.getAssertion();
+            ai.setAsserted(true);
+
+            if (!isTokenRequired(x509TokenPolicy, message)) {
+                continue;
+            }
+
+            if (bstResults.isEmpty()) {
+                ai.setNotAsserted(
+                    "The received token does not match the token inclusion requirement"
+                );
+                continue;
+            }
+
+            if (!checkTokenType(x509TokenPolicy.getTokenVersionAndType(), bstResults)) {
+                ai.setNotAsserted("An incorrect X.509 Token Type is detected");
+                continue;
+            }
+        }
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577235/fstmerge_var2_164268010510578924
+        return true;
+    }
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_92597_1eb69/rev_92597-1eb69/rt/ws/security/src/main/java/org/apache/cxf/ws/security/wss4j/policyvalidators/X509TokenPolicyValidator.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577241/fstmerge_var1_9078137933620637879
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577241/fstmerge_base_8564349483374762102
+private boolean checkTokenType(
+        String requiredVersionAndType,
+        List<WSSecurityEngineResult> bstResults
+    ) {
+        if (bstResults.isEmpty()) {
+            return false;
+        }
+
+        String requiredType = X509_V3_VALUETYPE;
+        if (SPConstants.WSS_X509_PKI_PATH_V1_TOKEN10.equals(requiredType)
+            || SPConstants.WSS_X509_PKI_PATH_V1_TOKEN11.equals(requiredType)) {
+            requiredType = PKI_VALUETYPE;
+        }
+
+        for (WSSecurityEngineResult result : bstResults) {
+            BinarySecurity binarySecurityToken = 
+                (BinarySecurity)result.get(WSSecurityEngineResult.TAG_BINARY_SECURITY_TOKEN);
+            if (binarySecurityToken != null) {
+                String type = binarySecurityToken.getValueType();
+                if (requiredType.equals(type)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+=======
+private boolean checkTokenType(
+        String requiredVersionAndType,
+        List<WSSecurityEngineResult> bstResults
+    ) {
+        if (bstResults.isEmpty()) {
+            return false;
+        }
+
+        String requiredType = X509_V3_VALUETYPE;
+        if (SPConstants.WSS_X509_PKI_PATH_V1_TOKEN10.equals(requiredVersionAndType)
+            || SPConstants.WSS_X509_PKI_PATH_V1_TOKEN11.equals(requiredVersionAndType)) {
+            requiredType = PKI_VALUETYPE;
+        }
+
+        for (WSSecurityEngineResult result : bstResults) {
+            BinarySecurity binarySecurityToken = 
+                (BinarySecurity)result.get(WSSecurityEngineResult.TAG_BINARY_SECURITY_TOKEN);
+            if (binarySecurityToken != null) {
+                String type = binarySecurityToken.getValueType();
+                if (requiredType.equals(type)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577241/fstmerge_var2_3901333028762531880
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_92597_1eb69/rev_92597-1eb69/rt/ws/security/src/main/java/org/apache/cxf/ws/security/wss4j/policyvalidators/X509TokenPolicyValidator.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+public boolean validatePolicy(
+        AssertionInfoMap aim,
+        Message message,
+        Element soapBody,
+        List<WSSecurityEngineResult> results,
+        List<WSSecurityEngineResult> signedResults,
+        List<WSSecurityEngineResult> encryptedResults
+    ) {
+        Collection<AssertionInfo> ais = getAllAssertionsByLocalname(aim, SPConstants.TRANSPORT_BINDING);
+        if (!ais.isEmpty()) {
+            parsePolicies(aim, ais, message, results, signedResults);
+            
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577246/fstmerge_var1_6152990504924763364
+            // We don't need to check these policies for the Transport binding
+            assertPolicy(aim, SP12Constants.ENCRYPTED_PARTS);
+            assertPolicy(aim, SP11Constants.ENCRYPTED_PARTS);
+            assertPolicy(aim, SP12Constants.SIGNED_PARTS);
+            assertPolicy(aim, SP11Constants.SIGNED_PARTS);
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577246/fstmerge_base_5761093308242721351
+            // Check the AlgorithmSuite
+            AlgorithmSuitePolicyValidator algorithmValidator = new AlgorithmSuitePolicyValidator(results);
+            if (!algorithmValidator.validatePolicy(ai, binding.getAlgorithmSuite())) {
+                continue;
+            }
+            
+            // Check the IncludeTimestamp
+            if (!validateTimestamp(binding.isIncludeTimestamp(), true, results, signedResults, message)) {
+                String error = "Received Timestamp does not match the requirements";
+                notAssertPolicy(aim, SP12Constants.INCLUDE_TIMESTAMP, error);
+                ai.setNotAsserted(error);
+                continue;
+            }
+            assertPolicy(aim, SP12Constants.INCLUDE_TIMESTAMP);
+            
+            // Check the Layout
+            Layout layout = binding.getLayout();
+            boolean timestampFirst = layout.getValue() == SPConstants.Layout.LaxTimestampFirst;
+            boolean timestampLast = layout.getValue() == SPConstants.Layout.LaxTimestampLast;
+            if (!validateLayout(timestampFirst, timestampLast, results)) {
+                String error = "Layout does not match the requirements";
+                notAssertPolicy(aim, SP12Constants.LAYOUT, error);
+                ai.setNotAsserted(error);
+                continue;
+            }
+            assertPolicy(aim, SP12Constants.LAYOUT);
+=======
+            // Check the AlgorithmSuite
+            AlgorithmSuitePolicyValidator algorithmValidator = new AlgorithmSuitePolicyValidator(results);
+            if (!algorithmValidator.validatePolicy(ai, binding.getAlgorithmSuite())) {
+                continue;
+            }
+            
+            // Check the IncludeTimestamp
+            if (!validateTimestamp(binding.isIncludeTimestamp(), true, results, signedResults, message)) {
+                String error = "Received Timestamp does not match the requirements";
+                notAssertPolicy(aim, SP12Constants.INCLUDE_TIMESTAMP, error);
+                ai.setNotAsserted(error);
+                continue;
+            }
+            assertPolicy(aim, SP12Constants.INCLUDE_TIMESTAMP);
+            
+            // Check the Layout
+            Layout layout = binding.getLayout();
+            LayoutPolicyValidator layoutValidator = new LayoutPolicyValidator(results, signedResults);
+            if (!layoutValidator.validatePolicy(layout)) {
+                String error = "Layout does not match the requirements";
+                notAssertPolicy(aim, layout, error);
+                ai.setNotAsserted(error);
+                continue;
+            }
+            assertPolicy(aim, layout);
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577246/fstmerge_var2_1886605762009964995
+        }
+        
+        return true;
+    }
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_92597_1eb69/rev_92597-1eb69/rt/ws/security/src/main/java/org/apache/cxf/ws/security/wss4j/policyvalidators/TransportBindingPolicyValidator.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+public boolean validatePolicy(
+        AssertionInfoMap aim,
+        Message message,
+        Element soapBody,
+        List<WSSecurityEngineResult> results,
+        List<WSSecurityEngineResult> signedResults
+    ) {
+        body = soapBody;
+        signed = signedResults;
+        
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577252/fstmerge_var1_1908316114691631593
+        Collection<AssertionInfo> ais = getAllAssertionsByLocalname(aim, SPConstants.SAML_TOKEN);
+        if (!ais.isEmpty()) {
+            parsePolicies(aim, ais, message, results, signedResults);
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577252/fstmerge_base_4188330359998441885
+        List<WSSecurityEngineResult> samlResults = new ArrayList<WSSecurityEngineResult>();
+        WSSecurityUtil.fetchAllActionResults(results, WSConstants.ST_SIGNED, samlResults);
+        WSSecurityUtil.fetchAllActionResults(results, WSConstants.ST_UNSIGNED, samlResults);
+        
+        for (AssertionInfo ai : ais) {
+            SamlToken samlToken = (SamlToken)ai.getAssertion();
+            ai.setAsserted(true);
+
+            if (!isTokenRequired(samlToken, message)) {
+                continue;
+            }
+
+            if (samlResults.isEmpty()) {
+                ai.setNotAsserted(
+                    "The received token does not match the token inclusion requirement"
+                );
+                continue;
+            }
+            
+            // All of the received SAML Assertions must conform to the policy
+            for (WSSecurityEngineResult result : samlResults) {
+                AssertionWrapper assertionWrapper = 
+                    (AssertionWrapper)result.get(WSSecurityEngineResult.TAG_SAML_ASSERTION);
+                
+                if (!checkVersion(samlToken, assertionWrapper)) {
+                    ai.setNotAsserted("Wrong SAML Version");
+                    continue;
+                }
+                TLSSessionInfo tlsInfo = message.get(TLSSessionInfo.class);
+                Certificate[] tlsCerts = null;
+                if (tlsInfo != null) {
+                    tlsCerts = tlsInfo.getPeerCertificates();
+                }
+                if (!checkHolderOfKey(assertionWrapper, signedResults, tlsCerts)) {
+                    ai.setNotAsserted("Assertion fails holder-of-key requirements");
+                    continue;
+                }
+                if (!SAMLUtils.checkSenderVouches(assertionWrapper, tlsCerts, body, signed)) {
+                    ai.setNotAsserted("Assertion fails sender-vouches requirements");
+                    continue;
+                }
+                /*
+                    if (!checkIssuerName(samlToken, assertionWrapper)) {
+                        ai.setNotAsserted("Wrong IssuerName");
+                    }
+                 */
+            }
+=======
+        final List<Integer> actions = new ArrayList<Integer>(2);
+        actions.add(WSConstants.ST_SIGNED);
+        actions.add(WSConstants.ST_UNSIGNED);
+        List<WSSecurityEngineResult> samlResults = 
+            WSS4JUtils.fetchAllActionResults(results, actions);
+        
+        for (AssertionInfo ai : ais) {
+            SamlToken samlToken = (SamlToken)ai.getAssertion();
+            ai.setAsserted(true);
+
+            if (!isTokenRequired(samlToken, message)) {
+                continue;
+            }
+
+            if (samlResults.isEmpty()) {
+                ai.setNotAsserted(
+                    "The received token does not match the token inclusion requirement"
+                );
+                continue;
+            }
+            
+            // All of the received SAML Assertions must conform to the policy
+            for (WSSecurityEngineResult result : samlResults) {
+                AssertionWrapper assertionWrapper = 
+                    (AssertionWrapper)result.get(WSSecurityEngineResult.TAG_SAML_ASSERTION);
+                
+                if (!checkVersion(samlToken, assertionWrapper)) {
+                    ai.setNotAsserted("Wrong SAML Version");
+                    continue;
+                }
+                TLSSessionInfo tlsInfo = message.get(TLSSessionInfo.class);
+                Certificate[] tlsCerts = null;
+                if (tlsInfo != null) {
+                    tlsCerts = tlsInfo.getPeerCertificates();
+                }
+                if (!checkHolderOfKey(assertionWrapper, signedResults, tlsCerts)) {
+                    ai.setNotAsserted("Assertion fails holder-of-key requirements");
+                    continue;
+                }
+                if (!SAMLUtils.checkSenderVouches(assertionWrapper, tlsCerts, body, signed)) {
+                    ai.setNotAsserted("Assertion fails sender-vouches requirements");
+                    continue;
+                }
+                /*
+                    if (!checkIssuerName(samlToken, assertionWrapper)) {
+                        ai.setNotAsserted("Wrong IssuerName");
+                    }
+                 */
+            }
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577252/fstmerge_var2_4138310250612147453
+        }
+        
+        return true;
+    }
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_92597_1eb69/rev_92597-1eb69/rt/ws/security/src/main/java/org/apache/cxf/ws/security/wss4j/policyvalidators/SamlTokenPolicyValidator.java
+Conflict type: SameSignatureCM
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577275/fstmerge_var1_3411716163229466416
+public boolean validatePolicy(Layout layout) {
+        boolean timestampFirst = layout.getLayoutType() == LayoutType.LaxTsFirst;
+        boolean timestampLast = layout.getLayoutType() == LayoutType.LaxTsLast;
+        boolean strict = layout.getLayoutType() == LayoutType.Strict;
+        
+        if (timestampFirst) {
+            if (results.isEmpty()) {
+                return false;
+            }
+            Integer firstAction = (Integer)results.get(results.size() - 1).get(WSSecurityEngineResult.TAG_ACTION);
+            if (firstAction.intValue() != WSConstants.TS) {
+                return false;
+            }
+        } else if (timestampLast) {
+            if (results.isEmpty()) {
+                return false;
+            }
+            Integer lastAction = 
+                (Integer)results.get(0).get(WSSecurityEngineResult.TAG_ACTION);
+            if (lastAction.intValue() != WSConstants.TS) {
+                return false;
+            }
+        } else if (strict && (!validateStrictSignaturePlacement() 
+            || !validateStrictSignatureTokenPlacement()
+            || !checkSignatureIsSignedPlacement())) {
+            return false;
+        }
+        
+        return true;
+    }
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577275/fstmerge_base_9058435706449739841
+=======
+public boolean validatePolicy(Layout layout) {
+        boolean timestampFirst = layout.getValue() == SPConstants.Layout.LaxTsFirst;
+        boolean timestampLast = layout.getValue() == SPConstants.Layout.LaxTsLast;
+        boolean strict = layout.getValue() == SPConstants.Layout.Strict;
+        
+        if (timestampFirst) {
+            if (results.isEmpty()) {
+                return false;
+            }
+            Integer firstAction = (Integer)results.get(results.size() - 1).get(WSSecurityEngineResult.TAG_ACTION);
+            if (firstAction.intValue() != WSConstants.TS) {
+                return false;
+            }
+        } else if (timestampLast) {
+            if (results.isEmpty()) {
+                return false;
+            }
+            Integer lastAction = 
+                (Integer)results.get(0).get(WSSecurityEngineResult.TAG_ACTION);
+            if (lastAction.intValue() != WSConstants.TS) {
+                return false;
+            }
+        } else if (strict && (!validateStrictSignaturePlacement() 
+            || !validateStrictSignatureTokenPlacement()
+            || !checkSignatureIsSignedPlacement())) {
+            return false;
+        }
+        
+        return true;
+    }
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577275/fstmerge_var2_6479955593165331896
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_92597_1eb69/rev_92597-1eb69/rt/ws/security/src/main/java/org/apache/cxf/ws/security/wss4j/policyvalidators/LayoutPolicyValidator.java
+Conflict type: SameSignatureCM
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577303/fstmerge_var1_6081360994403895174
+private int findCorrespondingTokenIndex(
+        WSSecurityEngineResult signatureResult
+    ) {
+        // See what was used to sign this result
+        X509Certificate cert = 
+            (X509Certificate)signatureResult.get(WSSecurityEngineResult.TAG_X509_CERTIFICATE);
+        PublicKey publicKey = 
+            (PublicKey)signatureResult.get(WSSecurityEngineResult.TAG_PUBLIC_KEY);
+        
+        for (int i = 0; i < results.size(); i++) {
+            WSSecurityEngineResult token = results.get(i);
+            Integer actInt = (Integer)token.get(WSSecurityEngineResult.TAG_ACTION);
+            if (actInt == WSConstants.SIGN) {
+                continue;
+            }
+            
+            BinarySecurity binarySecurity = 
+                (BinarySecurity)token.get(WSSecurityEngineResult.TAG_BINARY_SECURITY_TOKEN);
+            PublicKey foundPublicKey = 
+                (PublicKey)token.get(WSSecurityEngineResult.TAG_PUBLIC_KEY);
+            if (binarySecurity instanceof X509Security
+                || binarySecurity instanceof PKIPathSecurity) {
+                X509Certificate foundCert = 
+                    (X509Certificate)token.get(WSSecurityEngineResult.TAG_X509_CERTIFICATE);
+                if (foundCert.equals(cert)) {
+                    return i;
+                }
+            } else if (actInt.intValue() == WSConstants.ST_SIGNED
+                || actInt.intValue() == WSConstants.ST_UNSIGNED) {
+                SamlAssertionWrapper assertionWrapper = 
+                    (SamlAssertionWrapper)token.get(WSSecurityEngineResult.TAG_SAML_ASSERTION);
+                SAMLKeyInfo samlKeyInfo = assertionWrapper.getSubjectKeyInfo();
+                if (samlKeyInfo != null) {
+                    X509Certificate[] subjectCerts = samlKeyInfo.getCerts();
+                    PublicKey subjectPublicKey = samlKeyInfo.getPublicKey();
+                    if ((cert != null && subjectCerts != null 
+                        && cert.equals(subjectCerts[0]))
+                        || (subjectPublicKey != null && subjectPublicKey.equals(publicKey))) {
+                        return i;
+                    }
+                }
+            } else if (publicKey != null && publicKey.equals(foundPublicKey)) {
+                return i;
+            } 
+        }
+        return -1;
+    }
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577303/fstmerge_base_173980125988924016
+=======
+private int findCorrespondingTokenIndex(
+        WSSecurityEngineResult signatureResult
+    ) {
+        // See what was used to sign this result
+        X509Certificate cert = 
+            (X509Certificate)signatureResult.get(WSSecurityEngineResult.TAG_X509_CERTIFICATE);
+        PublicKey publicKey = 
+            (PublicKey)signatureResult.get(WSSecurityEngineResult.TAG_PUBLIC_KEY);
+        
+        for (int i = 0; i < results.size(); i++) {
+            WSSecurityEngineResult token = results.get(i);
+            Integer actInt = (Integer)token.get(WSSecurityEngineResult.TAG_ACTION);
+            if (actInt == WSConstants.SIGN) {
+                continue;
+            }
+            
+            BinarySecurity binarySecurity = 
+                (BinarySecurity)token.get(WSSecurityEngineResult.TAG_BINARY_SECURITY_TOKEN);
+            PublicKey foundPublicKey = 
+                (PublicKey)token.get(WSSecurityEngineResult.TAG_PUBLIC_KEY);
+            if (binarySecurity instanceof X509Security
+                || binarySecurity instanceof PKIPathSecurity) {
+                X509Certificate foundCert = 
+                    (X509Certificate)token.get(WSSecurityEngineResult.TAG_X509_CERTIFICATE);
+                if (foundCert.equals(cert)) {
+                    return i;
+                }
+            } else if (actInt.intValue() == WSConstants.ST_SIGNED
+                || actInt.intValue() == WSConstants.ST_UNSIGNED) {
+                AssertionWrapper assertionWrapper = 
+                    (AssertionWrapper)token.get(WSSecurityEngineResult.TAG_SAML_ASSERTION);
+                SAMLKeyInfo samlKeyInfo = assertionWrapper.getSubjectKeyInfo();
+                if (samlKeyInfo != null) {
+                    X509Certificate[] subjectCerts = samlKeyInfo.getCerts();
+                    PublicKey subjectPublicKey = samlKeyInfo.getPublicKey();
+                    if ((cert != null && subjectCerts != null 
+                        && cert.equals(subjectCerts[0]))
+                        || (subjectPublicKey != null && subjectPublicKey.equals(publicKey))) {
+                        return i;
+                    }
+                }
+            } else if (publicKey != null && publicKey.equals(foundPublicKey)) {
+                return i;
+            } 
+        }
+        return -1;
+    }
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577303/fstmerge_var2_4267411817374778137
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_92597_1eb69/rev_92597-1eb69/rt/ws/security/src/main/java/org/apache/cxf/ws/security/wss4j/policyvalidators/LayoutPolicyValidator.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+public boolean validatePolicy(
+        AssertionInfoMap aim,
+        Message message,
+        Element soapBody,
+        List<WSSecurityEngineResult> results,
+        List<WSSecurityEngineResult> signedResults
+    ) {
+        Collection<AssertionInfo> ais = getAllAssertionsByLocalname(aim, SPConstants.WSS11);
+        if (!ais.isEmpty()) {
+            parsePolicies(ais, message, results);
+            
+            assertPolicy(aim, SPConstants.MUST_SUPPORT_REF_THUMBPRINT);
+            assertPolicy(aim, SPConstants.MUST_SUPPORT_REF_ENCRYPTED_KEY);
+            assertPolicy(aim, SPConstants.REQUIRE_SIGNATURE_CONFIRMATION);
+        }
+        
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577470/fstmerge_var1_2350102489008538972
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577470/fstmerge_base_2132591167019092942
+        List<WSSecurityEngineResult> scResults = new ArrayList<WSSecurityEngineResult>();
+        WSSecurityUtil.fetchAllActionResults(results, WSConstants.SC, scResults);
+        
+        for (AssertionInfo ai : ais) {
+            Wss11 wss11 = (Wss11)ai.getAssertion();
+            ai.setAsserted(true);
+
+            if (!MessageUtils.isRequestor(message)) {
+                continue;
+            }
+            
+            if (wss11.isRequireSignatureConfirmation() && scResults.isEmpty()) {
+                ai.setNotAsserted(
+                    "Signature Confirmation policy validation failed"
+                );
+                continue;
+            }
+        }
+=======
+        List<WSSecurityEngineResult> scResults =
+            WSS4JUtils.fetchAllActionResults(results, WSConstants.SC);
+        
+        for (AssertionInfo ai : ais) {
+            Wss11 wss11 = (Wss11)ai.getAssertion();
+            ai.setAsserted(true);
+
+            if (!MessageUtils.isRequestor(message)) {
+                continue;
+            }
+            
+            if ((wss11.isRequireSignatureConfirmation() && scResults.isEmpty())
+                || (!wss11.isRequireSignatureConfirmation() && !scResults.isEmpty())) {
+                ai.setNotAsserted(
+                    "Signature Confirmation policy validation failed"
+                );
+                continue;
+            }
+        }
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577470/fstmerge_var2_8738531697811047384
+        return true;
+    }
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_92597_1eb69/rev_92597-1eb69/rt/ws/security/src/main/java/org/apache/cxf/ws/security/wss4j/policyvalidators/WSS11PolicyValidator.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+protected void policyNotAsserted(Assertion assertion, Exception reason) {
+        if (assertion == null) {
+            return;
+        }
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577681/fstmerge_var1_3828954555611925077
+        LOG.log(Level.FINE, "Not asserting " + assertion.getName() + ": " + reason);
+        Collection<AssertionInfo> ais = aim.get(assertion.getName());
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577681/fstmerge_base_5481776476816613725
+        LOG.log(Level.FINE, "Not asserting " + assertion.getName() + ": " + reason);
+        Collection<AssertionInfo> ais;
+        ais = aim.get(assertion.getName());
+=======
+        if (LOG.isLoggable(Level.FINE)) {
+            LOG.log(Level.FINE, "Not asserting " + assertion.getName() + ": " + reason);
+        }
+        Collection<AssertionInfo> ais;
+        ais = aim.get(assertion.getName());
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577681/fstmerge_var2_784237264951560673
+        if (ais != null) {
+            for (AssertionInfo ai : ais) {
+                if (ai.getAssertion() == assertion) {
+                    ai.setNotAsserted(reason.getMessage());
+                }
+            }
+        }
+        if (!assertion.isOptional()) {
+            throw new PolicyException(new Message(reason.getMessage(), LOG));
+        }
+    }
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_92597_1eb69/rev_92597-1eb69/rt/ws/security/src/main/java/org/apache/cxf/ws/security/wss4j/policyhandlers/AbstractBindingBuilder.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+protected void policyNotAsserted(Assertion assertion, String reason) {
+        if (assertion == null) {
+            return;
+        }
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577686/fstmerge_var1_5793293260326072245
+        LOG.log(Level.FINE, "Not asserting " + assertion.getName() + ": " + reason);
+        Collection<AssertionInfo> ais = aim.get(assertion.getName());
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577686/fstmerge_base_8525635723584774126
+        LOG.log(Level.FINE, "Not asserting " + assertion.getName() + ": " + reason);
+        Collection<AssertionInfo> ais;
+        ais = aim.get(assertion.getName());
+=======
+        if (LOG.isLoggable(Level.FINE)) {
+            LOG.log(Level.FINE, "Not asserting " + assertion.getName() + ": " + reason);
+        }
+        Collection<AssertionInfo> ais;
+        ais = aim.get(assertion.getName());
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577686/fstmerge_var2_7670059328917958746
+        if (ais != null) {
+            for (AssertionInfo ai : ais) {
+                if (ai.getAssertion() == assertion) {
+                    ai.setNotAsserted(reason);
+                }
+            }
+        }
+        if (!assertion.isOptional()) {
+            throw new PolicyException(new Message(reason, LOG));
+        }
+    }
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_92597_1eb69/rev_92597-1eb69/rt/ws/security/src/main/java/org/apache/cxf/ws/security/wss4j/policyhandlers/AbstractBindingBuilder.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+protected void policyAsserted(Assertion assertion) {
+        if (assertion == null) {
+            return;
+        }
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577691/fstmerge_var1_7353412567116793214
+        LOG.log(Level.FINE, "Asserting " + assertion.getName());
+        Collection<AssertionInfo> ais = aim.get(assertion.getName());
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577691/fstmerge_base_4452178255070710282
+        LOG.log(Level.FINE, "Asserting " + assertion.getName());
+        Collection<AssertionInfo> ais;
+        ais = aim.get(assertion.getName());
+=======
+        if (LOG.isLoggable(Level.FINE)) {
+            LOG.log(Level.FINE, "Asserting " + assertion.getName());
+        }
+        Collection<AssertionInfo> ais;
+        ais = aim.get(assertion.getName());
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577691/fstmerge_var2_1252535490441051091
+        if (ais != null) {
+            for (AssertionInfo ai : ais) {
+                if (ai.getAssertion() == assertion) {
+                    ai.setAsserted(true);
+                }
+            }
+        }
+    }
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_92597_1eb69/rev_92597-1eb69/rt/ws/security/src/main/java/org/apache/cxf/ws/security/wss4j/policyhandlers/AbstractBindingBuilder.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+protected WSSecTimestamp handleLayout(WSSecTimestamp timestamp) {
+        Collection<AssertionInfo> ais = getAllAssertionsByLocalname(SPConstants.LAYOUT);
+        if (!ais.isEmpty()) {
+            for (AssertionInfo ai : ais) {
+                Layout layout = (Layout)ai.getAssertion();
+                ai.setAsserted(true);
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577722/fstmerge_var1_5194797635105677964
+                if (layout.getLayoutType() == LayoutType.LaxTsLast) {
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577722/fstmerge_base_3336507580279024075
+                if (SPConstants.Layout.LaxTimestampLast == layout.getValue()) {
+=======
+                if (SPConstants.Layout.LaxTsLast == layout.getValue()) {
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577722/fstmerge_var2_6472783842596353911
+                    if (timestamp == null) {
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577722/fstmerge_var1_5194797635105677964
+                        ai.setNotAsserted(SPConstants.LAYOUT_LAX_TIMESTAMP_LAST + " requires a timestamp");
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577722/fstmerge_base_3336507580279024075
+                        ai.setNotAsserted(SPConstants.Layout.LaxTimestampLast + " requires a timestamp");
+=======
+                        ai.setNotAsserted(SPConstants.Layout.LaxTsLast + " requires a timestamp");
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577722/fstmerge_var2_6472783842596353911
+                    } else {
+                        ai.setAsserted(true);
+                        policyAsserted(SPConstants.LAYOUT_LAX_TIMESTAMP_LAST);
+                        Element el = timestamp.getElement();
+                        secHeader.getSecurityHeader().appendChild(el);
+                        if (bottomUpElement == null) {
+                            bottomUpElement = el;
+                        }
+                    }
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577722/fstmerge_var1_5194797635105677964
+                } else if (layout.getLayoutType() == LayoutType.LaxTsFirst) {
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577722/fstmerge_base_3336507580279024075
+                } else if (SPConstants.Layout.LaxTimestampFirst == layout.getValue()) {
+=======
+                } else if (SPConstants.Layout.LaxTsFirst == layout.getValue()) {
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577722/fstmerge_var2_6472783842596353911
+                    if (timestamp == null) {
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577722/fstmerge_var1_5194797635105677964
+                        ai.setNotAsserted(SPConstants.LAYOUT_LAX_TIMESTAMP_FIRST + " requires a timestamp");
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577722/fstmerge_base_3336507580279024075
+                        ai.setNotAsserted(SPConstants.Layout.LaxTimestampLast + " requires a timestamp");
+=======
+                        ai.setNotAsserted(SPConstants.Layout.LaxTsFirst + " requires a timestamp");
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577722/fstmerge_var2_6472783842596353911
+                    } else {
+                        addTopDownElement(timestampEl.getElement());
+                        policyAsserted(SPConstants.LAYOUT_LAX_TIMESTAMP_FIRST);
+                    }
+                } else if (timestampEl != null) {
+                    addTopDownElement(timestampEl.getElement());
+                }
+                
+                policyAsserted(SPConstants.LAYOUT_LAX);
+                policyAsserted(SPConstants.LAYOUT_STRICT);
+            }                    
+        } else if (timestampEl != null) {
+            addTopDownElement(timestampEl.getElement());
+        }
+        return timestamp;
+    }
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_92597_1eb69/rev_92597-1eb69/rt/ws/security/src/main/java/org/apache/cxf/ws/security/wss4j/policyhandlers/AbstractBindingBuilder.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577830/fstmerge_var1_831050374831518040
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577830/fstmerge_base_4031109878680113748
+protected List<WSEncryptionPart> getElements(String encryptionModifier,
+            List<String> xpaths, Map<String, String> namespaces,
+            List<Element> found,
+            boolean forceId) throws XPathExpressionException, SOAPException {
+        
+        List<WSEncryptionPart> result = new ArrayList<WSEncryptionPart>();
+        
+        if (xpaths != null && !xpaths.isEmpty()) {
+            XPathFactory factory = XPathFactory.newInstance();
+            for (String expression : xpaths) {
+                XPath xpath = factory.newXPath();
+                if (namespaces != null) {
+                    xpath.setNamespaceContext(new MapNamespaceContext(namespaces));
+                }
+               
+                NodeList list = (NodeList)xpath.evaluate(expression, saaj.getSOAPPart().getEnvelope(),
+                                               XPathConstants.NODESET);
+                for (int x = 0; x < list.getLength(); x++) {
+                    Element el = (Element)list.item(x);
+                    
+                    if (!found.contains(el)) {
+                        String id = null;
+                        if (forceId) {
+                            id = this.addWsuIdToElement(el);
+                        } else {
+                            //not forcing an ID on this.  Use one if there is one 
+                            //there already, but don't force one
+                            Attr idAttr = el.getAttributeNode("Id");
+                            if (idAttr == null) {
+                                //then try the wsu:Id value
+                                idAttr = el.getAttributeNodeNS(PolicyConstants.WSU_NAMESPACE_URI, "Id");
+                            }
+                            if (idAttr != null) {
+                                id = idAttr.getValue();
+                            }
+                        }
+                        WSEncryptionPart part = 
+                            new WSEncryptionPart(id, encryptionModifier);
+                        part.setElement(el);
+                        part.setXpath(expression);
+                        
+                        result.add(part);
+                    }
+                }
+            }
+        }
+        
+        return result;
+    }
+=======
+protected List<WSEncryptionPart> getElements(String encryptionModifier,
+            List<String> xpaths, Map<String, String> namespaces,
+            List<Element> found,
+            boolean forceId) throws XPathExpressionException, SOAPException {
+        
+        List<WSEncryptionPart> result = new ArrayList<WSEncryptionPart>();
+        
+        if (xpaths != null && !xpaths.isEmpty()) {
+            XPathFactory factory = XPathFactory.newInstance();
+            for (String expression : xpaths) {
+                XPath xpath = factory.newXPath();
+                if (namespaces != null) {
+                    xpath.setNamespaceContext(new MapNamespaceContext(namespaces));
+                }
+               
+                NodeList list = (NodeList)xpath.evaluate(expression, saaj.getSOAPPart().getEnvelope(),
+                                               XPathConstants.NODESET);
+                for (int x = 0; x < list.getLength(); x++) {
+                    Element el = (Element)list.item(x);
+                    
+                    if (!found.contains(el)) {
+                        String id = null;
+                        if (forceId) {
+                            id = this.addWsuIdToElement(el);
+                        } else {
+                            //not forcing an ID on this.  Use one if there is one 
+                            //there already, but don't force one
+                            Attr idAttr = el.getAttributeNodeNS(null, "Id");
+                            if (idAttr == null) {
+                                //then try the wsu:Id value
+                                idAttr = el.getAttributeNodeNS(PolicyConstants.WSU_NAMESPACE_URI, "Id");
+                            }
+                            if (idAttr != null) {
+                                id = idAttr.getValue();
+                            }
+                        }
+                        WSEncryptionPart part = 
+                            new WSEncryptionPart(id, encryptionModifier);
+                        part.setElement(el);
+                        part.setXpath(expression);
+                        
+                        result.add(part);
+                    }
+                }
+            }
+        }
+        
+        return result;
+    }
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577830/fstmerge_var2_5445924370961292174
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_92597_1eb69/rev_92597-1eb69/rt/ws/security/src/main/java/org/apache/cxf/ws/security/wss4j/policyhandlers/AbstractBindingBuilder.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+protected void addSignatureConfirmation(List<WSEncryptionPart> sigParts) {
+        Wss10 wss10 = getWss10();
+        
+        if (!(wss10 instanceof Wss11) 
+            || !((Wss11)wss10).isRequireSignatureConfirmation()) {
+            //If we don't require sig confirmation simply go back :-)
+            return;
+        }
+        
+        List<WSHandlerResult> results = 
+            CastUtils.cast((List<?>)
+                message.getExchange().getInMessage().get(WSHandlerConstants.RECV_RESULTS));
+        /*
+         * loop over all results gathered by all handlers in the chain. For each
+         * handler result get the various actions. After that loop we have all
+         * signature results in the signatureActions list
+         */
+        List<WSSecurityEngineResult> signatureActions = new ArrayList<WSSecurityEngineResult>();
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577933/fstmerge_base_6426728867959048798
+=======
+        final List<Integer> signedActions = new ArrayList<Integer>(2);
+        signedActions.add(WSConstants.SIGN);
+        signedActions.add(WSConstants.UT_SIGN);
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577933/fstmerge_var2_9199749323211798309
+        for (WSHandlerResult wshResult : results) {
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577933/fstmerge_var1_3830407574448864370
+            signatureActions.addAll(
+                WSSecurityUtil.fetchAllActionResults(wshResult.getResults(), signedActions)
+            );
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577933/fstmerge_base_6426728867959048798
+            WSSecurityUtil.fetchAllActionResults(wshResult.getResults(),
+                    WSConstants.SIGN, signatureActions);
+            WSSecurityUtil.fetchAllActionResults(wshResult.getResults(),
+                    WSConstants.UT_SIGN, signatureActions);
+=======
+            signatureActions.addAll(
+                WSS4JUtils.fetchAllActionResults(wshResult.getResults(), signedActions)
+            );
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646577933/fstmerge_var2_9199749323211798309
+        }
+        
+        sigConfList = new ArrayList<WSEncryptionPart>();
+        // prepare a SignatureConfirmation token
+        WSSecSignatureConfirmation wsc = new WSSecSignatureConfirmation(wssConfig);
+        if (signatureActions.size() > 0) {
+            for (WSSecurityEngineResult wsr : signatureActions) {
+                byte[] sigVal = (byte[]) wsr.get(WSSecurityEngineResult.TAG_SIGNATURE_VALUE);
+                wsc.setSignatureValue(sigVal);
+                wsc.prepare(saaj.getSOAPPart());
+                addSupportingElement(wsc.getSignatureConfirmationElement());
+                if (sigParts != null) {
+                    WSEncryptionPart part = new WSEncryptionPart(wsc.getId(), "Element");
+                    part.setElement(wsc.getSignatureConfirmationElement());
+                    sigParts.add(part);
+                    sigConfList.add(part);
+                }
+            }
+        } else {
+            //No Sig value
+            wsc.prepare(saaj.getSOAPPart());
+            addSupportingElement(wsc.getSignatureConfirmationElement());
+            if (sigParts != null) {
+                WSEncryptionPart part = new WSEncryptionPart(wsc.getId(), "Element");
+                part.setElement(wsc.getSignatureConfirmationElement());
+                sigParts.add(part);
+                sigConfList.add(part);
+            }
+        }
+        
+        policyAsserted(SPConstants.REQUIRE_SIGNATURE_CONFIRMATION);
+    }
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_92597_1eb69/rev_92597-1eb69/rt/ws/security/src/main/java/org/apache/cxf/ws/security/wss4j/policyhandlers/AbstractBindingBuilder.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646578054/fstmerge_var1_6788871075955020779
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646578054/fstmerge_base_7861969348240168207
+public EHCacheReplayCache(String key, Bus b, URL configFileURL) {
+        bus = b;
+        if (bus != null) {
+            bus.getExtension(BusLifeCycleManager.class).registerLifeCycleListener(this);
+        }
+        cacheManager = EHCacheManagerHolder.getCacheManager(bus, configFileURL);
+        
+        CacheConfiguration cc = EHCacheManagerHolder.getCacheConfiguration(key, cacheManager);
+
+        Ehcache newCache = new Cache(cc);
+        cache = cacheManager.addCacheIfAbsent(newCache);
+    }
+=======
+public EHCacheReplayCache(String key, Bus b, URL configFileURL) {
+        bus = b;
+        if (bus != null) {
+            bus.getExtension(BusLifeCycleManager.class).registerLifeCycleListener(this);
+        }
+        cacheManager = EHCacheManagerHolder.getCacheManager(bus, configFileURL);
+        
+        CacheConfiguration cc = EHCacheManagerHolder.getCacheConfiguration(key, cacheManager);
+
+        Ehcache newCache = new Cache(cc);
+        cache = cacheManager.addCacheIfAbsent(newCache);
+        
+        // Set the TimeToLive value from the CacheConfiguration
+        ttl = cc.getTimeToLiveSeconds();
+    }
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646578054/fstmerge_var2_1328252158097978870
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_92597_1eb69/rev_92597-1eb69/rt/ws/security/src/main/java/org/apache/cxf/ws/security/cache/EHCacheReplayCache.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646579196/fstmerge_var1_5178184611091987430
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646579196/fstmerge_base_4009572130601252723
+public Assertion build(Element element, AssertionBuilderFactory factory) {
+        
+        SPConstants consts = SP11Constants.SP_NS.equals(element.getNamespaceURI())
+            ? SP11Constants.INSTANCE : SP12Constants.INSTANCE;
+
+        SamlToken samlToken = new SamlToken(consts);
+        samlToken.setOptional(PolicyConstants.isOptional(element));
+        samlToken.setIgnorable(PolicyConstants.isIgnorable(element));
+
+        String attribute = element.getAttributeNS(element.getNamespaceURI(), SPConstants.ATTR_INCLUDE_TOKEN);
+        if (attribute != null) {
+            samlToken.setInclusion(consts.getInclusionFromAttributeValue(attribute));
+        }
+        
+        Element child = DOMUtils.getFirstElement(element);
+        boolean foundPolicy = false;
+        while (child != null) {
+            String ln = child.getLocalName();
+            if (org.apache.neethi.Constants.ELEM_POLICY.equals(ln)) {
+                foundPolicy = true;
+                samlToken.setPolicy(child);
+                NodeList policyChildren = child.getChildNodes();
+                if (policyChildren != null) {
+                    for (int i = 0; i < policyChildren.getLength(); i++) {
+                        Node policyChild = policyChildren.item(i);
+                        if (policyChild instanceof Element) {
+                            QName qname = 
+                                new QName(policyChild.getNamespaceURI(), policyChild.getLocalName());
+                            String localname = qname.getLocalPart();
+                            if (SPConstants.SAML_11_TOKEN_10.equals(localname)) {
+                                samlToken.setUseSamlVersion11Profile10(true);
+                            } else if (SPConstants.SAML_11_TOKEN_11.equals(localname)) {
+                                samlToken.setUseSamlVersion11Profile11(true);
+                            } else if (SPConstants.SAML_20_TOKEN_11.equals(localname)) {
+                                samlToken.setUseSamlVersion20Profile11(true);
+                            } else if (SPConstants.REQUIRE_DERIVED_KEYS.equals(localname)) {
+                                samlToken.setDerivedKeys(true);
+                            } else if (SPConstants.REQUIRE_EXPLICIT_DERIVED_KEYS.equals(localname)) {
+                                samlToken.setExplicitDerivedKeys(true);
+                            } else if (SPConstants.REQUIRE_IMPLIED_DERIVED_KEYS.equals(localname)) {
+                                samlToken.setImpliedDerivedKeys(true);
+                            } else if (SPConstants.REQUIRE_KEY_IDENTIFIER_REFERENCE.equals(localname)) {
+                                samlToken.setRequireKeyIdentifierReference(true);
+                            }
+                        }
+                    }
+                }
+            }
+            child = DOMUtils.getNextElement(child);
+        }
+        
+        if (!foundPolicy && consts != SP11Constants.INSTANCE) {
+            throw new IllegalArgumentException(
+                "sp:SpnegoContextToken/wsp:Policy must have a value"
+            );
+        }
+        
+        return samlToken;
+    }
+=======
+public Assertion build(Element element, AssertionBuilderFactory factory) {
+        
+        SPConstants consts = SP11Constants.SP_NS.equals(element.getNamespaceURI())
+            ? SP11Constants.INSTANCE : SP12Constants.INSTANCE;
+
+        SamlToken samlToken = new SamlToken(consts);
+        samlToken.setOptional(PolicyConstants.isOptional(element));
+        samlToken.setIgnorable(PolicyConstants.isIgnorable(element));
+
+        String attribute = element.getAttributeNS(element.getNamespaceURI(), SPConstants.ATTR_INCLUDE_TOKEN);
+        if (attribute != null) {
+            samlToken.setInclusion(consts.getInclusionFromAttributeValue(attribute));
+        }
+        
+        Element child = DOMUtils.getFirstElement(element);
+        boolean foundPolicy = false;
+        while (child != null) {
+            String ln = child.getLocalName();
+            if (org.apache.neethi.Constants.ELEM_POLICY.equals(ln)) {
+                foundPolicy = true;
+                samlToken.setPolicy(child);
+                NodeList policyChildren = child.getChildNodes();
+                if (policyChildren != null) {
+                    for (int i = 0; i < policyChildren.getLength(); i++) {
+                        Node policyChild = policyChildren.item(i);
+                        if (policyChild instanceof Element) {
+                            QName qname = 
+                                new QName(policyChild.getNamespaceURI(), policyChild.getLocalName());
+                            String localname = qname.getLocalPart();
+                            if (SPConstants.SAML_11_TOKEN_10.equals(localname)) {
+                                samlToken.setUseSamlVersion11Profile10(true);
+                            } else if (SPConstants.SAML_11_TOKEN_11.equals(localname)) {
+                                samlToken.setUseSamlVersion11Profile11(true);
+                            } else if (SPConstants.SAML_20_TOKEN_11.equals(localname)) {
+                                samlToken.setUseSamlVersion20Profile11(true);
+                            } else if (SPConstants.REQUIRE_DERIVED_KEYS.equals(localname)) {
+                                samlToken.setDerivedKeys(true);
+                            } else if (SPConstants.REQUIRE_EXPLICIT_DERIVED_KEYS.equals(localname)) {
+                                samlToken.setExplicitDerivedKeys(true);
+                            } else if (SPConstants.REQUIRE_IMPLIED_DERIVED_KEYS.equals(localname)) {
+                                samlToken.setImpliedDerivedKeys(true);
+                            } else if (SPConstants.REQUIRE_KEY_IDENTIFIER_REFERENCE.equals(localname)) {
+                                samlToken.setRequireKeyIdentifierReference(true);
+                            }
+                        }
+                    }
+                }
+            }
+            child = DOMUtils.getNextElement(child);
+        }
+        
+        if (!foundPolicy && consts != SP11Constants.INSTANCE) {
+            throw new IllegalArgumentException(
+                "sp:SamlToken/wsp:Policy must have a value"
+            );
+        }
+        
+        return samlToken;
+    }
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646579196/fstmerge_var2_4125713449836482961
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_92597_1eb69/rev_92597-1eb69/rt/ws/security/src/main/java/org/apache/cxf/ws/security/policy/builders/SamlTokenBuilder.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646579330/fstmerge_var1_7516431171709191281
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646579330/fstmerge_base_896694054909075371
+private void processElement(Element element, SignedEncryptedParts parent) {
+
+        if ("Header".equals(element.getLocalName())) {
+
+            String nameAttribute = element.getAttribute(SPConstants.NAME);
+            if (nameAttribute == null) {
+                nameAttribute = "";
+            }
+            String namespaceAttribute = element.getAttribute(SPConstants.NAMESPACE);
+            if ("".equals(namespaceAttribute)) {
+                throw new IllegalArgumentException(
+                    "sp:SignedParts/sp:Header@Namespace must have a value"
+                );
+            }
+
+            parent.addHeader(new Header(nameAttribute, namespaceAttribute));
+
+        } else if ("Body".equals(element.getLocalName())) {
+            parent.setBody(true);
+        }
+    }
+=======
+private void processElement(Element element, SignedEncryptedParts parent) {
+
+        if ("Header".equals(element.getLocalName())) {
+
+            String nameAttribute = element.getAttributeNS(null, SPConstants.NAME);
+            if (nameAttribute == null) {
+                nameAttribute = "";
+            }
+            String namespaceAttribute = element.getAttributeNS(null, SPConstants.NAMESPACE);
+            if ("".equals(namespaceAttribute)) {
+                throw new IllegalArgumentException(
+                    "sp:SignedParts/sp:Header@Namespace must have a value"
+                );
+            }
+
+            parent.addHeader(new Header(nameAttribute, namespaceAttribute));
+
+        } else if ("Body".equals(element.getLocalName())) {
+            parent.setBody(true);
+        }
+    }
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646579330/fstmerge_var2_1991466797459504887
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_92597_1eb69/rev_92597-1eb69/rt/ws/security/src/main/java/org/apache/cxf/ws/security/policy/builders/SignedPartsBuilder.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646579353/fstmerge_var1_7857954999853148732
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646579353/fstmerge_base_6918177265400005820
+private void processElement(Element element, SignedEncryptedParts parent) {
+
+        if ("Header".equals(element.getLocalName())) {
+            String nameAttribute = element.getAttribute(SPConstants.NAME);
+            if (nameAttribute == null) {
+                nameAttribute = "";
+            }
+            String namespaceAttribute = element.getAttribute(SPConstants.NAMESPACE);
+            if ("".equals(namespaceAttribute)) {
+                throw new IllegalArgumentException(
+                    "sp:EncryptedParts/sp:Header@Namespace must have a value"
+                );
+            }
+            parent.addHeader(new Header(nameAttribute, namespaceAttribute));
+
+        } else if ("Body".equals(element.getLocalName())) {
+            parent.setBody(true);
+        }
+    }
+=======
+private void processElement(Element element, SignedEncryptedParts parent) {
+
+        if ("Header".equals(element.getLocalName())) {
+            String nameAttribute = element.getAttributeNS(null, SPConstants.NAME);
+            if (nameAttribute == null) {
+                nameAttribute = "";
+            }
+            String namespaceAttribute = element.getAttributeNS(null, SPConstants.NAMESPACE);
+            if ("".equals(namespaceAttribute)) {
+                throw new IllegalArgumentException(
+                    "sp:EncryptedParts/sp:Header@Namespace must have a value"
+                );
+            }
+            parent.addHeader(new Header(nameAttribute, namespaceAttribute));
+
+        } else if ("Body".equals(element.getLocalName())) {
+            parent.setBody(true);
+        }
+    }
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646579353/fstmerge_var2_9142606467599109941
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_92597_1eb69/rev_92597-1eb69/rt/ws/security/src/main/java/org/apache/cxf/ws/security/policy/builders/EncryptedPartsBuilder.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646579728/fstmerge_var1_3522872822981863750
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646579728/fstmerge_base_5615283485133476170
+private void processElement(Element element, RequiredParts parent) {
+        if ("Header".equals(element.getLocalName())) {
+
+            String nameAttribute = element.getAttribute(SPConstants.NAME);
+            if (nameAttribute == null) {
+                nameAttribute = "";
+            }
+
+            String namespaceAttribute = element.getAttribute(SPConstants.NAMESPACE);
+            if ("".equals(namespaceAttribute)) {
+                throw new IllegalArgumentException(
+                    "sp:RequiredParts/sp:Header@Namespace must have a value"
+                );
+            }
+            parent.addHeader(new Header(nameAttribute, namespaceAttribute));
+        }
+    }
+=======
+private void processElement(Element element, RequiredParts parent) {
+        if ("Header".equals(element.getLocalName())) {
+
+            String nameAttribute = element.getAttributeNS(null, SPConstants.NAME);
+            if (nameAttribute == null) {
+                nameAttribute = "";
+            }
+
+            String namespaceAttribute = element.getAttributeNS(null, SPConstants.NAMESPACE);
+            if ("".equals(namespaceAttribute)) {
+                throw new IllegalArgumentException(
+                    "sp:RequiredParts/sp:Header@Namespace must have a value"
+                );
+            }
+            parent.addHeader(new Header(nameAttribute, namespaceAttribute));
+        }
+    }
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646579728/fstmerge_var2_4499759338944773244
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_92597_1eb69/rev_92597-1eb69/rt/ws/security/src/main/java/org/apache/cxf/ws/security/policy/builders/RequiredPartsBuilder.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+private void parseHandlerResults(
+            WSHandlerResult rResult,
+            Message message,
+            AssertionInfoMap aim
+        ) {
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646581938/fstmerge_var1_3385731188848448510
+            List<WSSecurityEngineResult> signedResults = 
+                WSSecurityUtil.fetchAllActionResults(rResult.getResults(), WSConstants.SIGN);
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646581938/fstmerge_base_2901603542119132742
+            List<WSSecurityEngineResult> signedResults = new ArrayList<WSSecurityEngineResult>();
+            WSSecurityUtil.fetchAllActionResults(
+                rResult.getResults(), WSConstants.SIGN, signedResults
+            );
+=======
+            List<WSSecurityEngineResult> signedResults = 
+                WSS4JUtils.fetchAllActionResults(rResult.getResults(), WSConstants.SIGN);
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646581938/fstmerge_var2_6239476430280386145
+            
+            IssuedTokenPolicyValidator issuedValidator = 
+                new IssuedTokenPolicyValidator(signedResults, message);
+            Collection<AssertionInfo> issuedAis = 
+                NegotiationUtils.getAllAssertionsByLocalname(aim, SPConstants.ISSUED_TOKEN);
+
+            for (SamlAssertionWrapper assertionWrapper : findSamlTokenResults(rResult.getResults())) {
+                boolean valid = issuedValidator.validatePolicy(issuedAis, assertionWrapper);
+                if (valid) {
+                    SecurityToken token = createSecurityToken(assertionWrapper);
+                    getTokenStore(message).add(token);
+                    message.getExchange().remove(SecurityConstants.TOKEN);
+                    message.getExchange().put(SecurityConstants.TOKEN_ID, token.getId());
+                    return;
+                }
+            }
+            for (BinarySecurity binarySecurityToken : findBinarySecurityTokenResults(rResult.getResults())) {
+                boolean valid = issuedValidator.validatePolicy(issuedAis, binarySecurityToken);
+                if (valid) {
+                    SecurityToken token = createSecurityToken(binarySecurityToken);
+                    getTokenStore(message).add(token);
+                    message.getExchange().remove(SecurityConstants.TOKEN);
+                    message.getExchange().put(SecurityConstants.TOKEN_ID, token.getId());
+                    return;
+                }
+            }
+        }
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_92597_1eb69/rev_92597-1eb69/rt/ws/security/src/main/java/org/apache/cxf/ws/security/policy/interceptors/IssuedTokenInterceptorProvider.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+protected void verifyWss4jEncResults(SoapMessage inmsg) {
+        //
+        // There should be exactly 1 (WSS4J) HandlerResult
+        //
+        final List<WSHandlerResult> handlerResults = 
+            CastUtils.cast((List<?>)inmsg.get(WSHandlerConstants.RECV_RESULTS));
+        assertNotNull(handlerResults);
+        assertSame(handlerResults.size(), 1);
+
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646582723/fstmerge_var1_3757449932659507752
+        final List<WSSecurityEngineResult> protectionResults = 
+            WSSecurityUtil.fetchAllActionResults(handlerResults.get(0).getResults(), WSConstants.ENCR);
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646582723/fstmerge_base_8399397660056693855
+        List<WSSecurityEngineResult> protectionResults = new Vector<WSSecurityEngineResult>();
+        WSSecurityUtil.fetchAllActionResults(handlerResults.get(0).getResults(),
+                WSConstants.ENCR, protectionResults);
+=======
+        final List<WSSecurityEngineResult> protectionResults =
+            WSS4JUtils.fetchAllActionResults(handlerResults.get(0).getResults(), WSConstants.ENCR);
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646582723/fstmerge_var2_6836223336183293826
+        assertNotNull(protectionResults);
+        
+        //
+        // This result should contain a reference to the decrypted element
+        //
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646582723/fstmerge_base_8399397660056693855
+        final Map<String, Object> result = protectionResults
+                .get(0);
+=======
+        final Map<String, Object> result = protectionResults.get(0);
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646582723/fstmerge_var2_6836223336183293826
+        final List<WSDataRef> protectedElements = 
+            CastUtils.cast((List<?>)result.get(WSSecurityEngineResult.TAG_DATA_REF_URIS));
+        assertNotNull(protectedElements);
+    }
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_92597_1eb69/rev_92597-1eb69/rt/ws/security/src/test/java/org/apache/cxf/ws/security/wss4j/AbstractPolicySecurityTest.java
+Conflict type: SameSignatureCM
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646674481/fstmerge_var1_1330382302628673107
+@org.junit.Test
+    public void testPlaintextPrincipal() throws Exception {
+
+        SpringBusFactory bf = new SpringBusFactory();
+        URL busFile = UsernameTokenTest.class.getResource("client/client.xml");
+
+        Bus bus = bf.createBus(busFile.toString());
+        SpringBusFactory.setDefaultBus(bus);
+        SpringBusFactory.setThreadDefaultBus(bus);
+
+        URL wsdl = UsernameTokenTest.class.getResource("DoubleItUt.wsdl");
+        Service service = Service.create(wsdl, SERVICE_QNAME);
+        QName portQName = new QName(NAMESPACE, "DoubleItPlaintextPrincipalPort");
+        DoubleItPortType utPort = 
+                service.getPort(portQName, DoubleItPortType.class);
+        updateAddressPort(utPort, PORT);
+        
+        // DOM
+        ((BindingProvider)utPort).getRequestContext().put(SecurityConstants.USERNAME, "Alice");
+        utPort.doubleIt(25);
+        
+        try {
+            ((BindingProvider)utPort).getRequestContext().put(SecurityConstants.USERNAME, "Frank");
+            utPort.doubleIt(30);
+            fail("Failure expected on a user with the wrong role");
+        } catch (javax.xml.ws.soap.SOAPFaultException ex) {
+            String error = "Unauthorized";
+            assertTrue(ex.getMessage().contains(error));
+        }
+        
+        // Streaming
+        /*
+        // TODO
+        ((BindingProvider)utPort).getRequestContext().put(SecurityConstants.USERNAME, "Alice");
+        utPort.doubleIt(25);
+        
+        try {
+            ((BindingProvider)utPort).getRequestContext().put(SecurityConstants.USERNAME, "Frank");
+            utPort.doubleIt(30);
+            fail("Failure expected on a user with the wrong role");
+        } catch (javax.xml.ws.soap.SOAPFaultException ex) {
+            String error = "Unauthorized";
+            assertTrue(ex.getMessage().contains(error));
+        }
+        */
+        
+        ((java.io.Closeable)utPort).close();
+        bus.shutdown(true);
+    }
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646674481/fstmerge_base_5614412795053042385
+=======
+@org.junit.Test
+    public void testPlaintextPrincipal() throws Exception {
+
+        SpringBusFactory bf = new SpringBusFactory();
+        URL busFile = UsernameTokenTest.class.getResource("client/client.xml");
+
+        Bus bus = bf.createBus(busFile.toString());
+        SpringBusFactory.setDefaultBus(bus);
+        SpringBusFactory.setThreadDefaultBus(bus);
+
+        URL wsdl = UsernameTokenTest.class.getResource("DoubleItUt.wsdl");
+        Service service = Service.create(wsdl, SERVICE_QNAME);
+        QName portQName = new QName(NAMESPACE, "DoubleItPlaintextPrincipalPort");
+        DoubleItPortType utPort = 
+                service.getPort(portQName, DoubleItPortType.class);
+        updateAddressPort(utPort, PORT);
+        
+        ((BindingProvider)utPort).getRequestContext().put(SecurityConstants.USERNAME, "Alice");
+        
+        utPort.doubleIt(25);
+        
+        try {
+            ((BindingProvider)utPort).getRequestContext().put(SecurityConstants.USERNAME, "Frank");
+            utPort.doubleIt(30);
+            fail("Failure expected on a user with the wrong role");
+        } catch (javax.xml.ws.soap.SOAPFaultException ex) {
+            String error = "Unauthorized";
+            assertTrue(ex.getMessage().contains(error));
+        }
+        
+        ((java.io.Closeable)utPort).close();
+        bus.shutdown(true);
+    }
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646674481/fstmerge_var2_7179152815168852431
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_92597_1eb69/rev_92597-1eb69/systests/ws-security/src/test/java/org/apache/cxf/systest/ws/ut/UsernameTokenTest.java
+Conflict type: SameSignatureCM
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646674531/fstmerge_var1_2300183247210418210
+public Credential validate(Credential credential, RequestData data) throws WSSecurityException {
+        Credential cred = super.validate(credential, data);
+        
+        UsernameToken ut = credential.getUsernametoken();
+        WSUsernameTokenPrincipalImpl principal = 
+            new WSUsernameTokenPrincipalImpl(ut.getName(), ut.isHashed());
+        principal.setCreatedTime(ut.getCreated());
+        principal.setNonce(principal.getNonce());
+        principal.setPassword(ut.getPassword());
+        principal.setPasswordType(ut.getPasswordType());
+        
+        Subject subject = new Subject();
+        subject.getPrincipals().add(principal);
+        if ("Alice".equals(ut.getName())) {
+            subject.getPrincipals().add(new SimpleGroup("manager", ut.getName()));
+        }
+        subject.getPrincipals().add(new SimpleGroup("worker", ut.getName()));
+        cred.setSubject(subject);
+        
+        return cred;
+    }
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646674531/fstmerge_base_2658059950255910730
+=======
+public Credential validate(Credential credential, RequestData data) throws WSSecurityException {
+        Credential cred = super.validate(credential, data);
+        
+        UsernameToken ut = credential.getUsernametoken();
+        WSUsernameTokenPrincipal principal = 
+            new WSUsernameTokenPrincipal(ut.getName(), ut.isHashed());
+        principal.setCreatedTime(ut.getCreated());
+        principal.setNonce(principal.getNonce());
+        principal.setPassword(ut.getPassword());
+        principal.setPasswordType(ut.getPasswordType());
+        
+        Subject subject = new Subject();
+        subject.getPrincipals().add(principal);
+        if ("Alice".equals(ut.getName())) {
+            subject.getPrincipals().add(new SimpleGroup("manager", ut.getName()));
+        }
+        subject.getPrincipals().add(new SimpleGroup("worker", ut.getName()));
+        cred.setSubject(subject);
+        
+        return cred;
+    }
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646674531/fstmerge_var2_806600370239128402
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_92597_1eb69/rev_92597-1eb69/systests/ws-security/src/test/java/org/apache/cxf/systest/ws/ut/server/CustomUTValidator.java
+Conflict type: SameSignatureCM
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646676444/fstmerge_var1_3258391792181957507
+public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+        for (int i = 0; i < callbacks.length; i++) {
+            WSPasswordCallback pc = (WSPasswordCallback)callbacks[i];
+            if (pc.getUsage() == WSPasswordCallback.Usage.SECRET_KEY) {
+                pc.setKey(KEY);
+            }
+        }
+    }
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646676444/fstmerge_base_2244634243872441300
+=======
+public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+        for (int i = 0; i < callbacks.length; i++) {
+            WSPasswordCallback pc = (WSPasswordCallback)callbacks[i];
+            if (pc.getUsage() == WSPasswordCallback.SECRET_KEY) {
+                pc.setKey(KEY);
+            }
+        }
+    }
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418646676444/fstmerge_var2_7503351139897059019
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_92597_1eb69/rev_92597-1eb69/systests/ws-security/src/test/java/org/apache/cxf/systest/ws/action/SecretKeyPasswordCallback.java
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_4df36_ed8ac/rev_4df36-ed8ac.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_8a321_3ebbd/rev_8a321-3ebbd.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_2be06_4aefa/rev_2be06-4aefa.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_b77bb_d33c0/rev_b77bb-d33c0.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_3085f_c4b5b/rev_3085f-c4b5b.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_642f2_94a15/rev_642f2-94a15.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_03a0a_c0349/rev_03a0a-c0349.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_4dc42_a0bb3/rev_4dc42-a0bb3.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_c92b6_8018b/rev_c92b6-8018b.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_3889d_a77d4/rev_3889d-a77d4.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_07108_d86d2/rev_07108-d86d2.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_a02db_aebae/rev_a02db-aebae.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_33537_04c31/rev_33537-04c31.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_cde7f_73359/rev_cde7f-73359.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_a6d41_72287/rev_a6d41-72287.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_a6d41_72287/rev_a6d41-72287.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_e5f56_36b26/rev_e5f56-36b26.revisions
+Conflict type: SameSignatureCM
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418670611723/fstmerge_var1_2778394852772543823
+@BeforeClass
+    public static void startServers() throws Exception {
+
+        @SuppressWarnings({ "unused", "resource" })
+        ApplicationContext appctxt = 
+            new ClassPathXmlApplicationContext(
+                JAXRSClientServerWebSocketSpringTest.class.getResource(
+                    "/jaxrs_websocket/beans-embedded.xml").toString());
+        
+    }
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418670611723/fstmerge_base_7844934536096250105
+=======
+@BeforeClass
+    public static void startServers() throws Exception {
+
+        @SuppressWarnings("unused")
+        ApplicationContext appctxt = 
+            new ClassPathXmlApplicationContext(
+                JAXRSClientServerWebSocketSpringTest.class.getResource(
+                    "/jaxrs_websocket/beans-embedded.xml").toString());
+        
+    }
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418670611723/fstmerge_var2_3116644847926933646
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_e5f56_36b26/rev_e5f56-36b26/systests/jaxrs/src/test/java/org/apache/cxf/systest/jaxrs/websocket/JAXRSClientServerWebSocketSpringTest.java
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_1e9e6_675c9/rev_1e9e6-675c9.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_ec853_0a4f8/rev_ec853-0a4f8.revisions
+Conflict type: SameSignatureCM
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418673645356/fstmerge_var1_8439366570503789278
+@Test
+    public void testRobustFailWithoutAddressingInUserLogicalPhase() throws Exception {
+
+        setupGreeter("org/apache/cxf/systest/interceptor/no-addr.xml", false);
+
+        control.setRobustInOnlyMode(true);
+
+        // behaviour is identicial for all phases
+        FaultLocation location = new org.apache.cxf.greeter_control.types.ObjectFactory()
+            .createFaultLocation();
+        location.setPhase("user-logical");
+
+        control.setFaultLocation(location);
+
+        try {
+            // writer to grab the content of soap fault.
+            // robust is not yet used at client's side, but I think it should
+            StringWriter writer = new StringWriter();
+            ((Client)greeter).getInInterceptors().add(new LoggingInInterceptor());
+            ((LoggingInInterceptor)greeterBus.getInInterceptors().get(0)).setPrintWriter(new PrintWriter(writer));
+            // it should tell CXF to convert one-way robust out faults into real SoapFaultException
+            ((Client)greeter).getEndpoint().put(Message.ROBUST_ONEWAY, true);
+            greeter.greetMeOneWay("oneway");
+            fail("Oneway operation unexpectedly succeded for phase " + location.getPhase());
+        } catch (WebServiceException ex) {
+            // actually it should be instance of javax.xml.ws.soap.SOAPFaultException
+            assertEquals(FAULT_MESSAGE, ex.getMessage());
+        }
+    }
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418673645356/fstmerge_base_1472636618087470083
+=======
+@Test
+    public void testRobustFailWithoutAddressingInUserLogicalPhase() throws Exception {
+
+        setupGreeter("org/apache/cxf/systest/interceptor/no-addr.xml", false);
+
+        control.setRobustInOnlyMode(true);
+
+        // behaviour is identicial for all phases
+        FaultLocation location = new org.apache.cxf.greeter_control.types.ObjectFactory()
+            .createFaultLocation();
+        location.setPhase("user-logical");
+        
+        control.setFaultLocation(location);
+
+        try {
+            // writer to grab the content of soap fault.
+            // robust is not yet used at client's side, but I think it should
+            StringWriter writer = new StringWriter();
+            ((Client)greeter).getInInterceptors().add(new LoggingInInterceptor());
+            ((LoggingInInterceptor)greeterBus.getInInterceptors().get(0)).setPrintWriter(new PrintWriter(writer));
+            // it should tell CXF to convert one-way robust out faults into real SoapFaultException
+            ((Client)greeter).getEndpoint().put(Message.ROBUST_ONEWAY, true);
+            greeter.greetMeOneWay("oneway");
+            fail("Oneway operation unexpectedly succeded for phase " + location.getPhase());
+        } catch (WebServiceException ex) {
+            // actually it should be instance of javax.xml.ws.soap.SOAPFaultException
+            assertEquals(FAULT_MESSAGE, ex.getMessage());
+        }
+    }
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418673645356/fstmerge_var2_8568769754174875438
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_ec853_0a4f8/rev_ec853-0a4f8/systests/uncategorized/src/test/java/org/apache/cxf/systest/interceptor/InterceptorFaultTest.java
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_a63b9_ffd30/rev_a63b9-ffd30.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_939b5_ff86d/rev_939b5-ff86d.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_92f88_32fac/rev_92f88-32fac.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_c67b0_a96ef/rev_c67b0-a96ef.revisions
+Conflict type: ModifierList
+Conflict body: 
+~~FSTMerge~~ static ##FSTMerge## @SuppressWarnings("PMD")
+    static ##FSTMerge##
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_c67b0_a96ef/rev_c67b0-a96ef/rt/transports/jms/src/main/java/org/apache/cxf/transport/jms/util/MessageListenerContainer.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418679771591/fstmerge_var1_4821252927574754244
+@Override
+        public void onMessage(Message message) {
+            try {
+                tm.begin();
+                tm.getTransaction().enlistResource(session.getXAResource());
+                listenerHandler.onMessage(message);
+                tm.commit();
+            } catch (Throwable e) {
+                safeRollback(e);
+                if (e instanceof RuntimeException) {
+                    throw (RuntimeException)e;
+                } else {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418679771591/fstmerge_base_1774016906537323079
+@Override
+        public void onMessage(Message message) {
+            try {
+                tm.begin();
+                tm.getTransaction().enlistResource(session.getXAResource());
+                listenerHandler.onMessage(message);
+                tm.commit();
+            } catch (Throwable e) {
+                safeRollback(e);
+            }
+        }
+=======
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1418679771591/fstmerge_var2_318772975892538470
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_c67b0_a96ef/rev_c67b0-a96ef/rt/transports/jms/src/main/java/org/apache/cxf/transport/jms/util/MessageListenerContainer.java
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_a5be5_8ff6a/rev_a5be5-8ff6a.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_a5be5_8ff6a/rev_a5be5-8ff6a.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_a5300_338c6/rev_a5300-338c6.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_a9890_c081e/rev_a9890-c081e.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_7ed1c_9cb6e/rev_7ed1c-9cb6e.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_17d84_17c66/rev_17d84-17c66.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_0024d_b15aa/rev_0024d-b15aa.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_e44fb_71099/rev_e44fb-71099.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_68c31_95a6d/rev_68c31-95a6d.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_25549_095a3/rev_25549-095a3.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_0652b_0bb4d/rev_0652b-0bb4d.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_27e80_dae61/rev_27e80-dae61.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_d607b_cf2db/rev_d607b-cf2db.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_074e9_89dec/rev_074e9-89dec.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_7fab6_5edc4/rev_7fab6-5edc4.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_d2173_84cbd/rev_d2173-84cbd.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_fb690_3a373/rev_fb690-3a373.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_5a9bc_b7516/rev_5a9bc-b7516.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_805f8_f3087/rev_805f8-f3087.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_97dab_1cf60/rev_97dab-1cf60.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_c36a2_5934b/rev_c36a2-5934b.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_eb598_e76e0/rev_eb598-e76e0.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_53836_2d48a/rev_53836-2d48a.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_3e585_3cfdd/rev_3e585-3cfdd.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_67432_c36df/rev_67432-c36df.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_fdb7d_b9c91/rev_fdb7d-b9c91.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_8bcb5_b5fc9/rev_8bcb5-b5fc9.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_0f54c_4f70b/rev_0f54c-4f70b.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_70cae_857cc/rev_70cae-857cc.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_4d6fd_ffd42/rev_4d6fd-ffd42.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_be6b9_fd347/rev_be6b9-fd347.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_48146_162bb/rev_48146-162bb.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_fa8a6_eee2a/rev_fa8a6-eee2a.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_08e47_11243/rev_08e47-11243.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_c80de_32964/rev_c80de-32964.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_6a90a_33200/rev_6a90a-33200.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_53089_854fd/rev_53089-854fd.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_92426_65e1d/rev_92426-65e1d.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_d552e_698cd/rev_d552e-698cd.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_f49d0_5ef79/rev_f49d0-5ef79.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_702f2_522b7/rev_702f2-522b7.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_a4072_c34bf/rev_a4072-c34bf.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_a5aff_b8938/rev_a5aff-b8938.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_0cfed_4fe78/rev_0cfed-4fe78.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_ea512_2efba/rev_ea512-2efba.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_80ea7_1d54d/rev_80ea7-1d54d.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_d4805_83ca3/rev_d4805-83ca3.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_4a292_8daf3/rev_4a292-8daf3.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_4ff4d_49c35/rev_4ff4d-49c35.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_2d131_a1243/rev_2d131-a1243.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_da6b2_bf6bb/rev_da6b2-bf6bb.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_df947_81d40/rev_df947-81d40.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_ec98e_cba91/rev_ec98e-cba91.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_19e91_13b9b/rev_19e91-13b9b.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_2ef6f_d4a35/rev_2ef6f-d4a35.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/cxf/revisions/rev_ee66b_598f6/rev_ee66b-598f6.revisions

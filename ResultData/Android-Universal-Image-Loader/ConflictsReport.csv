@@ -1,0 +1,1121 @@
+=========================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_04a2b_9be54/rev_04a2b-9be54.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_8dcd0_70116/rev_8dcd0-70116.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_e9995_f3f78/rev_e9995-f3f78.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_5abd0_367e7/rev_5abd0-367e7.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_0f015_c2996/rev_0f015-c2996.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_07648_ca938/rev_07648-ca938.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_737df_af137/rev_737df-af137.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_329b6_5a655/rev_329b6-5a655.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_53492_a6658/rev_53492-a6658.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_c0dfb_0226c/rev_c0dfb-0226c.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_e7d94_60920/rev_e7d94-60920.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_734fe_850dc/rev_734fe-850dc.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_50751_e879f/rev_50751-e879f.revisions
+Conflict type: LineBasedMCFd
+Conflict body: 
+~~FSTMerge~~ ##FSTMerge## private static final String ERROR_WRONG_ARGUMENTS = "Wrong arguments were passed to displayImage() method (ImageView reference are required)"; ##FSTMerge## private static final String ERROR_WRONG_ARGUMENTS = "Wrong arguments were passed to displayImage() method (ImageView reference must not be null)";
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_50751_e879f/rev_50751-e879f/library/src/com/nostra13/universalimageloader/core/ImageLoader.java
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_c4832_cb613/rev_c4832-cb613.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_e6798_5e250/rev_e6798-5e250.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_6f39b_8f36a/rev_6f39b-8f36a.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_be8e7_665c3/rev_be8e7-665c3.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_c9354_10881/rev_c9354-10881.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_31e62_022f4/rev_31e62-022f4.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_9f6db_57024/rev_9f6db-57024.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_dc6fb_9a8a1/rev_dc6fb-9a8a1.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_dec28_0acc9/rev_dec28-0acc9.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_8bc28_d4184/rev_8bc28-d4184.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_29be5_077a2/rev_29be5-077a2.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_934d0_5233d/rev_934d0-5233d.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_0de0e_b6997/rev_0de0e-b6997.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_d9a9f_6e011/rev_d9a9f-6e011.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_bf79f_23cdc/rev_bf79f-23cdc.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_906be_24ca7/rev_906be-24ca7.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_fb905_05f6d/rev_fb905-05f6d.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_4aec2_66c44/rev_4aec2-66c44.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_d701d_cc4ec/rev_d701d-cc4ec.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_20ad3_b5a75/rev_20ad3-b5a75.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_d4a57_b331f/rev_d4a57-b331f.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_65373_28307/rev_65373-28307.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_9ac6d_3b9c2/rev_9ac6d-3b9c2.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_8356c_f16b0/rev_8356c-f16b0.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_23e41_59c02/rev_23e41-59c02.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_ee098_1e169/rev_ee098-1e169.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_04a2b_9be54/rev_04a2b-9be54.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_8dcd0_70116/rev_8dcd0-70116.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_e9995_f3f78/rev_e9995-f3f78.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_5abd0_367e7/rev_5abd0-367e7.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_0f015_c2996/rev_0f015-c2996.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_07648_ca938/rev_07648-ca938.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_737df_af137/rev_737df-af137.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_329b6_5a655/rev_329b6-5a655.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_53492_a6658/rev_53492-a6658.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_c0dfb_0226c/rev_c0dfb-0226c.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_e7d94_60920/rev_e7d94-60920.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_734fe_850dc/rev_734fe-850dc.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_50751_e879f/rev_50751-e879f.revisions
+Conflict type: LineBasedMCFd
+Conflict body: 
+~~FSTMerge~~ ##FSTMerge## private static final String ERROR_WRONG_ARGUMENTS = "Wrong arguments were passed to displayImage() method (ImageView reference are required)"; ##FSTMerge## private static final String ERROR_WRONG_ARGUMENTS = "Wrong arguments were passed to displayImage() method (ImageView reference must not be null)";
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_50751_e879f/rev_50751-e879f/library/src/com/nostra13/universalimageloader/core/ImageLoader.java
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_c4832_cb613/rev_c4832-cb613.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_e6798_5e250/rev_e6798-5e250.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_6f39b_8f36a/rev_6f39b-8f36a.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_be8e7_665c3/rev_be8e7-665c3.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_c9354_10881/rev_c9354-10881.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_31e62_022f4/rev_31e62-022f4.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_9f6db_57024/rev_9f6db-57024.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_dc6fb_9a8a1/rev_dc6fb-9a8a1.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_dec28_0acc9/rev_dec28-0acc9.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_8bc28_d4184/rev_8bc28-d4184.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_29be5_077a2/rev_29be5-077a2.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_934d0_5233d/rev_934d0-5233d.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_0de0e_b6997/rev_0de0e-b6997.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_d9a9f_6e011/rev_d9a9f-6e011.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_bf79f_23cdc/rev_bf79f-23cdc.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_906be_24ca7/rev_906be-24ca7.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_fb905_05f6d/rev_fb905-05f6d.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_4aec2_66c44/rev_4aec2-66c44.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_d701d_cc4ec/rev_d701d-cc4ec.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_20ad3_b5a75/rev_20ad3-b5a75.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_d4a57_b331f/rev_d4a57-b331f.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_65373_28307/rev_65373-28307.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_9ac6d_3b9c2/rev_9ac6d-3b9c2.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_8356c_f16b0/rev_8356c-f16b0.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_23e41_59c02/rev_23e41-59c02.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_ee098_1e169/rev_ee098-1e169.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_3321e_474db/rev_3321e-474db.revisions
+Conflict type: LineBasedMCFd
+Conflict body: 
+public void loadImage(String uri, ImageSize targetImageSize, DisplayImageOptions options,
+						  ImageLoadingListener listener) {
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487581182/fstmerge_var1_1356435809510572542
+		checkConfiguration();
+		if (targetImageSize == null) {
+			targetImageSize = configuration.getMaxImageSize();
+		}
+		if (options == null) {
+			options = configuration.defaultDisplayImageOptions;
+		}
+
+		ImageNonViewAware imageAware = new ImageNonViewAware(uri, targetImageSize, ViewScaleType.CROP);
+		displayImage(uri, imageAware, options, listener);
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487581182/fstmerge_base_2891111500675409981
+		checkConfiguration();
+		if (targetImageSize == null) {
+			targetImageSize = configuration.getMaxImageSize();
+		}
+		if (options == null) {
+			options = configuration.defaultDisplayImageOptions;
+		}
+
+		ImageNonViewAware imageAware = new ImageNonViewAware(targetImageSize, ViewScaleType.CROP);
+		displayImage(uri, imageAware, options, listener);
+=======
+		loadImage(uri, targetImageSize, options, listener, null);
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487581182/fstmerge_var2_7979669365776488009
+	}
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_3321e_474db/rev_3321e-474db/library/src/com/nostra13/universalimageloader/core/ImageLoader.java
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_ae1bc_079ce/rev_ae1bc-079ce.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_bc9c2_d40d4/rev_bc9c2-d40d4.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_8e7a4_cb0eb/rev_8e7a4-cb0eb.revisions
+Conflict type: LineBasedMCFd
+Conflict body: 
+static void updateAppWidget(Context context, final AppWidgetManager appWidgetManager, final int appWidgetId) {
+		final RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget);
+
+		ImageSize minImageSize = new ImageSize(70, 70); // 70 - approximate size of ImageView in widget
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615351/fstmerge_var1_2431616118610560663
+		ImageLoader.getInstance()
+				.loadImage(IMAGES[0], minImageSize, displayOptions, new SimpleImageLoadingListener() {
+					@Override
+					public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+						views.setImageViewBitmap(R.id.image_left, loadedImage);
+						appWidgetManager.updateAppWidget(appWidgetId, views);
+					}
+				});
+		ImageLoader.getInstance()
+				.loadImage(IMAGES[1], minImageSize, displayOptions, new SimpleImageLoadingListener() {
+					@Override
+					public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+						views.setImageViewBitmap(R.id.image_right, loadedImage);
+						appWidgetManager.updateAppWidget(appWidgetId, views);
+					}
+				});
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615351/fstmerge_base_1188569682095839737
+		ImageLoader.getInstance().loadImage(IMAGES[0], minImageSize, optionsWithFakeDisplayer, new SimpleImageLoadingListener() {
+			@Override
+			public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+				views.setImageViewBitmap(R.id.image_left, loadedImage);
+				appWidgetManager.updateAppWidget(appWidgetId, views);
+			}
+		});
+		ImageLoader.getInstance().loadImage(IMAGES[1], minImageSize, optionsWithFakeDisplayer, new SimpleImageLoadingListener() {
+			@Override
+			public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+				views.setImageViewBitmap(R.id.image_right, loadedImage);
+				appWidgetManager.updateAppWidget(appWidgetId, views);
+			}
+		});
+=======
+		ImageLoader.getInstance()
+				.loadImage(IMAGES[0], minImageSize, displayOptions, new SimpleImageLoadingListener() {
+			@Override
+			public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+				views.setImageViewBitmap(R.id.image_left, loadedImage);
+				appWidgetManager.updateAppWidget(appWidgetId, views);
+			}
+		});
+		ImageLoader.getInstance()
+				.loadImage(IMAGES[1], minImageSize, displayOptions, new SimpleImageLoadingListener() {
+			@Override
+			public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+				views.setImageViewBitmap(R.id.image_right, loadedImage);
+				appWidgetManager.updateAppWidget(appWidgetId, views);
+			}
+		});
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615351/fstmerge_var2_7493262694598205055
+	}
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_8e7a4_cb0eb/rev_8e7a4-cb0eb/sample/src/com/nostra13/example/universalimageloader/widget/UILWidgetProvider.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615419/fstmerge_var1_5487226469113327636
+private Bitmap tryLoadBitmap() throws TaskCancelledException {
+		File imageFile = getImageFileInDiscCache();
+
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615419/fstmerge_base_4326163554849686128
+private Bitmap tryLoadBitmap() {
+		File imageFile = configuration.discCache.get(uri);
+
+=======
+private Bitmap tryLoadBitmap() throws TaskCancelledException {
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615419/fstmerge_var2_5291746621669004910
+		Bitmap bitmap = null;
+		try {
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615419/fstmerge_var1_5487226469113327636
+			String cacheFileUri = Scheme.FILE.wrap(imageFile.getAbsolutePath());
+			if (imageFile.exists()) {
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615419/fstmerge_base_4326163554849686128
+			if (imageFile != null && imageFile.exists()) {
+=======
+			File imageFile = configuration.discCache.get(uri);
+			if (imageFile != null && imageFile.exists()) {
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615419/fstmerge_var2_5291746621669004910
+				log(LOG_LOAD_IMAGE_FROM_DISC_CACHE);
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615419/fstmerge_base_4326163554849686128
+=======
+				loadedFrom = LoadedFrom.DISC_CACHE;
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615419/fstmerge_var2_5291746621669004910
+
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615419/fstmerge_var1_5487226469113327636
+				checkTaskNotActual();
+				bitmap = decodeImage(cacheFileUri);
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615419/fstmerge_base_4326163554849686128
+				loadedFrom = LoadedFrom.DISC_CACHE;
+				bitmap = decodeImage(Scheme.FILE.wrap(imageFile.getAbsolutePath()));
+				if (imageViewCollected) return null;
+=======
+				checkTaskNotActual();
+				bitmap = decodeImage(Scheme.FILE.wrap(imageFile.getAbsolutePath()));
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615419/fstmerge_var2_5291746621669004910
+			}
+			if (bitmap == null || bitmap.getWidth() <= 0 || bitmap.getHeight() <= 0) {
+				log(LOG_LOAD_IMAGE_FROM_NETWORK);
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615419/fstmerge_base_4326163554849686128
+=======
+				loadedFrom = LoadedFrom.NETWORK;
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615419/fstmerge_var2_5291746621669004910
+
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615419/fstmerge_var1_5487226469113327636
+				String imageUriForDecoding =
+						options.isCacheOnDisc() && tryCacheImageOnDisc(imageFile) ? cacheFileUri : uri;
+
+				checkTaskNotActual();
+				bitmap = decodeImage(imageUriForDecoding);
+
+				if (bitmap == null || bitmap.getWidth() <= 0 || bitmap.getHeight() <= 0) {
+					fireFailEvent(FailType.DECODING_ERROR, null);
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615419/fstmerge_base_4326163554849686128
+				loadedFrom = LoadedFrom.NETWORK;
+				String imageUriForDecoding = options.isCacheOnDisc() ? tryCacheImageOnDisc() : uri;
+				if (!checkTaskIsNotActual()) {
+					bitmap = decodeImage(imageUriForDecoding);
+					if (imageViewCollected) return null;
+					if (bitmap == null || bitmap.getWidth() <= 0 || bitmap.getHeight() <= 0) {
+						fireFailEvent(FailType.DECODING_ERROR, null);
+					}
+=======
+				String imageUriForDecoding = uri;
+				if (options.isCacheOnDisc() && tryCacheImageOnDisc()) {
+					imageFile = configuration.discCache.get(uri);
+					if (imageFile != null) {
+						imageUriForDecoding = Scheme.FILE.wrap(imageFile.getAbsolutePath());
+					}
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615419/fstmerge_var2_5291746621669004910
+				}
+
+				checkTaskNotActual();
+				bitmap = decodeImage(imageUriForDecoding);
+
+				if (bitmap == null || bitmap.getWidth() <= 0 || bitmap.getHeight() <= 0) {
+					fireFailEvent(FailType.DECODING_ERROR, null);
+				}
+			}
+		} catch (IllegalStateException e) {
+			fireFailEvent(FailType.NETWORK_DENIED, null);
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615419/fstmerge_base_4326163554849686128
+=======
+		} catch (TaskCancelledException e) {
+			throw e;
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615419/fstmerge_var2_5291746621669004910
+		} catch (IOException e) {
+			L.e(e);
+			fireFailEvent(FailType.IO_ERROR, e);
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615419/fstmerge_var1_5487226469113327636
+			if (imageFile.exists()) {
+				imageFile.delete();
+			}
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615419/fstmerge_base_4326163554849686128
+			if (imageFile != null && imageFile.exists()) {
+				imageFile.delete();
+			}
+=======
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615419/fstmerge_var2_5291746621669004910
+		} catch (OutOfMemoryError e) {
+			L.e(e);
+			fireFailEvent(FailType.OUT_OF_MEMORY, e);
+		} catch (Throwable e) {
+			L.e(e);
+			fireFailEvent(FailType.UNKNOWN, e);
+		}
+		return bitmap;
+	}
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_8e7a4_cb0eb/rev_8e7a4-cb0eb/library/src/com/nostra13/universalimageloader/core/LoadAndDisplayImageTask.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615427/fstmerge_var1_7188205111834412834
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615427/fstmerge_base_630998878516796790
+private String tryCacheImageOnDisc() {
+		log(LOG_CACHE_IMAGE_ON_DISC);
+
+		try {
+			int width = configuration.maxImageWidthForDiscCache;
+			int height = configuration.maxImageHeightForDiscCache;
+			boolean saved = false;
+			if (width > 0 || height > 0) {
+				saved = downloadSizedImage(width, height);
+			}
+			if (!saved) {
+				downloadImage();
+			}
+			File imageFile = configuration.discCache.get(uri);
+			if (imageFile != null && imageFile.exists()) {
+				return Scheme.FILE.wrap(imageFile.getAbsolutePath());
+			}
+		} catch (IOException e) {
+			L.e(e);
+		}
+		return uri;
+	}
+=======
+private boolean tryCacheImageOnDisc() throws TaskCancelledException {
+		log(LOG_CACHE_IMAGE_ON_DISC);
+
+		boolean loaded;
+		try {
+			loaded = downloadImage();
+			if (loaded) {
+				int width = configuration.maxImageWidthForDiscCache;
+				int height = configuration.maxImageHeightForDiscCache;
+				if (width > 0 || height > 0) {
+					log(LOG_RESIZE_CACHED_IMAGE_FILE);
+					resizeAndSaveImage(width, height); // TODO : process boolean result
+				}
+			}
+		} catch (IOException e) {
+			L.e(e);
+			loaded = false;
+		}
+		return loaded;
+	}
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615427/fstmerge_var2_7328624037344148624
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_8e7a4_cb0eb/rev_8e7a4-cb0eb/library/src/com/nostra13/universalimageloader/core/LoadAndDisplayImageTask.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615431/fstmerge_var1_3171606829296111904
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615431/fstmerge_base_2992633200868324592
+private void downloadImage() throws IOException {
+		InputStream is = getDownloader().getStream(uri, options.getExtraForDownloader());
+		configuration.discCache.save(uri, is);
+	}
+=======
+private boolean downloadImage() throws IOException {
+		InputStream is = getDownloader().getStream(uri, options.getExtraForDownloader());
+		return configuration.discCache.save(uri, is, this);
+	}
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615431/fstmerge_var2_3143579110097684435
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_8e7a4_cb0eb/rev_8e7a4-cb0eb/library/src/com/nostra13/universalimageloader/core/LoadAndDisplayImageTask.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615480/fstmerge_var1_6378528528376661683
+public DisplayBitmapTask(Bitmap bitmap, ImageLoadingInfo imageLoadingInfo, ImageLoaderEngine engine,
+							 LoadedFrom loadedFrom) {
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615480/fstmerge_base_5822520263226149527
+public DisplayBitmapTask(Bitmap bitmap, ImageLoadingInfo imageLoadingInfo, ImageLoaderEngine engine, LoadedFrom loadedFrom) {
+=======
+public DisplayBitmapTask(Bitmap bitmap, ImageLoadingInfo imageLoadingInfo, ImageLoaderEngine engine,
+			LoadedFrom loadedFrom) {
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615480/fstmerge_var2_703242230006631009
+		this.bitmap = bitmap;
+		imageUri = imageLoadingInfo.uri;
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615480/fstmerge_base_5822520263226149527
+		imageViewRef = imageLoadingInfo.imageViewRef;
+=======
+		imageAware = imageLoadingInfo.imageAware;
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615480/fstmerge_var2_703242230006631009
+		memoryCacheKey = imageLoadingInfo.memoryCacheKey;
+		displayer = imageLoadingInfo.options.getDisplayer();
+		listener = imageLoadingInfo.listener;
+		this.engine = engine;
+		this.loadedFrom = loadedFrom;
+	}
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_8e7a4_cb0eb/rev_8e7a4-cb0eb/library/src/com/nostra13/universalimageloader/core/DisplayBitmapTask.java
+Conflict type: SameSignatureCM
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615496/fstmerge_var1_2132024363052336113
+public void displayImage(String uri, ImageAware imageAware, DisplayImageOptions options,
+							 ImageLoadingListener listener) {
+		displayImage(uri, imageAware, options, listener, null);
+	}
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615496/fstmerge_base_2080367261906252928
+=======
+public void displayImage(String uri, ImageAware imageAware, DisplayImageOptions options,
+			ImageLoadingListener listener) {
+		displayImage(uri, imageAware, options, listener, null);
+	}
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615496/fstmerge_var2_8579738893068968360
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_8e7a4_cb0eb/rev_8e7a4-cb0eb/library/src/com/nostra13/universalimageloader/core/ImageLoader.java
+Conflict type: SameSignatureCM
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615498/fstmerge_var1_2507592796361523676
+public void displayImage(String uri, ImageAware imageAware, DisplayImageOptions options,
+							 ImageLoadingListener listener, ImageLoadingProgressListener progressListener) {
+		checkConfiguration();
+		if (imageAware == null) {
+			throw new IllegalArgumentException(ERROR_WRONG_ARGUMENTS);
+		}
+		if (listener == null) {
+			listener = emptyListener;
+		}
+		if (options == null) {
+			options = configuration.defaultDisplayImageOptions;
+		}
+
+		if (TextUtils.isEmpty(uri)) {
+			engine.cancelDisplayTaskFor(imageAware);
+			listener.onLoadingStarted(uri, imageAware.getWrappedView());
+			if (options.shouldShowImageForEmptyUri()) {
+				imageAware.setImageDrawable(options.getImageForEmptyUri(configuration.resources));
+			} else {
+				imageAware.setImageDrawable(null);
+			}
+			listener.onLoadingComplete(uri, imageAware.getWrappedView(), null);
+			return;
+		}
+
+		ImageSize targetSize = ImageSizeUtils.defineTargetSizeForView(imageAware, configuration.getMaxImageSize());
+		String memoryCacheKey = MemoryCacheUtil.generateKey(uri, targetSize);
+		engine.prepareDisplayTaskFor(imageAware, memoryCacheKey);
+
+		listener.onLoadingStarted(uri, imageAware.getWrappedView());
+		Bitmap bmp = configuration.memoryCache.get(memoryCacheKey);
+		if (bmp != null && !bmp.isRecycled()) {
+			if (configuration.writeLogs) L.d(LOG_LOAD_IMAGE_FROM_MEMORY_CACHE, memoryCacheKey);
+
+			if (options.shouldPostProcess()) {
+				ImageLoadingInfo imageLoadingInfo = new ImageLoadingInfo(uri, imageAware, targetSize, memoryCacheKey,
+						options, listener, progressListener, engine.getLockForUri(uri));
+				ProcessAndDisplayImageTask displayTask = new ProcessAndDisplayImageTask(engine, bmp, imageLoadingInfo,
+						options.getHandler());
+				if (options.isSyncLoading()) {
+					displayTask.run();
+				} else {
+					engine.submit(displayTask);
+				}
+			} else {
+				options.getDisplayer().display(bmp, imageAware, LoadedFrom.MEMORY_CACHE);
+				listener.onLoadingComplete(uri, imageAware.getWrappedView(), bmp);
+			}
+		} else {
+			if (options.shouldShowImageOnLoading()) {
+				imageAware.setImageDrawable(options.getImageOnLoading(configuration.resources));
+			} else if (options.isResetViewBeforeLoading()) {
+				imageAware.setImageDrawable(null);
+			}
+
+			ImageLoadingInfo imageLoadingInfo = new ImageLoadingInfo(uri, imageAware, targetSize, memoryCacheKey,
+					options, listener, progressListener, engine.getLockForUri(uri));
+			LoadAndDisplayImageTask displayTask = new LoadAndDisplayImageTask(engine, imageLoadingInfo,
+					options.getHandler());
+			if (options.isSyncLoading()) {
+				displayTask.run();
+			} else {
+				engine.submit(displayTask);
+			}
+		}
+	}
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615498/fstmerge_base_2314679583226365588
+=======
+public void displayImage(String uri, ImageAware imageAware, DisplayImageOptions options,
+			ImageLoadingListener listener, ImageLoadingProgressListener progressListener) {
+		checkConfiguration();
+		if (imageAware == null) {
+			throw new IllegalArgumentException(ERROR_WRONG_ARGUMENTS);
+		}
+		if (listener == null) {
+			listener = emptyListener;
+		}
+		if (options == null) {
+			options = configuration.defaultDisplayImageOptions;
+		}
+
+		if (TextUtils.isEmpty(uri)) {
+			engine.cancelDisplayTaskFor(imageAware);
+			listener.onLoadingStarted(uri, imageAware.getWrappedView());
+			if (options.shouldShowImageForEmptyUri()) {
+				imageAware.setImageDrawable(options.getImageForEmptyUri(configuration.resources));
+			} else {
+				imageAware.setImageDrawable(null);
+			}
+			listener.onLoadingComplete(uri, imageAware.getWrappedView(), null);
+			return;
+		}
+
+		ImageSize targetSize = ImageSizeUtils.defineTargetSizeForView(imageAware, configuration.getMaxImageSize());
+		String memoryCacheKey = MemoryCacheUtil.generateKey(uri, targetSize);
+		engine.prepareDisplayTaskFor(imageAware, memoryCacheKey);
+
+		listener.onLoadingStarted(uri, imageAware.getWrappedView());
+		Bitmap bmp = configuration.memoryCache.get(memoryCacheKey);
+		if (bmp != null && !bmp.isRecycled()) {
+			if (configuration.writeLogs) L.d(LOG_LOAD_IMAGE_FROM_MEMORY_CACHE, memoryCacheKey);
+
+			if (options.shouldPostProcess()) {
+				ImageLoadingInfo imageLoadingInfo = new ImageLoadingInfo(uri, imageAware, targetSize, memoryCacheKey,
+						options, listener, progressListener, engine.getLockForUri(uri));
+				ProcessAndDisplayImageTask displayTask = new ProcessAndDisplayImageTask(engine, bmp, imageLoadingInfo,
+						options.getHandler());
+				if (options.isSyncLoading()) {
+					displayTask.run();
+				} else {
+					engine.submit(displayTask);
+				}
+			} else {
+				options.getDisplayer().display(bmp, imageAware, LoadedFrom.MEMORY_CACHE);
+				listener.onLoadingComplete(uri, imageAware.getWrappedView(), bmp);
+			}
+		} else {
+			if (options.shouldShowImageOnLoading()) {
+				imageAware.setImageDrawable(options.getImageOnLoading(configuration.resources));
+			} else if (options.isResetViewBeforeLoading()) {
+				imageAware.setImageDrawable(null);
+			}
+
+			ImageLoadingInfo imageLoadingInfo = new ImageLoadingInfo(uri, imageAware, targetSize, memoryCacheKey,
+					options, listener, progressListener, engine.getLockForUri(uri));
+			LoadAndDisplayImageTask displayTask = new LoadAndDisplayImageTask(engine, imageLoadingInfo,
+					options.getHandler());
+			if (options.isSyncLoading()) {
+				displayTask.run();
+			} else {
+				engine.submit(displayTask);
+			}
+		}
+	}
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615498/fstmerge_var2_3566904387947549216
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_8e7a4_cb0eb/rev_8e7a4-cb0eb/library/src/com/nostra13/universalimageloader/core/ImageLoader.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615505/fstmerge_var1_5817574888218107129
+public void displayImage(String uri, ImageView imageView, DisplayImageOptions options,
+							 ImageLoadingListener listener) {
+		displayImage(uri, imageView, options, listener, null);
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615505/fstmerge_base_6888691415047778117
+public void displayImage(String uri, ImageView imageView, DisplayImageOptions options, ImageLoadingListener listener) {
+		checkConfiguration();
+		if (imageView == null) {
+			throw new IllegalArgumentException(ERROR_WRONG_ARGUMENTS);
+		}
+		if (listener == null) {
+			listener = emptyListener;
+		}
+		if (options == null) {
+			options = configuration.defaultDisplayImageOptions;
+		}
+
+		if (TextUtils.isEmpty(uri)) {
+			engine.cancelDisplayTaskFor(imageView);
+			listener.onLoadingStarted(uri, imageView);
+			if (options.shouldShowImageForEmptyUri()) {
+				imageView.setImageResource(options.getImageForEmptyUri());
+			} else {
+				imageView.setImageDrawable(null);
+			}
+			listener.onLoadingComplete(uri, imageView, null);
+			return;
+		}
+
+		ImageSize targetSize = ImageSizeUtils.defineTargetSizeForView(imageView, configuration.maxImageWidthForMemoryCache, configuration.maxImageHeightForMemoryCache);
+		String memoryCacheKey = MemoryCacheUtil.generateKey(uri, targetSize);
+		engine.prepareDisplayTaskFor(imageView, memoryCacheKey);
+
+		listener.onLoadingStarted(uri, imageView);
+		Bitmap bmp = configuration.memoryCache.get(memoryCacheKey);
+		if (bmp != null && !bmp.isRecycled()) {
+			if (configuration.writeLogs) L.d(LOG_LOAD_IMAGE_FROM_MEMORY_CACHE, memoryCacheKey);
+
+			if (options.shouldPostProcess()) {
+				ImageLoadingInfo imageLoadingInfo = new ImageLoadingInfo(uri, imageView, targetSize, memoryCacheKey, options, listener, engine.getLockForUri(uri));
+				ProcessAndDisplayImageTask displayTask = new ProcessAndDisplayImageTask(engine, bmp, imageLoadingInfo, options.getHandler());
+				engine.submit(displayTask);
+			} else {
+				options.getDisplayer().display(bmp, imageView, LoadedFrom.MEMORY_CACHE);
+				listener.onLoadingComplete(uri, imageView, bmp);
+			}
+		} else {
+			if (options.shouldShowStubImage()) {
+				imageView.setImageResource(options.getStubImage());
+			} else {
+				if (options.isResetViewBeforeLoading()) {
+					imageView.setImageDrawable(null);
+				}
+			}
+
+			ImageLoadingInfo imageLoadingInfo = new ImageLoadingInfo(uri, imageView, targetSize, memoryCacheKey, options, listener, engine.getLockForUri(uri));
+			LoadAndDisplayImageTask displayTask = new LoadAndDisplayImageTask(engine, imageLoadingInfo, options.getHandler());
+			engine.submit(displayTask);
+		}
+=======
+public void displayImage(String uri, ImageView imageView, DisplayImageOptions options,
+			ImageLoadingListener listener) {
+		displayImage(uri, imageView, options, listener, null);
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615505/fstmerge_var2_4256570082694456243
+	}
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_8e7a4_cb0eb/rev_8e7a4-cb0eb/library/src/com/nostra13/universalimageloader/core/ImageLoader.java
+Conflict type: SameSignatureCM
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615511/fstmerge_var1_4092800333742532543
+public void displayImage(String uri, ImageView imageView, DisplayImageOptions options,
+							 ImageLoadingListener listener, ImageLoadingProgressListener progressListener) {
+		displayImage(uri, new ImageViewAware(imageView), options, listener, progressListener);
+	}
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615511/fstmerge_base_3352772489730489953
+=======
+public void displayImage(String uri, ImageView imageView, DisplayImageOptions options,
+			ImageLoadingListener listener, ImageLoadingProgressListener progressListener) {
+		displayImage(uri, new ImageViewAware(imageView), options, listener, progressListener);
+	}
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615511/fstmerge_var2_1942296230756919168
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_8e7a4_cb0eb/rev_8e7a4-cb0eb/library/src/com/nostra13/universalimageloader/core/ImageLoader.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615528/fstmerge_var1_7235667399854215861
+public void loadImage(String uri, ImageSize targetImageSize, DisplayImageOptions options,
+						  ImageLoadingListener listener) {
+		loadImage(uri, targetImageSize, options, listener, null);
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615528/fstmerge_base_5801316168822121158
+public void loadImage(String uri, ImageSize targetImageSize, DisplayImageOptions options, ImageLoadingListener listener) {
+		checkConfiguration();
+		if (targetImageSize == null) {
+			targetImageSize = new ImageSize(configuration.maxImageWidthForMemoryCache, configuration.maxImageHeightForMemoryCache);
+		}
+		if (options == null) {
+			options = configuration.defaultDisplayImageOptions;
+		}
+
+		DisplayImageOptions optionsWithFakeDisplayer;
+		if (options.getDisplayer() instanceof FakeBitmapDisplayer) {
+			optionsWithFakeDisplayer = options;
+		} else {
+			optionsWithFakeDisplayer = new DisplayImageOptions.Builder().cloneFrom(options).displayer(fakeBitmapDisplayer).build();
+		}
+
+		ImageView fakeImage = new ImageView(configuration.context);
+		fakeImage.setLayoutParams(new LayoutParams(targetImageSize.getWidth(), targetImageSize.getHeight()));
+		fakeImage.setScaleType(ScaleType.CENTER_CROP);
+
+		displayImage(uri, fakeImage, optionsWithFakeDisplayer, listener);
+=======
+public void loadImage(String uri, ImageSize targetImageSize, DisplayImageOptions options,
+			ImageLoadingListener listener) {
+		loadImage(uri, targetImageSize, options, listener, null);
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615528/fstmerge_var2_2537490273390421231
+	}
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_8e7a4_cb0eb/rev_8e7a4-cb0eb/library/src/com/nostra13/universalimageloader/core/ImageLoader.java
+Conflict type: SameSignatureCM
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615531/fstmerge_var1_4169289195417110264
+public void loadImage(String uri, ImageSize targetImageSize, DisplayImageOptions options,
+						  ImageLoadingListener listener, ImageLoadingProgressListener progressListener) {
+		checkConfiguration();
+		if (targetImageSize == null) {
+			targetImageSize = configuration.getMaxImageSize();
+		}
+		if (options == null) {
+			options = configuration.defaultDisplayImageOptions;
+		}
+
+		ImageNonViewAware imageAware = new ImageNonViewAware(uri, targetImageSize, ViewScaleType.CROP);
+		displayImage(uri, imageAware, options, listener, progressListener);
+	}
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615531/fstmerge_base_6659193960602722177
+=======
+public void loadImage(String uri, ImageSize targetImageSize, DisplayImageOptions options,
+			ImageLoadingListener listener, ImageLoadingProgressListener progressListener) {
+		checkConfiguration();
+		if (targetImageSize == null) {
+			targetImageSize = configuration.getMaxImageSize();
+		}
+		if (options == null) {
+			options = configuration.defaultDisplayImageOptions;
+		}
+
+		ImageNonViewAware imageAware = new ImageNonViewAware(uri, targetImageSize, ViewScaleType.CROP);
+		displayImage(uri, imageAware, options, listener, progressListener);
+	}
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615531/fstmerge_var2_5871234290314284975
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_8e7a4_cb0eb/rev_8e7a4-cb0eb/library/src/com/nostra13/universalimageloader/core/ImageLoader.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+private Executor createTaskExecutor() {
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615651/fstmerge_var1_702382142518609654
+		return DefaultConfigurationFactory
+				.createExecutor(configuration.threadPoolSize, configuration.threadPriority,
+								configuration.tasksProcessingType);
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615651/fstmerge_base_7808604918946986153
+		return DefaultConfigurationFactory.createExecutor(configuration.threadPoolSize, configuration.threadPriority, configuration.tasksProcessingType);
+=======
+		return DefaultConfigurationFactory.createExecutor(configuration.threadPoolSize, configuration.threadPriority,
+				configuration.tasksProcessingType);
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487615651/fstmerge_var2_2502179641891975036
+	}
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_8e7a4_cb0eb/rev_8e7a4-cb0eb/library/src/com/nostra13/universalimageloader/core/ImageLoaderEngine.java
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_0bd25_8e7a4/rev_0bd25-8e7a4.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_4e839_6e9ce/rev_4e839-6e9ce.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_c7ff1_433af/rev_c7ff1-433af.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_45fd1_c97b8/rev_45fd1-c97b8.revisions
+Conflict type: LineBasedMCFd
+Conflict body: 
+protected InputStream getStreamFromNetwork(String imageUri, Object extra) throws IOException {
+		HttpURLConnection conn = createConnection(imageUri, extra);
+
+		int redirectCount = 0;
+		while (conn.getResponseCode() / 100 == 3 && redirectCount < MAX_REDIRECT_COUNT) {
+			conn = createConnection(conn.getHeaderField("Location"), extra);
+			redirectCount++;
+		}
+
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487664316/fstmerge_var1_8173963166353373900
+		InputStream imageStream;
+		try {
+			imageStream = conn.getInputStream();
+		} catch (IOException e) {
+			// Read all data to allow reuse connection (http://bit.ly/1ad35PY)
+			IoUtils.readAndCloseStream(conn.getErrorStream()); // read all data to close
+			throw e;
+		}
+		return new ContentLengthInputStream(new BufferedInputStream(imageStream, BUFFER_SIZE), conn.getContentLength());
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487664316/fstmerge_base_5420761821064389073
+		return new ContentLengthInputStream(new BufferedInputStream(conn.getInputStream(), BUFFER_SIZE),
+											conn.getContentLength());
+=======
+		InputStream imageStream;
+		try {
+			imageStream = conn.getInputStream();
+		} catch (IOException e) {
+			// Read all data to allow reuse connection (http://bit.ly/1ad35PY)
+			IoUtils.readAndCloseStream(conn.getErrorStream());
+			throw e;
+		}
+		return new ContentLengthInputStream(new BufferedInputStream(imageStream, BUFFER_SIZE), conn.getContentLength());
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487664316/fstmerge_var2_6527862626636393848
+	}
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_45fd1_c97b8/rev_45fd1-c97b8/library/src/com/nostra13/universalimageloader/core/download/BaseImageDownloader.java
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_75ea5_0c047/rev_75ea5-0c047.revisions
+Conflict type: LineBasedMCFd
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487675974/fstmerge_var1_6949638628178453710
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487675974/fstmerge_base_7513182890466141289
+public static File findInCache(String imageUri, DiscCacheAware discCache) {
+		File image = discCache.get(imageUri);
+		return image.exists() ? image : null;
+	}
+=======
+public static File findInCache(String imageUri, DiscCacheAware discCache) {
+		File image = discCache.get(imageUri);
+		return image != null && image.exists() ? image : null;
+	}
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487675974/fstmerge_var2_1509997784480304318
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_75ea5_0c047/rev_75ea5-0c047/library/src/com/nostra13/universalimageloader/core/assist/DiscCacheUtil.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487675979/fstmerge_var1_1940130061197818706
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487675979/fstmerge_base_4921595634753141646
+public static boolean removeFromCache(String imageUri, DiscCacheAware discCache) {
+		File image = discCache.get(imageUri);
+		return image.delete();
+	}
+=======
+public static boolean removeFromCache(String imageUri, DiscCacheAware discCache) {
+		File image = discCache.get(imageUri);
+		return image != null && image.exists() && image.delete();
+	}
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487675979/fstmerge_var2_4140179480334294037
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_75ea5_0c047/rev_75ea5-0c047/library/src/com/nostra13/universalimageloader/core/assist/DiscCacheUtil.java
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_716fe_94c52/rev_716fe-94c52.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_78028_e9628/rev_78028-e9628.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_af487_7637a/rev_af487-7637a.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_8f68f_2b13b/rev_8f68f-2b13b.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_2de3e_4fd09/rev_2de3e-4fd09.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_0d0e6_754aa/rev_0d0e6-754aa.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_7397e_f6f1c/rev_7397e-f6f1c.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_11754_70fb9/rev_11754-70fb9.revisions
+Conflict type: LineBasedMCFd
+Conflict body: 
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487771205/fstmerge_var1_445701674323340552
+private boolean resizeAndSaveImage(File targetFile, int maxWidth, int maxHeight) throws IOException {
+		boolean saved = false;
+		// Decode image file, compress and re-save it
+		ImageSize targetImageSize = new ImageSize(maxWidth, maxHeight);
+		DisplayImageOptions specialOptions = new DisplayImageOptions.Builder().cloneFrom(options)
+				.imageScaleType(ImageScaleType.IN_SAMPLE_INT).build();
+		ImageDecodingInfo decodingInfo = new ImageDecodingInfo(memoryCacheKey,
+				Scheme.FILE.wrap(targetFile.getAbsolutePath()), uri, targetImageSize, ViewScaleType.FIT_INSIDE,
+				getDownloader(), specialOptions);
+		Bitmap bmp = decoder.decode(decodingInfo);
+		if (bmp != null && configuration.processorForDiscCache != null) {
+			log(LOG_PROCESS_IMAGE_BEFORE_CACHE_ON_DISC);
+			bmp = configuration.processorForDiscCache.process(bmp);
+			if (bmp == null) {
+				L.e(ERROR_PROCESSOR_FOR_DISC_CACHE_NULL, memoryCacheKey);
+			}
+		}
+		if (bmp != null) {
+			OutputStream os = new BufferedOutputStream(new FileOutputStream(targetFile), BUFFER_SIZE);
+			try {
+				bmp.compress(configuration.imageCompressFormatForDiscCache, configuration.imageQualityForDiscCache, os);
+			} finally {
+				IoUtils.closeSilently(os);
+			}
+			bmp.recycle();
+		}
+		return true;
+	}
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487771205/fstmerge_base_6101361216892195044
+private boolean resizeAndSaveImage(File targetFile, int maxWidth, int maxHeight) throws IOException {
+		boolean saved = false;
+		// Decode image file, compress and re-save it
+		ImageSize targetImageSize = new ImageSize(maxWidth, maxHeight);
+		DisplayImageOptions specialOptions = new DisplayImageOptions.Builder().cloneFrom(options)
+				.imageScaleType(ImageScaleType.IN_SAMPLE_INT).build();
+		ImageDecodingInfo decodingInfo = new ImageDecodingInfo(memoryCacheKey,
+				Scheme.FILE.wrap(targetFile.getAbsolutePath()), targetImageSize, ViewScaleType.FIT_INSIDE,
+				getDownloader(), specialOptions);
+		Bitmap bmp = decoder.decode(decodingInfo);
+		if (bmp != null && configuration.processorForDiscCache != null) {
+			log(LOG_PROCESS_IMAGE_BEFORE_CACHE_ON_DISC);
+			bmp = configuration.processorForDiscCache.process(bmp);
+			if (bmp == null) {
+				L.e(ERROR_PROCESSOR_FOR_DISC_CACHE_NULL, memoryCacheKey);
+			}
+		}
+		if (bmp != null) {
+			OutputStream os = new BufferedOutputStream(new FileOutputStream(targetFile), BUFFER_SIZE);
+			try {
+				bmp.compress(configuration.imageCompressFormatForDiscCache, configuration.imageQualityForDiscCache, os);
+			} finally {
+				IoUtils.closeSilently(os);
+			}
+			bmp.recycle();
+		}
+		return true;
+	}
+=======
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487771205/fstmerge_var2_1412023672934231940
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_11754_70fb9/rev_11754-70fb9/library/src/com/nostra13/universalimageloader/core/LoadAndDisplayImageTask.java
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_d5e98_11754/rev_d5e98-11754.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_29811_625c2/rev_29811-625c2.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_e1645_e3f92/rev_e1645-e3f92.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_b9d55_1187e/rev_b9d55-1187e.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_7af78_c2306/rev_7af78-c2306.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_85753_81e36/rev_85753-81e36.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_fec71_5221b/rev_fec71-5221b.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_dcf8a_bea73/rev_dcf8a-bea73.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_2079a_5cbdc/rev_2079a-5cbdc.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_59d33_ab472/rev_59d33-ab472.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_19c50_9cd5c/rev_19c50-9cd5c.revisions
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_07029_b1a2f/rev_07029-b1a2f.revisions
+Conflict type: LineBasedMCFd
+Conflict body: 
+protected InputStream getStreamFromContent(String imageUri, Object extra) throws FileNotFoundException {
+		ContentResolver res = context.getContentResolver();
+		Uri uri = Uri.parse(imageUri);
+<<<<<<< /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487928059/fstmerge_var1_8415209912192209432
+		
+		if(isVideoUri(uri)){
+			
+			Bitmap bitmap = MediaStore.Video.Thumbnails.getThumbnail(res, Long.valueOf(uri.getLastPathSegment()), MediaStore.Images.Thumbnails.MINI_KIND, null);
+
+			ByteArrayOutputStream bos = new ByteArrayOutputStream(); 
+			bitmap.compress(CompressFormat.PNG, 0 , bos); 
+			byte[] bitmapdata = bos.toByteArray();
+			return new ByteArrayInputStream(bitmapdata);
+			
+		}
+		
+		return res.openInputStream(uri);
+||||||| /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487928059/fstmerge_base_1185033262247364022
+		return res.openInputStream(uri);
+=======
+		if (imageUri.startsWith(CONTENT_CONTACTS_URI_PREFIX)) {
+			return ContactsContract.Contacts.openContactPhotoInputStream(res, uri);
+		} else {
+			return res.openInputStream(uri);
+		}
+>>>>>>> /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/conflictsAnalyzer/fstmerge_tmp1415487928059/fstmerge_var2_684567416357909950
+	}
+
+File path: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_07029_b1a2f/rev_07029-b1a2f/library/src/com/nostra13/universalimageloader/core/download/BaseImageDownloader.java
+
+==================================================================================================================
+Revision: /media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/conflictsStudy/downloads/Android-Universal-Image-Loader/revisions/rev_f45ea_b1a2f/rev_f45ea-b1a2f.revisions

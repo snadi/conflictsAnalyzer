@@ -1,0 +1,2268 @@
+=========================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_31e90_93cb8/rev_31e90-93cb8.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_51c6b_2cf9d/rev_51c6b-2cf9d.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_8f2a6_ee6db/rev_8f2a6-ee6db.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_c5ed4_ce156/rev_c5ed4-ce156.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_8fdaa_b3ee8/rev_8fdaa-b3ee8.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_62be1_28348/rev_62be1-28348.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_b36d1_c0eac/rev_b36d1-c0eac.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_1fbad_6b168/rev_1fbad-6b168.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_dcd31_c1d79/rev_dcd31-c1d79.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_e316f_1e873/rev_e316f-1e873.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_d53a6_12fb5/rev_d53a6-12fb5.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_e4078_6a4b9/rev_e4078-6a4b9.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_c3650_7d338/rev_c3650-7d338.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_6d6e0_afabb/rev_6d6e0-afabb.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_2d84d_e688a/rev_2d84d-e688a.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_8c7a0_29232/rev_8c7a0-29232.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_37dfe_4207a/rev_37dfe-4207a.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_0bff9_8c28c/rev_0bff9-8c28c.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_a6754_ecd9b/rev_a6754-ecd9b.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_d0339_531c5/rev_d0339-531c5.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_32d75_efbd0/rev_32d75-efbd0.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_ad643_3006d/rev_ad643-3006d.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_c4c43_bd3cc/rev_c4c43-bd3cc.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_de144_3fc15/rev_de144-3fc15.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_974b5_5c698/rev_974b5-5c698.revisions
+Conflict type: LineBasedMCFd
+Conflict body: 
+private <T> Future<T> doConnect(final Request request, final AsyncHandler<T> asyncHandler, NettyResponseFuture<T> f) throws IOException{
+        
+        if (isClose.get()){
+           throw new IOException("Closed"); 
+        }
+
+        if (config.getMaxTotalConnections() != -1 && activeConnectionsCount.getAndIncrement() >= config.getMaxTotalConnections()) {
+            activeConnectionsCount.decrementAndGet();
+            throw new IOException("Too many connections");
+        }
+
+<<<<<<< /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412950283239/fstmerge_var1_230405529038579805
+        URI uri = createUri(request.getUrl());
+
+        log.debug("Lookup cache: %s", uri);
+||||||| /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412950283239/fstmerge_base_3138506943422179685
+        URI uri = createUri(request.getUrl());
+        if (log.isDebugEnabled())
+            log.debug("Lookup cache: " + uri.toString());
+=======
+        URI uri = createUri(request.getRawUrl());
+        if (log.isDebugEnabled())
+            log.debug("Lookup cache: " + uri.toString());
+>>>>>>> /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412950283239/fstmerge_var2_510284534974101619
+
+        Channel channel = lookupInCache(uri);
+        if (channel != null && channel.isOpen()) {
+            // Decrement the count as this is not a new connection.
+            activeConnectionsCount.decrementAndGet();
+            
+            HttpRequest nettyRequest = buildRequest(config,request,uri);
+            if (f == null) {
+                f = new NettyResponseFuture<T>(uri, request, asyncHandler,
+                                               nettyRequest, config.getRequestTimeoutInMs());
+            }
+            executeRequest(channel, config,f,nettyRequest);
+            return f;
+        }
+        ConnectListener<T> c = new ConnectListener.Builder<T>(config, request, asyncHandler,f).build();
+        configure(uri.getScheme().compareToIgnoreCase("https") == 0, c);
+
+        ChannelFuture channelFuture;
+        try{
+            if (config.getProxyServer() == null && request.getProxyServer() == null) {
+                channelFuture = bootstrap.connect(new InetSocketAddress(uri.getHost(), getPort(uri)));
+            } else {
+                ProxyServer proxy = (request.getProxyServer() == null ? config.getProxyServer() : request.getProxyServer());
+                channelFuture = bootstrap.connect(new InetSocketAddress(proxy.getHost(), proxy.getPort()));
+            }
+            bootstrap.setOption("connectTimeout", config.getConnectionTimeoutInMs());
+        } catch (Throwable t){
+            if (config.getMaxTotalConnections() != -1) {
+                activeConnectionsCount.decrementAndGet();
+            }
+            log.error(t);
+            c.future().abort(t.getCause());
+            return c.future();
+        }
+        channelFuture.addListener(c);
+        openChannels.add(channelFuture.getChannel());        
+        return c.future();
+    }
+
+File path: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_974b5_5c698/rev_974b5-5c698/src/main/java/com/ning/http/client/providers/NettyAsyncHttpProvider.java
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_9f3b7_1b2aa/rev_9f3b7-1b2aa.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_0f933_50d49/rev_0f933-50d49.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_e6434_26931/rev_e6434-26931.revisions
+Conflict type: LineBasedMCFd
+Conflict body: 
+private <T> Future<T> doConnect(final Request request, final AsyncHandler<T> asyncHandler, NettyResponseFuture<T> f) throws IOException{
+
+        if (isClose.get()) {
+            throw new IOException("Closed");
+        }
+
+        if (config.getMaxTotalConnections() != -1 && activeConnectionsCount.getAndIncrement() >= config.getMaxTotalConnections()) {
+            activeConnectionsCount.decrementAndGet();
+            throw new IOException("Too many connections");
+        }
+
+        URI uri = createUri(request.getUrl());
+
+        log.debug("Lookup cache: %s", uri);
+
+        Channel channel = lookupInCache(uri);
+        if (channel != null && channel.isOpen()) {
+            if (channel.isConnected()) {
+                // Decrement the count as this is not a new connection.
+                if (config.getMaxConnectionPerHost() != -1) {
+                    activeConnectionsCount.decrementAndGet();
+                }
+
+                HttpRequest nettyRequest = buildRequest(config, request, uri, false);
+                if (f == null) {
+                    f = new NettyResponseFuture<T>(uri, request, asyncHandler,
+<<<<<<< /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412950368560/fstmerge_var1_4890748890352328454
+                                                   nettyRequest, requestTimeout(config, request.getPerRequestConfig()));
+||||||| /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412950368560/fstmerge_base_7412744247298129490
+                                                   nettyRequest, config.getRequestTimeoutInMs());
+=======
+                            nettyRequest, config.getRequestTimeoutInMs());
+                } else {
+                    f.setNettyRequest(nettyRequest);
+>>>>>>> /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412950368560/fstmerge_var2_5049282244161776963
+                }
+
+                try {
+<<<<<<< /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412950368560/fstmerge_var1_4890748890352328454
+                    executeRequest(channel, config, f, nettyRequest);
+||||||| /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412950368560/fstmerge_base_7412744247298129490
+                    executeRequest(channel, config,f,nettyRequest);
+=======
+                    executeRequest(channel,config,f,nettyRequest);
+>>>>>>> /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412950368560/fstmerge_var2_5049282244161776963
+                    return f;
+                } catch (ConnectException ex) {
+                    // The connection failed because the channel got remotly closed
+                    // Let continue the normal processing.
+                    connectionsPool.remove(channel);
+                }
+            } else {
+                connectionsPool.remove(channel);
+            }
+        }
+        ConnectListener<T> c = new ConnectListener.Builder<T>(config, request, asyncHandler, f).build();
+
+
+        boolean useSSl = uri.getScheme().compareToIgnoreCase("https") == 0
+                && (request.getProxyServer() == null
+                || !request.getProxyServer().getProtocolAsString().equals("https"));
+        configure(useSSl, c);
+
+        ChannelFuture channelFuture;
+        try{
+            if (config.getProxyServer() == null && request.getProxyServer() == null) {
+                channelFuture = bootstrap.connect(new InetSocketAddress(uri.getHost(), getPort(uri)));
+            } else {
+                ProxyServer proxy = (request.getProxyServer() == null ? config.getProxyServer() : request.getProxyServer());
+                channelFuture = bootstrap.connect(new InetSocketAddress(proxy.getHost(), proxy.getPort()));
+            }
+            bootstrap.setOption("connectTimeout", config.getConnectionTimeoutInMs());
+        } catch (Throwable t){
+            if (config.getMaxTotalConnections() != -1) {
+                activeConnectionsCount.decrementAndGet();
+            }
+            log.error(t);
+            c.future().abort(t.getCause());
+            return c.future();
+        }
+        channelFuture.addListener(c);
+        openChannels.add(channelFuture.getChannel());
+        return c.future();
+    }
+
+File path: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_e6434_26931/rev_e6434-26931/src/main/java/com/ning/http/client/providers/NettyAsyncHttpProvider.java
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_f69cc_577da/rev_f69cc-577da.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_6dd33_2919b/rev_6dd33-2919b.revisions
+Conflict type: LineBasedMCFd
+Conflict body: 
+private final static <T> void executeRequest(final Channel channel,
+                                                 final AsyncHttpClientConfig config,
+                                                 final NettyResponseFuture<T> future,
+                                                 final HttpRequest nettyRequest) throws ConnectException {
+
+        if (!channel.isConnected()) {
+            String url = channel.getRemoteAddress() != null ? channel.getRemoteAddress().toString() : null;
+            if (url == null) {
+                try {
+                    url = future.getURI().toString();
+                } catch (MalformedURLException e) {
+                    // ignored
+                }
+            }
+            throw new ConnectException(String.format("Connection refused to %s", url));
+        }
+
+        channel.getPipeline().getContext(NettyAsyncHttpProvider.class).setAttachment(future);
+
+        /**
+         * Currently it is impossible to write the headers and the FIle using a single I/O operation.
+         * I've filled NETTY-XXX as an enhancement.
+         */
+        channel.write(nettyRequest).addListener(new ProgressListener(true, future.getAsyncHandler()));
+
+        if (future.getRequest().getFile() != null) {
+            final File file = future.getRequest().getFile();
+            RandomAccessFile raf;
+            long fileLength = 0;
+
+            try {
+                raf = new RandomAccessFile(file, "r");
+                fileLength = raf.length();
+
+                ChannelFuture writeFuture;
+                if (channel.getPipeline().get(SslHandler.class) != null) {
+                    writeFuture = channel.write(new ChunkedFile(raf, 0, fileLength, 8192));
+                    writeFuture.addListener(new ProgressListener(false, future.getAsyncHandler()));
+                } else {
+                    final FileRegion region = new DefaultFileRegion(raf.getChannel(), 0, fileLength);
+                    writeFuture = channel.write(region);
+                    writeFuture.addListener(new ProgressListener(false, future.getAsyncHandler()) {
+                        public void operationComplete(ChannelFuture cf) {
+                            region.releaseExternalResources();
+                            super.operationComplete(cf);
+                        }
+                    });
+                }
+            } catch (IOException ex) {
+                throw new IllegalStateException(ex);
+            }
+        }
+
+        try {
+<<<<<<< /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412950433552/fstmerge_var1_7921567433785312261
+            future.touch();
+            future.setReaperFuture(config.reaper().scheduleAtFixedRate(new Runnable() {
+                public void run() {
+                    if (future.hasExpired()) {
+                        if (log.isDebugEnabled()) {
+                            log.debug("Request Timeout expired for " + future);
+                        }
+                        future.abort(new TimeoutException("Request timed out."));
+                        closeChannel(channel.getPipeline().getContext(NettyAsyncHttpProvider.class));
+||||||| /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412950433552/fstmerge_base_3736046166387574527
+            future.setReaperFuture(config.reaper().schedule(new Callable<Object>() {
+                public Object call() {
+                    if (!future.isDone() && !future.isCancelled()) {
+                        future.abort(new TimeoutException("Request timed out."));
+                        channel.getPipeline().getContext(NettyAsyncHttpProvider.class).setAttachment(ClosedEvent.class);
+=======
+            int delay = requestTimeout(config, future.getRequest().getPerRequestConfig());
+            if (delay != -1) {
+                future.setReaperFuture(config.reaper().schedule(new Callable<Object>() {
+                    public Object call() {
+                        if (!future.isDone() && !future.isCancelled()) {
+                            future.abort(new TimeoutException("Request timed out."));
+                            channel.getPipeline().getContext(NettyAsyncHttpProvider.class).setAttachment(ClosedEvent.class);
+                        }
+                        return null;
+>>>>>>> /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412950433552/fstmerge_var2_7113343820447839760
+                    }
+<<<<<<< /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412950433552/fstmerge_var1_7921567433785312261
+                }
+            }, 0, requestTimeout(config, future.getRequest().getPerRequestConfig()), TimeUnit.MILLISECONDS));
+||||||| /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412950433552/fstmerge_base_3736046166387574527
+                    return null;
+                }
+            }, requestTimeout(config, future.getRequest().getPerRequestConfig()), TimeUnit.MILLISECONDS));
+=======
+                }, delay, TimeUnit.MILLISECONDS));
+            }
+>>>>>>> /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412950433552/fstmerge_var2_7113343820447839760
+        } catch (RejectedExecutionException ex) {
+            future.abort(ex);
+        }
+    }
+
+File path: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_6dd33_2919b/rev_6dd33-2919b/src/main/java/com/ning/http/client/providers/NettyAsyncHttpProvider.java
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_6dd33_69a4c/rev_6dd33-69a4c.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_69a4c_bc733/rev_69a4c-bc733.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_7fb4f_ee371/rev_7fb4f-ee371.revisions
+Conflict type: LineBasedMCFd
+Conflict body: 
+private final static <T> void executeRequest(final Channel channel,
+                                                 final AsyncHttpClientConfig config,
+                                                 final NettyResponseFuture<T> future,
+                                                 final HttpRequest nettyRequest) throws ConnectException {
+
+<<<<<<< /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412950535777/fstmerge_base_4764075074977116296
+        if (!channel.isConnected()){
+=======
+        if (!channel.isConnected()) {
+>>>>>>> /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412950535777/fstmerge_var2_3972232300141903635
+            String url = channel.getRemoteAddress() != null ? channel.getRemoteAddress().toString() : null;
+            if (url == null) {
+                try {
+                    url = future.getURI().toString();
+                } catch (MalformedURLException e) {
+                    // ignored
+                }
+            }
+            throw new ConnectException(String.format("Connection refused to %s", url));
+        }
+
+        channel.getPipeline().getContext(NettyAsyncHttpProvider.class).setAttachment(future);
+
+        /**
+         * Currently it is impossible to write the headers and the FIle using a single I/O operation.
+         * I've filled NETTY-XXX as an enhancement.
+         */
+<<<<<<< /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412950535777/fstmerge_base_4764075074977116296
+        channel.write(nettyRequest).addListener(new ProgressListener(true,future.getAsyncHandler()));
+=======
+        channel.write(nettyRequest).addListener(new ProgressListener(true, future.getAsyncHandler()));
+>>>>>>> /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412950535777/fstmerge_var2_3972232300141903635
+
+        if (future.getRequest().getFile() != null) {
+            final File file = future.getRequest().getFile();
+            RandomAccessFile raf;
+            long fileLength = 0;
+
+            try {
+                raf = new RandomAccessFile(file, "r");
+                fileLength = raf.length();
+
+                ChannelFuture writeFuture;
+                if (channel.getPipeline().get(SslHandler.class) != null) {
+                    writeFuture = channel.write(new ChunkedFile(raf, 0, fileLength, 8192));
+<<<<<<< /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412950535777/fstmerge_base_4764075074977116296
+                    writeFuture.addListener(new ProgressListener(false,future.getAsyncHandler()));
+=======
+                    writeFuture.addListener(new ProgressListener(false, future.getAsyncHandler()));
+>>>>>>> /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412950535777/fstmerge_var2_3972232300141903635
+                } else {
+                    final FileRegion region = new DefaultFileRegion(raf.getChannel(), 0, fileLength);
+                    writeFuture = channel.write(region);
+<<<<<<< /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412950535777/fstmerge_base_4764075074977116296
+                    writeFuture.addListener(new ProgressListener(false,future.getAsyncHandler()) {
+                         public void operationComplete(ChannelFuture cf) {
+                             region.releaseExternalResources();
+                             super.operationComplete(cf);
+=======
+                    writeFuture.addListener(new ProgressListener(false, future.getAsyncHandler()) {
+                        public void operationComplete(ChannelFuture cf) {
+                            region.releaseExternalResources();
+                            super.operationComplete(cf);
+>>>>>>> /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412950535777/fstmerge_var2_3972232300141903635
+                        }
+                    });
+                }
+            } catch (IOException ex) {
+                throw new IllegalStateException(ex);
+            }
+        }
+
+<<<<<<< /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412950535777/fstmerge_var1_3807525233800607546
+        try {
+            future.touch();
+            int delay = requestTimeout(config, future.getRequest().getPerRequestConfig());
+            if (delay != -1) {
+                future.setReaperFuture(config.reaper().scheduleAtFixedRate(new Runnable() {
+                    public void run() {
+                        if (future.hasExpired()) {
+                            if (log.isDebugEnabled()) {
+                                log.debug("Request Timeout expired for " + future);
+                            }
+                            future.abort(new TimeoutException("Request timed out."));
+                            closeChannel(channel.getPipeline().getContext(NettyAsyncHttpProvider.class));
+                        }
+||||||| /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412950535777/fstmerge_base_4764075074977116296
+        try{
+            future.setReaperFuture(config.reaper().schedule(new Callable<Object>() {
+                public Object call() {
+                    if (!future.isDone() && !future.isCancelled()) {
+                        future.abort(new TimeoutException());
+                        channel.getPipeline().getContext(NettyAsyncHttpProvider.class).setAttachment(ClosedEvent.class);
+=======
+        try {
+            future.touch();
+            future.setReaperFuture(config.reaper().scheduleAtFixedRate(new Runnable() {
+                public void run() {
+                    if (future.hasExpired()) {
+                        if (log.isDebugEnabled()) {
+                            log.debug("Request Timeout expired for " + future);
+                        }
+                        future.abort(new TimeoutException("Request timed out."));
+                        closeChannel(channel.getPipeline().getContext(NettyAsyncHttpProvider.class));
+>>>>>>> /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412950535777/fstmerge_var2_3972232300141903635
+                    }
+<<<<<<< /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412950535777/fstmerge_var1_3807525233800607546
+                }, 0, delay, TimeUnit.MILLISECONDS));
+            }
+        } catch (RejectedExecutionException ex) {
+||||||| /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412950535777/fstmerge_base_4764075074977116296
+                    return null;
+                }
+
+            }, config.getRequestTimeoutInMs(), TimeUnit.MILLISECONDS));
+        } catch (RejectedExecutionException ex){
+=======
+                }
+            }, 0, requestTimeout(config, future.getRequest().getPerRequestConfig()), TimeUnit.MILLISECONDS));
+        } catch (RejectedExecutionException ex) {
+>>>>>>> /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412950535777/fstmerge_var2_3972232300141903635
+            future.abort(ex);
+        }
+    }
+
+File path: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_7fb4f_ee371/rev_7fb4f-ee371/src/main/java/com/ning/http/client/providers/NettyAsyncHttpProvider.java
+Conflict type: SameSignatureCM
+Conflict body: 
+<<<<<<< /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412950536386/fstmerge_var1_3603309570746763385
+public boolean hasExpired(){
+        return responseTimeoutInMs != -1 && ((System.currentTimeMillis() - touch.get()) > responseTimeoutInMs);
+    }
+||||||| /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412950536386/fstmerge_base_7562501604078832031
+=======
+public boolean hasExpired(){
+        return ((System.currentTimeMillis() - touch.get()) > responseTimeoutInMs );
+    }
+>>>>>>> /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412950536386/fstmerge_var2_3237612874345132742
+
+File path: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_7fb4f_ee371/rev_7fb4f-ee371/src/main/java/com/ning/http/client/providers/NettyResponseFuture.java
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_35257_d5edd/rev_35257-d5edd.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_e8e06_0bc03/rev_e8e06-0bc03.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_fbf4f_72458/rev_fbf4f-72458.revisions
+Conflict type: LineBasedMCFd
+Conflict body: 
+@Override
+    public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) throws Exception {
+        // Discard in memory bytes if the HttpContent.interrupt() has been invoked.
+        if (ctx.getAttachment() instanceof DiscardEvent) {
+            ctx.getChannel().setReadable(false);
+            return;
+        } else if (!(ctx.getAttachment() instanceof NettyResponseFuture<?>)) {
+            // The IdleStateHandler times out and he is calling us.
+            // We already closed the channel in IdleStateHandler#channelIdle
+            // so we have nothing to do
+            return;
+        }
+        final NettyResponseFuture<?> future = (NettyResponseFuture<?>) ctx.getAttachment();
+        future.touch();
+
+        HttpRequest nettyRequest = future.getNettyRequest();
+        AsyncHandler<?> handler = future.getAsyncHandler();
+
+        try {
+            if (e.getMessage() instanceof HttpResponse) {
+                HttpResponse response = (HttpResponse) e.getMessage();
+                // Required if there is some trailing headers.
+                future.setHttpResponse(response);
+                int statusCode = response.getStatus().getCode();
+
+                String ka = response.getHeader(HttpHeaders.Names.CONNECTION);
+                future.setKeepAlive(ka == null || ka.toLowerCase().equals("keep-alive"));
+
+                String wwwAuth = response.getHeader(HttpHeaders.Names.WWW_AUTHENTICATE);
+                Request request = future.getRequest();
+                if (statusCode == 401
+                        && wwwAuth != null
+                        && future.getRequest().getRealm() != null
+                        && !future.getAndSetAuth(true)) {
+
+                    Realm realm = new Realm.RealmBuilder().clone(request.getRealm())
+                            .parseWWWAuthenticateHeader(wwwAuth)
+                            .setUri(URI.create(request.getUrl()).getPath())
+                            .setMethodName(request.getReqType())
+                            .setScheme(request.getRealm().getAuthScheme())
+                            .setUsePreemptiveAuth(true)
+                            .build();
+
+                    log.debug("Sending authentication to %s", request.getUrl());
+
+                    //Cache our current connection so we don't have to re-open it.
+                    markAsDoneAndCacheConnection(future, ctx.getChannel(), false);
+                    RequestBuilder builder = new RequestBuilder(future.getRequest());
+
+                    execute(builder.setRealm(realm).build(), future);
+                    return;
+                }
+
+                String proxyAuth = response.getHeader(HttpHeaders.Names.PROXY_AUTHENTICATE);
+                if (statusCode == 407
+                        && proxyAuth != null
+                        && future.getRequest().getRealm() != null
+                        && !future.getAndSetAuth(true)) {
+
+                    log.debug("Sending proxy authentication to %s", request.getUrl());
+
+                    //Cache our current connection so we don't have to re-open it.
+                    markAsDoneAndCacheConnection(future, ctx.getChannel(), false);
+                    execute(future.getRequest(), future);
+                    return;
+                }
+
+                if (future.getNettyRequest().getMethod().equals(HttpMethod.CONNECT)
+                        && statusCode == 200) {
+
+                    log.debug("Connected to %s", request.getUrl());
+
+                    //Cache our current connection so we don't have to re-open it.
+                    markAsDoneAndCacheConnection(future, ctx.getChannel(), false);
+                    RequestBuilder builder = new RequestBuilder(future.getRequest());
+                    try {
+                        upgradeProtocol(ctx.getChannel().getPipeline(),(request.getUrl()));
+                    } catch (Throwable ex) {
+                        future.abort(ex);
+                    }
+
+                    execute(builder.build(), future);
+                    return;
+                }
+
+<<<<<<< /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412950648938/fstmerge_var1_3268789945464529709
+                boolean redirectEnabled = (request.getFollowRedirects() == true
+                        || request.getFollowRedirects() == null && config.isRedirectEnabled());
+                if (redirectEnabled && (statusCode == 302 || statusCode == 301)) {
+||||||| /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412950648938/fstmerge_base_8130925952764933427
+                if (config.isRedirectEnabled()
+                        && (statusCode == 302 || statusCode == 301)) {
+=======
+                if (config.isRedirectEnabled() && (statusCode == 302 || statusCode == 301)) {
+>>>>>>> /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412950648938/fstmerge_var2_1667178152282604070
+
+                    if (future.incrementAndGetCurrentRedirectCount() < config.getMaxRedirects()) {
+
+                        String location = response.getHeader(HttpHeaders.Names.LOCATION);
+                        if (location.startsWith("/")) {
+                            location = getBaseUrl(future.getURI()) + location;
+                        }
+
+                        if(!location.equals(future.getURI().toString())){
+                            URI uri = createUri(location);
+
+                            if (location.startsWith("https")) {
+                                upgradeProtocol(ctx.getChannel().getPipeline(), "https");
+                            }
+                            RequestBuilder builder = new RequestBuilder(future.getRequest());
+                            future.setURI(uri);
+
+                            closeChannel(ctx);
+                            String newUrl = uri.toString();
+
+                            log.debug("Redirecting to %s", newUrl);
+                            execute(builder.setUrl(newUrl).build(), future);
+                            return;
+                        }
+                    } else {
+                        throw new MaxRedirectException("Maximum redirect reached: " + config.getMaxRedirects());
+                    }
+                }
+
+                if (log.isDebugEnabled()) {
+                    log.debug("Status: %s", response.getStatus());
+                    log.debug("Version: %s", response.getProtocolVersion());
+                    log.debug("\"");
+                    if (!response.getHeaderNames().isEmpty()) {
+                        for (String name : response.getHeaderNames()) {
+                            log.debug("Header: %s = %s", name, response.getHeaders(name));
+                        }
+                        log.debug("\"");
+                    }
+                }
+
+                if (!future.getAndSetStatusReceived(true) && updateStatusAndInterrupt(handler, new ResponseStatus(future.getURI(), response, this))) {
+                    finishUpdate(future, ctx);
+                    return;
+                } else if (updateHeadersAndInterrupt(handler, new ResponseHeaders(future.getURI(), response, this))) {
+                    finishUpdate(future, ctx);
+                    return;
+                } else if (!response.isChunked()) {
+                    if (response.getContent().readableBytes() != 0) {
+                        updateBodyAndInterrupt(handler, new ResponseBodyPart(future.getURI(), response, this));
+                    }
+                    finishUpdate(future, ctx);
+                    return;
+                }
+
+                if (nettyRequest.getMethod().equals(HttpMethod.HEAD)) {
+                    markAsDoneAndCacheConnection(future, ctx.getChannel(), true);
+                }
+
+            } else if (e.getMessage() instanceof HttpChunk) {
+                HttpChunk chunk = (HttpChunk) e.getMessage();
+
+                if (handler != null) {
+                    if (chunk.isLast() || updateBodyAndInterrupt(handler, new ResponseBodyPart(future.getURI(), null, this, chunk))) {
+                        if (chunk instanceof DefaultHttpChunkTrailer) {
+                            updateHeadersAndInterrupt(handler, new ResponseHeaders(future.getURI(),
+                                    future.getHttpResponse(), this, (HttpChunkTrailer) chunk));
+                        }
+                        finishUpdate(future, ctx);
+                    }
+                }
+            }
+        } catch (Exception t) {
+            try {
+                future.abort(t);
+            } finally {
+                finishUpdate(future, ctx);
+                throw t;
+            }
+        }
+    }
+
+File path: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_fbf4f_72458/rev_fbf4f-72458/src/main/java/com/ning/http/client/providers/NettyAsyncHttpProvider.java
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_77780_0efa8/rev_77780-0efa8.revisions
+Conflict type: LineBasedMCFd
+Conflict body: 
+@Test(groups = "standalone")
+    public void testRequestLevelProxy() throws IOException, ExecutionException, TimeoutException, InterruptedException {
+        AsyncHttpClient client = new AsyncHttpClient();
+        String target = "http://127.0.0.1:1234/";
+        Future<Response> f = client
+                .prepareGet(target)
+                .setProxyServer(new ProxyServer("127.0.0.1", port1))
+                .execute();
+        Response resp = f.get(3, TimeUnit.SECONDS);
+        assertNotNull(resp);
+        assertEquals(resp.getStatusCode(), HttpServletResponse.SC_OK);
+<<<<<<< /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412950693292/fstmerge_var1_5314019990183502755
+        assertEquals(resp.getHeader("target"), target);
+||||||| /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412950693292/fstmerge_base_9095347932065818792
+        assertEquals(resp.getHeader("target"), "/");
+=======
+        assertEquals(resp.getHeader("target"), "http://127.0.0.1:1234/");
+>>>>>>> /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412950693292/fstmerge_var2_5837219404133235416
+    }
+
+File path: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_77780_0efa8/rev_77780-0efa8/src/test/java/com/ning/http/client/async/ProxyTest.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+@Test(groups = "standalone")
+    public void testGlobalProxy() throws IOException, ExecutionException, TimeoutException, InterruptedException {
+        AsyncHttpClientConfig cfg
+                = new AsyncHttpClientConfig.Builder().setProxyServer(new ProxyServer("127.0.0.1", port1)).build();
+        AsyncHttpClient client = new AsyncHttpClient(cfg);
+        String target = "http://127.0.0.1:1234/";
+        Future<Response> f = client
+                .prepareGet(target)
+                .execute();
+        Response resp = f.get(3, TimeUnit.SECONDS);
+        assertNotNull(resp);
+        assertEquals(resp.getStatusCode(), HttpServletResponse.SC_OK);
+<<<<<<< /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412950693299/fstmerge_var1_6978901428313914312
+        assertEquals(resp.getHeader("target"), target);
+||||||| /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412950693299/fstmerge_base_5873254971787203402
+        assertEquals(resp.getHeader("target"), "/");
+=======
+        assertEquals(resp.getHeader("target"), "http://127.0.0.1:1234/");
+>>>>>>> /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412950693299/fstmerge_var2_4116397092484598683
+    }
+
+File path: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_77780_0efa8/rev_77780-0efa8/src/test/java/com/ning/http/client/async/ProxyTest.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+@Test(groups = "standalone")
+    public void testBothProxies() throws IOException, ExecutionException, TimeoutException, InterruptedException {
+        AsyncHttpClientConfig cfg
+                = new AsyncHttpClientConfig.Builder().setProxyServer(new ProxyServer("127.0.0.1", port1 - 1)).build();
+        AsyncHttpClient client = new AsyncHttpClient(cfg);
+        String target = "http://127.0.0.1:1234/";
+        Future<Response> f = client
+                .prepareGet(target)
+                .setProxyServer(new ProxyServer("127.0.0.1", port1))
+                .execute();
+        Response resp = f.get(3, TimeUnit.SECONDS);
+        assertNotNull(resp);
+        assertEquals(resp.getStatusCode(), HttpServletResponse.SC_OK);
+<<<<<<< /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412950693306/fstmerge_var1_3974510699073353736
+        assertEquals(resp.getHeader("target"), target);
+||||||| /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412950693306/fstmerge_base_3218460414060081988
+        assertEquals(resp.getHeader("target"), "/");
+=======
+        assertEquals(resp.getHeader("target"), "http://127.0.0.1:1234/");
+>>>>>>> /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412950693306/fstmerge_var2_25417841080617661
+    }
+
+File path: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_77780_0efa8/rev_77780-0efa8/src/test/java/com/ning/http/client/async/ProxyTest.java
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_467e6_41175/rev_467e6-41175.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_5d41e_8a125/rev_5d41e-8a125.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_c869e_77059/rev_c869e-77059.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_db70f_9436a/rev_db70f-9436a.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_90d25_9c156/rev_90d25-9c156.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_25739_772da/rev_25739-772da.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_b2037_cf2fc/rev_b2037-cf2fc.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_7f451_21c9d/rev_7f451-21c9d.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_43944_b9bd6/rev_43944-b9bd6.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_adf65_b4fc4/rev_adf65-b4fc4.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_b3b56_e419e/rev_b3b56-e419e.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_12063_ddc7b/rev_12063-ddc7b.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_e6c6f_fee4f/rev_e6c6f-fee4f.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_20a17_a6710/rev_20a17-a6710.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_d9236_323d0/rev_d9236-323d0.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_8b307_40fcb/rev_8b307-40fcb.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_e15aa_18538/rev_e15aa-18538.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_e6bd1_a68ba/rev_e6bd1-a68ba.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_2c0bc_cafa7/rev_2c0bc-cafa7.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_c7b76_a2e5a/rev_c7b76-a2e5a.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_627b8_af323/rev_627b8-af323.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_fb51f_50629/rev_fb51f-50629.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_4d669_9c681/rev_4d669-9c681.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_cd393_7e2ce/rev_cd393-7e2ce.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_2b69a_7d3ae/rev_2b69a-7d3ae.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_4f852_6f8e8/rev_4f852-6f8e8.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_59cf9_0ec60/rev_59cf9-0ec60.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_92010_f4768/rev_92010-f4768.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_be7ae_bb61c/rev_be7ae-bb61c.revisions
+Conflict type: LineBasedMCFd
+Conflict body: 
+@Override
+    public void messageReceived(final ChannelHandlerContext ctx, MessageEvent e) throws Exception {
+        //call super to reset the read timeout
+        super.messageReceived(ctx, e);
+
+        IN_IO_THREAD.set(Boolean.TRUE);
+        if (ctx.getAttachment() == null) {
+            log.debug("ChannelHandlerContext wasn't having any attachment");
+        }
+
+        if (ctx.getAttachment() instanceof DiscardEvent) {
+            return;
+        } else if (ctx.getAttachment() instanceof AsyncCallable) {
+            if (e.getMessage() instanceof HttpChunk) {
+                HttpChunk chunk = (HttpChunk) e.getMessage();
+                if (chunk.isLast()) {
+                    AsyncCallable ac = (AsyncCallable) ctx.getAttachment();
+                    ac.call();
+                }
+            } else {
+                AsyncCallable ac = (AsyncCallable) ctx.getAttachment();
+                ac.call();
+            }
+            ctx.setAttachment(new DiscardEvent());
+            return;
+        } else if (!(ctx.getAttachment() instanceof NettyResponseFuture<?>)) {
+            // The IdleStateHandler times out and he is calling us.
+            // We already closed the channel in IdleStateHandler#channelIdle
+            // so we have nothing to do
+            return;
+        }
+
+        final NettyResponseFuture<?> future = (NettyResponseFuture<?>) ctx.getAttachment();
+        future.touch();
+
+        HttpRequest nettyRequest = future.getNettyRequest();
+        AsyncHandler<?> handler = future.getAsyncHandler();
+        Request request = future.getRequest();
+        HttpResponse response = null;
+        try {
+            if (e.getMessage() instanceof HttpResponse) {
+                response = (HttpResponse) e.getMessage();
+
+                log.debug("\n\nRequest {}\n\nResponse {}\n", nettyRequest, response);
+
+                // Required if there is some trailing headers.
+                future.setHttpResponse(response);
+
+                int statusCode = response.getStatus().getCode();
+
+                String ka = response.getHeader(HttpHeaders.Names.CONNECTION);
+                future.setKeepAlive(ka == null || ka.toLowerCase().equals("keep-alive"));
+
+                List<String> wwwAuth = getWwwAuth(response.getHeaders());
+                Realm realm = request.getRealm() != null ? request.getRealm() : config.getRealm();
+
+                HttpResponseStatus status = new ResponseStatus(future.getURI(), response, this);
+                FilterContext fc = new FilterContext.FilterContextBuilder().asyncHandler(handler).request(request).responseStatus(status).build();
+                for (ResponseFilter asyncFilter : config.getResponseFilters()) {
+                    try {
+                        fc = asyncFilter.filter(fc);
+                        if (fc == null) {
+                            throw new NullPointerException("FilterContext is null");
+                        }
+                    } catch (FilterException efe) {
+                        abort(future, efe);
+                    }
+                }
+
+                // The request has changed
+                if (fc.replayRequest()) {
+                    replayRequest(future, fc, response, ctx);
+                    return;
+                }
+
+                if (statusCode == 401
+                        && wwwAuth.size() > 0
+                        && realm != null
+                        && !future.getAndSetAuth(true)) {
+
+                    final RequestBuilder builder = new RequestBuilder(future.getRequest());
+                    future.setState(NettyResponseFuture.STATE.NEW);
+
+                    if (!future.getURI().getPath().equalsIgnoreCase(realm.getUri())) {
+                        builder.setUrl(future.getURI().toString());
+                    }
+
+                    Realm newRealm = null;
+                    final FluentCaseInsensitiveStringsMap headers = request.getHeaders();
+                    ProxyServer proxyServer = request.getProxyServer() != null ? request.getProxyServer() : config.getProxyServer();
+
+                    // TODO: Refactor and put this code out of here.
+                    // NTLM
+                    if (wwwAuth.get(0).startsWith("NTLM") || (wwwAuth.get(0).startsWith("Negotiate")
+                            && realm.getAuthScheme() == Realm.AuthScheme.NTLM)) {
+
+                        String ntlmDomain = proxyServer == null ? realm.getNtlmDomain() : proxyServer.getNtlmDomain();
+                        String ntlmHost = proxyServer == null ? realm.getNtlmHost() : proxyServer.getHost();
+                        String prinicipal = proxyServer == null ? realm.getPrincipal() : proxyServer.getPrincipal();
+                        String password = proxyServer == null ? realm.getPassword() : proxyServer.getPassword();
+                        if (!realm.isNtlmMessageType2Received()) {
+                            String challengeHeader = ntlmEngine.generateType1Msg(ntlmDomain, ntlmHost);
+
+                            headers.add(HttpHeaders.Names.AUTHORIZATION, "NTLM " + challengeHeader);
+
+                            newRealm = new Realm.RealmBuilder().clone(realm)
+                                    .setScheme(realm.getAuthScheme())
+                                    .setUri(URI.create(request.getUrl()).getPath())
+                                    .setMethodName(request.getMethod())
+                                    .setNtlmMessageType2Received(true)
+                                    .build();
+                            future.getAndSetAuth(false);
+                        } else {
+                            String serverChallenge = wwwAuth.get(0).trim().substring("NTLM ".length());
+                            String challengeHeader = ntlmEngine.generateType3Msg(prinicipal, password,
+                                    ntlmDomain, ntlmHost, serverChallenge);
+
+                            headers.remove(HttpHeaders.Names.AUTHORIZATION);
+                            headers.add(HttpHeaders.Names.AUTHORIZATION, "NTLM " + challengeHeader);
+
+                            newRealm = new Realm.RealmBuilder().clone(realm)
+                                    .setScheme(realm.getAuthScheme())
+                                    .setUri(URI.create(request.getUrl()).getPath())
+                                    .setMethodName(request.getMethod())
+                                    .build();
+                        }
+                        // SPNEGO KERBEROS
+                    } else if (wwwAuth.get(0).startsWith("Negotiate")) {
+
+                        URI uri = URI.create(request.getUrl());
+                        String host = request.getVirtualHost() == null ? uri.getHost() : request.getVirtualHost();
+                        String server = proxyServer == null ? host : proxyServer.getHost();
+                        try {
+                            String challengeHeader = spnegoEngine.generateToken(server);
+                            headers.remove(HttpHeaders.Names.AUTHORIZATION);
+                            headers.add(HttpHeaders.Names.AUTHORIZATION, "Negotiate " + challengeHeader);
+
+                            newRealm = new Realm.RealmBuilder().clone(realm)
+                                    .setScheme(realm.getAuthScheme())
+                                    .setUri(uri.getPath())
+                                    .setMethodName(request.getMethod())
+                                    .setScheme(Realm.AuthScheme.KERBEROS)
+                                    .build();
+                        } catch (Throwable throwable) {
+                            abort(future, throwable);
+                            return;
+                        }
+                    } else {
+                        newRealm = new Realm.RealmBuilder().clone(realm)
+                                .setScheme(realm.getAuthScheme())
+                                .setUri(URI.create(request.getUrl()).getPath())
+                                .setMethodName(request.getMethod())
+                                .setUsePreemptiveAuth(true)
+                                .parseWWWAuthenticateHeader(wwwAuth.get(0))
+                                .build();
+                    }
+
+                    final Realm nr = newRealm;
+
+                    log.debug("Sending authentication to {}", request.getUrl());
+                    AsyncCallable ac = new AsyncCallable(future) {
+                        public Object call() throws Exception {
+                            drainChannel(ctx, future, future.getKeepAlive(), future.getURI());
+                            nextRequest(builder.setHeaders(headers).setRealm(nr).build(), future);
+                            return null;
+                        }
+                    };
+                    if (future.getKeepAlive() && response.isChunked()) {
+                        // We must make sure there is no bytes left before executing the next request.
+                        ctx.setAttachment(ac);
+                    } else {
+                        ac.call();
+                    }
+                    return;
+                }
+
+                if (statusCode == 100) {
+                    future.getAndSetWriteHeaders(false);
+                    future.getAndSetWriteBody(true);
+                    writeRequest(ctx.getChannel(), config, future, nettyRequest);
+                    return;
+                }
+
+                String proxyAuth = response.getHeader(HttpHeaders.Names.PROXY_AUTHENTICATE);
+                if (statusCode == 407
+                        && proxyAuth != null
+                        && future.getRequest().getRealm() != null
+                        && !future.getAndSetAuth(true)) {
+
+                    log.debug("Sending proxy authentication to {}", request.getUrl());
+
+                    nextRequest(future.getRequest(), future);
+                    return;
+                }
+
+                if (future.getNettyRequest().getMethod().equals(HttpMethod.CONNECT)
+                        && statusCode == 200) {
+
+                    ProxyServer proxyServer = request.getProxyServer() != null ? request.getProxyServer() : config.getProxyServer();
+                    log.debug("Connected to {}:{}", proxyServer.getHost(), proxyServer.getPort());
+
+                    if (future.getKeepAlive()) {
+                        future.attachChannel(ctx.getChannel(), true);
+                    }
+
+                    final RequestBuilder builder = new RequestBuilder(future.getRequest());
+                    try {
+                        log.debug("Connecting to proxy {} for scheme {}", proxyServer, request.getUrl());
+                        upgradeProtocol(ctx.getChannel().getPipeline(), request.getUrl());
+                    } catch (Throwable ex) {
+                        abort(future, ex);
+                    }
+                    nextRequest(builder.build(), future);
+                    return;
+                }
+
+                boolean redirectEnabled = request.isRedirectEnabled() ? true : config.isRedirectEnabled();
+                if (redirectEnabled && (statusCode == 302 || statusCode == 301)) {
+
+                    if (future.incrementAndGetCurrentRedirectCount() < config.getMaxRedirects()) {
+                        // We must allow 401 handling again.
+                        future.getAndSetAuth(false);
+
+                        String location = response.getHeader(HttpHeaders.Names.LOCATION);
+                        URI uri = AsyncHttpProviderUtils.getRedirectUri(future.getURI(), location);
+                        boolean stripQueryString = config.isRemoveQueryParamOnRedirect();
+
+                        if (!uri.toString().equalsIgnoreCase(future.getURI().toString())) {
+<<<<<<< /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412952603582/fstmerge_var1_1251915791781638796
+                            final RequestBuilder builder = stripQueryString ?
+                                      new RequestBuilder(future.getRequest()).setQueryParameters(null)
+                                    : new RequestBuilder(future.getRequest());
+
+||||||| /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412952603582/fstmerge_base_7618078719811306723
+                            final RequestBuilder builder = new RequestBuilder(future.getRequest());
+=======
+                            final RequestBuilder builder = new RequestBuilder(future.getRequest()).setQueryParameters(null);
+>>>>>>> /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412952603582/fstmerge_var2_1634866909393244647
+                            final URI initialConnectionUri = future.getURI();
+                            final boolean initialConnectionKeepAlive = future.getKeepAlive();
+                            future.setURI(uri);
+                            final String newUrl = uri.toString();
+
+                            log.debug("Redirecting to {}", newUrl);
+
+                            AsyncCallable ac = new AsyncCallable(future) {
+                                public Object call() throws Exception {
+                                    drainChannel(ctx, future, initialConnectionKeepAlive, initialConnectionUri);
+                                    nextRequest(builder.setUrl(newUrl).build(), future);
+                                    return null;
+                                }
+                            };
+
+                            if (response.isChunked()) {
+                                // We must make sure there is no bytes left before executing the next request.
+                                ctx.setAttachment(ac);
+                            } else {
+                                ac.call();
+                            }
+                            return;
+                        }
+                    } else {
+                        throw new MaxRedirectException("Maximum redirect reached: " + config.getMaxRedirects());
+                    }
+                }
+
+                if (!future.getAndSetStatusReceived(true) && updateStatusAndInterrupt(handler, status)) {
+                    finishUpdate(future, ctx, response.isChunked());
+
+                    return;
+                } else if (updateHeadersAndInterrupt(handler, new ResponseHeaders(future.getURI(), response, this))) {
+                    finishUpdate(future, ctx, response.isChunked());
+                    return;
+                } else if (!response.isChunked()) {
+                    if (response.getContent().readableBytes() != 0) {
+                        updateBodyAndInterrupt(handler, new ResponseBodyPart(future.getURI(), response, this));
+                    }
+                    finishUpdate(future, ctx, false);
+                    return;
+                }
+
+                if (nettyRequest.getMethod().equals(HttpMethod.HEAD)) {
+                    updateBodyAndInterrupt(handler, new ResponseBodyPart(future.getURI(), response, this));
+                    markAsDoneAndCacheConnection(future, ctx);
+                    drainChannel(ctx, future, future.getKeepAlive(), future.getURI());
+                    return;
+                }
+
+            } else if (e.getMessage() instanceof HttpChunk) {
+                HttpChunk chunk = (HttpChunk) e.getMessage();
+
+                if (handler != null) {
+                    if (chunk.isLast() || updateBodyAndInterrupt(handler, new ResponseBodyPart(future.getURI(), null, this, chunk))) {
+                        if (chunk instanceof DefaultHttpChunkTrailer) {
+                            updateHeadersAndInterrupt(handler, new ResponseHeaders(future.getURI(),
+                                    future.getHttpResponse(), this, (HttpChunkTrailer) chunk));
+                        }
+                        finishUpdate(future, ctx, !chunk.isLast());
+                    }
+                }
+            }
+        } catch (Exception t) {
+            if (IOException.class.isAssignableFrom(t.getClass()) && config.getIOExceptionFilters().size() > 0) {
+                FilterContext fc = new FilterContext.FilterContextBuilder().asyncHandler(future.getAsyncHandler())
+                        .request(future.getRequest()).ioException(IOException.class.cast(t)).build();
+                fc = handleIoException(fc, future);
+
+                if (fc.replayRequest()) {
+                    replayRequest(future, fc, response, ctx);
+                    return;
+                }
+            }
+
+            try {
+                abort(future, t);
+            } finally {
+                finishUpdate(future, ctx, false);
+                throw t;
+            }
+        }
+    }
+
+File path: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_be7ae_bb61c/rev_be7ae-bb61c/src/main/java/com/ning/http/client/providers/netty/NettyAsyncHttpProvider.java
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_f7154_a7b0f/rev_f7154-a7b0f.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_9f483_e0765/rev_9f483-e0765.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_c766c_08228/rev_c766c-08228.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_95fc6_0ff3c/rev_95fc6-0ff3c.revisions
+Conflict type: LineBasedMCFd
+Conflict body: 
+public AsyncHttpClientConfig build() {
+
+            if ( applicationThreadPool.isShutdown() ) {
+                throw new IllegalStateException( "ExecutorServices closed" );
+            }
+
+            if (proxyServer == null && useProxyProperties) {
+                proxyServer = ProxyUtils.createProxy(System.getProperties());
+            }
+
+            return new AsyncHttpClientConfig(defaultMaxTotalConnections,
+                    defaultMaxConnectionPerHost,
+                    defaultConnectionTimeOutInMs,
+                    defaultIdleConnectionInPoolTimeoutInMs,
+                    defaultRequestTimeoutInMs,
+                    redirectEnabled,
+                    maxDefaultRedirects,
+                    compressionEnabled,
+                    userAgent,
+                    allowPoolingConnection,
+                    reaper,
+                    applicationThreadPool,
+                    proxyServer,
+                    sslContext,
+                    sslEngineFactory,
+                    providerConfig,
+                    connectionsPool,
+                    realm,
+                    requestFilters,
+                    responseFilters,
+                    ioExceptionFilters,
+                    requestCompressionLevel,
+                    maxRequestRetry,
+                    allowSslConnectionPool,
+                    useRawUrl,
+<<<<<<< /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412953001200/fstmerge_var1_3568359624741828909
+                    removeQueryParamOnRedirect,
+                    ioThreadMultiplier);
+||||||| /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412953001200/fstmerge_base_1491605319433678465
+                    removeQueryParamOnRedirect);
+=======
+                    removeQueryParamOnRedirect,
+                    hostnameVerifier);
+>>>>>>> /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412953001200/fstmerge_var2_2392422031443688931
+        }
+
+File path: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_95fc6_0ff3c/rev_95fc6-0ff3c/src/main/java/com/ning/http/client/AsyncHttpClientConfig.java
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_6ced4_ddd77/rev_6ced4-ddd77.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_d9b69_ed7bf/rev_d9b69-ed7bf.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_4d2ab_c3651/rev_4d2ab-c3651.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_a31de_d6ee3/rev_a31de-d6ee3.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_849b3_5ad82/rev_849b3-5ad82.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_49c29_23093/rev_49c29-23093.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_b6d4d_49c29/rev_b6d4d-49c29.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_54310_4ef7b/rev_54310-4ef7b.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_eca66_a0a75/rev_eca66-a0a75.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_7f466_2be79/rev_7f466-2be79.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_3407e_d4e78/rev_3407e-d4e78.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_efe60_b2ff8/rev_efe60-b2ff8.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_f8308_f973f/rev_f8308-f973f.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_32877_44ef9/rev_32877-44ef9.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_32ed6_3d36d/rev_32ed6-3d36d.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_7dd07_fbf9c/rev_7dd07-fbf9c.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_7732d_f2d80/rev_7732d-f2d80.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_a70bd_5cf40/rev_a70bd-5cf40.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_eb5eb_25dcb/rev_eb5eb-25dcb.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_a6caf_35a7a/rev_a6caf-35a7a.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_0963b_6e714/rev_0963b-6e714.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_e5be9_0963b/rev_e5be9-0963b.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_8264a_0a09a/rev_8264a-0a09a.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_4e6e5_22069/rev_4e6e5-22069.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_aff74_241dc/rev_aff74-241dc.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_ed2cd_d81c7/rev_ed2cd-d81c7.revisions
+Conflict type: SameSignatureCM
+Conflict body: 
+<<<<<<< /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412955973516/fstmerge_var1_5931234242477761517
+@Override
+        protected void onHttpHeaderError(final HttpHeader httpHeader,
+                                   final FilterChainContext ctx,
+                                   final Throwable t) throws IOException {
+            t.printStackTrace();
+            httpHeader.setSkipRemainder(true);
+            final HttpTransactionContext context =
+                    provider.getHttpTransactionContext(ctx.getConnection());
+            context.abort(t);
+        }
+||||||| /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412955973516/fstmerge_base_263306688307384764
+=======
+@Override
+        protected void onHttpHeaderError(final HttpHeader httpHeader,
+                                         final FilterChainContext ctx,
+                                         final Throwable t) throws IOException {
+            t.printStackTrace();
+            httpHeader.setSkipRemainder(true);
+            final HttpTransactionContext context =
+                    provider.getHttpTransactionContext(ctx.getConnection());
+            context.abort(t);
+        }
+>>>>>>> /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412955973516/fstmerge_var2_5704799155669978296
+
+File path: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_ed2cd_d81c7/rev_ed2cd-d81c7/src/main/java/com/ning/http/client/providers/grizzly/GrizzlyAsyncHttpProvider.java
+Conflict type: LineBasedMCFd
+Conflict body: 
+@Override
+    public void messageReceived(final ChannelHandlerContext ctx, MessageEvent e) throws Exception {
+        //call super to reset the read timeout
+        super.messageReceived(ctx, e);
+        IN_IO_THREAD.set(Boolean.TRUE);
+        if (ctx.getAttachment() == null) {
+            log.debug("ChannelHandlerContext wasn't having any attachment");
+        }
+
+        if (ctx.getAttachment() instanceof DiscardEvent) {
+            return;
+        } else if (ctx.getAttachment() instanceof AsyncCallable) {
+            if (e.getMessage() instanceof HttpChunk) {
+                HttpChunk chunk = (HttpChunk) e.getMessage();
+                if (chunk.isLast()) {
+                    AsyncCallable ac = (AsyncCallable) ctx.getAttachment();
+                    ac.call();
+                } else {
+                    return;
+                }
+            } else {
+                AsyncCallable ac = (AsyncCallable) ctx.getAttachment();
+                ac.call();
+            }
+            ctx.setAttachment(new DiscardEvent());
+            return;
+        } else if (!(ctx.getAttachment() instanceof NettyResponseFuture<?>)) {
+            try {
+                ctx.getChannel().close();
+            } catch (Throwable t) {
+                log.trace("Closing an orphan channel {}", ctx.getChannel());
+            }
+            return;
+        }
+
+<<<<<<< /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412955975560/fstmerge_var1_7945491120992837943
+        final NettyResponseFuture<?> future = (NettyResponseFuture<?>) ctx.getAttachment();
+        future.touch();
+
+        // The connect timeout occured.
+        if (future.isCancelled() || future.isDone()) {
+            finishChannel(ctx);
+            return;
+        }
+
+        HttpRequest nettyRequest = future.getNettyRequest();
+        AsyncHandler<?> handler = future.getAsyncHandler();
+        Request request = future.getRequest();
+        HttpResponse response = null;
+        try {
+            if (e.getMessage() instanceof HttpResponse) {
+                response = (HttpResponse) e.getMessage();
+
+                log.debug("\n\nRequest {}\n\nResponse {}\n", nettyRequest, response);
+
+                // Required if there is some trailing headers.
+                future.setHttpResponse(response);
+
+                int statusCode = response.getStatus().getCode();
+
+                String ka = response.getHeader(HttpHeaders.Names.CONNECTION);
+                future.setKeepAlive(ka == null || ka.toLowerCase().equals("keep-alive"));
+
+                List<String> wwwAuth = getAuthorizationToken(response.getHeaders(), HttpHeaders.Names.WWW_AUTHENTICATE);
+                Realm realm = request.getRealm() != null ? request.getRealm() : config.getRealm();
+
+                HttpResponseStatus status = new ResponseStatus(future.getURI(), response, this);
+                FilterContext<?> fc = new FilterContext.FilterContextBuilder().asyncHandler(handler).request(request).responseStatus(status).build();
+                for (ResponseFilter asyncFilter : config.getResponseFilters()) {
+                    try {
+                        fc = asyncFilter.filter(fc);
+                        if (fc == null) {
+                            throw new NullPointerException("FilterContext is null");
+                        }
+                    } catch (FilterException efe) {
+                        abort(future, efe);
+                    }
+                }
+
+                // The request has changed
+                if (fc.replayRequest()) {
+                    replayRequest(future, fc, response, ctx);
+                    return;
+                }
+
+                Realm newRealm = null;
+                ProxyServer proxyServer = request.getProxyServer() != null ? request.getProxyServer() : config.getProxyServer();
+                final FluentCaseInsensitiveStringsMap headers = request.getHeaders();
+                final RequestBuilder builder = new RequestBuilder(future.getRequest());
+
+                if (realm != null && !future.getURI().getPath().equalsIgnoreCase(realm.getUri())) {
+                    builder.setUrl(future.getURI().toString());
+                }
+
+                if (statusCode == 401
+                        && wwwAuth.size() > 0
+                        && !future.getAndSetAuth(true)) {
+
+                    future.setState(NettyResponseFuture.STATE.NEW);
+                    // NTLM
+                    if (!wwwAuth.contains("Kerberos") && (wwwAuth.contains("NTLM") || (wwwAuth.contains("Negotiate")))) {
+                        newRealm = ntlmChallenge(wwwAuth, request, proxyServer, headers, realm, future);
+                        // SPNEGO KERBEROS
+                    } else if (wwwAuth.contains("Negotiate")) {
+                        newRealm = kerberosChallenge(wwwAuth, request, proxyServer, headers, realm, future);
+                        if (newRealm == null) return;
+                    } else {
+                        Realm.RealmBuilder realmBuilder;
+                        if (realm != null) {
+                            realmBuilder = new Realm.RealmBuilder().clone(realm).setScheme(realm.getAuthScheme())
+                            ;
+                        } else {
+                            realmBuilder = new Realm.RealmBuilder();
+                        }
+                        newRealm = realmBuilder
+                                .setUri(URI.create(request.getUrl()).getPath())
+                                .setMethodName(request.getMethod())
+                                .setUsePreemptiveAuth(true)
+                                .parseWWWAuthenticateHeader(wwwAuth.get(0))
+                                .build();
+                    }
+
+                    final Realm nr = newRealm;
+
+                    log.debug("Sending authentication to {}", request.getUrl());
+                    AsyncCallable ac = new AsyncCallable(future) {
+                        public Object call() throws Exception {
+                            drainChannel(ctx, future, future.getKeepAlive(), future.getURI());
+                            nextRequest(builder.setHeaders(headers).setRealm(nr).build(), future);
+                            return null;
+                        }
+                    };
+
+                    if (future.getKeepAlive() && response.isChunked()) {
+                        // We must make sure there is no bytes left before executing the next request.
+                        ctx.setAttachment(ac);
+                    } else {
+                        ac.call();
+                    }
+                    return;
+                }
+
+                if (statusCode == 100) {
+                    future.getAndSetWriteHeaders(false);
+                    future.getAndSetWriteBody(true);
+                    writeRequest(ctx.getChannel(), config, future, nettyRequest);
+                    return;
+                }
+
+                List<String> proxyAuth = getAuthorizationToken(response.getHeaders(), HttpHeaders.Names.PROXY_AUTHENTICATE);
+                if (statusCode == 407
+                        && proxyAuth.size() > 0
+                        && !future.getAndSetAuth(true)) {
+
+                    log.debug("Sending proxy authentication to {}", request.getUrl());
+
+                    future.setState(NettyResponseFuture.STATE.NEW);
+
+                    if (!proxyAuth.contains("Kerberos") && (proxyAuth.get(0).contains("NTLM") || (proxyAuth.contains("Negotiate")))) {
+                        newRealm = ntlmProxyChallenge(proxyAuth, request, proxyServer, headers, realm, future);
+                        // SPNEGO KERBEROS
+                    } else if (proxyAuth.contains("Negotiate")) {
+                        newRealm = kerberosChallenge(proxyAuth, request, proxyServer, headers, realm, future);
+                        if (newRealm == null) return;
+                    } else {
+                        newRealm = future.getRequest().getRealm();
+                    }
+
+                    Request req = builder.setHeaders(headers).setRealm(newRealm).build();
+                    future.setReuseChannel(true);
+                    future.setConnectAllowed(true);
+                    nextRequest(req, future);
+                    return;
+                }
+
+                if (future.getNettyRequest().getMethod().equals(HttpMethod.CONNECT)
+                        && statusCode == 200) {
+
+                    log.debug("Connected to {}:{}", proxyServer.getHost(), proxyServer.getPort());
+
+                    if (future.getKeepAlive()) {
+                        future.attachChannel(ctx.getChannel(), true);
+                    }
+
+                    try {
+                        log.debug("Connecting to proxy {} for scheme {}", proxyServer, request.getUrl());
+                        upgradeProtocol(ctx.getChannel().getPipeline(), request.getUrl());
+                    } catch (Throwable ex) {
+                        abort(future, ex);
+                    }
+                    Request req = builder.build();
+                    future.setReuseChannel(true);
+                    future.setConnectAllowed(false);
+                    nextRequest(req, future);
+                    return;
+                }
+
+                boolean redirectEnabled = request.isRedirectOverrideSet()? request.isRedirectEnabled() : config.isRedirectEnabled();
+                if (redirectEnabled && (statusCode == 302 || statusCode == 301 || statusCode == 307)) {
+
+                    if (future.incrementAndGetCurrentRedirectCount() < config.getMaxRedirects()) {
+                        // We must allow 401 handling again.
+                        future.getAndSetAuth(false);
+
+                        String location = response.getHeader(HttpHeaders.Names.LOCATION);
+                        URI uri = AsyncHttpProviderUtils.getRedirectUri(future.getURI(), location);
+                        boolean stripQueryString = config.isRemoveQueryParamOnRedirect();
+
+                        if (!uri.toString().equalsIgnoreCase(future.getURI().toString())) {
+                            final RequestBuilder nBuilder = stripQueryString ?
+                                    new RequestBuilder(future.getRequest()).setQueryParameters(null)
+                                    : new RequestBuilder(future.getRequest());
+
+                            final URI initialConnectionUri = future.getURI();
+                            final boolean initialConnectionKeepAlive = future.getKeepAlive();
+                            future.setURI(uri);
+                            final String newUrl = uri.toString();
+
+                            log.debug("Redirecting to {}", newUrl);
+                            for (String cookieStr : future.getHttpResponse().getHeaders(HttpHeaders.Names.SET_COOKIE)) {
+                                Cookie c = AsyncHttpProviderUtils.parseCookie(cookieStr);
+                                nBuilder.addOrReplaceCookie(c);
+                            }
+
+                            for (String cookieStr : future.getHttpResponse().getHeaders(HttpHeaders.Names.SET_COOKIE2)) {
+                                Cookie c = AsyncHttpProviderUtils.parseCookie(cookieStr);
+                                nBuilder.addOrReplaceCookie(c);
+                            }
+
+                            AsyncCallable ac = new AsyncCallable(future) {
+                                public Object call() throws Exception {
+                                    if (initialConnectionKeepAlive && ctx.getChannel().isReadable() &&
+                                            connectionsPool.offer(AsyncHttpProviderUtils.getBaseUrl(initialConnectionUri), ctx.getChannel())) {
+                                        return null;
+                                    }
+                                    finishChannel(ctx);
+                                    return null;
+                                }
+                            };
+
+                            if (response.isChunked()) {
+                                // We must make sure there is no bytes left before executing the next request.
+                                ctx.setAttachment(ac);
+                            } else {
+                                ac.call();
+                            }
+                            nextRequest(nBuilder.setUrl(newUrl).build(), future);
+                            return;
+                        }
+                    } else {
+                        throw new MaxRedirectException("Maximum redirect reached: " + config.getMaxRedirects());
+                    }
+                }
+
+                if (!future.getAndSetStatusReceived(true) && updateStatusAndInterrupt(handler, status)) {
+                    finishUpdate(future, ctx, response.isChunked());
+                    return;
+                } else if (updateHeadersAndInterrupt(handler, new ResponseHeaders(future.getURI(), response, this))) {
+                    finishUpdate(future, ctx, response.isChunked());
+                    return;
+                } else if (!response.isChunked()) {
+                    if (response.getContent().readableBytes() != 0) {
+                        updateBodyAndInterrupt(future, handler, new ResponseBodyPart(future.getURI(), response, this, true));
+                    }
+                    finishUpdate(future, ctx, false);
+                    return;
+                }
+
+                if (nettyRequest.getMethod().equals(HttpMethod.HEAD)) {
+                    updateBodyAndInterrupt(future, handler, new ResponseBodyPart(future.getURI(), response, this, true));
+                    markAsDone(future, ctx);
+                    drainChannel(ctx, future, future.getKeepAlive(), future.getURI());
+                }
+
+            } else if (e.getMessage() instanceof HttpChunk) {
+                HttpChunk chunk = (HttpChunk) e.getMessage();
+
+                if (handler != null) {
+                    if (chunk.isLast() || updateBodyAndInterrupt(future, handler, new ResponseBodyPart(future.getURI(), null, this, chunk, chunk.isLast()))) {
+                        if (chunk instanceof DefaultHttpChunkTrailer) {
+                            updateHeadersAndInterrupt(handler, new ResponseHeaders(future.getURI(),
+                                    future.getHttpResponse(), this, (HttpChunkTrailer) chunk));
+                        }
+                        finishUpdate(future, ctx, !chunk.isLast());
+                    }
+                }
+            }
+        } catch (Exception t) {
+            if (IOException.class.isAssignableFrom(t.getClass()) && config.getIOExceptionFilters().size() > 0) {
+                FilterContext<?> fc = new FilterContext.FilterContextBuilder().asyncHandler(future.getAsyncHandler())
+                        .request(future.getRequest()).ioException(IOException.class.cast(t)).build();
+                fc = handleIoException(fc, future);
+
+                if (fc.replayRequest()) {
+                    replayRequest(future, fc, response, ctx);
+                    return;
+                }
+            }
+
+            try {
+                abort(future, t);
+            } finally {
+                finishUpdate(future, ctx, false);
+                throw t;
+            }
+        }
+||||||| /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412955975560/fstmerge_base_7443503525851350024
+        final NettyResponseFuture<?> future = (NettyResponseFuture<?>) ctx.getAttachment();
+        future.touch();
+
+        // The connect timeout occured.
+        if (future.isCancelled() || future.isDone()) {
+            finishChannel(ctx);
+            return;
+        }
+
+        HttpRequest nettyRequest = future.getNettyRequest();
+        AsyncHandler<?> handler = future.getAsyncHandler();
+        Request request = future.getRequest();
+        HttpResponse response = null;
+        try {
+            if (e.getMessage() instanceof HttpResponse) {
+                response = (HttpResponse) e.getMessage();
+
+                log.debug("\n\nRequest {}\n\nResponse {}\n", nettyRequest, response);
+
+                // Required if there is some trailing headers.
+                future.setHttpResponse(response);
+
+                int statusCode = response.getStatus().getCode();
+
+                String ka = response.getHeader(HttpHeaders.Names.CONNECTION);
+                future.setKeepAlive(ka == null || ka.toLowerCase().equals("keep-alive"));
+
+                List<String> wwwAuth = getAuthorizationToken(response.getHeaders(), HttpHeaders.Names.WWW_AUTHENTICATE);
+                Realm realm = request.getRealm() != null ? request.getRealm() : config.getRealm();
+
+                HttpResponseStatus status = new ResponseStatus(future.getURI(), response, this);
+                FilterContext<?> fc = new FilterContext.FilterContextBuilder().asyncHandler(handler).request(request).responseStatus(status).build();
+                for (ResponseFilter asyncFilter : config.getResponseFilters()) {
+                    try {
+                        fc = asyncFilter.filter(fc);
+                        if (fc == null) {
+                            throw new NullPointerException("FilterContext is null");
+                        }
+                    } catch (FilterException efe) {
+                        abort(future, efe);
+                    }
+                }
+
+                // The request has changed
+                if (fc.replayRequest()) {
+                    replayRequest(future, fc, response, ctx);
+                    return;
+                }
+
+                Realm newRealm = null;
+                ProxyServer proxyServer = request.getProxyServer() != null ? request.getProxyServer() : config.getProxyServer();
+                final FluentCaseInsensitiveStringsMap headers = request.getHeaders();
+                final RequestBuilder builder = new RequestBuilder(future.getRequest());
+
+                if (realm != null && !future.getURI().getPath().equalsIgnoreCase(realm.getUri())) {
+                    builder.setUrl(future.getURI().toString());
+                }
+
+                if (statusCode == 401
+                        && wwwAuth.size() > 0
+                        && !future.getAndSetAuth(true)) {
+
+                    future.setState(NettyResponseFuture.STATE.NEW);
+                    // NTLM
+                    if (!wwwAuth.contains("Kerberos") && (wwwAuth.contains("NTLM") || (wwwAuth.contains("Negotiate")))) {
+                        newRealm = ntlmChallenge(wwwAuth, request, proxyServer, headers, realm, future);
+                        // SPNEGO KERBEROS
+                    } else if (wwwAuth.contains("Negotiate")) {
+                        newRealm = kerberosChallenge(wwwAuth, request, proxyServer, headers, realm, future);
+                        if (newRealm == null) return;
+                    } else {
+                        Realm.RealmBuilder realmBuilder;
+                        if (realm != null) {
+                            realmBuilder = new Realm.RealmBuilder().clone(realm).setScheme(realm.getAuthScheme())
+                            ;
+                        } else {
+                            realmBuilder = new Realm.RealmBuilder();
+                        }
+                        newRealm = realmBuilder
+                                .setUri(URI.create(request.getUrl()).getPath())
+                                .setMethodName(request.getMethod())
+                                .setUsePreemptiveAuth(true)
+                                .parseWWWAuthenticateHeader(wwwAuth.get(0))
+                                .build();
+                    }
+
+                    final Realm nr = newRealm;
+
+                    log.debug("Sending authentication to {}", request.getUrl());
+                    AsyncCallable ac = new AsyncCallable(future) {
+                        public Object call() throws Exception {
+                            drainChannel(ctx, future, future.getKeepAlive(), future.getURI());
+                            nextRequest(builder.setHeaders(headers).setRealm(nr).build(), future);
+                            return null;
+                        }
+                    };
+
+                    if (future.getKeepAlive() && response.isChunked()) {
+                        // We must make sure there is no bytes left before executing the next request.
+                        ctx.setAttachment(ac);
+                    } else {
+                        ac.call();
+                    }
+                    return;
+                }
+
+                if (statusCode == 100) {
+                    future.getAndSetWriteHeaders(false);
+                    future.getAndSetWriteBody(true);
+                    writeRequest(ctx.getChannel(), config, future, nettyRequest);
+                    return;
+                }
+
+                List<String> proxyAuth = getAuthorizationToken(response.getHeaders(), HttpHeaders.Names.PROXY_AUTHENTICATE);
+                if (statusCode == 407
+                        && proxyAuth.size() > 0
+                        && !future.getAndSetAuth(true)) {
+
+                    log.debug("Sending proxy authentication to {}", request.getUrl());
+
+                    future.setState(NettyResponseFuture.STATE.NEW);
+
+                    if (!proxyAuth.contains("Kerberos") && (proxyAuth.get(0).contains("NTLM") || (proxyAuth.contains("Negotiate")))) {
+                        newRealm = ntlmProxyChallenge(proxyAuth, request, proxyServer, headers, realm, future);
+                        // SPNEGO KERBEROS
+                    } else if (proxyAuth.contains("Negotiate")) {
+                        newRealm = kerberosChallenge(proxyAuth, request, proxyServer, headers, realm, future);
+                        if (newRealm == null) return;
+                    } else {
+                        newRealm = future.getRequest().getRealm();
+                    }
+
+                    Request req = builder.setHeaders(headers).setRealm(newRealm).build();
+                    future.setReuseChannel(true);
+                    future.setConnectAllowed(true);
+                    nextRequest(req, future);
+                    return;
+                }
+
+                if (future.getNettyRequest().getMethod().equals(HttpMethod.CONNECT)
+                        && statusCode == 200) {
+
+                    log.debug("Connected to {}:{}", proxyServer.getHost(), proxyServer.getPort());
+
+                    if (future.getKeepAlive()) {
+                        future.attachChannel(ctx.getChannel(), true);
+                    }
+
+                    try {
+                        log.debug("Connecting to proxy {} for scheme {}", proxyServer, request.getUrl());
+                        upgradeProtocol(ctx.getChannel().getPipeline(), request.getUrl());
+                    } catch (Throwable ex) {
+                        abort(future, ex);
+                    }
+                    Request req = builder.build();
+                    future.setReuseChannel(true);
+                    future.setConnectAllowed(false);
+                    nextRequest(req, future);
+                    return;
+                }
+
+                boolean redirectEnabled = request.isRedirectEnabled() ? true : config.isRedirectEnabled();
+                if (redirectEnabled && (statusCode == 302 || statusCode == 301 || statusCode == 307)) {
+
+                    if (future.incrementAndGetCurrentRedirectCount() < config.getMaxRedirects()) {
+                        // We must allow 401 handling again.
+                        future.getAndSetAuth(false);
+
+                        String location = response.getHeader(HttpHeaders.Names.LOCATION);
+                        URI uri = AsyncHttpProviderUtils.getRedirectUri(future.getURI(), location);
+                        boolean stripQueryString = config.isRemoveQueryParamOnRedirect();
+
+                        if (!uri.toString().equalsIgnoreCase(future.getURI().toString())) {
+                            final RequestBuilder nBuilder = stripQueryString ?
+                                    new RequestBuilder(future.getRequest()).setQueryParameters(null)
+                                    : new RequestBuilder(future.getRequest());
+
+                            final URI initialConnectionUri = future.getURI();
+                            final boolean initialConnectionKeepAlive = future.getKeepAlive();
+                            future.setURI(uri);
+                            final String newUrl = uri.toString();
+
+                            log.debug("Redirecting to {}", newUrl);
+                            for (String cookieStr : future.getHttpResponse().getHeaders(HttpHeaders.Names.SET_COOKIE)) {
+                                Cookie c = AsyncHttpProviderUtils.parseCookie(cookieStr);
+                                nBuilder.addOrReplaceCookie(c);
+                            }
+
+                            for (String cookieStr : future.getHttpResponse().getHeaders(HttpHeaders.Names.SET_COOKIE2)) {
+                                Cookie c = AsyncHttpProviderUtils.parseCookie(cookieStr);
+                                nBuilder.addOrReplaceCookie(c);
+                            }
+
+                            AsyncCallable ac = new AsyncCallable(future) {
+                                public Object call() throws Exception {
+                                    if (initialConnectionKeepAlive && ctx.getChannel().isReadable() &&
+                                            connectionsPool.offer(AsyncHttpProviderUtils.getBaseUrl(initialConnectionUri), ctx.getChannel())) {
+                                        return null;
+                                    }
+                                    finishChannel(ctx);
+                                    return null;
+                                }
+                            };
+
+                            if (response.isChunked()) {
+                                // We must make sure there is no bytes left before executing the next request.
+                                ctx.setAttachment(ac);
+                            } else {
+                                ac.call();
+                            }
+                            nextRequest(nBuilder.setUrl(newUrl).build(), future);
+                            return;
+                        }
+                    } else {
+                        throw new MaxRedirectException("Maximum redirect reached: " + config.getMaxRedirects());
+                    }
+                }
+
+                if (!future.getAndSetStatusReceived(true) && updateStatusAndInterrupt(handler, status)) {
+                    finishUpdate(future, ctx, response.isChunked());
+                    return;
+                } else if (updateHeadersAndInterrupt(handler, new ResponseHeaders(future.getURI(), response, this))) {
+                    finishUpdate(future, ctx, response.isChunked());
+                    return;
+                } else if (!response.isChunked()) {
+                    if (response.getContent().readableBytes() != 0) {
+                        updateBodyAndInterrupt(future, handler, new ResponseBodyPart(future.getURI(), response, this, true));
+                    }
+                    finishUpdate(future, ctx, false);
+                    return;
+                }
+
+                if (nettyRequest.getMethod().equals(HttpMethod.HEAD)) {
+                    updateBodyAndInterrupt(future, handler, new ResponseBodyPart(future.getURI(), response, this, true));
+                    markAsDone(future, ctx);
+                    drainChannel(ctx, future, future.getKeepAlive(), future.getURI());
+                }
+
+            } else if (e.getMessage() instanceof HttpChunk) {
+                HttpChunk chunk = (HttpChunk) e.getMessage();
+
+                if (handler != null) {
+                    if (chunk.isLast() || updateBodyAndInterrupt(future, handler, new ResponseBodyPart(future.getURI(), null, this, chunk, chunk.isLast()))) {
+                        if (chunk instanceof DefaultHttpChunkTrailer) {
+                            updateHeadersAndInterrupt(handler, new ResponseHeaders(future.getURI(),
+                                    future.getHttpResponse(), this, (HttpChunkTrailer) chunk));
+                        }
+                        finishUpdate(future, ctx, !chunk.isLast());
+                    }
+                }
+            }
+        } catch (Exception t) {
+            if (IOException.class.isAssignableFrom(t.getClass()) && config.getIOExceptionFilters().size() > 0) {
+                FilterContext<?> fc = new FilterContext.FilterContextBuilder().asyncHandler(future.getAsyncHandler())
+                        .request(future.getRequest()).ioException(IOException.class.cast(t)).build();
+                fc = handleIoException(fc, future);
+
+                if (fc.replayRequest()) {
+                    replayRequest(future, fc, response, ctx);
+                    return;
+                }
+            }
+
+            try {
+                abort(future, t);
+            } finally {
+                finishUpdate(future, ctx, false);
+                throw t;
+            }
+        }
+=======
+        Protocol p = (ctx.getPipeline().get(HttpClientCodec.class) != null ? httpProtocol : webSocketProtocol);
+        p.handle(ctx, e);
+>>>>>>> /Users/paolaaccioly/Documents/Doutorado/ssmerge/FH/featurehouse-master/fstmerge_tmp1412955975560/fstmerge_var2_5394004506069917330
+    }
+
+File path: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_ed2cd_d81c7/rev_ed2cd-d81c7/src/main/java/com/ning/http/client/providers/netty/NettyAsyncHttpProvider.java
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_81a59_ed2cd/rev_81a59-ed2cd.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_b4616_3c1e8/rev_b4616-3c1e8.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_ffe26_a69bf/rev_ffe26-a69bf.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_db8e4_0debb/rev_db8e4-0debb.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_5e384_1217e/rev_5e384-1217e.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_ad9d3_91123/rev_ad9d3-91123.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_97679_c3ec1/rev_97679-c3ec1.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_96229_b8dd1/rev_96229-b8dd1.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_15f06_c0f33/rev_15f06-c0f33.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_d7a1f_9e5e4/rev_d7a1f-9e5e4.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_07d2f_e0580/rev_07d2f-e0580.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_29d81_72a08/rev_29d81-72a08.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_76b51_392dd/rev_76b51-392dd.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_29177_a265f/rev_29177-a265f.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_01917_06c70/rev_01917-06c70.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_93924_a5932/rev_93924-a5932.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_4cbe9_0de07/rev_4cbe9-0de07.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_26ba9_43be7/rev_26ba9-43be7.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_86b19_bb2a7/rev_86b19-bb2a7.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_1bf36_0245e/rev_1bf36-0245e.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_bfc58_a93d6/rev_bfc58-a93d6.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_eb79d_bfc58/rev_eb79d-bfc58.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_cacd7_64cde/rev_cacd7-64cde.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_4b2d2_9b0e3/rev_4b2d2-9b0e3.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_951b1_55ece/rev_951b1-55ece.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_5255a_ca59d/rev_5255a-ca59d.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_7f958_333de/rev_7f958-333de.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_21b78_8194d/rev_21b78-8194d.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_477bb_743e7/rev_477bb-743e7.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_a93f3_e1232/rev_a93f3-e1232.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_71fb6_ee8c6/rev_71fb6-ee8c6.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_4c867_6d164/rev_4c867-6d164.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_1cf8d_c8554/rev_1cf8d-c8554.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_b1a86_f0aff/rev_b1a86-f0aff.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_22b7a_a9660/rev_22b7a-a9660.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_3df88_6faa1/rev_3df88-6faa1.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_2d70a_06318/rev_2d70a-06318.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_219ef_ed985/rev_219ef-ed985.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_299c8_b46b0/rev_299c8-b46b0.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_677af_4cba5/rev_677af-4cba5.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_900a8_1b2f1/rev_900a8-1b2f1.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_5f70e_029ca/rev_5f70e-029ca.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_05159_39ab2/rev_05159-39ab2.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_1c844_3f9f6/rev_1c844-3f9f6.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_f4d87_9a07c/rev_f4d87-9a07c.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_4a67d_ef9f3/rev_4a67d-ef9f3.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_9af59_f2583/rev_9af59-f2583.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_d3d5f_a68e9/rev_d3d5f-a68e9.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_6eccf_8bde2/rev_6eccf-8bde2.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_b5145_d8254/rev_b5145-d8254.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_6c556_ad14a/rev_6c556-ad14a.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_5b8a7_d3aeb/rev_5b8a7-d3aeb.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_9087e_8d362/rev_9087e-8d362.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_b6433_d9810/rev_b6433-d9810.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_54f1c_5238e/rev_54f1c-5238e.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_af7c1_483e4/rev_af7c1-483e4.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_ec14a_366f0/rev_ec14a-366f0.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_a16dd_3c369/rev_a16dd-3c369.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_6b6e5_a16dd/rev_6b6e5-a16dd.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_0bc18_4782f/rev_0bc18-4782f.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_65d3a_05ae8/rev_65d3a-05ae8.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_1f4b5_6f8a4/rev_1f4b5-6f8a4.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_c431f_e0162/rev_c431f-e0162.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_1f2cc_98872/rev_1f2cc-98872.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_75a23_8c365/rev_75a23-8c365.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_7204f_005c6/rev_7204f-005c6.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_6deae_f7a6c/rev_6deae-f7a6c.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_c8334_12d9d/rev_c8334-12d9d.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_4a56d_c71e0/rev_4a56d-c71e0.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_f6b34_9908f/rev_f6b34-9908f.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_ce896_1e002/rev_ce896-1e002.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_99e10_5ad18/rev_99e10-5ad18.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_ce0e2_c9b68/rev_ce0e2-c9b68.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_c0874_9af26/rev_c0874-9af26.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_fd2ec_14046/rev_fd2ec-14046.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_736f2_252e7/rev_736f2-252e7.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_358a5_67e9b/rev_358a5-67e9b.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_75c9d_22ac9/rev_75c9d-22ac9.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_ee8e7_0231c/rev_ee8e7-0231c.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_2326e_c717f/rev_2326e-c717f.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_3af32_6a7de/rev_3af32-6a7de.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_0f761_e4c5c/rev_0f761-e4c5c.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_81383_2d6b2/rev_81383-2d6b2.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_ed9f9_4d3a1/rev_ed9f9-4d3a1.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_d7fc5_0f30a/rev_d7fc5-0f30a.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_7fbef_f4ad6/rev_7fbef-f4ad6.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_618cc_802cf/rev_618cc-802cf.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_55f8e_3ac39/rev_55f8e-3ac39.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_1eb2d_a3444/rev_1eb2d-a3444.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_30d89_5a21f/rev_30d89-5a21f.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_2fd0f_840db/rev_2fd0f-840db.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_4e2d2_d55e1/rev_4e2d2-d55e1.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_dde23_95886/rev_dde23-95886.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_90b56_60897/rev_90b56-60897.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_ba972_db405/rev_ba972-db405.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_3df41_c0ecc/rev_3df41-c0ecc.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_2ae3b_595a0/rev_2ae3b-595a0.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_c9b53_90b56/rev_c9b53-90b56.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_bbdc1_c9b53/rev_bbdc1-c9b53.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_d6a16_3c915/rev_d6a16-3c915.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_8e4d7_285c2/rev_8e4d7-285c2.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_bdadd_63c51/rev_bdadd-63c51.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_54869_9aba8/rev_54869-9aba8.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_aaf7c_3b4aa/rev_aaf7c-3b4aa.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_77be6_2eeb0/rev_77be6-2eeb0.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_df6ed_01e61/rev_df6ed-01e61.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_26b58_1a3c9/rev_26b58-1a3c9.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_c5e9d_c04ab/rev_c5e9d-c04ab.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_7ac0e_d677d/rev_7ac0e-d677d.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_e89c6_62336/rev_e89c6-62336.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_b11c7_ecb37/rev_b11c7-ecb37.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_b175f_cdd95/rev_b175f-cdd95.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_ee816_fc446/rev_ee816-fc446.revisions
+
+==================================================================================================================
+Revision: /Users/paolaaccioly/gitClones/async-http-client/revisions/rev_9ca6a_2572b/rev_9ca6a-2572b.revisions
+
+=========================================================
