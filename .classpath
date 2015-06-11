@@ -5,6 +5,10 @@
 	<classpathentry exported="true" kind="con" path="GROOVY_SUPPORT"/>
 	<classpathentry exported="true" kind="con" path="GROOVY_DSL_SUPPORT"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/GremlinQuery"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/featurehouse"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/CIDE_generateAST"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/CIDE2_ast"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/fstcomp"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/fstgen"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/fstmerge"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
