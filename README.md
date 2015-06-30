@@ -1,4 +1,4 @@
-In order to run the conflicts analyzer you will need to have Java 7, groovy, maven and R installed in your machine. 
+In order to run the conflicts analyzer you will need to have Java 7 or higher, groovy, maven and R installed in your machine. 
 After that, you will need to clone the required projects from github and import then inside Eclipse IDE according 
 to the instructions described below:
 
