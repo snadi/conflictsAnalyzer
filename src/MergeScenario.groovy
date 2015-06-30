@@ -3,7 +3,8 @@
 import java.util.Observable;
 
 import merger.FSTGenMerger;
-import merger.MergeVisitor;
+import merger.MergeVisitor
+import util.CompareFiles;
 import composer.rules.ImplementsListMerging;
 import de.ovgu.cide.fstgen.ast.FSTTerminal;
 
@@ -17,6 +18,8 @@ class MergeScenario implements Observer {
 	private Map<String,Integer> mergeScenarioSummary
 
 	private boolean hasConflicts
+	
+	private CompareFiles compareFiles
 
 	MergeScenario(String path){
 		this.path = path
@@ -24,11 +27,14 @@ class MergeScenario implements Observer {
 		this.conflicts = new ArrayList<Conflict>()
 		this.hasConflicts = false
 		this.createMergeScenarioSummary()
+		this.compareFiles = new CompareFiles(this.path)
 	}
 
 	public void analyzeConflicts(){
+		this.compareFiles.ignoreFilesWeDontMerge()
 		this.runFstGenMerger()
 		this.updateHasConflicts()
+		this.compareFiles.restoreFilesWeDontMerge()
 	}
 
 	public void deleteMSDir(){
