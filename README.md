@@ -12,9 +12,6 @@ to the instructions described below:
 2- clone GremlinQuery and switch to right branch
 
     git clone https://github.com/prga/GremlinQuery.git
-    cd GremlinQuery
-    git checkout jgitMergeBase
-    cd ..
 
 3-clone featurehouse (ssmerge) 
 
