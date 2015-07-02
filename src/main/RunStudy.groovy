@@ -1,3 +1,4 @@
+package main
 import java.util.Hashtable
 
 /*this class is supposed to integrate all the 3 steps involved to run the study
