@@ -9,7 +9,7 @@ import de.ovgu.cide.fstgen.ast.FSTTerminal;
 
 enum SSMergeConflicts {
 
-	ModifierList, DefaultValueAnnotation, ImplementList, LineBasedMCFd, SameIdFd, SameSignatureCM, NOPATTERN
+	ModifierList, DefaultValueAnnotation, ImplementList, EditSameMC, AddSameFd, EditSameFd, SameSignatureCM, NOPATTERN
 
 }
 
@@ -83,10 +83,10 @@ public  class Conflict {
 
 		if(fd[1].equals(" ")){
 
-			type = SSMergeConflicts.SameIdFd.toString();
+			type = SSMergeConflicts.AddSameFd.toString();
 
 		}else{
-			type = SSMergeConflicts.LineBasedMCFd.toString();
+			type = SSMergeConflicts.AddSameFd.toString();
 		}
 
 		return type;
@@ -98,7 +98,7 @@ public  class Conflict {
 		String type = "";
 
 		if(isInsideMethod()){
-			type = SSMergeConflicts.LineBasedMCFd.toString();
+			type = SSMergeConflicts.EditSameMC.toString();
 		}else{
 			type = matchConflictOutsideMethod();
 		}
@@ -115,7 +115,7 @@ public  class Conflict {
 
 		if(a.contains(" ")){
 
-			type = SSMergeConflicts.LineBasedMCFd.toString();
+			type = SSMergeConflicts.EditSameMC.toString();
 		}else{
 
 			type = SSMergeConflicts.SameSignatureCM.toString();

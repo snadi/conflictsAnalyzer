@@ -4,13 +4,14 @@ computeBarPlot<-function(project, exportPath){
   DefaultValueAnnotation = project$DefaultValueAnnotation
   ImplementList = project$ImplementList
   ModifierList = project$ModifierList
-  LineBasedMCFd = project$LineBasedMCFd
+  EditSameMC = project$EditSameMC
   SameSignatureCM = project$SameSignatureCM
-  SameIdFd = project$SameIdFd
+  AddSameFd = project$AddSameFd
+  EditSameFd = project$EditSameFd
   barChartFileName = paste( name, "BarPlot", ".png")
   png(paste(exportPath, barChartFileName, sep=""))
-  slices <- c(DefaultValueAnnotation, ImplementList, ModifierList, LineBasedMCFd, SameSignatureCM, SameIdFd )
-  labels <- c("DefaultValueAnnotation", "ImplementList", "ModifierList", "LineBasedMCFd", "SameSignatureCM", "SameIdFd" ) 
+  slices <- c(DefaultValueAnnotation, ImplementList, ModifierList, EditSameMC, SameSignatureCM, EditSameFd )
+  labels <- c("DefaultValueAnnotation", "ImplementList", "ModifierList", "EditSameMC", "SameSignatureCM", "EditSameFd" ) 
   par(las=2)
   par(mar=c(5,8,4,2))
   barplot(slices, main=name, horiz=TRUE, names.arg=labels, cex.names=0.8, col=c("darkviolet","chocolate4", "darkgreen", "darkblue", "red" , "darkgoldenrod2"))

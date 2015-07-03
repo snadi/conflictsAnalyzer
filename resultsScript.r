@@ -47,8 +47,8 @@ deleteAllFiles <- function(exportPath) {
 
 
 main<-function(){
-importPath = "/Users/paolaaccioly/Documents/Doutorado/conflictsStudy/ConflictsAnalyzer/"
-exportPath = "/Users/paolaaccioly/Dropbox/Public/conflictpattern/"
+importPath = "/Users/paolaaccioly/Documents/testeConflictsAnalyzer/conflictsAnalyzer/"
+exportPath = "/Users/paolaaccioly/Documents/testeConflictsAnalyzer/graphs/"
 
 conflictRateFile="projectsPatternData.csv"
 #conflictPatternFile="patternsData.csv"
@@ -81,15 +81,16 @@ dev.off
 DefaultValueAnnotation <- sum(conflictRateTemp$DefaultValueAnnotation)
 ImplementList <- sum(conflictRateTemp$ImplementList)
 ModifierList <- sum(conflictRateTemp$ModifierList)
-LineBasedMCFd <- sum(conflictRateTemp$LineBasedMCFd)
+EditSameMC <- sum(conflictRateTemp$EditSameMC)
 SameSignatureCM <- sum(conflictRateTemp$SameSignatureCM)
-SameIdFd <- sum(conflictRateTemp$SameIdFd)
+AddSameFd <- sum(conflictRateTemp$AddSameFd)
+EditSameFd <- sum(conflictRateTemp$EditSameFd)
 
 # bar plot all conflicts
 barChartFileName = paste("BarChart.png")
 png(paste(exportPath, barChartFileName, sep=""))
-slices <- c(DefaultValueAnnotation, ImplementList, ModifierList, LineBasedMCFd, SameSignatureCM, SameIdFd )
-labels <- c("DefaultValueA", "ImplementList", "ModifierList", "LineBasedMCFd", "SameSignatureCM", "SameIdFd" ) 
+slices <- c(DefaultValueAnnotation, ImplementList, ModifierList, EditSameMC, SameSignatureCM, AddSameFd, EditSameFd)
+labels <- c("DefaultValueA", "ImplementList", "ModifierList", "EditSameMC", "SameSignatureCM", "AddSameFd", "EditSameFd" ) 
 dat <- data.frame(Frequency = slices,Conflicts = labels)
 library(ggplot2)
 p <- ggplot(dat, aes(x = Conflicts, y = Frequency)) +
@@ -101,18 +102,18 @@ print(p)
 dev.off
 
 #conflicts table
-Conflicts_Patterns <- c("DefaultValueAnnotation", "ImplementList", "ModifierList", "LineBasedMCFd", "SameSignatureCM", "SameIdFd", "TOTAL")
-conflictsSum <- sum(DefaultValueAnnotation, ImplementList, ModifierList, LineBasedMCFd, SameSignatureCM,SameIdFd)
-Occurrences <- c(DefaultValueAnnotation, ImplementList, ModifierList, LineBasedMCFd, SameSignatureCM,SameIdFd, conflictsSum)
+Conflicts_Patterns <- c("DefaultValueAnnotation", "ImplementList", "ModifierList", "EditSameMC", "SameSignatureCM", "AddSameFd", "EditSameFd", "TOTAL")
+conflictsSum <- sum(DefaultValueAnnotation, ImplementList, ModifierList, EditSameMC, SameSignatureCM,AddSameFd, EditSameFd)
+Occurrences <- c(DefaultValueAnnotation, ImplementList, ModifierList, EditSameMC, SameSignatureCM,AddSameFd, EditSameFd, conflictsSum)
 conflictsTable <- data.frame(Conflicts_Patterns, Occurrences)
 
 #boxplot for each conflict pattern percentages along all projects
 
-#LineBasedMCFd 
+#EditSameMC 
 boxplotLBMCF = paste("BoxplotLBMCF.png")
 png(paste(exportPath, boxplotLBMCF, sep=""))
-percentages <- computePatternPercentages(conflictRateTemp, "LineBasedMCFd")
-boxplot(percentages,xlab="Projects", ylab="LineBasedMCFd (%)", col="blue", outline=FALSE)
+percentages <- computePatternPercentages(conflictRateTemp, "EditSameMC")
+boxplot(percentages,xlab="Projects", ylab="EditSameMC (%)", col="blue", outline=FALSE)
 dev.off
 
 #SameSignatureCM
@@ -136,11 +137,18 @@ percentages <- computePatternPercentages(conflictRateTemp, "ModifierList")
 boxplot(percentages,xlab="Projects", ylab="ModifierList (%)", col="green", outline=FALSE)
 dev.off
 
-#SameIdFd
+#AddSameFd
 BoxplotSIF = paste("BoxplotSIF.png")
 png(paste(exportPath, BoxplotSIF, sep=""))
-percentages <- computePatternPercentages(conflictRateTemp, "SameIdFd")
-boxplot(percentages,xlab="Projects", ylab="SameIdFd (%)", col="darkgoldenrod2", outline=FALSE)
+percentages <- computePatternPercentages(conflictRateTemp, "AddSameFd")
+boxplot(percentages,xlab="Projects", ylab="AddSameFd (%)", col="darkgoldenrod2", outline=FALSE)
+dev.off
+
+#EditSameFd
+BoxplotESF = paste("BoxplotESF.png")
+png(paste(exportPath, BoxplotESF, sep=""))
+percentages <- computePatternPercentages(conflictRateTemp, "EditSameFd")
+boxplot(percentages,xlab="Projects", ylab="EditSameFd (%)", col="gray", outline=FALSE)
 dev.off
 
 #DefaultValueAnnotation
@@ -158,13 +166,14 @@ name <- lastProject$Project
 DefaultValueAnnotation <- lastProject$DefaultValueAnnotation
 ImplementList <- lastProject$ImplementList
 ModifierList <- lastProject$ModifierList
-LineBasedMCFd <- lastProject$LineBasedMCFd
+EditSameMC <- lastProject$EditSameMC
 SameSignatureCM <- lastProject$SameSignatureCM
-SameIdFd <- lastProject$SameIdFd
+AddSameFd <- lastProject$AddSameFd
+EditSameFd <- lastProject$EditSameFd
 barPlotFileName = paste(name, "BarPlot.png", sep="")
 png(paste(exportPath, barPlotFileName, sep=""))
-slices <- c(DefaultValueAnnotation, ImplementList, ModifierList, LineBasedMCFd, SameSignatureCM, SameIdFd )
-labels <- c("DefaultValueAnnotation", "ImplementList", "ModifierList", "LineBasedMCFd", "SameSignatureCM", "SameIdFd" ) 
+slices <- c(DefaultValueAnnotation, ImplementList, ModifierList, EditSameMC, SameSignatureCM, AddSameFd, EditSameFd )
+labels <- c("DefaultValueAnnotation", "ImplementList", "ModifierList", "EditSameMC", "SameSignatureCM", "AddSameFd", EditSameFd ) 
 par(las=2)
 par(mar=c(5,8,4,2))
 barplot(slices, main=name, horiz=TRUE, names.arg=labels, cex.names=0.8, col=c("darkviolet","chocolate4", "darkgreen", "darkblue", "red" , "darkgoldenrod2"))
@@ -195,6 +204,7 @@ HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotSSCM, Align="center", append
 HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotIL, Align="center", append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotML, Align="center", append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotSIF, Align="center", append=TRUE)
+HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotESF, Align="center", append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotDVA, Align="center", append=TRUE)
 
 time = Sys.time()

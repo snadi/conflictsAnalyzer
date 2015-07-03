@@ -68,7 +68,7 @@ public class ConflictPrinter {
 
 		out = new File(fileName)
 
-		def row = 'Project Merge_Scenarios Conflicting_Scenarios DefaultValueAnnotation ImplementList ModifierList LineBasedMCFd SameSignatureCM SameIdFd\n'
+		def row = 'Project Merge_Scenarios Conflicting_Scenarios DefaultValueAnnotation ImplementList ModifierList EditSameMC SameSignatureCM AddSameFd EditSameFd\n'
 
 		out.append(row)
 
@@ -76,10 +76,11 @@ public class ConflictPrinter {
 			int DefaultValueAnnotation = p.projectSummary.get("DefaultValueAnnotation")
 			int ImplementList = p.projectSummary.get("ImplementList")
 			int ModifierList = p.projectSummary.get("ModifierList")
-			int LineBasedMCFd = p.projectSummary.get("LineBasedMCFd")
+			int EditSameMC = p.projectSummary.get("EditSameMC")
 			int SameSignatureCM = p.projectSummary.get("SameSignatureCM")
-			int SameIdFd = p.projectSummary.get("SameIdFd")
-			String conflicts = ' ' + DefaultValueAnnotation + ' ' + ImplementList + ' ' + ModifierList + ' ' + LineBasedMCFd + ' ' + SameSignatureCM + ' ' + SameIdFd
+			int AddSameFd = p.projectSummary.get("AddSameFd")
+			int EditSameFd = p.projectSummary.get("EditSameFd")
+			String conflicts = ' ' + DefaultValueAnnotation + ' ' + ImplementList + ' ' + ModifierList + ' ' + EditSameMC + ' ' + SameSignatureCM + ' ' + AddSameFd + ' ' + EditSameFd
 			row = p.name + ' ' + p.analyzedMergeScenarios + ' ' + p.conflictingMergeScenarios + conflicts + '\n'
 			out.append(row)
 		}
