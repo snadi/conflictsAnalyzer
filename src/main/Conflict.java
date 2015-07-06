@@ -86,7 +86,7 @@ public  class Conflict {
 			type = SSMergeConflicts.AddSameFd.toString();
 
 		}else{
-			type = SSMergeConflicts.AddSameFd.toString();
+			type = SSMergeConflicts.EditSameFd.toString();
 		}
 
 		return type;
