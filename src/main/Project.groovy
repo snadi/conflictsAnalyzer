@@ -35,7 +35,12 @@ class Project {
 		this.computeConflictingRate()
 		this.projectSummary = projectSummary
 	}
-
+	
+	/*This constructor is used by the CsvAnalyzer class*/
+	public Project(String projectName){
+		this.name = projectName
+	}
+	
 	private void createProjectDir(){
 		File projectDir = new File( "ResultData" + File.separator + this.name)
 		if(!projectDir.exists()){

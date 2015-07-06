@@ -222,7 +222,7 @@ class RunStudy {
 
 	public void updateAndPrintResults(Project p){
 		updateConflictRate(p)
-		ConflictPrinter.printAnalizedProjectsReport(this)
+		ConflictPrinter.printAnalizedProjectsReport(this.projects)
 	}
 
 	public double getProjectsConflictRate(){

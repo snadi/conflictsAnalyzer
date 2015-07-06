@@ -31,7 +31,7 @@ public class ConflictPrinter {
 	 }
 	 }*/
 
-	public static void printAnalizedProjectsReport(RunStudy rs){
+	public static void printAnalizedProjectsReport(ArrayList<Project> projects){
 
 		def fileName = 'ProjectsSummary.csv'
 		def out = new File(fileName)
@@ -39,27 +39,27 @@ public class ConflictPrinter {
 		out.delete()
 		out = new File(fileName)
 
-		def content = rs.projects.size + ' projects analyzed so far.' +
+		def content = projects.size + ' projects analyzed so far.' +
 				'\nBelow you will find the list of analyzed projects and their conflict rate.\n'
 
 		out.append(content)
 
-		for(Project project : rs.projects){
+		for(Project project : projects){
 			def row = project.getName() + ': ' +
 					project.getConflictRate() + '%\n'
 			out.append(row)
 		}
 
-		printInputDataToScriptR(rs)
+		printInputDataToScriptR(projects)
 	}
 
-	private static void printInputDataToScriptR(RunStudy rs){
-		printProjectsData(rs)
+	private static void printInputDataToScriptR(ArrayList<Project> projects){
+		printProjectsData(projects)
 		callRScript()
 	}
 
 
-	private static void printProjectsData(RunStudy rs){
+	private static void printProjectsData(ArrayList<Project> projects){
 		String fileName = 'projectsPatternData.csv'
 		def out = new File(fileName)
 
@@ -72,7 +72,7 @@ public class ConflictPrinter {
 
 		out.append(row)
 
-		for(Project p : rs.getProjects()){
+		for(Project p : projects){
 			int DefaultValueAnnotation = p.projectSummary.get("DefaultValueAnnotation")
 			int ImplementList = p.projectSummary.get("ImplementList")
 			int ModifierList = p.projectSummary.get("ModifierList")
