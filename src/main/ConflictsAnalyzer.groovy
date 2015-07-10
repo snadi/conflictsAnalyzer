@@ -76,7 +76,7 @@ class ConflictsAnalyzer {
 
 	public void createProjects(String pData){
 		this.projects = new ArrayList<Project>()
-		def projectData = new File(pData)
+		def projectData = new FileWithConflicts(pData)
 		projectData.eachLine {
 			String[] p = it.split(',')
 			String projectName = p[0].trim()

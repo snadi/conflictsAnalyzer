@@ -5,6 +5,7 @@ import java.util.Observable;
 
 import merger.FSTGenMerger;
 import merger.MergeVisitor
+import sun.tools.jar.Main;
 import util.CompareFiles;
 import composer.rules.ImplementsListMerging;
 import de.ovgu.cide.fstgen.ast.FSTTerminal;
@@ -13,6 +14,8 @@ import de.ovgu.cide.fstgen.ast.FSTTerminal;
 class MergeScenario implements Observer {
 
 	private String path
+	
+	private String name
 
 	private ArrayList<Conflict> conflicts
 
@@ -21,16 +24,37 @@ class MergeScenario implements Observer {
 	private boolean hasConflicts
 	
 	private CompareFiles compareFiles
+	
+	private int totalFiles
+	
+	private int filesEditedByOneDev
+	
+	private int filesEditedByBothDevs
+	
+	private int filesThatRemainedTheSame
+	
+	private int filesWithConflict
 
 	MergeScenario(String path){
 		this.path = path
+		this.setName()
 		//this.removeVarArgs()
 		this.conflicts = new ArrayList<Conflict>()
 		this.hasConflicts = false
 		this.createMergeScenarioSummary()
 		this.compareFiles = new CompareFiles(this.path)
 	}
-
+	
+	public void setName(){
+		String [] temp = this.path.split('/')
+		String revFile = temp[temp.size() -1]
+		this.name = revFile.substring(0, revFile.length()-10)
+	}
+	
+	public String getName(){
+		return this.name
+	}
+	
 	public void analyzeConflicts(){
 		this.compareFiles.ignoreFilesWeDontMerge()
 		this.runFstGenMerger()
@@ -40,7 +64,7 @@ class MergeScenario implements Observer {
 
 	public void deleteMSDir(){
 		String msPath = this.path.substring(0, (this.path.length()-26))
-		def dir = new File(msPath)
+		def dir = new FileWithConflicts(msPath)
 		boolean deleted = dir.deleteDir()
 		if(deleted){
 			println 'Merge scenario ' + this.path + ' deleted!'
@@ -139,6 +163,11 @@ class MergeScenario implements Observer {
 		def procSed = sSed.execute()
 		procGrep | procSed
 		procSed.waitFor()
+	} 
+	
+	public static void main(String[] args){
+		MergeScenario ms = new MergeScenario('/Users/paolaaccioly/Desktop/Teste/jdimeTests/rev.revisions')
+		println ms.getName()
 	}
 
 }

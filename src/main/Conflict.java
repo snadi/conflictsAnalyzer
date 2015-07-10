@@ -26,6 +26,7 @@ public  class Conflict {
 	private String filePath;
 
 	private String nodeType;
+	
 
 	public Conflict(FSTTerminal node, String path){
 		this.body = node.getBody();

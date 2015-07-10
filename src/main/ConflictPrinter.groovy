@@ -34,10 +34,10 @@ public class ConflictPrinter {
 	public static void printAnalizedProjectsReport(ArrayList<Project> projects){
 
 		def fileName = 'ProjectsSummary.csv'
-		def out = new File(fileName)
+		def out = new FileWithConflicts(fileName)
 		// deleting old files if it exists
 		out.delete()
-		out = new File(fileName)
+		out = new FileWithConflicts(fileName)
 
 		def content = projects.size + ' projects analyzed so far.' +
 				'\nBelow you will find the list of analyzed projects and their conflict rate.\n'
@@ -61,12 +61,12 @@ public class ConflictPrinter {
 
 	private static void printProjectsData(ArrayList<Project> projects){
 		String fileName = 'projectsPatternData.csv'
-		def out = new File(fileName)
+		def out = new FileWithConflicts(fileName)
 
 		// deleting old files if it exists
 		out.delete()
 
-		out = new File(fileName)
+		out = new FileWithConflicts(fileName)
 
 		def row = 'Project Merge_Scenarios Conflicting_Scenarios DefaultValueAnnotation ImplementList ModifierList EditSameMC SameSignatureCM AddSameFd EditSameFd\n'
 
@@ -104,13 +104,13 @@ public class ConflictPrinter {
 	}
 
 	public static void printProjectReport(Project project){
-		String fileName = "ResultData" + File.separator + project.getName() + File.separator + 'Project' + project.getName() + 'Report.csv'
-		def out = new File(fileName)
+		String fileName = "ResultData" + FileWithConflicts.separator + project.getName() + FileWithConflicts.separator + 'Project' + project.getName() + 'Report.csv'
+		def out = new FileWithConflicts(fileName)
 
 		// deleting old files if it exists
 		out.delete()
 
-		out = new File(fileName)
+		out = new FileWithConflicts(fileName)
 
 		String projectSummary = 'Project ' + project.name + '\nAnalyzed merge scenarios: ' +
 				project.analyzedMergeScenarios + '\nConflicting merge scenarios: ' +
@@ -131,7 +131,7 @@ public class ConflictPrinter {
 	public static void printMergeScenarioReport(MergeScenario mergeScenario, String projectName){
 		
 		
-		def out = new File("ResultData" + File.separator + projectName + File.separator + 'MergeScenariosReport.csv')
+		def out = new FileWithConflicts("ResultData" + FileWithConflicts.separator + projectName + FileWithConflicts.separator + 'MergeScenariosReport.csv')
 
 		out.append('Merge scenario: ' + mergeScenario.path + '\n')
 
@@ -149,7 +149,7 @@ public class ConflictPrinter {
 
 	public static void printConflictsReport(ArrayList<Conflict> conflicts, String mergeScenarioPath, String projectName){
 
-		def out = new File("ResultData" + File.separator + projectName + File.separator + 'ConflictsReport.csv')
+		def out = new FileWithConflicts("ResultData" + FileWithConflicts.separator + projectName + FileWithConflicts.separator + 'ConflictsReport.csv')
 
 		def delimiter = '========================================================='
 		out.append(delimiter)

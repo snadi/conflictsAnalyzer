@@ -42,7 +42,7 @@ class Project {
 	}
 	
 	private void createProjectDir(){
-		File projectDir = new File( "ResultData" + File.separator + this.name)
+		FileWithConflicts projectDir = new FileWithConflicts( "ResultData" + FileWithConflicts.separator + this.name)
 		if(!projectDir.exists()){
 			projectDir.mkdir()
 		}
@@ -57,7 +57,7 @@ class Project {
 
 	public void createMergeScenarios(String mergeScenariosPath){
 		this.mergeScenarios = new ArrayList<MergeScenario>()
-		def mergeScenarioFile = new File(mergeScenariosPath)
+		def mergeScenarioFile = new FileWithConflicts(mergeScenariosPath)
 		mergeScenarioFile.eachLine {
 			MergeScenario ms = new MergeScenario(it)
 			this.mergeScenarios.add(ms)
