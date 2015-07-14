@@ -34,10 +34,10 @@ public class ConflictPrinter {
 	public static void printAnalizedProjectsReport(ArrayList<Project> projects){
 
 		def fileName = 'ProjectsSummary.csv'
-		def out = new FileWithConflicts(fileName)
+		def out = new File(fileName)
 		// deleting old files if it exists
 		out.delete()
-		out = new FileWithConflicts(fileName)
+		out = new File(fileName)
 
 		def content = projects.size + ' projects analyzed so far.' +
 				'\nBelow you will find the list of analyzed projects and their conflict rate.\n'
@@ -61,12 +61,12 @@ public class ConflictPrinter {
 
 	private static void printProjectsData(ArrayList<Project> projects){
 		String fileName = 'projectsPatternData.csv'
-		def out = new FileWithConflicts(fileName)
+		def out = new File(fileName)
 
 		// deleting old files if it exists
 		out.delete()
 
-		out = new FileWithConflicts(fileName)
+		out = new File(fileName)
 
 		def row = 'Project Merge_Scenarios Conflicting_Scenarios DefaultValueAnnotation ImplementList ModifierList EditSameMC SameSignatureCM AddSameFd EditSameFd\n'
 
@@ -104,13 +104,13 @@ public class ConflictPrinter {
 	}
 
 	public static void printProjectReport(Project project){
-		String fileName = "ResultData" + FileWithConflicts.separator + project.getName() + FileWithConflicts.separator + 'Project' + project.getName() + 'Report.csv'
-		def out = new FileWithConflicts(fileName)
+		String fileName = "ResultData" + File.separator + project.getName() + File.separator + 'Project' + project.getName() + 'Report.csv'
+		def out = new File(fileName)
 
 		// deleting old files if it exists
 		out.delete()
 
-		out = new FileWithConflicts(fileName)
+		out = new File(fileName)
 
 		String projectSummary = 'Project ' + project.name + '\nAnalyzed merge scenarios: ' +
 				project.analyzedMergeScenarios + '\nConflicting merge scenarios: ' +
@@ -129,60 +129,67 @@ public class ConflictPrinter {
 	}
 
 	public static void printMergeScenarioReport(MergeScenario mergeScenario, String projectName){
-		
-		
-		def out = new FileWithConflicts("ResultData" + FileWithConflicts.separator + projectName + FileWithConflicts.separator + 'MergeScenariosReport.csv')
 
-		out.append('Merge scenario: ' + mergeScenario.path + '\n')
 
-		Set<String> keys = mergeScenario.mergeScenarioSummary.keySet()
-		for(String key: keys){
+		File out = new File("ResultData" + File.separator + projectName + File.separator + 'MergeScenariosReport.csv')
 
-			def row = [key+": "+ mergeScenario.mergeScenarioSummary.get(key)]
-			out.append row.join(',')
-			out.append '\n'
-
+		if(!out.exists()){
+			String fileHeader = 'Merge_scenario Total_Files Files_Edited_By_One_Dev ' +
+			'Files_That_Remained_The_Same Files_Merged Total_Conflicts ' +
+			'DefaultValueAnnotation ImplementList ModifierList EditSameMC' + 
+			'SameSignatureCM AddSameFd EditSameFd\n'
+			out.append(fileHeader)
+		}else{
+			out.append(mergeScenario.toString())
+			out.append('\n')
 		}
-
-		printConflictsReport(mergeScenario.getConflicts(), mergeScenario.path, projectName)
+		printConflictsReport(mergeScenario, projectName)
 	}
 
-	public static void printConflictsReport(ArrayList<Conflict> conflicts, String mergeScenarioPath, String projectName){
+	public static void printConflictsReport(MergeScenario mergeScenario, String projectName){
 
-		def out = new FileWithConflicts("ResultData" + FileWithConflicts.separator + projectName + FileWithConflicts.separator + 'ConflictsReport.csv')
+		def out = new File("ResultData" + File.separator + projectName + File.separator + 'ConflictsReport.csv')
 
 		def delimiter = '========================================================='
 		out.append(delimiter)
 		out.append '\n'
 
-		out.append('Revision: ' + mergeScenarioPath + '\n')
-		for(Conflict c: conflicts){
+		out.append('Revision: ' + mergeScenario.path + '\n')
 
-			def row = ['Conflict type: '+ c.getType() + '\n' + 'Conflict body: ' + '\n' + c.getBody() ]
-			out.append row.join(',')
-			out.append '\n'
-			row = ['File path: ' + c.getFilePath()]
-			out.append row.join(',')
-			out.append '\n'
+		for(MergedFile mergedFile: mergeScenario.getMergedFiles()){
 
+			for(Conflict c: mergedFile.getConflicts()){
+
+				def row = ['Conflict type: '+ c.getType() + '\n' + 'Conflict body: ' + '\n' + c.getBody() ]
+				out.append row.join(',')
+				out.append '\n'
+				row = ['File path: ' + c.getFilePath()]
+				out.append row.join(',')
+				out.append '\n'
+
+			}
+			
+			for(MethodOrConstructor moc : mergedFile.getMethodsWithConflicts()){
+				Conflict x = moc.getConflict()
+				def row = ['Conflict type: '+ x.getType() + '\n' + 'Conflict body: ' + '\n' + x.getBody() ]
+				out.append row.join(',')
+				out.append '\n'
+				row = ['File path: ' + x.getFilePath()]
+				out.append row.join(',')
+				out.append '\n'
+			}
+			
 		}
 		out.append '\n'
 		out.append(delimiter)
 	}
 
 	public static void main (String[] args){
-		String propsFile = "meuscript.r"
-		ProcessBuilder pb = new ProcessBuilder("Rscript", propsFile)
-		//pb.directory(new File(this.gitminerLocation))
-		pb.redirectOutput(ProcessBuilder.Redirect.INHERIT)
-		// Start the process.
-		try {
-			Process p = pb.start()
-			p.waitFor()
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+		File f = new File('teste.txt')
+		if(!f.exists()){
+			f.append('first row\n')
+		}else{
+			f.append('second row')
 		}
 	}
 }

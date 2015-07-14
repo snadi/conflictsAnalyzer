@@ -30,7 +30,7 @@ class RunStudy {
 	}
 
 	public void run(String[] args){
-		def projectsList = new FileWithConflicts(args[0])
+		def projectsList = new File(args[0])
 		updateGitMinerConfig(args[1])
 		projectsList.eachLine {
 			setProjectNameAndRepo(it)
@@ -43,7 +43,7 @@ class RunStudy {
 
 	public boolean previousResultsExists(){
 		boolean result = false
-		FileWithConflicts projects = new FileWithConflicts('projectsPatternData.csv')
+		File projects = new File('projectsPatternData.csv')
 		if(projects.exists()){
 			result = true
 		}
@@ -87,7 +87,7 @@ class RunStudy {
 	}
 
 	public void readProjectData(){
-		def projectFile = new FileWithConflicts("projectsPatternData.csv")
+		def projectFile = new File("projectsPatternData.csv")
 		boolean header = true
 		projectFile.eachLine {
 			if((!header) && (!it.empty)){
@@ -124,18 +124,18 @@ class RunStudy {
 
 	public void updateGitMinerConfig(String configFile){
 		Properties gitminerProps =  new Properties()
-		FileWithConflicts gitminerPropsFile = new FileWithConflicts(this.gitminerConfigProps)
+		File gitminerPropsFile = new File(this.gitminerConfigProps)
 		gitminerProps.load(gitminerPropsFile.newDataInputStream())
 
 
 		Properties configProps = new Properties()
-		FileWithConflicts propsFile = new FileWithConflicts(configFile)
+		File propsFile = new File(configFile)
 		configProps.load(propsFile.newDataInputStream())
 
 		this.gitminerLocation = configProps.getProperty('gitminer.path')
 		this.downloadPath = configProps.getProperty('downloads.path')
-		String graphDb = this.gitminerLocation + FileWithConflicts.separator + 'graph.db'
-		String repo_Loader = this.gitminerLocation + FileWithConflicts.separator + 'repo_loader'
+		String graphDb = this.gitminerLocation + File.separator + 'graph.db'
+		String repo_Loader = this.gitminerLocation + File.separator + 'repo_loader'
 
 		gitminerProps.setProperty('net.wagstrom.research.github.dburl', graphDb)
 		gitminerProps.setProperty('edu.unl.cse.git.localStore', repo_Loader)
@@ -172,17 +172,17 @@ class RunStudy {
 
 	private String renameGraph(){
 
-		String oldFile = this.gitminerLocation + FileWithConflicts.separator + 'graph.db'
-		String newFile = this.gitminerLocation + FileWithConflicts.separator + this.projectName + 'graph.db'
-		new FileWithConflicts(oldFile).renameTo(new FileWithConflicts(newFile))
+		String oldFile = this.gitminerLocation + File.separator + 'graph.db'
+		String newFile = this.gitminerLocation + File.separator + this.projectName + 'graph.db'
+		new File(oldFile).renameTo(new File(newFile))
 
 		return newFile
 	}
 
 	public void runGitminerCommand(String command){
-		String propsFile = new FileWithConflicts("").getAbsolutePath() + FileWithConflicts.separator + this.gitminerConfigProps
+		String propsFile = new File("").getAbsolutePath() + File.separator + this.gitminerConfigProps
 		ProcessBuilder pb = new ProcessBuilder(command, "-c", propsFile)
-		pb.directory(new FileWithConflicts(this.gitminerLocation))
+		pb.directory(new File(this.gitminerLocation))
 		pb.redirectOutput(ProcessBuilder.Redirect.INHERIT)
 		// Start the process.
 		try {
@@ -198,7 +198,7 @@ class RunStudy {
 
 	private void updateProjectRepo(){
 		Properties gitminerProps = new Properties()
-		FileWithConflicts gitminerPropsFile = new FileWithConflicts(this.gitminerConfigProps)
+		File gitminerPropsFile = new File(this.gitminerConfigProps)
 		gitminerProps.load(gitminerPropsFile.newDataInputStream())
 		gitminerProps.setProperty('net.wagstrom.research.github.projects', this.projectRepo)
 		gitminerProps.setProperty('edu.unl.cse.git.repositories', this.projectRepo)

@@ -14,57 +14,55 @@ import de.ovgu.cide.fstgen.ast.FSTTerminal;
 class MergeScenario implements Observer {
 
 	private String path
-	
+
 	private String name
 
-	private ArrayList<Conflict> conflicts
+	private ArrayList<MergedFile> mergedFiles
 
 	private Map<String,Integer> mergeScenarioSummary
 
 	private boolean hasConflicts
-	
-	private CompareFiles compareFiles
-	
-	private int totalFiles
-	
-	private int filesEditedByOneDev
-	
-	private int filesEditedByBothDevs
-	
-	private int filesThatRemainedTheSame
-	
-	private int filesWithConflict
 
-	MergeScenario(String path){
+	private CompareFiles compareFiles
+
+	public MergeScenario(String path){
 		this.path = path
 		this.setName()
 		//this.removeVarArgs()
-		this.conflicts = new ArrayList<Conflict>()
 		this.hasConflicts = false
 		this.createMergeScenarioSummary()
+		this.setMergedFiles()
+	}
+
+	public void setMergedFiles(){
 		this.compareFiles = new CompareFiles(this.path)
+		this.compareFiles.ignoreFilesWeDontMerge()
+		this.mergedFiles = this.compareFiles.getFilesToBeMerged()
 	}
 	
+	public ArrayList<MergedFile> getMergedFiles(){
+		return this.mergedFiles
+	}
+
 	public void setName(){
 		String [] temp = this.path.split('/')
 		String revFile = temp[temp.size() -1]
 		this.name = revFile.substring(0, revFile.length()-10)
 	}
-	
+
 	public String getName(){
 		return this.name
 	}
-	
+
 	public void analyzeConflicts(){
-		this.compareFiles.ignoreFilesWeDontMerge()
-		this.runFstGenMerger()
-		this.updateHasConflicts()
+
+		this.runSSMerge()
 		this.compareFiles.restoreFilesWeDontMerge()
 	}
 
 	public void deleteMSDir(){
 		String msPath = this.path.substring(0, (this.path.length()-26))
-		def dir = new FileWithConflicts(msPath)
+		File dir = new File(msPath)
 		boolean deleted = dir.deleteDir()
 		if(deleted){
 			println 'Merge scenario ' + this.path + ' deleted!'
@@ -74,32 +72,13 @@ class MergeScenario implements Observer {
 		}
 	}
 
-	public void runFstGenMerger(){
+	public void runSSMerge(){
 		FSTGenMerger fstGenMerge = new FSTGenMerger()
 		fstGenMerge.getMergeVisitor().addObserver(this)
 		String[] files = ["--expression", this.path]
 		fstGenMerge.run(files)
 	}
 
-
-	@Override
-	public void update(Observable o, Object arg) {
-
-		if(o instanceof MergeVisitor && arg instanceof FSTTerminal){
-
-			FSTTerminal node = (FSTTerminal) arg
-
-			if(!node.getType().contains("-Content")){
-				this.createConflict(node)
-			}
-		}
-	}
-
-	public void createConflict(FSTTerminal node){
-		Conflict conflict = new Conflict(node, this.path);
-		this.conflicts.add(conflict)
-		this.updateMergeScenarioSummary(conflict)
-	}
 
 	public void createMergeScenarioSummary(){
 		this.mergeScenarioSummary = new HashMap<String, Integer>()
@@ -132,21 +111,8 @@ class MergeScenario implements Observer {
 		this.id = id
 	}
 
-	public ArrayList<Conflict> getConflicts(){
-		return this.conflicts
-	}
-
-	public void setConflicts(ArrayList<Conflict> conflicts){
-		this.conflicts = conflicts
-	}
-
 	public boolean getHasConflicts(){
 		return this.hasConflicts
-	}
-
-	private void updateHasConflicts(){
-		if(!this.conflicts.isEmpty())
-			this.hasConflicts = true
 	}
 
 	public void removeVarArgs(){
@@ -163,7 +129,84 @@ class MergeScenario implements Observer {
 		def procSed = sSed.execute()
 		procGrep | procSed
 		procSed.waitFor()
-	} 
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+
+		if(o instanceof MergeVisitor && arg instanceof FSTTerminal){
+
+			FSTTerminal node = (FSTTerminal) arg
+
+			if(!node.getType().contains("-Content")){
+				this.hasConflicts = true
+				this.createConflict(node)
+			}
+		}
+	}
+
+	public void createConflict(FSTTerminal node){
+		Conflict conflict = new Conflict(node, this.path);
+		this.matchConflictWithFile(conflict)
+		this.updateMergeScenarioSummary(conflict)
+
+	}
+
+	private void matchConflictWithFile(Conflict conflict){
+		String conflictPath = conflict
+		boolean matchedFile = false
+		int i = 0
+		while(!matchedFile && i < this.mergedFiles.size){
+			if(conflictPath.equals(this.mergedFiles.elementData(i))){
+				matchedFile = true
+				this.addConflictToFile(conflict, i)
+			}else{
+				i++
+			}
+		}
+	}
+
+	private void addConflictToFile(Conflict conflict, int index){
+		if(conflict.type.equals(SSMergeConflicts.EditSameMC)){
+			MethodOrConstructor moc = new MethodOrConstructor(conflict)
+			this.mergedFiles.elementData(index).methodsWithConflicts.add(moc)
+		}else{
+			this.mergedFiles.elementData(index).conflicts.add(conflict)
+		}
+	}
+	
+	public String toString(){
+		String report = this.name + ' ' + this.compareFiles.getNumberOfTotalFiles() + 
+		' ' + this.compareFiles.getFilesEditedByOneDev() + ' ' +
+		this.compareFiles.getFilesThatRemainedTheSame() + ' ' + this.mergedFiles.size() +
+		' ' + this.getNumberOfConflicts() + ' ' + this.conflictsSummary() + '\n'
+		
+		return report
+	}
+	
+	public int getNumberOfConflicts(){
+		int result = 0
+		for(MergedFile mf : this.mergedFiles){
+			result = result + mf.getNumberOfConflicts()
+		}
+		
+		return result
+	}
+	
+	public String conflictsSummary(){
+		
+		int DefaultValueAnnotation = this.mergeScenarioSummary.get("DefaultValueAnnotation")
+		int ImplementList = this.mergeScenarioSummary.get("ImplementList")
+		int ModifierList = this.mergeScenarioSummary.get("ModifierList")
+		int EditSameMC = this.mergeScenarioSummary.get("EditSameMC")
+		int SameSignatureCM = this.mergeScenarioSummary.get("SameSignatureCM")
+		int AddSameFd = this.mergeScenarioSummary.get("AddSameFd")
+		int EditSameFd = this.mergeScenarioSummary.get("EditSameFd")
+		String result = ' ' + DefaultValueAnnotation + ' ' + ImplementList + ' ' + 
+		ModifierList + ' ' + EditSameMC + ' ' + SameSignatureCM + ' ' + AddSameFd + 
+		' ' + EditSameFd
+		return result
+	}
 	
 	public static void main(String[] args){
 		MergeScenario ms = new MergeScenario('/Users/paolaaccioly/Desktop/Teste/jdimeTests/rev.revisions')

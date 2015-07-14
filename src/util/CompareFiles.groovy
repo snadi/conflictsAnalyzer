@@ -2,6 +2,8 @@ package util
 
 import org.apache.commons.io.FileUtils
 
+import main.MergedFile;
+
 class CompareFiles {
 
 	private String leftRevName
@@ -14,9 +16,16 @@ class CompareFiles {
 
 	private File tempDir
 
+	private int filesEditedByOneDev
+
+	private int filesThatRemainedTheSame
+
+	private ArrayList<MergedFile> filesToBeMerged
+
 	public CompareFiles(String revFile){
 
 		this.setDirNames(revFile)
+		this.filesToBeMerged = new ArrayList<MergedFile>()
 	}
 
 	private void setDirNames(String revFile){
@@ -27,6 +36,10 @@ class CompareFiles {
 		this.rightRevName = revs[2]
 		this.tempDir = new File(this.revDir + File.separator + 'temp')
 
+	}
+
+	public ArrayList<MergedFile> getFilesToBeMerged(){
+		return this.filesToBeMerged
 	}
 
 	public void ignoreFilesWeDontMerge(){
@@ -70,17 +83,20 @@ class CompareFiles {
 		boolean rightEqualsBase = FileUtils.contentEquals(right, base)
 
 		if(leftEqualsBase && rightEqualsBase){
-
+			this.filesThatRemainedTheSame = this.filesThatRemainedTheSame + 1
 			this.moveAndDeleteFiles(this.baseRevName, base, left, right)
 
 		}else if((!leftEqualsBase) && rightEqualsBase){
-
+			this.filesEditedByOneDev = this.filesEditedByOneDev + 1
 			this.moveAndDeleteFiles(this.leftRevName, left, base, right)
 
 		}else if(leftEqualsBase && (!rightEqualsBase)){
-
+			this.filesEditedByOneDev = this.filesEditedByOneDev + 1
 			this.moveAndDeleteFiles(this.rightRevName, right, base, left)
 
+		}else if((!leftEqualsBase) && (!rightEqualsBase)){
+			MergedFile mf = new MergedFile(base.getAbsolutePath())
+			this.filesToBeMerged.add(mf)
 		}
 
 	}
@@ -94,10 +110,24 @@ class CompareFiles {
 
 	}
 
+	public int getNumberOfTotalFiles(){
+
+		int totalFiles = this.filesEditedByOneDev + this.filesThatRemainedTheSame + this.filesToBeMerged.size()
+		return totalFiles
+	}
+
 	public void restoreFilesWeDontMerge(){
 		//TO DO
 	}
+	
+	public int getFilesEditedByOneDev() {
+		return filesEditedByOneDev;
+	}
 
+	public int getFilesThatRemainedTheSame() {
+		return filesThatRemainedTheSame;
+	}
+	
 	public static void main(String[] args){
 		CompareFiles cp = new CompareFiles("/Users/paolaaccioly/Documents/testeConflictsAnalyzer/testes/rev/rev.revisions")
 		cp.ignoreFilesWeDontMerge()

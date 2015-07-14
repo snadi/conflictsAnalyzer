@@ -8,16 +8,14 @@ class MethodOrConstructor {
 	
 	public MethodOrConstructor(Conflict conflict){
 		this.conflict = conflict
-		this.setNumberOfConflicts()
-	}
-	
-	private void setNumberOfConflicts(){
-		String[] p = this.conflict.body.split("<<<<<<<");
-		this.numberOfConflicts = p.length - 1;
-		
+		this.numberOfConflicts = this.conflict.countConflictsInsideMethods()
 	}
 	
 	public int getNumberOfConflicts(){
 		return this.numberOfConflicts
+	}
+	
+	public Conflict getConflict(){
+		return this.conflict
 	}
 }
