@@ -44,5 +44,13 @@ class MergedFile {
 	public ArrayList<MethodOrConstructor> getMethodsWithConflicts(){
 		return this.methodsWithConflicts
 	}
+	
+	public boolean hasConflicts(){
+		boolean hasConflicts = false
+		if(this.conflicts.size != 0 || this.methodsWithConflicts.size != 0){
+			hasConflicts = true
+		}
+		return hasConflicts
+	}
 
 }

@@ -181,9 +181,19 @@ class MergeScenario implements Observer {
 		String report = this.name + ' ' + this.compareFiles.getNumberOfTotalFiles() + 
 		' ' + this.compareFiles.getFilesEditedByOneDev() + ' ' +
 		this.compareFiles.getFilesThatRemainedTheSame() + ' ' + this.mergedFiles.size() +
-		' ' + this.getNumberOfConflicts() + ' ' + this.conflictsSummary()
+		' '+ this.getNumberOfFilesWithConflicts() + ' ' + this.getNumberOfConflicts() + ' ' + this.conflictsSummary()
 		
 		return report
+	}
+	
+	private int getNumberOfFilesWithConflicts(){
+		int result = 0
+		for(MergedFile m : this.mergedFiles){
+			if(m.hasConflicts()){
+				result = result + 1
+			}
+		}
+		return result
 	}
 	
 	public int getNumberOfConflicts(){
