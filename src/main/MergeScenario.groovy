@@ -153,11 +153,13 @@ class MergeScenario implements Observer {
 	}
 
 	private void matchConflictWithFile(Conflict conflict){
-		String conflictPath = conflict
+		String rev_base = this.compareFiles.baseRevName
+		String conflictPath = conflict.filePath
 		boolean matchedFile = false
 		int i = 0
 		while(!matchedFile && i < this.mergedFiles.size){
-			if(conflictPath.equals(this.mergedFiles.elementData(i))){
+			String mergedFilePath = this.mergedFiles.elementData(i).path.replaceFirst(rev_base, this.name)
+			if(conflictPath.equals(mergedFilePath)){
 				matchedFile = true
 				this.addConflictToFile(conflict, i)
 			}else{
@@ -167,7 +169,7 @@ class MergeScenario implements Observer {
 	}
 
 	private void addConflictToFile(Conflict conflict, int index){
-		if(conflict.type.equals(SSMergeConflicts.EditSameMC)){
+		if(conflict.type.equals(SSMergeConflicts.EditSameMC.toString())){
 			MethodOrConstructor moc = new MethodOrConstructor(conflict)
 			this.mergedFiles.elementData(index).methodsWithConflicts.add(moc)
 		}else{
@@ -179,7 +181,7 @@ class MergeScenario implements Observer {
 		String report = this.name + ' ' + this.compareFiles.getNumberOfTotalFiles() + 
 		' ' + this.compareFiles.getFilesEditedByOneDev() + ' ' +
 		this.compareFiles.getFilesThatRemainedTheSame() + ' ' + this.mergedFiles.size() +
-		' ' + this.getNumberOfConflicts() + ' ' + this.conflictsSummary() + '\n'
+		' ' + this.getNumberOfConflicts() + ' ' + this.conflictsSummary()
 		
 		return report
 	}

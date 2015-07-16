@@ -10,8 +10,6 @@ class MergedFile {
 
 	private ArrayList<MethodOrConstructor> methodsWithConflicts
 	
-	private boolean hasConflicts
-	
 	private String path
 
 	public MergedFile(String path){
