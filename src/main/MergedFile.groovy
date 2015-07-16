@@ -52,5 +52,13 @@ class MergedFile {
 		}
 		return hasConflicts
 	}
+	
+	public String toString(){
+		String result = this.path + ' ' + this.getNumberOfConflicts() + ' ' + 
+		this.conflicts.size + ' ' + this.countConflictsInsideMethods() + ' '+
+		this.methodsWithConflicts.size + '\n'
+		
+		return result
+	}
 
 }

@@ -181,9 +181,18 @@ class MergeScenario implements Observer {
 		String report = this.name + ' ' + this.compareFiles.getNumberOfTotalFiles() + 
 		' ' + this.compareFiles.getFilesEditedByOneDev() + ' ' +
 		this.compareFiles.getFilesThatRemainedTheSame() + ' ' + this.mergedFiles.size() +
-		' '+ this.getNumberOfFilesWithConflicts() + ' ' + this.getNumberOfConflicts() + ' ' + this.conflictsSummary()
+		' ' + this.getNumberOfFilesWithConflicts() + ' ' + this.getNumberOfConflicts() +
+		' ' + this.conflictsSummary()
 		
 		return report
+	}
+	
+	public String printMetrics(){
+		String result = ''
+		for(MergedFile m : this.mergedFiles){
+			result = result + m.toString() 
+		}
+		return result
 	}
 	
 	private int getNumberOfFilesWithConflicts(){
@@ -214,7 +223,7 @@ class MergeScenario implements Observer {
 		int SameSignatureCM = this.mergeScenarioSummary.get("SameSignatureCM")
 		int AddSameFd = this.mergeScenarioSummary.get("AddSameFd")
 		int EditSameFd = this.mergeScenarioSummary.get("EditSameFd")
-		String result = ' ' + DefaultValueAnnotation + ' ' + ImplementList + ' ' + 
+		String result = DefaultValueAnnotation + ' ' + ImplementList + ' ' + 
 		ModifierList + ' ' + EditSameMC + ' ' + SameSignatureCM + ' ' + AddSameFd + 
 		' ' + EditSameFd
 		return result
