@@ -231,7 +231,7 @@ class MergeScenario implements Observer {
 	
 	public static void main(String[] args){
 		MergeScenario ms = new MergeScenario('/Users/paolaaccioly/Desktop/Teste/jdimeTests/rev.revisions')
-		println ms.getName()
+		ms.analyzeConflicts()
 	}
 
 }

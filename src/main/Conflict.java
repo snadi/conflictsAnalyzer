@@ -27,14 +27,60 @@ public  class Conflict {
 
 	private String nodeType;
 	
+	private boolean isFalsePositive;
+	
 
 	public Conflict(FSTTerminal node, String path){
 		this.body = node.getBody();
 		this.nodeType = node.getType();
 		this.matchPattern();
 		this.retrieveFilePath(node, path);
+		this.setIsFalsePositive();
 	}
-
+	
+	public void setIsFalsePositive(){
+		if(this.type.equals(SSMergeConflicts.EditSameMC.toString()) || 
+				this.type.equals(SSMergeConflicts.EditSameFd.toString())){
+			this.isFalsePositive = this.checkFalsePositives();
+			
+		}else{
+			this.isFalsePositive = false;
+		}
+	}
+	
+	public boolean checkFalsePositives(){
+		boolean isFP = false;
+		String [] splitConflictBody = this.splitConflictBody();
+		isFP = this.checkDifferentSpacing(splitConflictBody);
+		if(!isFP){
+			isFP = this.checkConsecutiveLines(splitConflictBody);
+		}
+		return isFP;
+	}
+	
+	public boolean checkDifferentSpacing(String [] splitConflictBody){
+		boolean result = false;
+		
+		return result;
+	}
+	
+	public boolean checkConsecutiveLines(String [] splitConflictBody){
+		boolean result = false;
+		
+		return result;
+	}
+	
+	public String [] splitConflictBody(){
+		String [] splitBody = {};
+		System.out.println("hello world");
+		
+		return splitBody;
+	}
+	
+	public boolean getIsFalsePositive(){
+		return this.isFalsePositive;
+	}
+	
 	public void matchPattern(){
 
 		String nodeType = this.nodeType;
