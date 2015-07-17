@@ -136,7 +136,7 @@ public class ConflictPrinter {
 		if(!out.exists()){
 			String fileHeader = 'Merge_scenario Total_Files Files_Edited_By_One_Dev ' +
 					'Files_That_Remained_The_Same Files_Merged Files_With_Conflicts Total_Conflicts ' +
-					'DefaultValueAnnotation ImplementList ModifierList EditSameMC' +
+					'DefaultValueAnnotation ImplementList ModifierList EditSameMC ' +
 					'SameSignatureCM AddSameFd EditSameFd\n'
 			out.append(fileHeader)
 		}else{

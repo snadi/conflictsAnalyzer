@@ -5,6 +5,7 @@ import java.io.File;
 
 import de.ovgu.cide.fstgen.ast.FSTNode;
 import de.ovgu.cide.fstgen.ast.FSTTerminal;
+import merger.FSTGenMerger;
 
 
 enum SSMergeConflicts {
@@ -71,8 +72,24 @@ public  class Conflict {
 	}
 	
 	public String [] splitConflictBody(){
-		String [] splitBody = {};
-		System.out.println("hello world");
+		String [] splitBody = {"", "", ""};
+		if(this.isMethodOrConstructor()){
+			String temp = this.body.substring(13);
+			String [] temp2 = temp.split("\\|\\|\\|\\|\\|\\|\\| base\n");
+			String left = temp2[0];
+			temp2 = temp2[1].split("======= right\n");
+			String base = temp2[0];
+			String right = temp2[1].replaceFirst(">>>>>>>", "");
+			splitBody[0] = left.trim();
+			splitBody[1] = base.trim();
+			splitBody[2] = right.trim();
+		}else{
+			String[] tokens = body.split(FSTGenMerger.MERGE_SEPARATOR);
+			splitBody[0] = tokens[0].replace(FSTGenMerger.SEMANTIC_MERGE_MARKER, "").trim();
+			splitBody[1] = tokens[1].trim();
+			splitBody[2] = tokens[2].trim();
+			
+		}
 		
 		return splitBody;
 	}
@@ -251,6 +268,5 @@ public  class Conflict {
 	public void setNodeType(String nodeType) {
 		this.nodeType = nodeType;
 	}
-
 
 }
