@@ -7,30 +7,24 @@ import merger.MergeVisitor
 class MergedFile {
 
 	private ArrayList<Conflict> conflicts
-
-	private ArrayList<MethodOrConstructor> methodsWithConflicts
 	
 	private String path
+	
+	private int numberOfConflicts
+	
+	private int methodsWithConflicts
+	
+	private int conflictsInsideMethods
 
 	public MergedFile(String path){
 		this.path = path
 		this.conflicts = new ArrayList<Conflict>()
-		this.methodsWithConflicts = new ArrayList<MethodOrConstructor>()
+		
 	}
 
 	public int getNumberOfConflicts(){
 
-		int numberOfConflicts = this.conflicts.size() + this.countConflictsInsideMethods()
-
-		return numberOfConflicts
-	}
-
-	private int countConflictsInsideMethods(){
-		int number = 0
-		for(MethodOrConstructor m in this.methodsWithConflicts){
-			number = number + m.getNumberOfConflicts()
-		}
-		return number
+		return this.numberOfConflicts
 	}
 	
 	public String getPath(){
@@ -41,22 +35,52 @@ class MergedFile {
 		return this.conflicts
 	}
 	
-	public ArrayList<MethodOrConstructor> getMethodsWithConflicts(){
-		return this.methodsWithConflicts
-	}
-	
 	public boolean hasConflicts(){
 		boolean hasConflicts = false
-		if(this.conflicts.size != 0 || this.methodsWithConflicts.size != 0){
+		if(this.conflicts.size != 0){
 			hasConflicts = true
 		}
 		return hasConflicts
 	}
 	
+	public int countConflictsDueToDifferentSpacing(){
+		int result = 0;
+		for (Conflict c : this.conflicts){
+			result = result + c.getDifferentSpacing()
+		}
+
+		return result;
+	}
+	
+	private int countConflictsInsideMethods(){
+		int result = 0;
+		
+		return result;
+	}
+	
+	private int countMethodsWithConflicts(){
+		int result = 0;
+		
+		return result;
+	}
+	
+	private void setMetrics(){
+		for(Conflict c : this.conflicts){
+			int number = c.getNumberOfConflicts()
+			this.numberOfConflicts = this.numberOfConflicts + number
+			if(c.getType().equals(SSMergeConflicts.EditSameMC.toString())){
+				this.methodsWithConflicts++
+				this.conflictsInsideMethods = this.conflictsInsideMethods + number
+			}
+		}
+	}
+	
 	public String toString(){
+		this.setMetrics()
+		
 		String result = this.path + ' ' + this.getNumberOfConflicts() + ' ' + 
 		this.conflicts.size + ' ' + this.countConflictsInsideMethods() + ' '+
-		this.methodsWithConflicts.size + '\n'
+		this.countMethodsWithConflicts() + '\n'
 		
 		return result
 	}

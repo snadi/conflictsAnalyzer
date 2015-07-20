@@ -169,12 +169,8 @@ class MergeScenario implements Observer {
 	}
 
 	private void addConflictToFile(Conflict conflict, int index){
-		if(conflict.type.equals(SSMergeConflicts.EditSameMC.toString())){
-			MethodOrConstructor moc = new MethodOrConstructor(conflict)
-			this.mergedFiles.elementData(index).methodsWithConflicts.add(moc)
-		}else{
+		
 			this.mergedFiles.elementData(index).conflicts.add(conflict)
-		}
 	}
 	
 	public String toString(){
@@ -182,9 +178,17 @@ class MergeScenario implements Observer {
 		' ' + this.compareFiles.getFilesEditedByOneDev() + ' ' +
 		this.compareFiles.getFilesThatRemainedTheSame() + ' ' + this.mergedFiles.size() +
 		' ' + this.getNumberOfFilesWithConflicts() + ' ' + this.getNumberOfConflicts() +
-		' ' + this.conflictsSummary()
+		this.countConflictsDueToDifferentSpacing() + ' ' + this.conflictsSummary()
 		
 		return report
+	}
+	
+	private int countConflictsDueToDifferentSpacing(){
+		int result = 0
+		for(MergedFile m : this.mergedFiles){
+			result = result + m.countConflictsDueToDifferentSpacing()
+		}
+		return result;
 	}
 	
 	public String printMetrics(){

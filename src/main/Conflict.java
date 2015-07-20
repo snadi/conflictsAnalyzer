@@ -2,6 +2,7 @@ package main;
 
 
 import java.io.File;
+import java.util.ArrayList;
 
 import de.ovgu.cide.fstgen.ast.FSTNode;
 import de.ovgu.cide.fstgen.ast.FSTTerminal;
@@ -27,77 +28,105 @@ public  class Conflict {
 	private String filePath;
 
 	private String nodeType;
-	
-	private boolean isFalsePositive;
-	
+
+	private int differentSpacing;
+
+	private int consecutiveLines;
+
+	private int numberOfConflicts;
+
 
 	public Conflict(FSTTerminal node, String path){
 		this.body = node.getBody();
 		this.nodeType = node.getType();
 		this.matchPattern();
 		this.retrieveFilePath(node, path);
-		this.setIsFalsePositive();
+		this.setFalsePositives();
 	}
-	
-	public void setIsFalsePositive(){
+
+	public void setFalsePositives(){
 		if(this.type.equals(SSMergeConflicts.EditSameMC.toString()) || 
 				this.type.equals(SSMergeConflicts.EditSameFd.toString())){
-			this.isFalsePositive = this.checkFalsePositives();
-			
+			this.countConflictsInsideMethods();
+			this.checkFalsePositives();
+
 		}else{
-			this.isFalsePositive = false;
+			this.consecutiveLines = 0;
+			this.differentSpacing = 0;
+			this.numberOfConflicts = 1;
 		}
 	}
-	
-	public boolean checkFalsePositives(){
-		boolean isFP = false;
-		String [] splitConflictBody = this.splitConflictBody();
-		isFP = this.checkDifferentSpacing(splitConflictBody);
-		if(!isFP){
-			isFP = this.checkConsecutiveLines(splitConflictBody);
+
+	public void checkFalsePositives(){
+		if(this.isMethodOrConstructor()){
+			ArrayList<String> conflicts = splitConflictsInsideMethods();
+			for(String s : conflicts){
+				this.auxCheckFalsePositives(s);
+			}
+		} else{
+			this.auxCheckFalsePositives(this.body);
 		}
-		return isFP;
 	}
-	
-	public boolean checkDifferentSpacing(String [] splitConflictBody){
-		boolean result = false;
-		
-		return result;
+
+	private void auxCheckFalsePositives(String s) {
+		String [] splitConflictBody = this.splitConflictBody(s);
+		this.checkDifferentSpacing(splitConflictBody);
+		this.checkConsecutiveLines(splitConflictBody);
 	}
-	
-	public boolean checkConsecutiveLines(String [] splitConflictBody){
-		boolean result = false;
-		
-		return result;
+
+	private ArrayList<String> splitConflictsInsideMethods(){
+		String [] temp = this.body.split("<<<<<<<");
+		ArrayList<String> conflicts = new ArrayList<String>();
+		for(int i = 1; i < temp.length; i++){
+			String temp2 = temp[i].split(">>>>>>>")[0];
+			conflicts.add(temp2);
+		}
+
+		return conflicts;
 	}
-	
-	public String [] splitConflictBody(){
+
+	public void checkDifferentSpacing(String [] splitConflictBody){
+
+		String[] threeWay = this.removeInvisibleChars(splitConflictBody);
+		if(threeWay[0].equals(threeWay[1]) || threeWay[2].equals(threeWay[1])){
+			this.differentSpacing++;
+		}
+
+	}
+
+	public String[] removeInvisibleChars(String[] input){
+		input[0] = input[0].replaceAll("\\s+","");
+		input[1] = input[1].replaceAll("\\s+","");
+		input[2] = input[2].replaceAll("\\s+","");
+		return input;
+	}
+	public void checkConsecutiveLines(String [] splitConflictBody){
+		//TO DO
+	}
+
+	public String [] splitConflictBody(String s){
 		String [] splitBody = {"", "", ""};
 		if(this.isMethodOrConstructor()){
-			String temp = this.body.substring(13);
-			String [] temp2 = temp.split("\\|\\|\\|\\|\\|\\|\\| base\n");
-			String left = temp2[0];
-			temp2 = temp2[1].split("======= right\n");
-			String base = temp2[0];
-			String right = temp2[1].replaceFirst(">>>>>>>", "");
-			splitBody[0] = left.trim();
-			splitBody[1] = base.trim();
-			splitBody[2] = right.trim();
+			String[] temp = s.split("\\|\\|\\|\\|\\|\\|\\|");
+			String left = temp[0].substring(s.indexOf('\n')+1).trim();
+			String [] baseRight = temp[1].split("=======");
+			String base = baseRight[0].substring(s.indexOf('\n')+1).trim();
+			String right = baseRight[1].trim();
+			splitBody[0] = left;
+			splitBody[1] = base;
+			splitBody[2] = right;
 		}else{
 			String[] tokens = body.split(FSTGenMerger.MERGE_SEPARATOR);
 			splitBody[0] = tokens[0].replace(FSTGenMerger.SEMANTIC_MERGE_MARKER, "").trim();
 			splitBody[1] = tokens[1].trim();
 			splitBody[2] = tokens[2].trim();
-			
+
 		}
-		
+
 		return splitBody;
 	}
-	
-	public boolean getIsFalsePositive(){
-		return this.isFalsePositive;
-	}
-	
+
+
 	public void matchPattern(){
 
 		String nodeType = this.nodeType;
@@ -130,7 +159,7 @@ public  class Conflict {
 		if (conflictType.equals("")){
 			conflictType = SSMergeConflicts.NOPATTERN.toString();
 		}
-		
+
 		this.setType(conflictType);
 
 	}
@@ -231,10 +260,10 @@ public  class Conflict {
 
 	}
 
-	public int countConflictsInsideMethods(){
+	public void countConflictsInsideMethods(){
 		String[] p = this.body.split("<<<<<<<");
-		int result = p.length - 1;
-		return result;
+		this.numberOfConflicts = p.length - 1;
+
 	}
 
 	public String getType() {
@@ -267,6 +296,56 @@ public  class Conflict {
 
 	public void setNodeType(String nodeType) {
 		this.nodeType = nodeType;
+	}
+
+	public int getNumberOfConflicts() {
+		return numberOfConflicts;
+	}
+
+	public void setNumberOfConflicts(int numberOfConflicts) {
+		this.numberOfConflicts = numberOfConflicts;
+	}
+
+	public int getDifferentSpacing() {
+		return differentSpacing;
+	}
+
+	public void setDifferentSpacing(int differentSpacing) {
+		this.differentSpacing = differentSpacing;
+	}
+
+	public int getConsecutiveLines() {
+		return consecutiveLines;
+	}
+
+	public void setConsecutiveLines(int consecutiveLines) {
+		this.consecutiveLines = consecutiveLines;
+	}
+
+	public static void main(String[] args) {
+		/*String example = "public void m(){\n" +
+				"<<<<<<< /Users/paolaaccioly/Desktop/Teste/jdimeTests/left/Example.java\n" +
+				"        int a1;\n" +
+				"||||||| /Users/paolaaccioly/Desktop/Teste/jdimeTests/base/Example.java\n" +
+				"        int a;\n" +
+				"=======\n" +
+				"            int a;\n" +
+				">>>>>>> /Users/paolaaccioly/Desktop/Teste/jdimeTests/right/Example.java\n" +
+				"        int b;\n" +
+				"        int c;\n" +
+				"<<<<<<< /Users/paolaaccioly/Desktop/Teste/jdimeTests/left/Example.java\n" +
+				"        int d1;\n" +
+				"||||||| /Users/paolaaccioly/Desktop/Teste/jdimeTests/base/Example.java\n" +
+				"        int d;\n" +
+				"=======\n" +
+				"        int d2;\n" +
+				">>>>>>> /Users/paolaaccioly/Desktop/Teste/jdimeTests/right/Example.java\n" +
+				"    }";
+		String example2 = "hello world";
+		System.out.println(example2.split("mamae")[0]);*/
+
+
+		
 	}
 
 }

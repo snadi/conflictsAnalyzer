@@ -136,7 +136,7 @@ public class ConflictPrinter {
 		if(!out.exists()){
 			String fileHeader = 'Merge_scenario Total_Files Files_Edited_By_One_Dev ' +
 					'Files_That_Remained_The_Same Files_Merged Files_With_Conflicts Total_Conflicts ' +
-					'DefaultValueAnnotation ImplementList ModifierList EditSameMC ' +
+					'Conflicts_Due_To_Different_Spacing '+ 'DefaultValueAnnotation ImplementList ModifierList EditSameMC ' +
 					'SameSignatureCM AddSameFd EditSameFd\n'
 			out.append(fileHeader)
 		}else{
@@ -151,7 +151,9 @@ public class ConflictPrinter {
 		File out = new File('ResultData' + File.separator + projectName + File.separator +
 				'Merge_Scenarios' + File.separator + mergeScenario.name + '.csv')
 		String header = 'File Total_of_Conflicts Conflicts_Outside_Methods ' +
-				'Conflicts_Inside_Methods Methods_with_Conflicts\n'
+				'Conflicts_Inside_Methods Methods_with_Conflicts ' + 
+				'Conflicts_Due_To_Different_Spacing ' + 
+				'Conflicts_Due_To_Consecutive_Lines\n'
 		out.append(header)
 		out.append(mergeScenario.printMetrics())
 
@@ -179,16 +181,6 @@ public class ConflictPrinter {
 				out.append row.join(',')
 				out.append '\n'
 
-			}
-
-			for(MethodOrConstructor moc : mergedFile.getMethodsWithConflicts()){
-				Conflict x = moc.getConflict()
-				def row = ['Conflict type: '+ x.getType() + '\n' + 'Conflict body: ' + '\n' + x.getBody() ]
-				out.append row.join(',')
-				out.append '\n'
-				row = ['File path: ' + x.getFilePath()]
-				out.append row.join(',')
-				out.append '\n'
 			}
 
 		}
