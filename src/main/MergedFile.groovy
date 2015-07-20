@@ -23,8 +23,11 @@ class MergedFile {
 	}
 
 	public int getNumberOfConflicts(){
-
-		return this.numberOfConflicts
+		int result = 0;
+		for(Conflict c : this.conflicts){
+			result = result + c.getNumberOfConflicts()
+		}
+		return result;
 	}
 	
 	public String getPath(){

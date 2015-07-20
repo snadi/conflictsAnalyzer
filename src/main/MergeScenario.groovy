@@ -93,11 +93,9 @@ class MergeScenario implements Observer {
 		String conflictType = conflict.getType()
 		Integer typeQuantity = this.mergeScenarioSummary.get(conflictType).value
 
-		if(conflict.methodOrConstructor && conflict.isInsideMethod()){
-			typeQuantity = typeQuantity + conflict.countConflictsInsideMethods()
-		}else{
-			typeQuantity++
-		}
+		
+			typeQuantity = typeQuantity + conflict.getNumberOfConflicts()
+		
 
 		this.mergeScenarioSummary.put(conflictType, typeQuantity)
 
@@ -178,7 +176,8 @@ class MergeScenario implements Observer {
 		' ' + this.compareFiles.getFilesEditedByOneDev() + ' ' +
 		this.compareFiles.getFilesThatRemainedTheSame() + ' ' + this.mergedFiles.size() +
 		' ' + this.getNumberOfFilesWithConflicts() + ' ' + this.getNumberOfConflicts() +
-		this.countConflictsDueToDifferentSpacing() + ' ' + this.conflictsSummary()
+		' ' + this.countConflictsDueToDifferentSpacing() + ' ' + this.conflictsSummary() +
+		' ' + this.hasConflicts
 		
 		return report
 	}

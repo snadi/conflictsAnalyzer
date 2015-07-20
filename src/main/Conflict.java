@@ -262,7 +262,12 @@ public  class Conflict {
 
 	public void countConflictsInsideMethods(){
 		String[] p = this.body.split("<<<<<<<");
-		this.numberOfConflicts = p.length - 1;
+		if(p.length>1){
+			this.numberOfConflicts = p.length - 1;
+		}else{
+			this.numberOfConflicts = 1;
+		}
+		
 
 	}
 
