@@ -20,6 +20,12 @@ class MergeScenario implements Observer {
 	private ArrayList<MergedFile> mergedFiles
 
 	private Map<String,Integer> mergeScenarioSummary
+	
+	private int conflictsDueToDifferentSpacing
+	
+	private int conflictsDueToConsecutiveLines
+	
+	private int numberOfConflicts
 
 	private boolean hasConflicts
 
@@ -92,15 +98,18 @@ class MergeScenario implements Observer {
 	public void updateMergeScenarioSummary(Conflict conflict){
 		String conflictType = conflict.getType()
 		Integer typeQuantity = this.mergeScenarioSummary.get(conflictType).value
-
-		
-			typeQuantity = typeQuantity + conflict.getNumberOfConflicts()
-		
-
+		typeQuantity = typeQuantity + conflict.getNumberOfConflicts()
 		this.mergeScenarioSummary.put(conflictType, typeQuantity)
-
+		this.updateFalsePositives(conflict)
 	}
-
+	
+	private void updateFalsePositives(Conflict conflict){
+		this.numberOfConflicts = this.numberOfConflicts + conflict.getNumberOfConflicts()
+		this.conflictsDueToDifferentSpacing = this.conflictsDueToDifferentSpacing + conflict.getDifferentSpacing()
+		this.conflictsDueToConsecutiveLines = this.conflictsDueToConsecutiveLines + conflict.getConsecutiveLines()
+		
+	}
+	
 	public String getId(){
 		return this.id
 	}
@@ -169,6 +178,7 @@ class MergeScenario implements Observer {
 	private void addConflictToFile(Conflict conflict, int index){
 		
 			this.mergedFiles.elementData(index).conflicts.add(conflict)
+			this.mergedFiles.elementData(index).updateMetrics(conflict)
 	}
 	
 	public String toString(){
@@ -176,19 +186,14 @@ class MergeScenario implements Observer {
 		' ' + this.compareFiles.getFilesEditedByOneDev() + ' ' +
 		this.compareFiles.getFilesThatRemainedTheSame() + ' ' + this.mergedFiles.size() +
 		' ' + this.getNumberOfFilesWithConflicts() + ' ' + this.getNumberOfConflicts() +
-		' ' + this.countConflictsDueToDifferentSpacing() + ' ' + this.conflictsSummary() +
-		' ' + this.hasConflicts
+		' ' + this.getConflictsDueToDifferentSpacing() + ' ' + this.getConflictsDueToConsecutiveLines() +
+		' ' + this.conflictsSummary()
 		
 		return report
 	}
 	
-	private int countConflictsDueToDifferentSpacing(){
-		int result = 0
-		for(MergedFile m : this.mergedFiles){
-			result = result + m.countConflictsDueToDifferentSpacing()
-		}
-		return result;
-	}
+	
+	
 	
 	public String printMetrics(){
 		String result = ''
@@ -209,14 +214,35 @@ class MergeScenario implements Observer {
 	}
 	
 	public int getNumberOfConflicts(){
-		int result = 0
-		for(MergedFile mf : this.mergedFiles){
-			result = result + mf.getNumberOfConflicts()
-		}
 		
-		return result
+
+		return this.numberOfConflicts
 	}
 	
+	
+	
+	public int getConflictsDueToDifferentSpacing() {
+		return conflictsDueToDifferentSpacing;
+	}
+
+	public void setConflictsDueToDifferentSpacing(int conflictsDueToDifferentSpacing) {
+		this.conflictsDueToDifferentSpacing = conflictsDueToDifferentSpacing;
+	}
+
+	public int getConflictsDueToConsecutiveLines() {
+		return conflictsDueToConsecutiveLines;
+	}
+
+	public void setConflictsDueToConsecutiveLines(int conflictsDueToConsecutiveLines) {
+		this.conflictsDueToConsecutiveLines = conflictsDueToConsecutiveLines;
+	}
+	
+	
+	
+	public void setNumberOfConflicts(int numberOfConflicts) {
+		this.numberOfConflicts = numberOfConflicts;
+	}
+
 	public String conflictsSummary(){
 		
 		int DefaultValueAnnotation = this.mergeScenarioSummary.get("DefaultValueAnnotation")

@@ -15,6 +15,12 @@ class MergedFile {
 	private int methodsWithConflicts
 	
 	private int conflictsInsideMethods
+	
+	private int conflictsOutsideMethods
+	
+	private int conflictsDueToDifferentSpacing
+	
+	private int conflictsDueToConsecutiveLines
 
 	public MergedFile(String path){
 		this.path = path
@@ -23,12 +29,23 @@ class MergedFile {
 	}
 
 	public int getNumberOfConflicts(){
-		int result = 0;
-		for(Conflict c : this.conflicts){
-			result = result + c.getNumberOfConflicts()
-		}
-		return result;
+	
+		return this.numberOfConflicts;
 	}
+	
+	public void updateMetrics(Conflict c){
+		this.numberOfConflicts = this.numberOfConflicts + c.getNumberOfConflicts()
+		if(c.getType().equals(SSMergeConflicts.EditSameMC.toString())){
+			this.conflictsInsideMethods = this.conflictsInsideMethods + c.getNumberOfConflicts()
+			this.conflictsDueToDifferentSpacing = this.conflictsDueToDifferentSpacing + c.getDifferentSpacing()
+			this.conflictsDueToConsecutiveLines = this.conflictsDueToConsecutiveLines + c.getConsecutiveLines()
+			this.methodsWithConflicts++
+		}else{
+			this.conflictsOutsideMethods++
+		}
+		
+	}
+	
 	
 	public String getPath(){
 		return this.path
@@ -46,44 +63,37 @@ class MergedFile {
 		return hasConflicts
 	}
 	
-	public int countConflictsDueToDifferentSpacing(){
-		int result = 0;
-		for (Conflict c : this.conflicts){
-			result = result + c.getDifferentSpacing()
-		}
-
-		return result;
-	}
-	
-	private int countConflictsInsideMethods(){
-		int result = 0;
+	public int getConflictsDueToDifferentSpacing(){
 		
-		return result;
+		return this.conflictsDueToDifferentSpacing;
 	}
 	
-	private int countMethodsWithConflicts(){
-		int result = 0;
+	public int getConflictsInsideMethods(){
 		
-		return result;
+		return this.conflictsInsideMethods;
 	}
 	
-	private void setMetrics(){
-		for(Conflict c : this.conflicts){
-			int number = c.getNumberOfConflicts()
-			this.numberOfConflicts = this.numberOfConflicts + number
-			if(c.getType().equals(SSMergeConflicts.EditSameMC.toString())){
-				this.methodsWithConflicts++
-				this.conflictsInsideMethods = this.conflictsInsideMethods + number
-			}
-		}
+	public int getMethodsWithConflicts(){
+		
+		return this.methodsWithConflicts
+	}
+	
+	public int getConflictsOutsideMethods(){
+		
+		return this.conflictsOutsideMethods
+	}
+	
+	public int getConflictsDueToConsecutiveLines(){
+	
+		return this.conflictsDueToConsecutiveLines
 	}
 	
 	public String toString(){
-		this.setMetrics()
 		
-		String result = this.path + ' ' + this.getNumberOfConflicts() + ' ' + 
-		this.conflicts.size + ' ' + this.countConflictsInsideMethods() + ' '+
-		this.countMethodsWithConflicts() + '\n'
+		String result = this.path + ' ' + this.getNumberOfConflicts() + ' ' +
+		 this.getConflictsInsideMethods() + ' '+ this.getMethodsWithConflicts() + 
+		 ' ' + this.getConflictsOutsideMethods() + ' ' + this.getConflictsDueToDifferentSpacing() +
+		 ' ' + this.getConflictsDueToConsecutiveLines() + '\n'
 		
 		return result
 	}

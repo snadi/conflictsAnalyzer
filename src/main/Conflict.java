@@ -102,16 +102,30 @@ public  class Conflict {
 	}
 	public void checkConsecutiveLines(String [] splitConflictBody){
 		//TO DO
+		this.consecutiveLines = 0;
 	}
 
 	public String [] splitConflictBody(String s){
 		String [] splitBody = {"", "", ""};
 		if(this.isMethodOrConstructor()){
+			String left = "";
+			String base = "";
+			String right = "";
 			String[] temp = s.split("\\|\\|\\|\\|\\|\\|\\|");
-			String left = temp[0].substring(s.indexOf('\n')+1).trim();
-			String [] baseRight = temp[1].split("=======");
-			String base = baseRight[0].substring(s.indexOf('\n')+1).trim();
-			String right = baseRight[1].trim();
+			
+			String[] temp2 = temp[0].split("\n");
+			if(temp2.length >1){
+				left = temp2[1].trim();
+			}
+
+			String [] baseRight = temp[1].split("=======");	
+			temp2 = baseRight[0].split("\n");
+			if(temp2.length > 1){
+				base = temp2[1].trim();
+			}
+			
+			temp2 = baseRight[1].trim().split("\n");
+			right = temp2[0].trim();
 			splitBody[0] = left;
 			splitBody[1] = base;
 			splitBody[2] = right;
@@ -348,9 +362,31 @@ public  class Conflict {
 				"    }";
 		String example2 = "hello world";
 		System.out.println(example2.split("mamae")[0]);*/
-
-
+		String s = "<<<<<<< /Users/paolaaccioly/Documents/testeConflictsAnalyzer/conflictsAnalyzer/fstmerge_tmp1437435093749/fstmerge_var1_6882939852718786152\n" +
+"		int x;" +
+"||||||| /Users/paolaaccioly/Documents/testeConflictsAnalyzer/conflictsAnalyzer/fstmerge_tmp1437435093749/fstmerge_base_7436445259957106246\n" +
+"=======\n" +
+"		int y;\n"+
+">>>>>>> /Users/paolaaccioly/Documents/testeConflictsAnalyzer/conflictsAnalyzer/fstmerge_tmp1437435093749/fstmerge_var2_5667963733764531246\n";
+		String left = "";
+		String base = "";
+		String right = "";
+		String[] temp = s.split("\\|\\|\\|\\|\\|\\|\\|");
 		
+		String[] temp2 = temp[0].split("\n");
+		if(temp2.length >1){
+			left = temp2[1].trim();
+		}
+
+		String [] baseRight = temp[1].split("=======");	
+		temp2 = baseRight[0].split("\n");
+		if(temp2.length > 1){
+			base = temp2[1].trim();
+		}
+		
+		temp2 = baseRight[1].trim().split("\n");
+		right = temp2[0].trim();
+		System.out.println("hello world");
 	}
 
 }

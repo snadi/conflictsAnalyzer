@@ -11,6 +11,10 @@ class Project {
 	private int conflictingMergeScenarios
 
 	private double conflictRate
+	
+	private int conflictsDueToDifferentSpacing
+	
+	private int conflictsDueToConsecutiveLines
 
 	private Hashtable<String, Integer> projectSummary
 
@@ -27,13 +31,15 @@ class Project {
 	 * that were already analyzed
 	 */
 	public Project(String projectName, int totalScenarios, int conflictingscenarios,
-	Hashtable<String, Integer> projectSummary){
+	int conflictsDiffSpacing, int conflictsConsecLines, Hashtable<String, Integer> projectSummary){
 
 		this.name = projectName
 		this.analyzedMergeScenarios = totalScenarios
 		this.conflictingMergeScenarios = conflictingscenarios
 		this.computeConflictingRate()
 		this.projectSummary = projectSummary
+		this.conflictsDueToDifferentSpacing = conflictsDiffSpacing
+		this.conflictsDueToConsecutiveLines = conflictsConsecLines
 	}
 
 	/*This constructor is used by the CsvAnalyzer class*/
@@ -156,6 +162,32 @@ class Project {
 			projectQuantity = projectQuantity + mergeQuantity
 			this.projectSummary.put(key, projectQuantity)
 		}
+		this.updateFalsePositives(ms)
+	}
+	
+	private void updateFalsePositives(MergeScenario ms){
+		this.conflictsDueToDifferentSpacing = this.conflictsDueToDifferentSpacing +
+		 ms.getConflictsDueToDifferentSpacing()
+		
+		this.conflictsDueToConsecutiveLines = this.conflictsDueToConsecutiveLines +
+		ms.getConflictsDueToConsecutiveLines()
+		
+	}
+	
+	public int getConflictsDueToDifferentSpacing() {
+		return conflictsDueToDifferentSpacing;
 	}
 
+	public void setConflictsDueToDifferentSpacing(int conflictsDueToDifferentSpacing) {
+		this.conflictsDueToDifferentSpacing = conflictsDueToDifferentSpacing;
+	}
+
+	public int getConflictsDueToConsecutiveLines() {
+		return conflictsDueToConsecutiveLines;
+	}
+
+	public void setConflictsDueToConsecutiveLines(int conflictsDueToConsecutiveLines) {
+		this.conflictsDueToConsecutiveLines = conflictsDueToConsecutiveLines;
+	}
+		
 }

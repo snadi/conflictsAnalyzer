@@ -15,7 +15,8 @@ class RunStudy {
 	private String downloadPath
 	private ArrayList<Project> projects
 	private int analyzedProjects, analyzedMergeScenarios,
-	conflictingMergeScenarios
+	conflictingMergeScenarios, conflictsDueToDifferentSpacing,
+	conflictsDueToConsecutiveLines
 
 	private double projectsConflictRate
 
@@ -103,13 +104,15 @@ class RunStudy {
 		String projectName = data[0]
 		int totalScenarios = Integer.parseInt(data[1])
 		int conflictingScenarios = Integer.parseInt(data[2])
-		int DefaultValueAnnotation = Integer.parseInt(data[3])
-		int ImplementList = Integer.parseInt(data[4])
-		int ModifierList = Integer.parseInt(data[5])
-		int EditSameMC = Integer.parseInt(data[6])
-		int SameSignatureCM = Integer.parseInt(data[7])
-		int AddSameFd = Integer.parseInt(data[8])
-		int EditSameFd = Integer.parseInt(data[9])
+		int conflictsDueToDifferentSpacing = Integer.parseInt(data[3])
+		int conflictsDueToConsecutiveLines = Integer.parseInt(data[4])
+		int DefaultValueAnnotation = Integer.parseInt(data[5])
+		int ImplementList = Integer.parseInt(data[6])
+		int ModifierList = Integer.parseInt(data[7])
+		int EditSameMC = Integer.parseInt(data[8])
+		int SameSignatureCM = Integer.parseInt(data[9])
+		int AddSameFd = Integer.parseInt(data[10])
+		int EditSameFd = Integer.parseInt(data[11])
 		Hashtable<String, Integer> projectSummary = new Hashtable<String, Integer>()
 		projectSummary.put("DefaultValueAnnotation", DefaultValueAnnotation)
 		projectSummary.put("ImplementList", ImplementList)
@@ -118,7 +121,8 @@ class RunStudy {
 		projectSummary.put("SameSignatureCM", SameSignatureCM)
 		projectSummary.put("AddSameFd", AddSameFd)
 		projectSummary.put("EditSameFd", EditSameFd)
-		Project project = new Project(projectName, totalScenarios, conflictingScenarios, projectSummary)
+		Project project = new Project(projectName, totalScenarios, conflictingScenarios, conflictsDueToDifferentSpacing, 
+			conflictsDueToConsecutiveLines, projectSummary)
 		this.projects.add(project)
 	}
 
