@@ -252,9 +252,10 @@ class MergeScenario implements Observer {
 		int SameSignatureCM = this.mergeScenarioSummary.get("SameSignatureCM")
 		int AddSameFd = this.mergeScenarioSummary.get("AddSameFd")
 		int EditSameFd = this.mergeScenarioSummary.get("EditSameFd")
+		int ExtendsList = this.mergeScenarioSummary.get("ExtendsList")
 		String result = DefaultValueAnnotation + ' ' + ImplementList + ' ' + 
 		ModifierList + ' ' + EditSameMC + ' ' + SameSignatureCM + ' ' + AddSameFd + 
-		' ' + EditSameFd
+		' ' + EditSameFd + ' ' + ExtendsList
 		return result
 	}
 	

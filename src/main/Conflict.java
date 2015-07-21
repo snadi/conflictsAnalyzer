@@ -11,7 +11,8 @@ import merger.FSTGenMerger;
 
 enum SSMergeConflicts {
 
-	ModifierList, DefaultValueAnnotation, ImplementList, EditSameMC, AddSameFd, EditSameFd, SameSignatureCM, NOPATTERN
+	ModifierList, DefaultValueAnnotation, ImplementList, EditSameMC, AddSameFd, 
+	EditSameFd, SameSignatureCM, ExtendsList, NOPATTERN
 
 }
 
@@ -162,12 +163,13 @@ public  class Conflict {
 
 			conflictType = this.setFieldDeclPattern();
 
-		}
-
-		else if(isMethodOrConstructor()){
+		}else if(isMethodOrConstructor()){
 
 			conflictType = this.setMethodPattern();
 
+		}else if(nodeType.equals("ExtendsList")){
+			
+			conflictType = SSMergeConflicts.ExtendsList.toString();
 		}
 
 		if (conflictType.equals("")){

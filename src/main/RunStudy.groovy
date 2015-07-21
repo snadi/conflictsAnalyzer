@@ -113,6 +113,7 @@ class RunStudy {
 		int SameSignatureCM = Integer.parseInt(data[9])
 		int AddSameFd = Integer.parseInt(data[10])
 		int EditSameFd = Integer.parseInt(data[11])
+		int ExtendsList = Integer.parseInt(data[12])
 		Hashtable<String, Integer> projectSummary = new Hashtable<String, Integer>()
 		projectSummary.put("DefaultValueAnnotation", DefaultValueAnnotation)
 		projectSummary.put("ImplementList", ImplementList)
@@ -121,6 +122,7 @@ class RunStudy {
 		projectSummary.put("SameSignatureCM", SameSignatureCM)
 		projectSummary.put("AddSameFd", AddSameFd)
 		projectSummary.put("EditSameFd", EditSameFd)
+		projectSummary.put("ExtendsList", ExtendsList)
 		Project project = new Project(projectName, totalScenarios, conflictingScenarios, conflictsDueToDifferentSpacing, 
 			conflictsDueToConsecutiveLines, projectSummary)
 		this.projects.add(project)

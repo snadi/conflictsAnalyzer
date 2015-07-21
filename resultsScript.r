@@ -85,12 +85,13 @@ EditSameMC <- sum(conflictRateTemp$EditSameMC)
 SameSignatureCM <- sum(conflictRateTemp$SameSignatureCM)
 AddSameFd <- sum(conflictRateTemp$AddSameFd)
 EditSameFd <- sum(conflictRateTemp$EditSameFd)
+ExtendsList <- sum(conflictRateTemp$ExtendsList)
 
 # bar plot all conflicts
 barChartFileName = paste("BarChart.png")
 png(paste(exportPath, barChartFileName, sep=""))
-slices <- c(DefaultValueAnnotation, ImplementList, ModifierList, EditSameMC, SameSignatureCM, AddSameFd, EditSameFd)
-labels <- c("DefaultValueA", "ImplementList", "ModifierList", "EditSameMC", "SameSignatureCM", "AddSameFd", "EditSameFd" ) 
+slices <- c(DefaultValueAnnotation, ImplementList, ModifierList, EditSameMC, SameSignatureCM, AddSameFd, EditSameFd, ExtendsList)
+labels <- c("DefaultValueA", "ImplementList", "ModifierList", "EditSameMC", "SameSignatureCM", "AddSameFd", "EditSameFd", "ExtendsList") 
 dat <- data.frame(Frequency = slices,Conflicts = labels)
 library(ggplot2)
 p <- ggplot(dat, aes(x = Conflicts, y = Frequency)) +
@@ -102,9 +103,9 @@ print(p)
 dev.off
 
 #conflicts table
-Conflicts_Patterns <- c("DefaultValueAnnotation", "ImplementList", "ModifierList", "EditSameMC", "SameSignatureCM", "AddSameFd", "EditSameFd", "TOTAL")
-conflictsSum <- sum(DefaultValueAnnotation, ImplementList, ModifierList, EditSameMC, SameSignatureCM,AddSameFd, EditSameFd)
-Occurrences <- c(DefaultValueAnnotation, ImplementList, ModifierList, EditSameMC, SameSignatureCM,AddSameFd, EditSameFd, conflictsSum)
+Conflicts_Patterns <- c("DefaultValueAnnotation", "ImplementList", "ModifierList", "EditSameMC", "SameSignatureCM", "AddSameFd", "EditSameFd", "ExtendsList", "TOTAL")
+conflictsSum <- sum(DefaultValueAnnotation, ImplementList, ModifierList, EditSameMC, SameSignatureCM,AddSameFd, EditSameFd, ExtendsList)
+Occurrences <- c(DefaultValueAnnotation, ImplementList, ModifierList, EditSameMC, SameSignatureCM,AddSameFd, EditSameFd, ExtendsList, conflictsSum)
 conflictsTable <- data.frame(Conflicts_Patterns, Occurrences)
 
 #boxplot for each conflict pattern percentages along all projects
@@ -158,6 +159,13 @@ percentages <- computePatternPercentages(conflictRateTemp, "DefaultValueAnnotati
 boxplot(percentages,xlab="Projects", ylab="DefaultValueAnnotation (%)", col="darkviolet", outline=FALSE)
 dev.off
 
+#ExtendsList
+BoxplotEL = paste("BoxplotEL.png")
+png(paste(exportPath, BoxplotEL, sep=""))
+percentages <- computePatternPercentages(conflictRateTemp, "ExtendsList")
+boxplot(percentages,xlab="Projects", ylab="ExtendsList (%)", col="chocolate4", outline=FALSE)
+dev.off
+
 
 #bar plot last project
 numberOfRows <- length(conflictRateTemp[,1])
@@ -170,10 +178,11 @@ EditSameMC <- lastProject$EditSameMC
 SameSignatureCM <- lastProject$SameSignatureCM
 AddSameFd <- lastProject$AddSameFd
 EditSameFd <- lastProject$EditSameFd
+ExtendsList <- lastProject$ExtendsList
 barPlotFileName = paste(name, "BarPlot.png", sep="")
 png(paste(exportPath, barPlotFileName, sep=""))
-slices <- c(DefaultValueAnnotation, ImplementList, ModifierList, EditSameMC, SameSignatureCM, AddSameFd, EditSameFd )
-labels <- c("DefaultValueAnnotation", "ImplementList", "ModifierList", "EditSameMC", "SameSignatureCM", "AddSameFd", EditSameFd ) 
+slices <- c(DefaultValueAnnotation, ImplementList, ModifierList, EditSameMC, SameSignatureCM, AddSameFd, EditSameFd, ExtendsList)
+labels <- c("DefaultValueAnnotation", "ImplementList", "ModifierList", "EditSameMC", "SameSignatureCM", "AddSameFd", "EditSameFd", "ExtendsList") 
 par(las=2)
 par(mar=c(5,8,4,2))
 barplot(slices, main=name, horiz=TRUE, names.arg=labels, cex.names=0.8, col=c("darkviolet","chocolate4", "darkgreen", "darkblue", "red" , "darkgoldenrod2"))
@@ -206,6 +215,7 @@ HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotML, Align="center", append=T
 HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotSIF, Align="center", append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotESF, Align="center", append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotDVA, Align="center", append=TRUE)
+HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotEL, Align="center", append=TRUE)
 
 time = Sys.time()
 HTML("<hr><h2>Last Time Updated:</h2>", file=htmlFile, append=TRUE)
