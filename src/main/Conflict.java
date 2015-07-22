@@ -101,35 +101,32 @@ public  class Conflict {
 		input[2] = input[2].replaceAll("\\s+","");
 		return input;
 	}
+
 	public void checkConsecutiveLines(String [] splitConflictBody){
-		//TO DO
-		this.consecutiveLines = 0;
+		this.consecutiveLines = 1;
+		String [] leftLines = splitConflictBody[0].split("\n");
+		String [] baseLines = splitConflictBody[1].split("\n");
+		String [] rightLines = splitConflictBody[2].split("\n");
+		
 	}
 
 	public String [] splitConflictBody(String s){
 		String [] splitBody = {"", "", ""};
 		if(this.isMethodOrConstructor()){
-			String left = "";
-			String base = "";
-			String right = "";
+
 			String[] temp = s.split("\\|\\|\\|\\|\\|\\|\\|");
-			
+
 			String[] temp2 = temp[0].split("\n");
-			if(temp2.length >1){
-				left = temp2[1].trim();
-			}
+			splitBody[0] = extractLines(temp2);
 
 			String [] baseRight = temp[1].split("=======");	
 			temp2 = baseRight[0].split("\n");
-			if(temp2.length > 1){
-				base = temp2[1].trim();
-			}
-			
+			splitBody[1] = extractLines(temp2);
+
 			temp2 = baseRight[1].trim().split("\n");
-			right = temp2[0].trim();
-			splitBody[0] = left;
-			splitBody[1] = base;
-			splitBody[2] = right;
+			
+			splitBody[2]= extractLines(temp2);
+
 		}else{
 			String[] tokens = body.split(FSTGenMerger.MERGE_SEPARATOR);
 			splitBody[0] = tokens[0].replace(FSTGenMerger.SEMANTIC_MERGE_MARKER, "").trim();
@@ -139,6 +136,22 @@ public  class Conflict {
 		}
 
 		return splitBody;
+	}
+
+	private String extractLines(String[] conflict) {
+		String lines = "";
+		if(conflict.length >1){
+			for(int i = 1; i < conflict.length; i++){
+				if(i != conflict.length-1){
+					lines = lines + conflict[i] + "\n";
+				}else{
+					lines = lines + conflict[i];
+				}
+				
+			}
+			
+		}
+		return lines;
 	}
 
 
@@ -168,7 +181,7 @@ public  class Conflict {
 			conflictType = this.setMethodPattern();
 
 		}else if(nodeType.equals("ExtendsList")){
-			
+
 			conflictType = SSMergeConflicts.ExtendsList.toString();
 		}
 
@@ -285,7 +298,7 @@ public  class Conflict {
 		}else{
 			this.numberOfConflicts = 1;
 		}
-		
+
 
 	}
 
@@ -367,16 +380,16 @@ public  class Conflict {
 		String example2 = "hello world";
 		System.out.println(example2.split("mamae")[0]);*/
 		String s = "<<<<<<< /Users/paolaaccioly/Documents/testeConflictsAnalyzer/conflictsAnalyzer/fstmerge_tmp1437435093749/fstmerge_var1_6882939852718786152\n" +
-"		int x;" +
-"||||||| /Users/paolaaccioly/Documents/testeConflictsAnalyzer/conflictsAnalyzer/fstmerge_tmp1437435093749/fstmerge_base_7436445259957106246\n" +
-"=======\n" +
-"		int y;\n"+
-">>>>>>> /Users/paolaaccioly/Documents/testeConflictsAnalyzer/conflictsAnalyzer/fstmerge_tmp1437435093749/fstmerge_var2_5667963733764531246\n";
+				"		int x;" +
+				"||||||| /Users/paolaaccioly/Documents/testeConflictsAnalyzer/conflictsAnalyzer/fstmerge_tmp1437435093749/fstmerge_base_7436445259957106246\n" +
+				"=======\n" +
+				"		int y;\n"+
+				">>>>>>> /Users/paolaaccioly/Documents/testeConflictsAnalyzer/conflictsAnalyzer/fstmerge_tmp1437435093749/fstmerge_var2_5667963733764531246\n";
 		String left = "";
 		String base = "";
 		String right = "";
 		String[] temp = s.split("\\|\\|\\|\\|\\|\\|\\|");
-		
+
 		String[] temp2 = temp[0].split("\n");
 		if(temp2.length >1){
 			left = temp2[1].trim();
@@ -387,7 +400,7 @@ public  class Conflict {
 		if(temp2.length > 1){
 			base = temp2[1].trim();
 		}
-		
+
 		temp2 = baseRight[1].trim().split("\n");
 		right = temp2[0].trim();
 		System.out.println("hello world");
