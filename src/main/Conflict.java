@@ -70,9 +70,9 @@ public  class Conflict {
 	}
 
 	private void auxCheckFalsePositives(String s) {
-		String [] splitConflictBody = this.splitConflictBody(s);
-		this.checkDifferentSpacing(splitConflictBody);
-		this.checkConsecutiveLines(splitConflictBody);
+		
+		this.checkDifferentSpacing(s);
+		this.checkConsecutiveLines(s);
 	}
 
 	private ArrayList<String> splitConflictsInsideMethods(){
@@ -86,8 +86,8 @@ public  class Conflict {
 		return conflicts;
 	}
 
-	public void checkDifferentSpacing(String [] splitConflictBody){
-
+	public void checkDifferentSpacing(String s){
+		String [] splitConflictBody = this.splitConflictBody(s);
 		String[] threeWay = this.removeInvisibleChars(splitConflictBody);
 		if(threeWay[0].equals(threeWay[1]) || threeWay[2].equals(threeWay[1])){
 			this.differentSpacing++;
@@ -102,14 +102,39 @@ public  class Conflict {
 		return input;
 	}
 
-	public void checkConsecutiveLines(String [] splitConflictBody){
-		this.consecutiveLines = 1;
+	public void checkConsecutiveLines(String s){
+		String [] splitConflictBody = this.splitConflictBody(s);
 		String [] leftLines = splitConflictBody[0].split("\n");
 		String [] baseLines = splitConflictBody[1].split("\n");
 		String [] rightLines = splitConflictBody[2].split("\n");
 		
-	}
+		if(baseLines.length != 0){
+			String fixedElement =  baseLines[0];
+			boolean foundOnLeft = this.searchFixedElement(fixedElement, leftLines);
+			if(foundOnLeft){
+				this.consecutiveLines++;
+			}else{
+				boolean foundOnRight = this.searchFixedElement(fixedElement, rightLines);
+				if(foundOnRight){
+					this.consecutiveLines++;
+				}
+			}
 
+		}
+	}
+	
+	private boolean searchFixedElement(String fixedElement, String[] variant){
+		boolean foundFixedElement = false;
+		int i = 0;
+		while(!foundFixedElement && i < variant.length){
+			if(variant[i].equals(fixedElement)){
+				foundFixedElement = true;
+			}
+			i++;
+		}
+		return foundFixedElement;
+	}
+	
 	public String [] splitConflictBody(String s){
 		String [] splitBody = {"", "", ""};
 		if(this.isMethodOrConstructor()){
@@ -122,10 +147,8 @@ public  class Conflict {
 			String [] baseRight = temp[1].split("=======");	
 			temp2 = baseRight[0].split("\n");
 			splitBody[1] = extractLines(temp2);
-
-			temp2 = baseRight[1].trim().split("\n");
-			
-			splitBody[2]= extractLines(temp2);
+			temp2 = baseRight[1].split("\n");
+			splitBody[2] = extractLines(temp2);
 
 		}else{
 			String[] tokens = body.split(FSTGenMerger.MERGE_SEPARATOR);
@@ -140,7 +163,7 @@ public  class Conflict {
 
 	private String extractLines(String[] conflict) {
 		String lines = "";
-		if(conflict.length >1){
+		if(conflict.length > 1){
 			for(int i = 1; i < conflict.length; i++){
 				if(i != conflict.length-1){
 					lines = lines + conflict[i] + "\n";
@@ -379,31 +402,13 @@ public  class Conflict {
 				"    }";
 		String example2 = "hello world";
 		System.out.println(example2.split("mamae")[0]);*/
-		String s = "<<<<<<< /Users/paolaaccioly/Documents/testeConflictsAnalyzer/conflictsAnalyzer/fstmerge_tmp1437435093749/fstmerge_var1_6882939852718786152\n" +
+		/*String s = "<<<<<<< /Users/paolaaccioly/Documents/testeConflictsAnalyzer/conflictsAnalyzer/fstmerge_tmp1437435093749/fstmerge_var1_6882939852718786152\n" +
 				"		int x;" +
 				"||||||| /Users/paolaaccioly/Documents/testeConflictsAnalyzer/conflictsAnalyzer/fstmerge_tmp1437435093749/fstmerge_base_7436445259957106246\n" +
 				"=======\n" +
 				"		int y;\n"+
 				">>>>>>> /Users/paolaaccioly/Documents/testeConflictsAnalyzer/conflictsAnalyzer/fstmerge_tmp1437435093749/fstmerge_var2_5667963733764531246\n";
-		String left = "";
-		String base = "";
-		String right = "";
-		String[] temp = s.split("\\|\\|\\|\\|\\|\\|\\|");
-
-		String[] temp2 = temp[0].split("\n");
-		if(temp2.length >1){
-			left = temp2[1].trim();
-		}
-
-		String [] baseRight = temp[1].split("=======");	
-		temp2 = baseRight[0].split("\n");
-		if(temp2.length > 1){
-			base = temp2[1].trim();
-		}
-
-		temp2 = baseRight[1].trim().split("\n");
-		right = temp2[0].trim();
-		System.out.println("hello world");
+	*/
 	}
 
 }

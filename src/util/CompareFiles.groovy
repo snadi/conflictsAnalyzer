@@ -103,7 +103,7 @@ class CompareFiles {
 
 	private void moveAndDeleteFiles(String revName, File toBeMoved, File toBeDeleted1, File toBeDeleted2){
 
-		String temp = toBeMoved.getAbsolutePath().replaceFirst(revName, 'temp')
+		String temp = toBeMoved.getAbsolutePath().replaceFirst(revName, 'temp2')
 		FileUtils.moveFile(toBeMoved, new File(temp))
 		FileUtils.forceDelete(toBeDeleted1)
 		FileUtils.forceDelete(toBeDeleted2)
