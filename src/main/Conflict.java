@@ -220,9 +220,9 @@ public  class Conflict {
 		String type;
 		String [] p1 = this.body.split("\\|\\|\\|\\|\\|\\|\\|");
 		String [] p2 = p1[1].split("=======");
-		String a = p2[0].substring(1, p2[0].length()-1);
+		String [] p3 = p2[0].split("\n");
 
-		if(a.contains(" ")){
+		if(p3.length != 1){
 
 			type = SSMergeConflicts.EditSameMC.toString();
 		}else{
@@ -237,7 +237,9 @@ public  class Conflict {
 		boolean isInsideMethod = false;
 
 		String [] p1 = this.body.split("<<<<<<<");
-		if(!p1[0].equals("")){
+		String [] p2 = this.body.split(">>>>>>>");
+		String [] p3 = p2[p2.length -1].split("\n");
+		if(!p1[0].equals("") && p3.length != 1){
 			isInsideMethod = true;
 		}
 
