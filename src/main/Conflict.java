@@ -35,6 +35,8 @@ public  class Conflict {
 	private int consecutiveLines;
 
 	private int numberOfConflicts;
+	
+	private int falsePositivesIntersection;
 
 
 	public Conflict(FSTTerminal node, String path){
@@ -44,6 +46,20 @@ public  class Conflict {
 		this.retrieveFilePath(node, path);
 		this.setFalsePositives();
 	}
+	
+	
+	
+	public int getFalsePositivesIntersection() {
+		return falsePositivesIntersection;
+	}
+
+
+
+	public void setFalsePositivesIntersection(int falsePositivesIntersection) {
+		this.falsePositivesIntersection = falsePositivesIntersection;
+	}
+
+
 
 	public void setFalsePositives(){
 		if(this.type.equals(SSMergeConflicts.EditSameMC.toString()) || 
@@ -71,8 +87,11 @@ public  class Conflict {
 
 	private void auxCheckFalsePositives(String s) {
 		
-		this.checkDifferentSpacing(s);
-		this.checkConsecutiveLines(s);
+		boolean diffSpacing = this.checkDifferentSpacing(s);
+		boolean consecLines = this.checkConsecutiveLines(s);
+		if(diffSpacing && consecLines){
+			this.falsePositivesIntersection++;
+		}
 	}
 
 	private ArrayList<String> splitConflictsInsideMethods(){
@@ -86,13 +105,15 @@ public  class Conflict {
 		return conflicts;
 	}
 
-	public void checkDifferentSpacing(String s){
+	public boolean checkDifferentSpacing(String s){
+		boolean falsePositive = false;
 		String [] splitConflictBody = this.splitConflictBody(s);
 		String[] threeWay = this.removeInvisibleChars(splitConflictBody);
 		if(threeWay[0].equals(threeWay[1]) || threeWay[2].equals(threeWay[1])){
 			this.differentSpacing++;
+			falsePositive = true;
 		}
-
+		return falsePositive;
 	}
 
 	public String[] removeInvisibleChars(String[] input){
@@ -102,7 +123,8 @@ public  class Conflict {
 		return input;
 	}
 
-	public void checkConsecutiveLines(String s){
+	public boolean checkConsecutiveLines(String s){
+		boolean falsePositive = false;
 		String [] splitConflictBody = this.splitConflictBody(s);
 		String [] leftLines = splitConflictBody[0].split("\n");
 		String [] baseLines = splitConflictBody[1].split("\n");
@@ -112,15 +134,18 @@ public  class Conflict {
 			String fixedElement =  baseLines[0];
 			boolean foundOnLeft = this.searchFixedElement(fixedElement, leftLines);
 			if(foundOnLeft){
+				falsePositive = true;
 				this.consecutiveLines++;
 			}else{
 				boolean foundOnRight = this.searchFixedElement(fixedElement, rightLines);
 				if(foundOnRight){
+					falsePositive = true;
 					this.consecutiveLines++;
 				}
 			}
 
 		}
+		return falsePositive;
 	}
 	
 	private boolean searchFixedElement(String fixedElement, String[] variant){
