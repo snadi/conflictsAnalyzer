@@ -15,8 +15,7 @@ class RunStudy {
 	private String downloadPath
 	private ArrayList<Project> projects
 	private int analyzedProjects, analyzedMergeScenarios,
-	conflictingMergeScenarios, conflictsDueToDifferentSpacing,
-	conflictsDueToConsecutiveLines
+	conflictingMergeScenarios
 
 	private double projectsConflictRate
 
@@ -107,9 +106,9 @@ class RunStudy {
 		String projectName = data[0]
 		int totalScenarios = Integer.parseInt(data[1])
 		int conflictingScenarios = Integer.parseInt(data[2])
-		int conflictsDueToDifferentSpacing = Integer.parseInt(data[3])
-		int conflictsDueToConsecutiveLines = Integer.parseInt(data[4])
-		int falsePositivesIntersection = Integer.parseInt(data[5])
+		int conflictsDueToDifferentSpacingMC = Integer.parseInt(data[3])
+		int conflictsDueToConsecutiveLinesMC = Integer.parseInt(data[4])
+		int falsePositivesIntersectionMC = Integer.parseInt(data[5])
 		int DefaultValueAnnotation = Integer.parseInt(data[6])
 		int ImplementList = Integer.parseInt(data[7])
 		int ModifierList = Integer.parseInt(data[8])
@@ -127,8 +126,8 @@ class RunStudy {
 		projectSummary.put("AddSameFd", AddSameFd)
 		projectSummary.put("EditSameFd", EditSameFd)
 		projectSummary.put("ExtendsList", ExtendsList)
-		Project project = new Project(projectName, totalScenarios, conflictingScenarios, conflictsDueToDifferentSpacing, 
-			conflictsDueToConsecutiveLines, falsePositivesIntersection ,projectSummary)
+		Project project = new Project(projectName, totalScenarios, conflictingScenarios, conflictsDueToDifferentSpacingMC, 
+			conflictsDueToConsecutiveLinesMC, falsePositivesIntersectionMC ,projectSummary)
 		this.projects.add(project)
 	}
 

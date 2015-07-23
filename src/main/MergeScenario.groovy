@@ -21,11 +21,11 @@ class MergeScenario implements Observer {
 
 	private Map<String,Integer> mergeScenarioSummary
 	
-	private int conflictsDueToDifferentSpacing
+	private int conflictsDueToDifferentSpacingMC
 	
-	private int conflictsDueToConsecutiveLines
+	private int conflictsDueToConsecutiveLinesMC
 	
-	private int falsePositivesIntersection
+	private int falsePositivesIntersectionMC
 	
 	private int numberOfConflicts
 
@@ -107,9 +107,9 @@ class MergeScenario implements Observer {
 	
 	private void updateFalsePositives(Conflict conflict){
 		this.numberOfConflicts = this.numberOfConflicts + conflict.getNumberOfConflicts()
-		this.conflictsDueToDifferentSpacing = this.conflictsDueToDifferentSpacing + conflict.getDifferentSpacing()
-		this.conflictsDueToConsecutiveLines = this.conflictsDueToConsecutiveLines + conflict.getConsecutiveLines()
-		this.falsePositivesIntersection = this.falsePositivesIntersection + conflict.getFalsePositivesIntersection()
+		this.conflictsDueToDifferentSpacingMC = this.conflictsDueToDifferentSpacingMC + conflict.getDifferentSpacing()
+		this.conflictsDueToConsecutiveLinesMC = this.conflictsDueToConsecutiveLinesMC + conflict.getConsecutiveLines()
+		this.falsePositivesIntersectionMC = this.falsePositivesIntersectionMC + conflict.getFalsePositivesIntersection()
 		
 	}
 	
@@ -189,8 +189,8 @@ class MergeScenario implements Observer {
 		' ' + this.compareFiles.getFilesEditedByOneDev() + ' ' +
 		this.compareFiles.getFilesThatRemainedTheSame() + ' ' + this.mergedFiles.size() +
 		' ' + this.getNumberOfFilesWithConflicts() + ' ' + this.getNumberOfConflicts() +
-		' ' + this.getConflictsDueToDifferentSpacing() + ' ' + this.getConflictsDueToConsecutiveLines() +
-		' ' + this.getFalsePositivesIntersection() + ' ' + this.conflictsSummary() + '\n'
+		' ' + this.getConflictsDueToDifferentSpacingMC() + ' ' + this.getConflictsDueToConsecutiveLinesMC() +
+		' ' + this.getFalsePositivesIntersectionMC() + ' ' + this.conflictsSummary() + '\n'
 		
 		return report
 	}
@@ -226,20 +226,20 @@ class MergeScenario implements Observer {
 	
 	
 	
-	public int getConflictsDueToDifferentSpacing() {
-		return conflictsDueToDifferentSpacing;
+	public int getConflictsDueToDifferentSpacingMC() {
+		return conflictsDueToDifferentSpacingMC;
 	}
 
-	public void setConflictsDueToDifferentSpacing(int conflictsDueToDifferentSpacing) {
-		this.conflictsDueToDifferentSpacing = conflictsDueToDifferentSpacing;
+	public void setConflictsDueToDifferentSpacingMC(int conflictsDueToDifferentSpacingMC) {
+		this.conflictsDueToDifferentSpacingMC = conflictsDueToDifferentSpacingMC;
 	}
 
-	public int getConflictsDueToConsecutiveLines() {
-		return conflictsDueToConsecutiveLines;
+	public int getConflictsDueToConsecutiveLinesMC() {
+		return conflictsDueToConsecutiveLinesMC;
 	}
 
-	public void setConflictsDueToConsecutiveLines(int conflictsDueToConsecutiveLines) {
-		this.conflictsDueToConsecutiveLines = conflictsDueToConsecutiveLines;
+	public void setConflictsDueToConsecutiveLinesMC(int conflictsDueToConsecutiveLinesMC) {
+		this.conflictsDueToConsecutiveLinesMC = conflictsDueToConsecutiveLinesMC;
 	}
 	
 	
@@ -248,12 +248,12 @@ class MergeScenario implements Observer {
 		this.numberOfConflicts = numberOfConflicts;
 	}
 
-	public int getFalsePositivesIntersection() {
-		return falsePositivesIntersection;
+	public int getFalsePositivesIntersectionMC() {
+		return falsePositivesIntersectionMC;
 	}
 
-	public void setFalsePositivesIntersection(int falsePositivesIntersection) {
-		this.falsePositivesIntersection = falsePositivesIntersection;
+	public void setFalsePositivesIntersectionMC(int falsePositivesIntersectionMC) {
+		this.falsePositivesIntersectionMC = falsePositivesIntersectionMC;
 	}
 
 	public String conflictsSummary(){

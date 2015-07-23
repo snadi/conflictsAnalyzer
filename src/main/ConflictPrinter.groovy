@@ -15,8 +15,8 @@ public class ConflictPrinter {
 		String row
 
 		row = 'Project Merge_Scenarios Conflicting_Scenarios ' +
-				'Conflicts_Due_To_Different_Spacing Conflicts_Due_To_Consecutive_Lines ' +
-				'False_Positives_Intersection ' +
+				'Conflicts_Due_To_Different_SpacingMC Conflicts_Due_To_Consecutive_LinesMC ' +
+				'False_Positives_IntersectionMC ' +
 				'DefaultValueAnnotation ImplementList ModifierList EditSameMC ' +
 				'SameSignatureCM AddSameFd EditSameFd ExtendsList\n'
 
@@ -35,9 +35,9 @@ public class ConflictPrinter {
 					' ' + ModifierList + ' ' + EditSameMC + ' ' + SameSignatureCM +
 					' ' + AddSameFd + ' ' + EditSameFd + ' ' + ExtendsList
 			row = p.name + ' ' + p.analyzedMergeScenarios + ' ' + p.conflictingMergeScenarios +
-					' ' + p.getConflictsDueToDifferentSpacing() + ' ' +
-					p.getConflictsDueToConsecutiveLines() + ' ' +
-					p.getFalsePositivesIntersection() +
+					' ' + p.getConflictsDueToDifferentSpacingMC() + ' ' +
+					p.getConflictsDueToConsecutiveLinesMC() + ' ' +
+					p.getFalsePositivesIntersectionMC() +
 					conflicts + '\n'
 			out.append(row)
 		}
@@ -51,8 +51,8 @@ public class ConflictPrinter {
 		if(!out.exists()){
 			String fileHeader = 'Merge_scenario Total_Files Files_Edited_By_One_Dev ' +
 					'Files_That_Remained_The_Same Files_Merged Files_With_Conflicts Total_Conflicts ' +
-					'Conflicts_Due_To_Different_Spacing Conflicts_Due_To_Consecutive_Lines '+
-					'False_Positives_Intersection ' +
+					'Conflicts_Due_To_Different_SpacingMC Conflicts_Due_To_Consecutive_LinesMC '+
+					'False_Positives_IntersectionMC ' +
 					'DefaultValueAnnotation ImplementList ModifierList EditSameMC ' +
 					'SameSignatureCM AddSameFd EditSameFd ExtendsList\n'
 			out.append(fileHeader)
@@ -70,8 +70,8 @@ public class ConflictPrinter {
 			String header = 'File Total_of_Conflicts ' +
 					'Conflicts_Inside_Methods Methods_with_Conflicts ' +
 					'Conflicts_Outside_Methods ' +
-					'Conflicts_Due_To_Different_Spacing ' +
-					'Conflicts_Due_To_Consecutive_Lines False_Positives_Intersection ' +
+					'Conflicts_Due_To_Different_SpacingMC ' +
+					'Conflicts_Due_To_Consecutive_LinesMC False_Positives_IntersectionMC ' +
 					'DefaultValueAnnotation ImplementList ModifierList EditSameMC ' +
 					'SameSignatureCM AddSameFd EditSameFd ExtendsList\n'
 			out.append(header)
