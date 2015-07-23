@@ -83,8 +83,10 @@ class RunStudy {
 	}
 	
 	public void loadPreviousResults(){
+		println 'Started loading previous results'
 		readProjectData()
 		initializeProjectsMetrics()
+		println 'Finished loading previous results'
 	}
 
 	public void readProjectData(){
@@ -96,7 +98,8 @@ class RunStudy {
 			}
 			header = false
 		}
-
+		ConflictPrinter.printProjectData(this.projects)
+		this.callRScript()
 	}
 
 	public void initializeProject(String line){
@@ -222,13 +225,8 @@ class RunStudy {
 		Project project = new Project(projectName, revisionFile)
 		project.analyzeConflicts()
 		this.projects.add(project)
-		updateAndPrintResults(project)
-
-	}
-
-	public void updateAndPrintResults(Project p){
-		updateConflictRate(p)
-		ConflictPrinter.printAnalizedProjectsReport(this.projects)
+		ConflictPrinter.printProjectData(this.projects)
+		this.callRScript()
 	}
 
 	public double getProjectsConflictRate(){
@@ -253,7 +251,22 @@ class RunStudy {
 			this.projectsConflictRate = 0
 		}
 	}
-
+	
+	public void callRScript(){
+		String propsFile = "resultsScript.r"
+		ProcessBuilder pb = new ProcessBuilder("Rscript", propsFile)
+		pb.redirectOutput(ProcessBuilder.Redirect.INHERIT)
+		// Start the process.
+		try {
+			Process p = pb.start()
+			p.waitFor()
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public static void main (String[] args){
 		RunStudy study = new RunStudy()
 		String[] files= ['projectsList', 'configuration.properties']
