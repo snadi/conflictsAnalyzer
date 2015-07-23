@@ -16,7 +16,8 @@ public class ConflictPrinter {
 
 		row = 'Project Merge_Scenarios Conflicting_Scenarios ' +
 				'Conflicts_Due_To_Different_SpacingMC Conflicts_Due_To_Consecutive_LinesMC ' +
-				'False_Positives_IntersectionMC ' +
+				'False_Positives_IntersectionMC Conflicts_Due_To_Different_SpacingFd ' +
+				'Conflicts_Due_To_Consecutive_LinesFd False_Positives_IntersectionFd ' +
 				'DefaultValueAnnotation ImplementList ModifierList EditSameMC ' +
 				'SameSignatureCM AddSameFd EditSameFd ExtendsList\n'
 
@@ -37,7 +38,10 @@ public class ConflictPrinter {
 			row = p.name + ' ' + p.analyzedMergeScenarios + ' ' + p.conflictingMergeScenarios +
 					' ' + p.getConflictsDueToDifferentSpacingMC() + ' ' +
 					p.getConflictsDueToConsecutiveLinesMC() + ' ' +
-					p.getFalsePositivesIntersectionMC() +
+					p.getFalsePositivesIntersectionMC() + ' ' +
+					p.getConflictsDueToDifferentSpacingFd() + ' ' +
+					p.getConflictsDueToConsecutiveLinesFd() + ' ' +
+					p.getFalsePositivesIntersectionFd() +
 					conflicts + '\n'
 			out.append(row)
 		}
@@ -52,7 +56,8 @@ public class ConflictPrinter {
 			String fileHeader = 'Merge_scenario Total_Files Files_Edited_By_One_Dev ' +
 					'Files_That_Remained_The_Same Files_Merged Files_With_Conflicts Total_Conflicts ' +
 					'Conflicts_Due_To_Different_SpacingMC Conflicts_Due_To_Consecutive_LinesMC '+
-					'False_Positives_IntersectionMC ' +
+					'False_Positives_IntersectionMC Conflicts_Due_To_Different_SpacingFd ' +
+					'Conflicts_Due_To_Consecutive_LinesFd False_Positives_IntersectionFd ' +
 					'DefaultValueAnnotation ImplementList ModifierList EditSameMC ' +
 					'SameSignatureCM AddSameFd EditSameFd ExtendsList\n'
 			out.append(fileHeader)
@@ -72,6 +77,8 @@ public class ConflictPrinter {
 					'Conflicts_Outside_Methods ' +
 					'Conflicts_Due_To_Different_SpacingMC ' +
 					'Conflicts_Due_To_Consecutive_LinesMC False_Positives_IntersectionMC ' +
+					'Conflicts_Due_To_Different_SpacingFd Conflicts_Due_To_Consecutive_LinesFd ' +
+					'False_Positives_IntersectionFd '+
 					'DefaultValueAnnotation ImplementList ModifierList EditSameMC ' +
 					'SameSignatureCM AddSameFd EditSameFd ExtendsList\n'
 			out.append(header)

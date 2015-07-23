@@ -17,6 +17,12 @@ class Project {
 	private int conflictsDueToConsecutiveLinesMC
 	
 	private int falsePositivesIntersectionMC
+	
+	private int conflictsDueToDifferentSpacingFd
+	
+	private int conflictsDueToConsecutiveLinesFd
+	
+	private int falsePositivesIntersectionFd
 
 	private Hashtable<String, Integer> projectSummary
 
@@ -33,7 +39,8 @@ class Project {
 	 * that were already analyzed
 	 */
 	public Project(String projectName, int totalScenarios, int conflictingscenarios,
-	int conflictsDiffSpacingMC, int conflictsConsecLinesMC, falsePositivesIntersectionMC ,Hashtable<String, Integer> projectSummary){
+	int conflictsDiffSpacingMC, int conflictsConsecLinesMC, falsePositivesIntersectionMC, conflictsDueToDifferentSpacingFd, 
+			conflictsDueToConsecutiveLinesFd, falsePositivesIntersectionFd ,Hashtable<String, Integer> projectSummary){
 
 		this.name = projectName
 		this.analyzedMergeScenarios = totalScenarios
@@ -43,6 +50,9 @@ class Project {
 		this.conflictsDueToDifferentSpacingMC = conflictsDiffSpacingMC
 		this.conflictsDueToConsecutiveLinesMC = conflictsConsecLinesMC
 		this.falsePositivesIntersectionMC = falsePositivesIntersectionMC
+		this.conflictsDueToDifferentSpacingFd = conflictsDueToDifferentSpacingFd
+		this.conflictsDueToConsecutiveLinesFd = conflictsDueToConsecutiveLinesFd
+		this.falsePositivesIntersectionFd = falsePositivesIntersectionFd
 	}
 
 	/*This constructor is used by the CsvAnalyzer class*/
@@ -177,6 +187,15 @@ class Project {
 		this.falsePositivesIntersectionMC = this.falsePositivesIntersectionMC +
 		ms.getFalsePositivesIntersectionMC()
 		
+		this.conflictsDueToDifferentSpacingFd = this.conflictsDueToDifferentSpacingFd +
+		ms.getConflictsDueToDifferentSpacingFd()
+	   
+	   this.conflictsDueToConsecutiveLinesFd = this.conflictsDueToConsecutiveLinesFd +
+	   ms.getConflictsDueToConsecutiveLinesFd()
+	   
+	   this.falsePositivesIntersectionFd = this.falsePositivesIntersectionFd +
+	   ms.getFalsePositivesIntersectionFd()
+		
 	}
 	
 	public int getConflictsDueToDifferentSpacingMC() {
@@ -201,6 +220,30 @@ class Project {
 
 	public void setFalsePositivesIntersectionMC(int falsePositivesIntersectionMC) {
 		this.falsePositivesIntersectionMC = falsePositivesIntersectionMC;
+	}
+
+	public int getConflictsDueToDifferentSpacingFd() {
+		return conflictsDueToDifferentSpacingFd;
+	}
+
+	public void setConflictsDueToDifferentSpacingFd(int conflictsDueToDifferentSpacingFd) {
+		this.conflictsDueToDifferentSpacingFd = conflictsDueToDifferentSpacingFd;
+	}
+
+	public int getConflictsDueToConsecutiveLinesFd() {
+		return conflictsDueToConsecutiveLinesFd;
+	}
+
+	public void setConflictsDueToConsecutiveLinesFd(int conflictsDueToConsecutiveLinesFd) {
+		this.conflictsDueToConsecutiveLinesFd = conflictsDueToConsecutiveLinesFd;
+	}
+
+	public int getFalsePositivesIntersectionFd() {
+		return falsePositivesIntersectionFd;
+	}
+
+	public void setFalsePositivesIntersectionFd(int falsePositivesIntersectionFd) {
+		this.falsePositivesIntersectionFd = falsePositivesIntersectionFd;
 	}
 		
 }

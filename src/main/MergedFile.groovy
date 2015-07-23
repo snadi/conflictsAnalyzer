@@ -26,6 +26,12 @@ class MergedFile {
 
 	private int falsePositivesIntersectionMC
 
+	private int conflictsDueToDifferentSpacingFd
+
+	private int conflictsDueToConsecutiveLinesFd
+
+	private int falsePositivesIntersectionFd
+
 	private Map<String,Integer> mergedFileSummary
 
 	public MergedFile(String path){
@@ -68,23 +74,31 @@ class MergedFile {
 	public void updateMetrics(Conflict c){
 		this.numberOfConflicts = this.numberOfConflicts + c.getNumberOfConflicts()
 		if(c.getType().equals(SSMergeConflicts.EditSameMC.toString())){
-			this.conflictsInsideMethods = this.conflictsInsideMethods + 
-			c.getNumberOfConflicts()
-			
+			this.conflictsInsideMethods = this.conflictsInsideMethods +
+					c.getNumberOfConflicts()
+
 			this.methodsWithConflicts++
 		}else{
 			this.conflictsOutsideMethods++
 		}
 
-		this.conflictsDueToDifferentSpacingMC = this.conflictsDueToDifferentSpacingMC + c.getDifferentSpacing()
-		this.conflictsDueToConsecutiveLinesMC = this.conflictsDueToConsecutiveLinesMC + c.getConsecutiveLines()
-		this.falsePositivesIntersectionMC = this.falsePositivesIntersectionMC + c.getFalsePositivesIntersection()
-
-
+		this.setFalsePositives(c)
 
 		this.updateMergedFileSummary(c)
 	}
 
+	private void setFalsePositives(Conflict c){
+		if(c.getType().equals(SSMergeConflicts.EditSameMC.toString())){
+			this.conflictsDueToDifferentSpacingMC = this.conflictsDueToDifferentSpacingMC + c.getDifferentSpacing()
+			this.conflictsDueToConsecutiveLinesMC = this.conflictsDueToConsecutiveLinesMC + c.getConsecutiveLines()
+			this.falsePositivesIntersectionMC = this.falsePositivesIntersectionMC + c.getFalsePositivesIntersection()
+		}else if(c.getType().equals(SSMergeConflicts.EditSameFd.toString())){
+			this.conflictsDueToDifferentSpacingFd = this.conflictsDueToConsecutiveLinesFd + c.getDifferentSpacing()
+			this.conflictsDueToConsecutiveLinesFd = this.conflictsDueToConsecutiveLinesFd + c.getConsecutiveLines()
+			this.falsePositivesIntersectionFd = this.falsePositivesIntersectionFd + c.getFalsePositivesIntersection()
+		}
+
+	}
 
 	public String getPath(){
 		return this.path
@@ -133,7 +147,9 @@ class MergedFile {
 				this.getConflictsInsideMethods() + ' '+ this.getMethodsWithConflicts() +
 				' ' + this.getConflictsOutsideMethods() + ' ' + this.getConflictsDueToDifferentSpacingMC() +
 				' ' + this.getConflictsDueToConsecutiveLinesMC() + ' ' +
-		this.getFalsePositivesIntersectionMC() + ' ' + this.conflictsSummary() + '\n'
+				this.getFalsePositivesIntersectionMC() + ' ' + this.getConflictsDueToDifferentSpacingFd() + ' ' +
+				this.getConflictsDueToConsecutiveLinesFd() + ' ' + this.getFalsePositivesIntersectionFd() + ' '+
+				this.conflictsSummary() + '\n'
 
 		return result
 	}
@@ -152,6 +168,30 @@ class MergedFile {
 				ModifierList + ' ' + EditSameMC + ' ' + SameSignatureCM + ' ' + AddSameFd +
 				' ' + EditSameFd + ' ' + ExtendsList
 		return result
+	}
+
+	public int getConflictsDueToDifferentSpacingFd() {
+		return conflictsDueToDifferentSpacingFd;
+	}
+
+	public void setConflictsDueToDifferentSpacingFd(int conflictsDueToDifferentSpacingFd) {
+		this.conflictsDueToDifferentSpacingFd = conflictsDueToDifferentSpacingFd;
+	}
+
+	public int getConflictsDueToConsecutiveLinesFd() {
+		return conflictsDueToConsecutiveLinesFd;
+	}
+
+	public void setConflictsDueToConsecutiveLinesFd(int conflictsDueToConsecutiveLinesFd) {
+		this.conflictsDueToConsecutiveLinesFd = conflictsDueToConsecutiveLinesFd;
+	}
+
+	public int getFalsePositivesIntersectionFd() {
+		return falsePositivesIntersectionFd;
+	}
+
+	public void setFalsePositivesIntersectionFd(int falsePositivesIntersectionFd) {
+		this.falsePositivesIntersectionFd = falsePositivesIntersectionFd;
 	}
 
 }
