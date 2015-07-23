@@ -33,7 +33,7 @@ class Project {
 	 * that were already analyzed
 	 */
 	public Project(String projectName, int totalScenarios, int conflictingscenarios,
-	int conflictsDiffSpacing, int conflictsConsecLines, Hashtable<String, Integer> projectSummary){
+	int conflictsDiffSpacing, int conflictsConsecLines, falsePositivesIntersection ,Hashtable<String, Integer> projectSummary){
 
 		this.name = projectName
 		this.analyzedMergeScenarios = totalScenarios
@@ -42,6 +42,7 @@ class Project {
 		this.projectSummary = projectSummary
 		this.conflictsDueToDifferentSpacing = conflictsDiffSpacing
 		this.conflictsDueToConsecutiveLines = conflictsConsecLines
+		this.falsePositivesIntersection = falsePositivesIntersection
 	}
 
 	/*This constructor is used by the CsvAnalyzer class*/

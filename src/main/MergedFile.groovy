@@ -132,7 +132,7 @@ class MergedFile {
 		String result = this.path + ' ' + this.getNumberOfConflicts() + ' ' +
 				this.getConflictsInsideMethods() + ' '+ this.getMethodsWithConflicts() +
 				' ' + this.getConflictsOutsideMethods() + ' ' + this.getConflictsDueToDifferentSpacing() +
-				' ' + this.getConflictsDueToConsecutiveLines() + ' '
+				' ' + this.getConflictsDueToConsecutiveLines() + ' ' +
 		this.getFalsePositivesIntersection() + ' ' + this.conflictsSummary() + '\n'
 
 		return result

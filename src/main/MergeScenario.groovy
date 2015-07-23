@@ -201,7 +201,9 @@ class MergeScenario implements Observer {
 	public String printMetrics(){
 		String result = ''
 		for(MergedFile m : this.mergedFiles){
-			result = result + m.toString() 
+			if(m.conflicts.size != 0){
+				result = result + m.toString()
+			}
 		}
 		return result
 	}

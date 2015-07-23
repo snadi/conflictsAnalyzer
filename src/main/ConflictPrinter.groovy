@@ -11,7 +11,7 @@ public class ConflictPrinter {
 		// deleting old files if it exists
 		out.delete()
 		out = new File(fileName)
-		
+
 		String row
 
 		row = 'Project Merge_Scenarios Conflicting_Scenarios ' +
@@ -19,27 +19,27 @@ public class ConflictPrinter {
 				'False_Positives_Intersection ' +
 				'DefaultValueAnnotation ImplementList ModifierList EditSameMC ' +
 				'SameSignatureCM AddSameFd EditSameFd ExtendsList\n'
-		
+
 		out.append(row)
 
 		for(Project p : projects){
-		int DefaultValueAnnotation = p.projectSummary.get("DefaultValueAnnotation")
-		int ImplementList = p.projectSummary.get("ImplementList")
-		int ModifierList = p.projectSummary.get("ModifierList")
-		int EditSameMC = p.projectSummary.get("EditSameMC")
-		int SameSignatureCM = p.projectSummary.get("SameSignatureCM")
-		int AddSameFd = p.projectSummary.get("AddSameFd")
-		int EditSameFd = p.projectSummary.get("EditSameFd")
-		int ExtendsList = p.projectSummary.get("ExtendsList")
-		String conflicts = ' ' + DefaultValueAnnotation + ' ' + ImplementList +
-				' ' + ModifierList + ' ' + EditSameMC + ' ' + SameSignatureCM +
-				' ' + AddSameFd + ' ' + EditSameFd + ' ' + ExtendsList
-		row = p.name + ' ' + p.analyzedMergeScenarios + ' ' + p.conflictingMergeScenarios +
-				' ' + p.getConflictsDueToDifferentSpacing() + ' ' +
-				p.getConflictsDueToConsecutiveLines() + ' ' +
-				p.getFalsePositivesIntersection() + ' ' +
-				conflicts + '\n'
-		out.append(row)
+			int DefaultValueAnnotation = p.projectSummary.get("DefaultValueAnnotation")
+			int ImplementList = p.projectSummary.get("ImplementList")
+			int ModifierList = p.projectSummary.get("ModifierList")
+			int EditSameMC = p.projectSummary.get("EditSameMC")
+			int SameSignatureCM = p.projectSummary.get("SameSignatureCM")
+			int AddSameFd = p.projectSummary.get("AddSameFd")
+			int EditSameFd = p.projectSummary.get("EditSameFd")
+			int ExtendsList = p.projectSummary.get("ExtendsList")
+			String conflicts = ' ' + DefaultValueAnnotation + ' ' + ImplementList +
+					' ' + ModifierList + ' ' + EditSameMC + ' ' + SameSignatureCM +
+					' ' + AddSameFd + ' ' + EditSameFd + ' ' + ExtendsList
+			row = p.name + ' ' + p.analyzedMergeScenarios + ' ' + p.conflictingMergeScenarios +
+					' ' + p.getConflictsDueToDifferentSpacing() + ' ' +
+					p.getConflictsDueToConsecutiveLines() + ' ' +
+					p.getFalsePositivesIntersection() +
+					conflicts + '\n'
+			out.append(row)
 		}
 	}
 
@@ -53,7 +53,7 @@ public class ConflictPrinter {
 					'Files_That_Remained_The_Same Files_Merged Files_With_Conflicts Total_Conflicts ' +
 					'Conflicts_Due_To_Different_Spacing Conflicts_Due_To_Consecutive_Lines '+
 					'False_Positives_Intersection ' +
-					'DefaultValueAnnotation ImplementList ModifierList EditSameMC, ' +
+					'DefaultValueAnnotation ImplementList ModifierList EditSameMC ' +
 					'SameSignatureCM AddSameFd EditSameFd ExtendsList\n'
 			out.append(fileHeader)
 		}
@@ -66,14 +66,17 @@ public class ConflictPrinter {
 	public static void printMergeScenarioMetrics(MergeScenario mergeScenario, String projectName){
 		File out = new File('ResultData' + File.separator + projectName + File.separator +
 				'Merge_Scenarios' + File.separator + mergeScenario.name + '.csv')
-		String header = 'File Total_of_Conflicts ' +
-				'Conflicts_Inside_Methods, Methods_with_Conflicts ' +
-				'Conflicts_Outside_Methods ' +
-				'Conflicts_Due_To_Different_Spacing ' +
-				'Conflicts_Due_To_Consecutive_Lines + False_Positives_Intersection' +
-				'DefaultValueAnnotation ImplementList ModifierList EditSameMC, ' +
+		if(!out.exists()){
+			String header = 'File Total_of_Conflicts ' +
+					'Conflicts_Inside_Methods Methods_with_Conflicts ' +
+					'Conflicts_Outside_Methods ' +
+					'Conflicts_Due_To_Different_Spacing ' +
+					'Conflicts_Due_To_Consecutive_Lines False_Positives_Intersection ' +
+					'DefaultValueAnnotation ImplementList ModifierList EditSameMC ' +
 					'SameSignatureCM AddSameFd EditSameFd ExtendsList\n'
-		out.append(header)
+			out.append(header)
+		}
+
 		out.append(mergeScenario.printMetrics())
 
 
