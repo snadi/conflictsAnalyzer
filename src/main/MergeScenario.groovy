@@ -25,6 +25,8 @@ class MergeScenario implements Observer {
 	
 	private int conflictsDueToConsecutiveLines
 	
+	private int falsePositivesIntersection
+	
 	private int numberOfConflicts
 
 	private boolean hasConflicts
@@ -107,6 +109,7 @@ class MergeScenario implements Observer {
 		this.numberOfConflicts = this.numberOfConflicts + conflict.getNumberOfConflicts()
 		this.conflictsDueToDifferentSpacing = this.conflictsDueToDifferentSpacing + conflict.getDifferentSpacing()
 		this.conflictsDueToConsecutiveLines = this.conflictsDueToConsecutiveLines + conflict.getConsecutiveLines()
+		this.falsePositivesIntersection = this.falsePositivesIntersection + conflict.getFalsePositivesIntersection()
 		
 	}
 	
@@ -187,7 +190,7 @@ class MergeScenario implements Observer {
 		this.compareFiles.getFilesThatRemainedTheSame() + ' ' + this.mergedFiles.size() +
 		' ' + this.getNumberOfFilesWithConflicts() + ' ' + this.getNumberOfConflicts() +
 		' ' + this.getConflictsDueToDifferentSpacing() + ' ' + this.getConflictsDueToConsecutiveLines() +
-		' ' + this.conflictsSummary()
+		' ' + this.getFalsePositivesIntersection() + ' ' + this.conflictsSummary() + '\n'
 		
 		return report
 	}
@@ -241,6 +244,14 @@ class MergeScenario implements Observer {
 	
 	public void setNumberOfConflicts(int numberOfConflicts) {
 		this.numberOfConflicts = numberOfConflicts;
+	}
+
+	public int getFalsePositivesIntersection() {
+		return falsePositivesIntersection;
+	}
+
+	public void setFalsePositivesIntersection(int falsePositivesIntersection) {
+		this.falsePositivesIntersection = falsePositivesIntersection;
 	}
 
 	public String conflictsSummary(){

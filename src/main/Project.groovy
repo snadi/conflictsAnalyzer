@@ -15,6 +15,8 @@ class Project {
 	private int conflictsDueToDifferentSpacing
 	
 	private int conflictsDueToConsecutiveLines
+	
+	private int falsePositivesIntersection
 
 	private Hashtable<String, Integer> projectSummary
 
@@ -171,6 +173,9 @@ class Project {
 		this.conflictsDueToConsecutiveLines = this.conflictsDueToConsecutiveLines +
 		ms.getConflictsDueToConsecutiveLines()
 		
+		this.falsePositivesIntersection = this.falsePositivesIntersection +
+		ms.getFalsePositivesIntersection()
+		
 	}
 	
 	public int getConflictsDueToDifferentSpacing() {
@@ -187,6 +192,14 @@ class Project {
 
 	public void setConflictsDueToConsecutiveLines(int conflictsDueToConsecutiveLines) {
 		this.conflictsDueToConsecutiveLines = conflictsDueToConsecutiveLines;
+	}
+
+	public int getFalsePositivesIntersection() {
+		return falsePositivesIntersection;
+	}
+
+	public void setFalsePositivesIntersection(int falsePositivesIntersection) {
+		this.falsePositivesIntersection = falsePositivesIntersection;
 	}
 		
 }

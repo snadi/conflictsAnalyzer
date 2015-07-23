@@ -16,6 +16,7 @@ public class ConflictPrinter {
 
 		row = 'Project Merge_Scenarios Conflicting_Scenarios ' +
 				'Conflicts_Due_To_Different_Spacing Conflicts_Due_To_Consecutive_Lines ' +
+				'False_Positives_Intersection ' +
 				'DefaultValueAnnotation ImplementList ModifierList EditSameMC ' +
 				'SameSignatureCM AddSameFd EditSameFd ExtendsList\n'
 		
@@ -35,7 +36,9 @@ public class ConflictPrinter {
 				' ' + AddSameFd + ' ' + EditSameFd + ' ' + ExtendsList
 		row = p.name + ' ' + p.analyzedMergeScenarios + ' ' + p.conflictingMergeScenarios +
 				' ' + p.getConflictsDueToDifferentSpacing() + ' ' +
-				p.getConflictsDueToConsecutiveLines() + conflicts + '\n'
+				p.getConflictsDueToConsecutiveLines() + ' ' +
+				p.getFalsePositivesIntersection() + ' ' +
+				conflicts + '\n'
 		out.append(row)
 		}
 	}
@@ -49,12 +52,12 @@ public class ConflictPrinter {
 			String fileHeader = 'Merge_scenario Total_Files Files_Edited_By_One_Dev ' +
 					'Files_That_Remained_The_Same Files_Merged Files_With_Conflicts Total_Conflicts ' +
 					'Conflicts_Due_To_Different_Spacing Conflicts_Due_To_Consecutive_Lines '+
+					'False_Positives_Intersection ' +
 					'DefaultValueAnnotation ImplementList ModifierList EditSameMC, ' +
 					'SameSignatureCM AddSameFd EditSameFd ExtendsList\n'
 			out.append(fileHeader)
 		}
 		out.append(mergeScenario.toString())
-		out.append('\n')
 
 		printMergeScenarioMetrics(mergeScenario, projectName)
 		printConflictsReport(mergeScenario, projectName)
@@ -67,7 +70,9 @@ public class ConflictPrinter {
 				'Conflicts_Inside_Methods, Methods_with_Conflicts ' +
 				'Conflicts_Outside_Methods ' +
 				'Conflicts_Due_To_Different_Spacing ' +
-				'Conflicts_Due_To_Consecutive_Lines\n'
+				'Conflicts_Due_To_Consecutive_Lines + False_Positives_Intersection' +
+				'DefaultValueAnnotation ImplementList ModifierList EditSameMC, ' +
+					'SameSignatureCM AddSameFd EditSameFd ExtendsList\n'
 		out.append(header)
 		out.append(mergeScenario.printMetrics())
 
