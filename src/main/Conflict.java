@@ -16,6 +16,10 @@ enum SSMergeConflicts {
 
 }
 
+enum PatternSameSignatureCM {
+	smallMethod, renamedMethod, copiedMethod
+}
+
 public  class Conflict {
 
 	public static final String SSMERGE_SEPARATOR = "##FSTMerge##";
@@ -37,6 +41,8 @@ public  class Conflict {
 	private int numberOfConflicts;
 	
 	private int falsePositivesIntersection;
+	
+	private String causeSameSignatureCM;
 
 
 	public Conflict(FSTTerminal node, String path){
@@ -48,6 +54,46 @@ public  class Conflict {
 	}
 	
 	
+	
+	public String getCauseSameSignatureCM() {
+		return causeSameSignatureCM;
+	}
+
+
+
+	public void setCauseSameSignatureCM() {
+		if(this.type.equals(SSMergeConflicts.SameSignatureCM.toString())){
+			this.checkCauseSameSignatureCM();
+		}else{
+			this.causeSameSignatureCM = "";
+		}
+		
+	}
+
+	private void checkCauseSameSignatureCM(){
+		if(!this.isSmallMethod()){
+			this.isCopiedOrRenamedMethod();
+		}
+	}
+	
+	private boolean isSmallMethod(){
+		boolean smallMethod = false;
+		String [] splitConflict = this.splitConflictBody(this.body);
+		if((splitConflict[0].split("\n").length < 5) && (splitConflict[2].split("\n").length < 5) ){
+			smallMethod = true;
+			this.causeSameSignatureCM = PatternSameSignatureCM.smallMethod.toString(); 
+		}
+		
+		return smallMethod;
+	}
+	
+	private void isCopiedOrRenamedMethod(){
+		this.causeSameSignatureCM = "";
+		
+		
+	}
+	
+
 	
 	public int getFalsePositivesIntersection() {
 		return falsePositivesIntersection;
@@ -163,7 +209,7 @@ public  class Conflict {
 	public String [] splitConflictBody(String s){
 		String [] splitBody = {"", "", ""};
 		if(this.isMethodOrConstructor()){
-			if(s.contains("\\|\\|\\|\\|\\|\\|\\|")){
+			if(s.contains("|||||||")){
 				String[] temp = s.split("\\|\\|\\|\\|\\|\\|\\|");
 
 				String[] temp2 = temp[0].split("\n");
