@@ -25,6 +25,8 @@ class Project {
 	private int falsePositivesIntersectionFd
 
 	private Hashtable<String, Integer> projectSummary
+	
+	private File mergeScenarioFile
 
 	public Project(String projectName, String mergeScenariosPath){
 
@@ -74,11 +76,7 @@ class Project {
 
 	public void createMergeScenarios(String mergeScenariosPath){
 		this.mergeScenarios = new ArrayList<MergeScenario>()
-		def mergeScenarioFile = new File(mergeScenariosPath)
-		mergeScenarioFile.eachLine {
-			MergeScenario ms = new MergeScenario(it)
-			this.mergeScenarios.add(ms)
-		}
+		this.mergeScenarioFile = new File(mergeScenariosPath)
 
 	}
 
@@ -115,12 +113,12 @@ class Project {
 	}
 
 	public void analyzeConflicts(){
-
-		for(MergeScenario ms : this.mergeScenarios){
+		this.mergeScenarioFile.eachLine {
+			MergeScenario ms = new MergeScenario(it)
+			this.mergeScenarios.add(ms)
 			ms.analyzeConflicts()
 			updateAndPrintSummary(ms)
 			ms.deleteMSDir()
-
 		}
 	}
 
