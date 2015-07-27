@@ -163,17 +163,22 @@ public  class Conflict {
 	public String [] splitConflictBody(String s){
 		String [] splitBody = {"", "", ""};
 		if(this.isMethodOrConstructor()){
+			if(s.contains("\\|\\|\\|\\|\\|\\|\\|")){
+				String[] temp = s.split("\\|\\|\\|\\|\\|\\|\\|");
 
-			String[] temp = s.split("\\|\\|\\|\\|\\|\\|\\|");
+				String[] temp2 = temp[0].split("\n");
+				splitBody[0] = extractLines(temp2);
 
-			String[] temp2 = temp[0].split("\n");
-			splitBody[0] = extractLines(temp2);
-
-			String [] baseRight = temp[1].split("=======");	
-			temp2 = baseRight[0].split("\n");
-			splitBody[1] = extractLines(temp2);
-			temp2 = baseRight[1].split("\n");
-			splitBody[2] = extractLines(temp2);
+				String [] baseRight = temp[1].split("=======");	
+				temp2 = baseRight[0].split("\n");
+				splitBody[1] = extractLines(temp2);
+				temp2 = baseRight[1].split("\n");
+				splitBody[2] = extractLines(temp2);
+			}else{
+				splitBody[1] = "";
+				splitBody[0] = extractLines(s.split("=======")[0].split("\n"));
+				splitBody[2] = extractLines(s.split("=======")[1].split("\n"));
+			}
 
 		}else{
 			String[] tokens = body.split(FSTGenMerger.MERGE_SEPARATOR);
