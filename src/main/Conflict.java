@@ -53,7 +53,9 @@ public  class Conflict {
 		this.setFalsePositives();
 	}
 	
-	
+	public Conflict (String type){
+		this.type = type;
+	}
 	
 	public String getCauseSameSignatureCM() {
 		return causeSameSignatureCM;
@@ -377,7 +379,14 @@ public  class Conflict {
 
 
 	}
-
+	
+	public int getNumberOfTruePositives(){
+		int truePositives = this.numberOfConflicts - this.differentSpacing -
+				this.consecutiveLines + this.falsePositivesIntersection;
+		
+		return truePositives;
+	}
+	
 	public String getType() {
 		return type;
 	}

@@ -19,21 +19,7 @@ class MergeScenario implements Observer {
 
 	private ArrayList<MergedFile> mergedFiles
 
-	private Map<String,Integer> mergeScenarioSummary
-
-	private int conflictsDueToDifferentSpacingMC
-
-	private int conflictsDueToConsecutiveLinesMC
-
-	private int falsePositivesIntersectionMC
-
-	private int conflictsDueToDifferentSpacingFd
-
-	private int conflictsDueToConsecutiveLinesFd
-
-	private int falsePositivesIntersectionFd
-
-	private int numberOfConflicts
+	private Map<String,Conflict> mergeScenarioSummary
 
 	private boolean hasConflicts
 
@@ -60,7 +46,7 @@ class MergeScenario implements Observer {
 
 	public void setName(){
 		String [] temp = this.path.split('/')
-		String revFile = temp[temp.size() -1]
+		String revFile = temp[temp.length -1]
 		this.name = revFile.substring(0, revFile.length()-10)
 	}
 
@@ -95,43 +81,31 @@ class MergeScenario implements Observer {
 
 
 	public void createMergeScenarioSummary(){
-		this.mergeScenarioSummary = new HashMap<String, Integer>()
+		this.mergeScenarioSummary = new HashMap<String, Conflict>()
 		for(SSMergeConflicts c : SSMergeConflicts.values()){
 
 			String type = c.toString();
-			this.mergeScenarioSummary.put(type, 0)
+			this.mergeScenarioSummary.put(type, new Conflict(type))
 		}
 	}
 
 	public void updateMergeScenarioSummary(Conflict conflict){
 		String conflictType = conflict.getType()
-		Integer typeQuantity = this.mergeScenarioSummary.get(conflictType).value
-		typeQuantity = typeQuantity + conflict.getNumberOfConflicts()
-		this.mergeScenarioSummary.put(conflictType, typeQuantity)
-		this.updateFalsePositives(conflict)
-	}
+		Conflict c2 = this.mergeScenarioSummary.get(conflictType)
+		
+		//get new values
+		int numberOfConflicts = conflict.getNumberOfConflicts() + c2.getNumberOfConflicts()
+		int differentSpacing = conflict.getDifferentSpacing() + c2.getDifferentSpacing()
+		int consecutiveLines = conflict.getConsecutiveLines() + c2.getConsecutiveLines()
+		int falsePositivesIntersection = conflict.falsePositivesIntersection + 
+		c2.getFalsePositivesIntersection()
+		
+		//set new values
+		c2.setNumberOfConflicts(numberOfConflicts)
+		c2.setDifferentSpacing(differentSpacing)
+		c2.setConsecutiveLines(consecutiveLines)
+		c2.setFalsePositivesIntersection(falsePositivesIntersection)
 
-	private void updateFalsePositives(Conflict conflict){
-		this.numberOfConflicts = this.numberOfConflicts + conflict.getNumberOfConflicts()
-		if(conflict.getType().equals(SSMergeConflicts.EditSameMC.toString())){
-			this.conflictsDueToDifferentSpacingMC = this.conflictsDueToDifferentSpacingMC + conflict.getDifferentSpacing()
-			this.conflictsDueToConsecutiveLinesMC = this.conflictsDueToConsecutiveLinesMC + conflict.getConsecutiveLines()
-			this.falsePositivesIntersectionMC = this.falsePositivesIntersectionMC + conflict.getFalsePositivesIntersection()
-		}else if(conflict.getType().equals(SSMergeConflicts.EditSameFd.toString())){
-			this.conflictsDueToDifferentSpacingFd = this.conflictsDueToDifferentSpacingFd + conflict.getDifferentSpacing()
-			this.conflictsDueToConsecutiveLinesFd = this.conflictsDueToConsecutiveLinesFd + conflict.getConsecutiveLines()
-			this.falsePositivesIntersectionFd = this.falsePositivesIntersectionFd + conflict.getFalsePositivesIntersection()
-		}
-
-
-	}
-
-	public String getId(){
-		return this.id
-	}
-
-	public void setId(String id){
-		this.id = id
 	}
 
 	public boolean getHasConflicts(){
@@ -197,22 +171,6 @@ class MergeScenario implements Observer {
 		this.mergedFiles.elementData(index).updateMetrics(conflict)
 	}
 
-	public String toString(){
-		String report = this.name + ' ' + this.compareFiles.getNumberOfTotalFiles() +
-				' ' + this.compareFiles.getFilesEditedByOneDev() + ' ' +
-				this.compareFiles.getFilesThatRemainedTheSame() + ' ' + this.mergedFiles.size() +
-				' ' + this.getNumberOfFilesWithConflicts() + ' ' + this.getNumberOfConflicts() +
-				' ' + this.getConflictsDueToDifferentSpacingMC() + ' ' + this.getConflictsDueToConsecutiveLinesMC() +
-				' ' + this.getFalsePositivesIntersectionMC() + ' ' + this.getConflictsDueToDifferentSpacingFd() + ' ' +
-				this.getConflictsDueToConsecutiveLinesFd() + ' ' + this.getFalsePositivesIntersectionFd() + ' ' +
-				this.conflictsSummary() + '\n'
-
-		return report
-	}
-
-
-
-
 	public String printMetrics(){
 		String result = ''
 		for(MergedFile m : this.mergedFiles){
@@ -232,89 +190,37 @@ class MergeScenario implements Observer {
 		}
 		return result
 	}
+	
+	public String toString(){
+		String report = this.name + ' ' + this.compareFiles.getNumberOfTotalFiles() +
+				' ' + this.compareFiles.getFilesEditedByOneDev() + ' ' +
+				this.compareFiles.getFilesThatRemainedTheSame() + ' ' + this.mergedFiles.size() +
+				' ' + this.getNumberOfFilesWithConflicts() + ' ' + 
+				this.conflictsSummary() + '\n'
 
-	public int getNumberOfConflicts(){
-
-
-		return this.numberOfConflicts
-	}
-
-
-
-	public int getConflictsDueToDifferentSpacingMC() {
-		return conflictsDueToDifferentSpacingMC;
-	}
-
-	public void setConflictsDueToDifferentSpacingMC(int conflictsDueToDifferentSpacingMC) {
-		this.conflictsDueToDifferentSpacingMC = conflictsDueToDifferentSpacingMC;
-	}
-
-	public int getConflictsDueToConsecutiveLinesMC() {
-		return conflictsDueToConsecutiveLinesMC;
-	}
-
-	public void setConflictsDueToConsecutiveLinesMC(int conflictsDueToConsecutiveLinesMC) {
-		this.conflictsDueToConsecutiveLinesMC = conflictsDueToConsecutiveLinesMC;
-	}
-
-
-
-	public void setNumberOfConflicts(int numberOfConflicts) {
-		this.numberOfConflicts = numberOfConflicts;
-	}
-
-	public int getFalsePositivesIntersectionMC() {
-		return falsePositivesIntersectionMC;
-	}
-
-	public void setFalsePositivesIntersectionMC(int falsePositivesIntersectionMC) {
-		this.falsePositivesIntersectionMC = falsePositivesIntersectionMC;
-	}
-
-
-	public int getConflictsDueToDifferentSpacingFd() {
-		return conflictsDueToDifferentSpacingFd;
-	}
-
-	public void setConflictsDueToDifferentSpacingFd(int conflictsDueToDifferentSpacingFd) {
-		this.conflictsDueToDifferentSpacingFd = conflictsDueToDifferentSpacingFd;
-	}
-
-	public int getConflictsDueToConsecutiveLinesFd() {
-		return conflictsDueToConsecutiveLinesFd;
-	}
-
-	public void setConflictsDueToConsecutiveLinesFd(int conflictsDueToConsecutiveLinesFd) {
-		this.conflictsDueToConsecutiveLinesFd = conflictsDueToConsecutiveLinesFd;
-	}
-
-	public int getFalsePositivesIntersectionFd() {
-		return falsePositivesIntersectionFd;
-	}
-
-	public void setFalsePositivesIntersectionFd(int falsePositivesIntersectionFd) {
-		this.falsePositivesIntersectionFd = falsePositivesIntersectionFd;
+		return report
 	}
 
 	public String conflictsSummary(){
+		String result = ''
+		
+		for(SSMergeConflicts c : SSMergeConflicts.values()){
+			int quantity = this.mergeScenarioSummary.get(c).getNumberOfTruePositives()
+			result = result + quantity + ' '
+		}
 
-		int DefaultValueAnnotation = this.mergeScenarioSummary.get("DefaultValueAnnotation")
-		int ImplementList = this.mergeScenarioSummary.get("ImplementList")
-		int ModifierList = this.mergeScenarioSummary.get("ModifierList")
-		int EditSameMC = this.mergeScenarioSummary.get("EditSameMC")
-		int SameSignatureCM = this.mergeScenarioSummary.get("SameSignatureCM")
-		int AddSameFd = this.mergeScenarioSummary.get("AddSameFd")
-		int EditSameFd = this.mergeScenarioSummary.get("EditSameFd")
-		int ExtendsList = this.mergeScenarioSummary.get("ExtendsList")
-		String result = DefaultValueAnnotation + ' ' + ImplementList + ' ' +
-				ModifierList + ' ' + EditSameMC + ' ' + SameSignatureCM + ' ' + AddSameFd +
-				' ' + EditSameFd + ' ' + ExtendsList
-		return result
+		return result.trim()
 	}
 
 	public static void main(String[] args){
 		MergeScenario ms = new MergeScenario('/Users/paolaaccioly/Desktop/Teste/jdimeTests/rev.revisions')
 		ms.analyzeConflicts()
+		/*Map <String,Conflict> mergeScenarioSummary = new HashMap<String, Conflict>()
+		 String type = SSMergeConflicts.EditSameMC.toString()
+		 mergeScenarioSummary.put(type, new Conflict(type))
+		 Conflict conflict = mergeScenarioSummary.get(type)
+		 conflict.setNumberOfConflicts(5);
+		 println 'hello world'*/
 	}
 
 }

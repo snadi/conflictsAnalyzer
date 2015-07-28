@@ -15,15 +15,18 @@ public class ConflictPrinter {
 		String row
 
 		row = 'Project Merge_Scenarios Conflicting_Scenarios ' +
-				'Conflicts_Due_To_Different_SpacingMC Conflicts_Due_To_Consecutive_LinesMC ' +
-				'False_Positives_IntersectionMC Conflicts_Due_To_Different_SpacingFd ' +
-				'Conflicts_Due_To_Consecutive_LinesFd False_Positives_IntersectionFd ' +
 				'DefaultValueAnnotation ImplementList ModifierList EditSameMC ' +
 				'SameSignatureCM AddSameFd EditSameFd ExtendsList\n'
 
 		out.append(row)
 
 		for(Project p : projects){
+			
+			String conflicts = ''
+			
+			for(SSMergeConflicts c : SSMergeConflicts.values()){
+				//int quantity = p.projectSummary.get(c).get
+			}
 			int DefaultValueAnnotation = p.projectSummary.get("DefaultValueAnnotation")
 			int ImplementList = p.projectSummary.get("ImplementList")
 			int ModifierList = p.projectSummary.get("ModifierList")
@@ -32,7 +35,7 @@ public class ConflictPrinter {
 			int AddSameFd = p.projectSummary.get("AddSameFd")
 			int EditSameFd = p.projectSummary.get("EditSameFd")
 			int ExtendsList = p.projectSummary.get("ExtendsList")
-			String conflicts = ' ' + DefaultValueAnnotation + ' ' + ImplementList +
+			conflicts = ' ' + DefaultValueAnnotation + ' ' + ImplementList +
 					' ' + ModifierList + ' ' + EditSameMC + ' ' + SameSignatureCM +
 					' ' + AddSameFd + ' ' + EditSameFd + ' ' + ExtendsList
 			row = p.name + ' ' + p.analyzedMergeScenarios + ' ' + p.conflictingMergeScenarios +
