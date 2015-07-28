@@ -108,16 +108,10 @@ public  class Conflict {
 
 
 	public void setFalsePositives(){
-		if(this.type.equals(SSMergeConflicts.EditSameMC.toString()) || 
-				this.type.equals(SSMergeConflicts.EditSameFd.toString())){
+		
 			this.countConflictsInsideMethods();
 			this.checkFalsePositives();
 
-		}else{
-			this.consecutiveLines = 0;
-			this.differentSpacing = 0;
-			this.numberOfConflicts = 1;
-		}
 	}
 
 	public void checkFalsePositives(){
@@ -321,28 +315,11 @@ public  class Conflict {
 		if(isInsideMethod()){
 			type = SSMergeConflicts.EditSameMC.toString();
 		}else{
-			type = matchConflictOutsideMethod();
-		}
-
-		return type;
-
-	}
-
-	private String matchConflictOutsideMethod() {
-		String type;
-		String [] p1 = this.body.split("\\|\\|\\|\\|\\|\\|\\|");
-		String [] p2 = p1[1].split("=======");
-		String [] p3 = p2[0].split("\n");
-
-		if(p3.length != 1){
-
-			type = SSMergeConflicts.EditSameMC.toString();
-		}else{
-
 			type = SSMergeConflicts.SameSignatureCM.toString();
-
 		}
+
 		return type;
+
 	}
 
 	public boolean isInsideMethod(){
@@ -351,7 +328,7 @@ public  class Conflict {
 		String [] p1 = this.body.split("<<<<<<<");
 		String [] p2 = this.body.split(">>>>>>>");
 		String [] p3 = p2[p2.length -1].split("\n");
-		if(!p1[0].equals("") && p3.length != 1){
+		if(!p1[0].equals("") && p3.length > 1){
 			isInsideMethod = true;
 		}
 
