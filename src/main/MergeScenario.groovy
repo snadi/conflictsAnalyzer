@@ -1,13 +1,15 @@
 package main
 
 
+import java.util.LinkedList;
 import java.util.Observable;
 
 import merger.FSTGenMerger;
 import merger.MergeVisitor
 import sun.tools.jar.Main;
 import util.CompareFiles;
-import composer.rules.ImplementsListMerging;
+import composer.rules.ImplementsListMerging
+import de.ovgu.cide.fstgen.ast.FSTNode;
 import de.ovgu.cide.fstgen.ast.FSTTerminal;
 
 
@@ -24,6 +26,10 @@ class MergeScenario implements Observer {
 	private boolean hasConflicts
 
 	private CompareFiles compareFiles
+	
+	private static LinkedList<FSTNode> baseNodes
+	
+	private FSTGenMerger fstGenMerge
 
 	public MergeScenario(String path){
 		this.path = path
@@ -77,10 +83,11 @@ class MergeScenario implements Observer {
 	}
 
 	public void runSSMerge(){
-		FSTGenMerger fstGenMerge = new FSTGenMerger()
+		this.fstGenMerge = new FSTGenMerger()
 		fstGenMerge.getMergeVisitor().addObserver(this)
 		String[] files = ["--expression", this.path]
 		fstGenMerge.run(files)
+		
 	}
 
 
@@ -130,8 +137,12 @@ class MergeScenario implements Observer {
 
 	public void createConflict(FSTTerminal node){
 		Conflict conflict = new Conflict(node, this.path);
+		if(conflict.getType().equals(SSMergeConflicts.SameSignatureCM.toString())){
+			conflict.setCauseSameSignatureCM(this.fstGenMerge.baseNodes)
+		}
 		this.matchConflictWithFile(conflict)
 		this.updateMergeScenarioSummary(conflict)
+
 
 	}
 

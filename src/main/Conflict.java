@@ -3,6 +3,7 @@ package main;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import de.ovgu.cide.fstgen.ast.FSTNode;
 import de.ovgu.cide.fstgen.ast.FSTTerminal;
@@ -39,9 +40,9 @@ public  class Conflict {
 	private int consecutiveLines;
 
 	private int numberOfConflicts;
-	
+
 	private int falsePositivesIntersection;
-	
+
 	private String causeSameSignatureCM;
 
 
@@ -51,33 +52,28 @@ public  class Conflict {
 		this.matchPattern();
 		this.retrieveFilePath(node, path);
 		this.setFalsePositives();
+		this.causeSameSignatureCM = "";
 	}
-	
+
 	public Conflict (String type){
 		this.type = type;
 	}
-	
+
 	public String getCauseSameSignatureCM() {
 		return causeSameSignatureCM;
 	}
 
 
 
-	public void setCauseSameSignatureCM() {
-		if(this.type.equals(SSMergeConflicts.SameSignatureCM.toString())){
-			this.checkCauseSameSignatureCM();
-		}else{
-			this.causeSameSignatureCM = "";
+	public void setCauseSameSignatureCM(LinkedList<FSTNode> baseNodes) {
+
+		boolean isSmallMethod = this.isSmallMethod();
+		if(!isSmallMethod){
+			this.isRenamedOrCopiedMethod(baseNodes);
 		}
-		
+
 	}
 
-	private void checkCauseSameSignatureCM(){
-		if(!this.isSmallMethod()){
-			this.isCopiedOrRenamedMethod();
-		}
-	}
-	
 	private boolean isSmallMethod(){
 		boolean smallMethod = false;
 		String [] splitConflict = this.splitConflictBody(this.body);
@@ -85,18 +81,16 @@ public  class Conflict {
 			smallMethod = true;
 			this.causeSameSignatureCM = PatternSameSignatureCM.smallMethod.toString(); 
 		}
-		
+
 		return smallMethod;
 	}
-	
-	private void isCopiedOrRenamedMethod(){
-		this.causeSameSignatureCM = "";
-		
+
+	private void isRenamedOrCopiedMethod(LinkedList<FSTNode> baseNodes){
 		
 	}
-	
 
-	
+
+
 	public int getFalsePositivesIntersection() {
 		return falsePositivesIntersection;
 	}
@@ -110,9 +104,9 @@ public  class Conflict {
 
 
 	public void setFalsePositives(){
-		
-			this.countConflictsInsideMethods();
-			this.checkFalsePositives();
+
+		this.countConflictsInsideMethods();
+		this.checkFalsePositives();
 
 	}
 
@@ -128,7 +122,7 @@ public  class Conflict {
 	}
 
 	private void auxCheckFalsePositives(String s) {
-		
+
 		boolean diffSpacing = this.checkDifferentSpacing(s);
 		boolean consecLines = this.checkConsecutiveLines(s);
 		if(diffSpacing && consecLines){
@@ -171,7 +165,7 @@ public  class Conflict {
 		String [] leftLines = splitConflictBody[0].split("\n");
 		String [] baseLines = splitConflictBody[1].split("\n");
 		String [] rightLines = splitConflictBody[2].split("\n");
-		
+
 		if(baseLines.length != 0){
 			String fixedElement =  baseLines[0];
 			boolean foundOnLeft = this.searchFixedElement(fixedElement, leftLines);
@@ -189,7 +183,7 @@ public  class Conflict {
 		}
 		return falsePositive;
 	}
-	
+
 	private boolean searchFixedElement(String fixedElement, String[] variant){
 		boolean foundFixedElement = false;
 		int i = 0;
@@ -201,7 +195,7 @@ public  class Conflict {
 		}
 		return foundFixedElement;
 	}
-	
+
 	public String [] splitConflictBody(String s){
 		String [] splitBody = {"", "", ""};
 		if(this.isMethodOrConstructor()){
@@ -242,9 +236,9 @@ public  class Conflict {
 				}else{
 					lines = lines + conflict[i];
 				}
-				
+
 			}
-			
+
 		}
 		return lines;
 	}
@@ -379,14 +373,14 @@ public  class Conflict {
 
 
 	}
-	
+
 	public int getNumberOfTruePositives(){
 		int truePositives = this.numberOfConflicts - this.differentSpacing -
 				this.consecutiveLines + this.falsePositivesIntersection;
-		
+
 		return truePositives;
 	}
-	
+
 	public String getType() {
 		return type;
 	}
@@ -470,7 +464,7 @@ public  class Conflict {
 				"=======\n" +
 				"		int y;\n"+
 				">>>>>>> /Users/paolaaccioly/Documents/testeConflictsAnalyzer/conflictsAnalyzer/fstmerge_tmp1437435093749/fstmerge_var2_5667963733764531246\n";
-	*/
+		 */
 	}
 
 }
