@@ -19,11 +19,11 @@ class RunStudy {
 
 	private double projectsConflictRate
 
-	private Hashtable<String, Integer> projectsSummary
+	private Hashtable<String, Conflict> projectsSummary
 
 	public RunStudy(){
 		this.projects = new ArrayList<Project>()
-		initializeProjectsMetrics()
+		ConflictPrinter.setconflictReportHeader()
 		if(previousResultsExists()){
 			loadPreviousResults()
 		}
@@ -54,7 +54,7 @@ class RunStudy {
 		return this.projects
 	}
 	
-	public Hashtable<String, Integer> getProjectsSummary(){
+	public Hashtable<String, Conflict> getProjectsSummary(){
 		return this.projectsSummary
 	}
 
@@ -106,33 +106,33 @@ class RunStudy {
 		String projectName = data[0]
 		int totalScenarios = Integer.parseInt(data[1])
 		int conflictingScenarios = Integer.parseInt(data[2])
-		int conflictsDueToDifferentSpacingMC = Integer.parseInt(data[3])
-		int conflictsDueToConsecutiveLinesMC = Integer.parseInt(data[4])
-		int falsePositivesIntersectionMC = Integer.parseInt(data[5])
-		int conflictsDueToDifferentSpacingFd = Integer.parseInt(data[6])
-		int conflictsDueToConsecutiveLinesFd = Integer.parseInt(data[7])
-		int falsePositivesIntersectionFd = Integer.parseInt(data[8])
-		int DefaultValueAnnotation = Integer.parseInt(data[9])
-		int ImplementList = Integer.parseInt(data[10])
-		int ModifierList = Integer.parseInt(data[11])
-		int EditSameMC = Integer.parseInt(data[12])
-		int SameSignatureCM = Integer.parseInt(data[13])
-		int AddSameFd = Integer.parseInt(data[14])
-		int EditSameFd = Integer.parseInt(data[15])
-		int ExtendsList = Integer.parseInt(data[16])
-		Hashtable<String, Integer> projectSummary = new Hashtable<String, Integer>()
-		projectSummary.put("DefaultValueAnnotation", DefaultValueAnnotation)
-		projectSummary.put("ImplementList", ImplementList)
-		projectSummary.put("ModifierList", ModifierList)
-		projectSummary.put("EditSameMC", EditSameMC)
-		projectSummary.put("SameSignatureCM", SameSignatureCM)
-		projectSummary.put("AddSameFd", AddSameFd)
-		projectSummary.put("EditSameFd", EditSameFd)
-		projectSummary.put("ExtendsList", ExtendsList)
-		Project project = new Project(projectName, totalScenarios, conflictingScenarios, conflictsDueToDifferentSpacingMC, 
-			conflictsDueToConsecutiveLinesMC, falsePositivesIntersectionMC, conflictsDueToDifferentSpacingFd, 
-			conflictsDueToConsecutiveLinesFd, falsePositivesIntersectionFd ,projectSummary)
+		HashMap<String, Conflict> projectSummary = this.initializeProjectSummary(data)
+		Project project = new Project(projectName, totalScenarios, conflictingScenarios ,projectSummary)
 		this.projects.add(project)
+	}
+	
+	private HashMap<String, Conflict> initializeProjectSummary(String[] data){
+		
+		HashMap<String, Conflict> projectSummary = new HashMap<String, Conflict>()
+		String noPattern = SSMergeConflicts.NOPATTERN.toString()
+		int i = 3
+		for(SSMergeConflicts c : SSMergeConflicts.values()){
+			String type = c.toString()
+			Conflict conflict = new Conflict(type)
+			conflict.setNumberOfConflicts(Integer.parseInt(data[i]))
+			i++
+			if(!type.equals(noPattern)){
+				conflict.setDifferentSpacing(Integer.parseInt(data[i]))
+				i++
+				conflict.setConsecutiveLines(Integer.parseInt(data[i]))
+				i++
+				conflict.setFalsePositivesIntersection(Integer.parseInt(data[i]))
+			}
+			projectSummary.put(type, conflict)
+			i++
+		}
+		
+		return projectSummary
 	}
 
 	public void updateGitMinerConfig(String configFile){

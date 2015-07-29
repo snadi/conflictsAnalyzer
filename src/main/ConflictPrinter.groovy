@@ -5,6 +5,28 @@ import java.util.ArrayList;
 
 public class ConflictPrinter {
 
+	static String conflictReportHeader 
+	
+	public static setconflictReportHeader(){
+		this.conflictReportHeader = ''
+		String noPattern = SSMergeConflicts.NOPATTERN.toString()
+		for(SSMergeConflicts c : SSMergeConflicts.values()){
+			String type = c.toString()
+			this.conflictReportHeader = this.conflictReportHeader +
+			type + ' '
+			if(!type.equals(noPattern)){
+				this.conflictReportHeader = this.conflictReportHeader +
+				type + 'DS ' + type + 'CL ' +
+				type + 'IFP '
+			}
+		}
+		this.conflictReportHeader.trim()
+	}
+	
+	public static String getConflictReportHeader(){
+		return this.conflictReportHeader
+	}
+
 	public static void printProjectData(ArrayList<Project> projects){
 		String fileName = 'projectsPatternData.csv'
 		def out = new File(fileName)
@@ -15,38 +37,12 @@ public class ConflictPrinter {
 		String row
 
 		row = 'Project Merge_Scenarios Conflicting_Scenarios ' +
-				'DefaultValueAnnotation ImplementList ModifierList EditSameMC ' +
-				'SameSignatureCM AddSameFd EditSameFd ExtendsList\n'
+		this.conflictReportHeader + '\n'
 
 		out.append(row)
 
 		for(Project p : projects){
-			
-			String conflicts = ''
-			
-			for(SSMergeConflicts c : SSMergeConflicts.values()){
-				//int quantity = p.projectSummary.get(c).get
-			}
-			int DefaultValueAnnotation = p.projectSummary.get("DefaultValueAnnotation")
-			int ImplementList = p.projectSummary.get("ImplementList")
-			int ModifierList = p.projectSummary.get("ModifierList")
-			int EditSameMC = p.projectSummary.get("EditSameMC")
-			int SameSignatureCM = p.projectSummary.get("SameSignatureCM")
-			int AddSameFd = p.projectSummary.get("AddSameFd")
-			int EditSameFd = p.projectSummary.get("EditSameFd")
-			int ExtendsList = p.projectSummary.get("ExtendsList")
-			conflicts = ' ' + DefaultValueAnnotation + ' ' + ImplementList +
-					' ' + ModifierList + ' ' + EditSameMC + ' ' + SameSignatureCM +
-					' ' + AddSameFd + ' ' + EditSameFd + ' ' + ExtendsList
-			row = p.name + ' ' + p.analyzedMergeScenarios + ' ' + p.conflictingMergeScenarios +
-					' ' + p.getConflictsDueToDifferentSpacingMC() + ' ' +
-					p.getConflictsDueToConsecutiveLinesMC() + ' ' +
-					p.getFalsePositivesIntersectionMC() + ' ' +
-					p.getConflictsDueToDifferentSpacingFd() + ' ' +
-					p.getConflictsDueToConsecutiveLinesFd() + ' ' +
-					p.getFalsePositivesIntersectionFd() +
-					conflicts + '\n'
-			out.append(row)
+			out.append(p.toString() + '\n')
 		}
 	}
 
@@ -58,9 +54,6 @@ public class ConflictPrinter {
 		if(!out.exists()){
 			String fileHeader = 'Merge_scenario Total_Files Files_Edited_By_One_Dev ' +
 					'Files_That_Remained_The_Same Files_Merged Files_With_Conflicts Total_Conflicts ' +
-					'Conflicts_Due_To_Different_SpacingMC Conflicts_Due_To_Consecutive_LinesMC '+
-					'False_Positives_IntersectionMC Conflicts_Due_To_Different_SpacingFd ' +
-					'Conflicts_Due_To_Consecutive_LinesFd False_Positives_IntersectionFd ' +
 					'DefaultValueAnnotation ImplementList ModifierList EditSameMC ' +
 					'SameSignatureCM AddSameFd EditSameFd ExtendsList\n'
 			out.append(fileHeader)
@@ -78,10 +71,6 @@ public class ConflictPrinter {
 			String header = 'File Total_of_Conflicts ' +
 					'Conflicts_Inside_Methods Methods_with_Conflicts ' +
 					'Conflicts_Outside_Methods ' +
-					'Conflicts_Due_To_Different_SpacingMC ' +
-					'Conflicts_Due_To_Consecutive_LinesMC False_Positives_IntersectionMC ' +
-					'Conflicts_Due_To_Different_SpacingFd Conflicts_Due_To_Consecutive_LinesFd ' +
-					'False_Positives_IntersectionFd '+
 					'DefaultValueAnnotation ImplementList ModifierList EditSameMC ' +
 					'SameSignatureCM AddSameFd EditSameFd ExtendsList\n'
 			out.append(header)
@@ -121,11 +110,7 @@ public class ConflictPrinter {
 	}
 
 	public static void main (String[] args){
-		File f = new File('teste.txt')
-		if(!f.exists()){
-			f.append('first row\n')
-		}else{
-			f.append('second row')
-		}
+		ConflictPrinter.setconflictReportHeader()
+		println ConflictPrinter.getConflictReportHeader()
 	}
 }

@@ -11,20 +11,8 @@ class Project {
 	private int conflictingMergeScenarios
 
 	private double conflictRate
-	
-	private int conflictsDueToDifferentSpacingMC
-	
-	private int conflictsDueToConsecutiveLinesMC
-	
-	private int falsePositivesIntersectionMC
-	
-	private int conflictsDueToDifferentSpacingFd
-	
-	private int conflictsDueToConsecutiveLinesFd
-	
-	private int falsePositivesIntersectionFd
 
-	private Hashtable<String, Integer> projectSummary
+	private Hashtable<String, Conflict> projectSummary
 	
 	private File mergeScenarioFile
 
@@ -41,26 +29,15 @@ class Project {
 	 * that were already analyzed
 	 */
 	public Project(String projectName, int totalScenarios, int conflictingscenarios,
-	int conflictsDiffSpacingMC, int conflictsConsecLinesMC, falsePositivesIntersectionMC, conflictsDueToDifferentSpacingFd, 
-			conflictsDueToConsecutiveLinesFd, falsePositivesIntersectionFd ,Hashtable<String, Integer> projectSummary){
+	Hashtable<String, Conflict> projectSummary){
 
 		this.name = projectName
 		this.analyzedMergeScenarios = totalScenarios
 		this.conflictingMergeScenarios = conflictingscenarios
 		this.computeConflictingRate()
 		this.projectSummary = projectSummary
-		this.conflictsDueToDifferentSpacingMC = conflictsDiffSpacingMC
-		this.conflictsDueToConsecutiveLinesMC = conflictsConsecLinesMC
-		this.falsePositivesIntersectionMC = falsePositivesIntersectionMC
-		this.conflictsDueToDifferentSpacingFd = conflictsDueToDifferentSpacingFd
-		this.conflictsDueToConsecutiveLinesFd = conflictsDueToConsecutiveLinesFd
-		this.falsePositivesIntersectionFd = falsePositivesIntersectionFd
 	}
 
-	/*This constructor is used by the CsvAnalyzer class*/
-	public Project(String projectName){
-		this.name = projectName
-	}
 
 	private void createProjectDir(){
 		String projectData = "ResultData" + File.separator + this.name
@@ -108,7 +85,7 @@ class Project {
 		return this.conflictRate
 	}
 
-	public Hashtable<String, Integer> getProjectSummary(){
+	public Hashtable<String, Conflict> getProjectSummary(){
 		return this.projectSummary
 	}
 
@@ -152,96 +129,53 @@ class Project {
 
 	private void initializeProjectSummary(){
 
-		this.projectSummary = new Hashtable<String, Integer>()
+		this.projectSummary = new Hashtable<String, Conflict>()
 
 		for(SSMergeConflicts c : SSMergeConflicts.values()){
 
 			String type = c.toString()
-			projectSummary.put(type, 0)
+			projectSummary.put(type, new Conflict(type))
 		}
 
 
 	}
 
 	private void updateProjectSummary(MergeScenario ms){
-		Set<String> keys = this.projectSummary.keySet()
-
-		for(String key: keys){
-			int mergeQuantity = ms.mergeScenarioSummary.get(key).value
-			int projectQuantity = this.projectSummary.get(key).value
-			projectQuantity = projectQuantity + mergeQuantity
-			this.projectSummary.put(key, projectQuantity)
+		for(SSMergeConflicts c : SSMergeConflicts.values()){
+			Conflict conflict = ms.getMergeScenarioSummary().get(c.toString())
+			Conflict c2 = this.projectSummary.get(c.toString())
+			
+			//get new values
+			int numberOfConflicts = conflict.getNumberOfConflicts() + c2.getNumberOfConflicts()
+			int differentSpacing = conflict.getDifferentSpacing() + c2.getDifferentSpacing()
+			int consecutiveLines = conflict.getConsecutiveLines() + c2.getConsecutiveLines()
+			int falsePositivesIntersection = conflict.falsePositivesIntersection +
+			c2.getFalsePositivesIntersection()
+			
+			//set new values
+			c2.setNumberOfConflicts(numberOfConflicts)
+			c2.setDifferentSpacing(differentSpacing)
+			c2.setConsecutiveLines(consecutiveLines)
+			c2.setFalsePositivesIntersection(falsePositivesIntersection)
 		}
-		this.updateFalsePositives(ms)
 	}
 	
-	private void updateFalsePositives(MergeScenario ms){
-		this.conflictsDueToDifferentSpacingMC = this.conflictsDueToDifferentSpacingMC +
-		 ms.getConflictsDueToDifferentSpacingMC()
+	public String toString(){
+		String result = this.name + ' ' + this.analyzedMergeScenarios + ' ' +
+		this.conflictingMergeScenarios + ' '
 		
-		this.conflictsDueToConsecutiveLinesMC = this.conflictsDueToConsecutiveLinesMC +
-		ms.getConflictsDueToConsecutiveLinesMC()
+		String noPattern = SSMergeConflicts.NOPATTERN.toString()
+		for(SSMergeConflicts c : SSMergeConflicts.values()){
+			String type = c.toString()
+			Conflict conflict = this.projectSummary.get(type)
+			result = result + conflict.getNumberOfConflicts() + ' '
+			if(!type.equals(noPattern)){
+				result = result + conflict.getDifferentSpacing() + ' ' +
+				conflict.getConsecutiveLines() + ' ' + conflict.getFalsePositivesIntersection() +
+				' '
+			}
+		}
 		
-		this.falsePositivesIntersectionMC = this.falsePositivesIntersectionMC +
-		ms.getFalsePositivesIntersectionMC()
-		
-		this.conflictsDueToDifferentSpacingFd = this.conflictsDueToDifferentSpacingFd +
-		ms.getConflictsDueToDifferentSpacingFd()
-	   
-	   this.conflictsDueToConsecutiveLinesFd = this.conflictsDueToConsecutiveLinesFd +
-	   ms.getConflictsDueToConsecutiveLinesFd()
-	   
-	   this.falsePositivesIntersectionFd = this.falsePositivesIntersectionFd +
-	   ms.getFalsePositivesIntersectionFd()
-		
-	}
-	
-	public int getConflictsDueToDifferentSpacingMC() {
-		return conflictsDueToDifferentSpacingMC;
-	}
-
-	public void setConflictsDueToDifferentSpacingMC(int conflictsDueToDifferentSpacingMC) {
-		this.conflictsDueToDifferentSpacingMC = conflictsDueToDifferentSpacingMC;
-	}
-
-	public int getConflictsDueToConsecutiveLinesMC() {
-		return conflictsDueToConsecutiveLinesMC;
-	}
-
-	public void setConflictsDueToConsecutiveLinesMC(int conflictsDueToConsecutiveLinesMC) {
-		this.conflictsDueToConsecutiveLinesMC = conflictsDueToConsecutiveLinesMC;
-	}
-
-	public int getFalsePositivesIntersectionMC() {
-		return falsePositivesIntersectionMC;
-	}
-
-	public void setFalsePositivesIntersectionMC(int falsePositivesIntersectionMC) {
-		this.falsePositivesIntersectionMC = falsePositivesIntersectionMC;
-	}
-
-	public int getConflictsDueToDifferentSpacingFd() {
-		return conflictsDueToDifferentSpacingFd;
-	}
-
-	public void setConflictsDueToDifferentSpacingFd(int conflictsDueToDifferentSpacingFd) {
-		this.conflictsDueToDifferentSpacingFd = conflictsDueToDifferentSpacingFd;
-	}
-
-	public int getConflictsDueToConsecutiveLinesFd() {
-		return conflictsDueToConsecutiveLinesFd;
-	}
-
-	public void setConflictsDueToConsecutiveLinesFd(int conflictsDueToConsecutiveLinesFd) {
-		this.conflictsDueToConsecutiveLinesFd = conflictsDueToConsecutiveLinesFd;
-	}
-
-	public int getFalsePositivesIntersectionFd() {
-		return falsePositivesIntersectionFd;
-	}
-
-	public void setFalsePositivesIntersectionFd(int falsePositivesIntersectionFd) {
-		this.falsePositivesIntersectionFd = falsePositivesIntersectionFd;
-	}
-		
+		return result.trim()
+	}	
 }

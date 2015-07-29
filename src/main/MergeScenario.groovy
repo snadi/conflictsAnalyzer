@@ -39,11 +39,15 @@ class MergeScenario implements Observer {
 		this.compareFiles.ignoreFilesWeDontMerge()
 		this.mergedFiles = this.compareFiles.getFilesToBeMerged()
 	}
-
+	
 	public ArrayList<MergedFile> getMergedFiles(){
 		return this.mergedFiles
 	}
-
+	
+	public HashMap<String, Conflict> getMergeScenarioSummary(){
+		return this.mergeScenarioSummary
+	}
+	
 	public void setName(){
 		String [] temp = this.path.split('/')
 		String revFile = temp[temp.length -1]
