@@ -3,7 +3,7 @@ package main
 public class ConflictSummary {
 
 
-	public String toString(HashMap<String, Conflict> projectSummary){
+	public static String printConflictsSummary(HashMap<String, Conflict> projectSummary){
 		String result = ''
 
 		String noPattern = SSMergeConflicts.NOPATTERN.toString()
@@ -21,7 +21,7 @@ public class ConflictSummary {
 		return result.trim()
 	}
 
-	public HashMap<String, Conflict> initializeConflictSummary(){
+	public static HashMap<String, Conflict> initializeConflictsSummary(){
 		HashMap<String, Conflict> conflictSummary = new HashMap<String, Conflict>()
 		for(SSMergeConflicts c : SSMergeConflicts.values()){
 
@@ -31,8 +31,7 @@ public class ConflictSummary {
 		return conflictSummary
 	}
 
-	public HashMap<String, Conflict> updateConflictSummary(HashMap<String, Conflict> projectSummary,
-			Conflict conflict){
+	public static HashMap<String, Conflict> updateConflictsSummary(HashMap<String, Conflict> projectSummary, Conflict conflict){
 			
 			String conflictType = conflict.getType()
 			Conflict c2 = projectSummary.get(conflictType)

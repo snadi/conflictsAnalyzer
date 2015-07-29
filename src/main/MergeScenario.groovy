@@ -39,15 +39,15 @@ class MergeScenario implements Observer {
 		this.compareFiles.ignoreFilesWeDontMerge()
 		this.mergedFiles = this.compareFiles.getFilesToBeMerged()
 	}
-	
+
 	public ArrayList<MergedFile> getMergedFiles(){
 		return this.mergedFiles
 	}
-	
+
 	public HashMap<String, Conflict> getMergeScenarioSummary(){
 		return this.mergeScenarioSummary
 	}
-	
+
 	public void setName(){
 		String [] temp = this.path.split('/')
 		String revFile = temp[temp.length -1]
@@ -85,30 +85,12 @@ class MergeScenario implements Observer {
 
 
 	public void createMergeScenarioSummary(){
-		this.mergeScenarioSummary = new HashMap<String, Conflict>()
-		for(SSMergeConflicts c : SSMergeConflicts.values()){
-
-			String type = c.toString();
-			this.mergeScenarioSummary.put(type, new Conflict(type))
-		}
+		this.mergeScenarioSummary = ConflictSummary.initializeConflictsSummary()
 	}
 
 	public void updateMergeScenarioSummary(Conflict conflict){
-		String conflictType = conflict.getType()
-		Conflict c2 = this.mergeScenarioSummary.get(conflictType)
-		
-		//get new values
-		int numberOfConflicts = conflict.getNumberOfConflicts() + c2.getNumberOfConflicts()
-		int differentSpacing = conflict.getDifferentSpacing() + c2.getDifferentSpacing()
-		int consecutiveLines = conflict.getConsecutiveLines() + c2.getConsecutiveLines()
-		int falsePositivesIntersection = conflict.falsePositivesIntersection + 
-		c2.getFalsePositivesIntersection()
-		
-		//set new values
-		c2.setNumberOfConflicts(numberOfConflicts)
-		c2.setDifferentSpacing(differentSpacing)
-		c2.setConsecutiveLines(consecutiveLines)
-		c2.setFalsePositivesIntersection(falsePositivesIntersection)
+		this.mergeScenarioSummary = ConflictSummary.updateConflictsSummary(this.mergeScenarioSummary
+				, conflict)
 
 	}
 
@@ -194,26 +176,15 @@ class MergeScenario implements Observer {
 		}
 		return result
 	}
-	
+
 	public String toString(){
 		String report = this.name + ' ' + this.compareFiles.getNumberOfTotalFiles() +
 				' ' + this.compareFiles.getFilesEditedByOneDev() + ' ' +
 				this.compareFiles.getFilesThatRemainedTheSame() + ' ' + this.mergedFiles.size() +
-				' ' + this.getNumberOfFilesWithConflicts() + ' ' + 
-				this.conflictsSummary() + '\n'
+				' ' + this.getNumberOfFilesWithConflicts() + ' ' +
+				ConflictSummary.printConflictsSummary(this.mergeScenarioSummary)
 
 		return report
-	}
-
-	public String conflictsSummary(){
-		String result = ''
-		
-		for(SSMergeConflicts c : SSMergeConflicts.values()){
-			int quantity = this.mergeScenarioSummary.get(c).getNumberOfTruePositives()
-			result = result + quantity + ' '
-		}
-
-		return result.trim()
 	}
 
 	public static void main(String[] args){

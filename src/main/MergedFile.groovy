@@ -29,29 +29,11 @@ class MergedFile {
 	}
 
 	public void createMergedFileSummary(){
-		this.mergedFileSummary = new HashMap<String, Conflict>()
-		for(SSMergeConflicts c : SSMergeConflicts.values()){
-
-			String type = c.toString();
-			this.mergedFileSummary.put(type, new Conflict(type))
-		}
+		this.mergedFileSummary = ConflictSummary.initializeConflictsSummary()
 	}
 
 	public void updateMergedFileSummary(Conflict conflict){
-		String conflictType = conflict.getType()
-		Conflict c2 = this.mergedFileSummary.get(conflictType)
-		//compute new values
-		int numberOfConflicts = conflict.getNumberOfConflicts() + c2.getNumberOfConflicts()
-		int differentSpacing = conflict.getDifferentSpacing() + c2.getDifferentSpacing()
-		int consecutiveLines = conflict.getConsecutiveLines() + c2.getConsecutiveLines()
-		int falsePositivesIntersection = conflict.falsePositivesIntersection + 
-		c2.getFalsePositivesIntersection()
-		
-		//set new values
-		c2.setNumberOfConflicts(numberOfConflicts)
-		c2.setDifferentSpacing(differentSpacing)
-		c2.setConsecutiveLines(consecutiveLines)
-		c2.setFalsePositivesIntersection(falsePositivesIntersection)
+		this.mergedFileSummary = ConflictSummary.updateConflictsSummary(this.mergedFileSummary, conflict)
 	}
 
 
@@ -112,21 +94,9 @@ class MergedFile {
 		String result = this.path + ' ' + this.getNumberOfConflicts() + ' ' +
 				this.getConflictsInsideMethods() + ' '+ this.getMethodsWithConflicts() +
 				' ' + this.getConflictsOutsideMethods() + ' '
-				this.conflictsSummary() + '\n'
+				ConflictSummary.printConflictsSummary(this.mergedFileSummary) + '\n'
 
 		return result
-	}
-
-	public String conflictsSummary(){
-
-		String result = ''
-		
-		for(SSMergeConflicts c : SSMergeConflicts.values()){
-			int quantity = this.mergedFileSummary.get(c).getNumberOfTruePositives()
-			result = result + quantity + ' '
-		}
-
-		return result.trim()
 	}
 
 }

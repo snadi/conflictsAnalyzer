@@ -12,7 +12,7 @@ class Project {
 
 	private double conflictRate
 
-	private Hashtable<String, Conflict> projectSummary
+	private Map<String, Conflict> projectSummary
 	
 	private File mergeScenarioFile
 
@@ -29,7 +29,7 @@ class Project {
 	 * that were already analyzed
 	 */
 	public Project(String projectName, int totalScenarios, int conflictingscenarios,
-	Hashtable<String, Conflict> projectSummary){
+	HashMap<String, Conflict> projectSummary){
 
 		this.name = projectName
 		this.analyzedMergeScenarios = totalScenarios
@@ -129,53 +129,23 @@ class Project {
 
 	private void initializeProjectSummary(){
 
-		this.projectSummary = new Hashtable<String, Conflict>()
-
-		for(SSMergeConflicts c : SSMergeConflicts.values()){
-
-			String type = c.toString()
-			projectSummary.put(type, new Conflict(type))
-		}
-
+		this.projectSummary = ConflictSummary.initializeConflictsSummary()
 
 	}
 
 	private void updateProjectSummary(MergeScenario ms){
+		
 		for(SSMergeConflicts c : SSMergeConflicts.values()){
 			Conflict conflict = ms.getMergeScenarioSummary().get(c.toString())
-			Conflict c2 = this.projectSummary.get(c.toString())
-			
-			//get new values
-			int numberOfConflicts = conflict.getNumberOfConflicts() + c2.getNumberOfConflicts()
-			int differentSpacing = conflict.getDifferentSpacing() + c2.getDifferentSpacing()
-			int consecutiveLines = conflict.getConsecutiveLines() + c2.getConsecutiveLines()
-			int falsePositivesIntersection = conflict.falsePositivesIntersection +
-			c2.getFalsePositivesIntersection()
-			
-			//set new values
-			c2.setNumberOfConflicts(numberOfConflicts)
-			c2.setDifferentSpacing(differentSpacing)
-			c2.setConsecutiveLines(consecutiveLines)
-			c2.setFalsePositivesIntersection(falsePositivesIntersection)
+			this.projectSummary = ConflictSummary.updateConflictsSummary(this.projectSummary, conflict)
 		}
 	}
 	
 	public String toString(){
 		String result = this.name + ' ' + this.analyzedMergeScenarios + ' ' +
-		this.conflictingMergeScenarios + ' '
-		
-		String noPattern = SSMergeConflicts.NOPATTERN.toString()
-		for(SSMergeConflicts c : SSMergeConflicts.values()){
-			String type = c.toString()
-			Conflict conflict = this.projectSummary.get(type)
-			result = result + conflict.getNumberOfConflicts() + ' '
-			if(!type.equals(noPattern)){
-				result = result + conflict.getDifferentSpacing() + ' ' +
-				conflict.getConsecutiveLines() + ' ' + conflict.getFalsePositivesIntersection() +
-				' '
-			}
-		}
-		
+		this.conflictingMergeScenarios + ' ' +
+		ConflictSummary.printConflictsSummary(this.projectSummary)
+
 		return result.trim()
 	}	
 }
