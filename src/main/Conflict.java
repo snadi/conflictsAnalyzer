@@ -78,7 +78,11 @@ public  class Conflict {
 	private boolean isSmallMethod(){
 		boolean smallMethod = false;
 		String [] splitConflict = this.splitConflictBody(this.body);
-		if((splitConflict[0].split("\n").length < 5) && (splitConflict[2].split("\n").length < 5) ){
+		if(splitConflict[0].equals("") && (splitConflict[2].split("\n").length < 5) ){
+				smallMethod = true;
+				this.causeSameSignatureCM = PatternSameSignatureCM.smallMethod.toString(); 
+
+		}else if((splitConflict[0].split("\n").length < 5) && (splitConflict[2].split("\n").length < 5)){
 			smallMethod = true;
 			this.causeSameSignatureCM = PatternSameSignatureCM.smallMethod.toString(); 
 		}
@@ -87,12 +91,12 @@ public  class Conflict {
 	}
 
 	private void isRenamedOrCopiedMethod(LinkedList<FSTNode> baseNodes){
-		
+
 	}
-	
+
 	private boolean checkIfSameMethod(){
 		boolean sameMethod = false;
-		
+
 		return sameMethod;
 	}
 
@@ -140,7 +144,7 @@ public  class Conflict {
 
 	public boolean checkDifferentSpacing(String [] splitConflictBody){
 		boolean falsePositive = false;
-		
+
 		if(!splitConflictBody[0].equals("")){
 			String[] temp = splitConflictBody.clone();
 			String[] threeWay = this.removeInvisibleChars(temp);
@@ -149,7 +153,7 @@ public  class Conflict {
 				falsePositive = true;
 			}
 		}
-		
+
 		return falsePositive;
 	}
 
@@ -162,7 +166,7 @@ public  class Conflict {
 
 	public boolean checkConsecutiveLines(String[] splitConflictBody){
 		boolean falsePositive = false;
-		
+
 		if(!splitConflictBody[0].equals("")){
 			String [] leftLines = splitConflictBody[0].split("\n");
 			String [] baseLines = splitConflictBody[1].split("\n");
@@ -181,9 +185,9 @@ public  class Conflict {
 					}
 				}
 			}
-			
+
 		}
-		
+
 		return falsePositive;
 	}
 
