@@ -74,7 +74,7 @@ public class ConflictPrinter {
 			out.append(header)
 		}
 
-		out.append(mergeScenario.printMetrics())
+		out.append(mergeScenario.printMetrics() + '\n')
 
 
 	}
