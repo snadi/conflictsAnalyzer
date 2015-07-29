@@ -167,19 +167,21 @@ public  class Conflict {
 			String [] leftLines = splitConflictBody[0].split("\n");
 			String [] baseLines = splitConflictBody[1].split("\n");
 			String [] rightLines = splitConflictBody[2].split("\n");
-			
-			String fixedElement =  baseLines[0];
-			boolean foundOnLeft = this.searchFixedElement(fixedElement, leftLines);
-			if(foundOnLeft){
-				falsePositive = true;
-				this.consecutiveLines++;
-			}else{
-				boolean foundOnRight = this.searchFixedElement(fixedElement, rightLines);
-				if(foundOnRight){
+			if(!baseLines[0].equals("")){
+				String fixedElement =  baseLines[0];
+				boolean foundOnLeft = this.searchFixedElement(fixedElement, leftLines);
+				if(foundOnLeft){
 					falsePositive = true;
 					this.consecutiveLines++;
+				}else{
+					boolean foundOnRight = this.searchFixedElement(fixedElement, rightLines);
+					if(foundOnRight){
+						falsePositive = true;
+						this.consecutiveLines++;
+					}
 				}
 			}
+			
 		}
 		
 		return falsePositive;
