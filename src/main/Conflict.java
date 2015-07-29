@@ -51,7 +51,8 @@ public  class Conflict {
 		this.nodeType = node.getType();
 		this.matchPattern();
 		this.retrieveFilePath(node, path);
-		this.setFalsePositives();
+		this.countConflictsInsideMethods();
+		this.checkFalsePositives();
 		this.causeSameSignatureCM = "";
 	}
 
@@ -88,7 +89,12 @@ public  class Conflict {
 	private void isRenamedOrCopiedMethod(LinkedList<FSTNode> baseNodes){
 		
 	}
-
+	
+	private boolean checkIfSameMethod(){
+		boolean sameMethod = false;
+		
+		return sameMethod;
+	}
 
 
 	public int getFalsePositivesIntersection() {
@@ -101,30 +107,21 @@ public  class Conflict {
 		this.falsePositivesIntersection = falsePositivesIntersection;
 	}
 
-
-
-	public void setFalsePositives(){
-
-		this.countConflictsInsideMethods();
-		this.checkFalsePositives();
-
-	}
-
 	public void checkFalsePositives(){
-		if(this.isMethodOrConstructor()){
-			ArrayList<String> conflicts = splitConflictsInsideMethods();
+		ArrayList<String> conflicts = splitConflictsInsideMethods();
+		if(conflicts.size() > 1){	
 			for(String s : conflicts){
 				this.auxCheckFalsePositives(s);
 			}
 		} else{
-			this.auxCheckFalsePositives(this.body);
+			this.auxCheckFalsePositives(conflicts.get(0));
 		}
 	}
 
 	private void auxCheckFalsePositives(String s) {
-
-		boolean diffSpacing = this.checkDifferentSpacing(s);
-		boolean consecLines = this.checkConsecutiveLines(s);
+		String [] splitConflictBody = this.splitConflictBody(s);
+		boolean diffSpacing = this.checkDifferentSpacing(splitConflictBody);
+		boolean consecLines = this.checkConsecutiveLines(splitConflictBody);
 		if(diffSpacing && consecLines){
 			this.falsePositivesIntersection++;
 		}
@@ -141,14 +138,18 @@ public  class Conflict {
 		return conflicts;
 	}
 
-	public boolean checkDifferentSpacing(String s){
+	public boolean checkDifferentSpacing(String [] splitConflictBody){
 		boolean falsePositive = false;
-		String [] splitConflictBody = this.splitConflictBody(s);
-		String[] threeWay = this.removeInvisibleChars(splitConflictBody);
-		if(threeWay[0].equals(threeWay[1]) || threeWay[2].equals(threeWay[1])){
-			this.differentSpacing++;
-			falsePositive = true;
+		
+		if(!splitConflictBody[0].equals("")){
+			String[] temp = splitConflictBody.clone();
+			String[] threeWay = this.removeInvisibleChars(temp);
+			if(threeWay[0].equals(threeWay[1]) || threeWay[2].equals(threeWay[1])){
+				this.differentSpacing++;
+				falsePositive = true;
+			}
 		}
+		
 		return falsePositive;
 	}
 
@@ -159,14 +160,14 @@ public  class Conflict {
 		return input;
 	}
 
-	public boolean checkConsecutiveLines(String s){
+	public boolean checkConsecutiveLines(String[] splitConflictBody){
 		boolean falsePositive = false;
-		String [] splitConflictBody = this.splitConflictBody(s);
-		String [] leftLines = splitConflictBody[0].split("\n");
-		String [] baseLines = splitConflictBody[1].split("\n");
-		String [] rightLines = splitConflictBody[2].split("\n");
-
-		if(baseLines.length != 0){
+		
+		if(!splitConflictBody[0].equals("")){
+			String [] leftLines = splitConflictBody[0].split("\n");
+			String [] baseLines = splitConflictBody[1].split("\n");
+			String [] rightLines = splitConflictBody[2].split("\n");
+			
 			String fixedElement =  baseLines[0];
 			boolean foundOnLeft = this.searchFixedElement(fixedElement, leftLines);
 			if(foundOnLeft){
@@ -179,8 +180,8 @@ public  class Conflict {
 					this.consecutiveLines++;
 				}
 			}
-
 		}
+		
 		return falsePositive;
 	}
 
