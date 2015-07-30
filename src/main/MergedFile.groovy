@@ -2,6 +2,7 @@ package main
 
 import de.ovgu.cide.fstgen.ast.FSTTerminal
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
 import merger.MergeVisitor
@@ -21,13 +22,20 @@ class MergedFile {
 	private int conflictsOutsideMethods
 
 	private Map<String,Conflict> mergedFileSummary
+	
+	private Map<String, Integer> sameSignatureCMSummary
 
 	public MergedFile(String path){
 		this.path = path
 		this.conflicts = new ArrayList<Conflict>()
 		this.createMergedFileSummary()
+		this.createSameSignatureCMSummary()
 	}
-
+	
+	public void createSameSignatureCMSummary(){
+		this.sameSignatureCMSummary = ConflictSummary.initializeSameSignatureCMSummary()
+	}
+	
 	public void createMergedFileSummary(){
 		this.mergedFileSummary = ConflictSummary.initializeConflictsSummary()
 	}
@@ -54,8 +62,16 @@ class MergedFile {
 		}
 
 		this.updateMergedFileSummary(c)
+		if(c.getType().equals(SSMergeConflicts.SameSignatureCM.toString())){
+			this.updateSameSignatureCMSummary(c.getCauseSameSignatureCM())
+		}
+		
 	}
-
+	
+	private void updateSameSignatureCMSummary(String cause){
+		this.sameSignatureCMSummary = ConflictSummary.
+		updateSameSignatureCMSummary(this.sameSignatureCMSummary, cause)
+	}
 
 	public String getPath(){
 		return this.path
@@ -94,7 +110,8 @@ class MergedFile {
 		String result = this.path + ' ' + this.getNumberOfConflicts() + ' ' +
 				this.getConflictsInsideMethods() + ' '+ this.getMethodsWithConflicts() +
 				' ' + this.getConflictsOutsideMethods() + ' '
-				ConflictSummary.printConflictsSummary(this.mergedFileSummary) + '\n'
+				ConflictSummary.printConflictsSummary(this.mergedFileSummary) + ' ' +
+				ConflictSummary.printSameSignatureCMSummary(this.sameSignatureCMSummary) + '\n'
 
 		return result
 	}

@@ -32,25 +32,54 @@ public class ConflictSummary {
 	}
 
 	public static HashMap<String, Conflict> updateConflictsSummary(HashMap<String, Conflict> projectSummary, Conflict conflict){
-			
-			String conflictType = conflict.getType()
-			Conflict c2 = projectSummary.get(conflictType)
-			
-			//get new values
-			int numberOfConflicts = conflict.getNumberOfConflicts() + c2.getNumberOfConflicts()
-			int differentSpacing = conflict.getDifferentSpacing() + c2.getDifferentSpacing()
-			int consecutiveLines = conflict.getConsecutiveLines() + c2.getConsecutiveLines()
-			int falsePositivesIntersection = conflict.falsePositivesIntersection +
-			c2.getFalsePositivesIntersection()
-			
-			//set new values
-			c2.setNumberOfConflicts(numberOfConflicts)
-			c2.setDifferentSpacing(differentSpacing)
-			c2.setConsecutiveLines(consecutiveLines)
-			c2.setFalsePositivesIntersection(falsePositivesIntersection)
-			
-			return projectSummary
-			
+
+		String conflictType = conflict.getType()
+		Conflict c2 = projectSummary.get(conflictType)
+
+		//get new values
+		int numberOfConflicts = conflict.getNumberOfConflicts() + c2.getNumberOfConflicts()
+		int differentSpacing = conflict.getDifferentSpacing() + c2.getDifferentSpacing()
+		int consecutiveLines = conflict.getConsecutiveLines() + c2.getConsecutiveLines()
+		int falsePositivesIntersection = conflict.falsePositivesIntersection +
+				c2.getFalsePositivesIntersection()
+
+		//set new values
+		c2.setNumberOfConflicts(numberOfConflicts)
+		c2.setDifferentSpacing(differentSpacing)
+		c2.setConsecutiveLines(consecutiveLines)
+		c2.setFalsePositivesIntersection(falsePositivesIntersection)
+
+		return projectSummary
+
 	}
 
+	public static HashMap<String, Integer> initializeSameSignatureCMSummary(){
+		HashMap<String, Integer> sameSignatureCMSummary = new HashMap<String, Integer>()
+		for(PatternSameSignatureCM p : PatternSameSignatureCM.values()){
+			String type = p.toString();
+			sameSignatureCMSummary.put(type, 0)
+		}
+
+		return sameSignatureCMSummary
+	}
+
+	public static HashMap<String, Conflict> updateSameSignatureCMSummary(HashMap<String, Integer> summary, String cause){
+
+		String conflictType = cause
+		int quantity = summary.get(conflictType)
+		quantity++
+		summary.put(conflictType, quantity)
+
+		return summary
+
+	}
+	
+	public static String printSameSignatureCMSummary(HashMap<String, Integer> summary){
+		String result = ''
+		for(PatternSameSignatureCM p : PatternSameSignatureCM.values()){
+			String cause = p.toString()
+			result = result + summary.get(cause) + ' '
+		}
+		return result.trim()
+	}
 }

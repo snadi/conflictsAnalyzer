@@ -20,6 +20,11 @@ public class ConflictPrinter {
 				type + 'IFP '
 			}
 		}
+		
+		for(PatternSameSignatureCM p : PatternSameSignatureCM.values()){
+			String cause = p.toString()
+			this.conflictReportHeader = this.conflictReportHeader + cause + ' '
+		}
 		this.conflictReportHeader.trim()
 	}
 	

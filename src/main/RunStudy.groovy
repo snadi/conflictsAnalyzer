@@ -107,7 +107,9 @@ class RunStudy {
 		int totalScenarios = Integer.parseInt(data[1])
 		int conflictingScenarios = Integer.parseInt(data[2])
 		HashMap<String, Conflict> projectSummary = this.initializeProjectSummary(data)
-		Project project = new Project(projectName, totalScenarios, conflictingScenarios ,projectSummary)
+		HashMap <String, Integer> sscmSummary = this.initializeSameSignatureCMSummary(data)
+		Project project = new Project(projectName, totalScenarios, conflictingScenarios, 
+			projectSummary, sscmSummary)
 		this.projects.add(project)
 	}
 	
@@ -134,7 +136,18 @@ class RunStudy {
 		
 		return projectSummary
 	}
-
+	
+	private HashMap<String, Integer> initializeSameSignatureCMSummary(String[] data){
+		HashMap<String, Integer> summary = new HashMap<String, Integer>()
+		int i = 37
+		for(PatternSameSignatureCM p : PatternSameSignatureCM.values()){
+			String cause = p.toString()
+			summary.put(cause, Integer.parseInt(data[i]))
+			i++
+		}
+		return summary
+	}
+	
 	public void updateGitMinerConfig(String configFile){
 		Properties gitminerProps =  new Properties()
 		File gitminerPropsFile = new File(this.gitminerConfigProps)

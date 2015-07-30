@@ -1,5 +1,7 @@
 package main
 
+import java.util.Map;
+
 class Project {
 
 	private ArrayList<MergeScenario> mergeScenarios
@@ -15,6 +17,8 @@ class Project {
 	private Map<String, Conflict> projectSummary
 	
 	private File mergeScenarioFile
+	
+	private Map<String, Integer> sameSignatureCMSummary
 
 	public Project(String projectName, String mergeScenariosPath){
 
@@ -22,22 +26,28 @@ class Project {
 		initializeProjectSummary()
 		createMergeScenarios(mergeScenariosPath)
 		initializeProjectMetrics()
+		this.createSameSignatureCMSummary()
 		this.createProjectDir()
 	}
-
+	
 	/*The following constructor is used to initialize projects
 	 * that were already analyzed
 	 */
 	public Project(String projectName, int totalScenarios, int conflictingscenarios,
-	HashMap<String, Conflict> projectSummary){
+	HashMap<String, Conflict> projectSummary, HashMap<String, Integer> sscmSummary){
 
 		this.name = projectName
 		this.analyzedMergeScenarios = totalScenarios
 		this.conflictingMergeScenarios = conflictingscenarios
 		this.computeConflictingRate()
 		this.projectSummary = projectSummary
+		this.sameSignatureCMSummary = sscmSummary
 	}
-
+	
+	
+	public void createSameSignatureCMSummary(){
+		this.sameSignatureCMSummary = ConflictSummary.initializeSameSignatureCMSummary()
+	}
 
 	private void createProjectDir(){
 		String projectData = "ResultData" + File.separator + this.name
@@ -107,6 +117,7 @@ class Project {
 		updateConflictingRate(ms)
 		if(ms.hasConflicts){
 			updateProjectSummary(ms)
+			updateSameSignatureCMSummary(ms)
 		}
 		printResults(ms)
 	}
@@ -141,10 +152,20 @@ class Project {
 		}
 	}
 	
+	private void updateSameSignatureCMSummary(MergeScenario ms){
+		for(PatternSameSignatureCM p : PatternSameSignatureCM.values()){
+			String cause = p.toString()
+			int quantity = ms.sameSignatureCMSummary.get(cause)
+			quantity = quantity + this.sameSignatureCMSummary.get(cause)
+			this.sameSignatureCMSummary.put(cause, quantity)
+		}
+	}
+	
 	public String toString(){
 		String result = this.name + ' ' + this.analyzedMergeScenarios + ' ' +
 		this.conflictingMergeScenarios + ' ' +
-		ConflictSummary.printConflictsSummary(this.projectSummary)
+		ConflictSummary.printConflictsSummary(this.projectSummary) + ' ' +
+		ConflictSummary.printSameSignatureCMSummary(this.sameSignatureCMSummary)
 
 		return result.trim()
 	}	

@@ -19,7 +19,7 @@ enum SSMergeConflicts {
 }
 
 enum PatternSameSignatureCM {
-	smallMethod, renamedMethod, copiedMethod
+	smallMethod, renamedMethod, copiedMethod, noPattern
 }
 
 public  class Conflict {
@@ -77,6 +77,9 @@ public  class Conflict {
 		boolean isSmallMethod = this.isSmallMethod(splitConflictBody);
 		if(!isSmallMethod){
 			this.isRenamedOrCopiedMethod(baseNodes, splitConflictBody);
+		}
+		if(this.causeSameSignatureCM.equals("")){
+			this.causeSameSignatureCM = PatternSameSignatureCM.noPattern.toString();
 		}
 	}
 

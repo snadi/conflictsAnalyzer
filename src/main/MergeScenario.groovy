@@ -1,7 +1,8 @@
 package main
 
 
-import java.util.LinkedList;
+import java.util.LinkedList
+import java.util.Map;
 import java.util.Observable;
 
 import merger.FSTGenMerger;
@@ -30,6 +31,8 @@ class MergeScenario implements Observer {
 	private static LinkedList<FSTNode> baseNodes
 	
 	private FSTGenMerger fstGenMerge
+	
+	private Map<String, Integer> sameSignatureCMSummary
 
 	public MergeScenario(String path){
 		this.path = path
@@ -37,9 +40,14 @@ class MergeScenario implements Observer {
 		//this.removeVarArgs()
 		this.hasConflicts = false
 		this.createMergeScenarioSummary()
+		this.createSameSignatureCMSummary()
 		this.setMergedFiles()
 	}
 
+	public void createSameSignatureCMSummary(){
+		this.sameSignatureCMSummary = ConflictSummary.initializeSameSignatureCMSummary()
+	}
+	
 	public void setMergedFiles(){
 		this.compareFiles = new CompareFiles(this.path)
 		this.compareFiles.ignoreFilesWeDontMerge()
@@ -143,13 +151,19 @@ class MergeScenario implements Observer {
 		Conflict conflict = new Conflict(node, this.path);
 		if(conflict.getType().equals(SSMergeConflicts.SameSignatureCM.toString())){
 			conflict.setCauseSameSignatureCM(this.fstGenMerge.baseNodes)
+			this.updateSameSignatureCMSummary(conflict.getCauseSameSignatureCM())
 		}
 		this.matchConflictWithFile(conflict)
 		this.updateMergeScenarioSummary(conflict)
 
 
 	}
-
+	
+	private void updateSameSignatureCMSummary(String cause){
+		this.sameSignatureCMSummary = ConflictSummary.
+		updateSameSignatureCMSummary(this.sameSignatureCMSummary, cause)
+	}
+	
 	private void matchConflictWithFile(Conflict conflict){
 		String rev_base = this.compareFiles.baseRevName
 		String conflictPath = conflict.filePath
@@ -197,7 +211,8 @@ class MergeScenario implements Observer {
 				' ' + this.compareFiles.getFilesEditedByOneDev() + ' ' +
 				this.compareFiles.getFilesThatRemainedTheSame() + ' ' + this.mergedFiles.size() +
 				' ' + this.getNumberOfFilesWithConflicts() + ' ' +
-				ConflictSummary.printConflictsSummary(this.mergeScenarioSummary)
+				ConflictSummary.printConflictsSummary(this.mergeScenarioSummary) + ' ' +
+				ConflictSummary.printSameSignatureCMSummary(this.sameSignatureCMSummary)
 
 		return report
 	}
