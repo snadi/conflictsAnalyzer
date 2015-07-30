@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import de.ovgu.cide.fstgen.ast.FSTNode;
 import de.ovgu.cide.fstgen.ast.FSTTerminal;
 import merger.FSTGenMerger;
+import util.StringSimilarity;
 
 
 enum SSMergeConflicts {
@@ -45,6 +46,10 @@ public  class Conflict {
 
 	private String causeSameSignatureCM;
 
+	private ArrayList<String> conflicts;
+
+	private double similarityThreshold;
+
 
 	public Conflict(FSTTerminal node, String path){
 		this.body = node.getBody();
@@ -54,6 +59,7 @@ public  class Conflict {
 		this.countConflictsInsideMethods();
 		this.checkFalsePositives();
 		this.causeSameSignatureCM = "";
+		this.similarityThreshold = 0.8;
 	}
 
 	public Conflict (String type){
@@ -67,20 +73,18 @@ public  class Conflict {
 
 
 	public void setCauseSameSignatureCM(LinkedList<FSTNode> baseNodes) {
-
-		boolean isSmallMethod = this.isSmallMethod();
+		String [] splitConflictBody = this.splitConflictBody(this.conflicts.get(0));
+		boolean isSmallMethod = this.isSmallMethod(splitConflictBody);
 		if(!isSmallMethod){
-			this.isRenamedOrCopiedMethod(baseNodes);
+			this.isRenamedOrCopiedMethod(baseNodes, splitConflictBody);
 		}
-
 	}
 
-	private boolean isSmallMethod(){
+	private boolean isSmallMethod(String [] splitConflict){
 		boolean smallMethod = false;
-		String [] splitConflict = this.splitConflictBody(this.body);
 		if(splitConflict[0].equals("") && (splitConflict[2].split("\n").length < 5) ){
-				smallMethod = true;
-				this.causeSameSignatureCM = PatternSameSignatureCM.smallMethod.toString(); 
+			smallMethod = true;
+			this.causeSameSignatureCM = PatternSameSignatureCM.smallMethod.toString(); 
 
 		}else if((splitConflict[0].split("\n").length < 5) && (splitConflict[2].split("\n").length < 5)){
 			smallMethod = true;
@@ -90,16 +94,47 @@ public  class Conflict {
 		return smallMethod;
 	}
 
-	private void isRenamedOrCopiedMethod(LinkedList<FSTNode> baseNodes){
+	private void isRenamedOrCopiedMethod(LinkedList<FSTNode> baseNodes, String [] splitConflict){
 
+		double similarity = this.getSimilarity(splitConflict);
+
+		if(similarity >= this.similarityThreshold){
+			boolean foundOnBaseNodes = this.checkBaseNodes(baseNodes, splitConflict[2]);
+			if(!foundOnBaseNodes){
+				this.causeSameSignatureCM = PatternSameSignatureCM.copiedMethod.toString();
+			}
+		}
 	}
 
-	private boolean checkIfSameMethod(){
-		boolean sameMethod = false;
-
-		return sameMethod;
+	private double getSimilarity(String [] splitConflict){
+		double similarity = 0;
+		if(!this.body.contains("|||||||")){
+			similarity = 1;
+		}else{
+			String [] input = this.removeInvisibleChars(splitConflict);
+			similarity = StringSimilarity.similarity(input[0], input[2]);
+		}
+		return similarity;
 	}
 
+	private boolean checkBaseNodes(LinkedList<FSTNode> baseNodes, String right){
+		boolean found = false;
+		int i = 0;
+		right = right.replaceAll("\\s+","");
+		while(!found && i < baseNodes.size()){
+			FSTTerminal temp =  (FSTTerminal) baseNodes.get(i);
+			String base = temp.getBody().replaceAll("\\s+","");
+			double similarity = StringSimilarity.similarity(base, right);
+			if(similarity >= this.similarityThreshold){
+				found = true;
+				baseNodes.remove(i);
+				this.causeSameSignatureCM = PatternSameSignatureCM.renamedMethod.toString();
+			}
+			i++;
+		}
+
+		return found;
+	}
 
 	public int getFalsePositivesIntersection() {
 		return falsePositivesIntersection;
@@ -112,13 +147,17 @@ public  class Conflict {
 	}
 
 	public void checkFalsePositives(){
-		ArrayList<String> conflicts = splitConflictsInsideMethods();
-		if(conflicts.size() > 1){	
-			for(String s : conflicts){
-				this.auxCheckFalsePositives(s);
-			}
-		} else{
-			this.auxCheckFalsePositives(conflicts.get(0));
+		this.conflicts = splitConflictsInsideMethods();
+		if(this.type.equals(SSMergeConflicts.SameSignatureCM.toString())){
+
+			if(conflicts.size() > 1){	
+				for(String s : conflicts){
+					this.auxCheckFalsePositives(s);
+				}
+			} else{
+				this.auxCheckFalsePositives(conflicts.get(0));
+			}	
+			
 		}
 	}
 
@@ -145,13 +184,11 @@ public  class Conflict {
 	public boolean checkDifferentSpacing(String [] splitConflictBody){
 		boolean falsePositive = false;
 
-		if(!splitConflictBody[0].equals("")){
-			String[] temp = splitConflictBody.clone();
-			String[] threeWay = this.removeInvisibleChars(temp);
-			if(threeWay[0].equals(threeWay[1]) || threeWay[2].equals(threeWay[1])){
-				this.differentSpacing++;
-				falsePositive = true;
-			}
+		String[] temp = splitConflictBody.clone();
+		String[] threeWay = this.removeInvisibleChars(temp);
+		if(threeWay[0].equals(threeWay[1]) || threeWay[2].equals(threeWay[1])){
+			this.differentSpacing++;
+			falsePositive = true;
 		}
 
 		return falsePositive;

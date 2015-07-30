@@ -15,7 +15,8 @@ class StringSimilarity {
 		/* // If you have StringUtils, you can use it to calculate the edit distance:
 		 return (longerLength - StringUtils.getLevenshteinDistance(longer, shorter)) /
 		 (double) longerLength; */
-		return (longerLength - editDistance(longer, shorter)) / (double) longerLength;
+		int distance = editDistance(longer, shorter)
+		return (longerLength - distance) / (double) longerLength;
 
 	}
 

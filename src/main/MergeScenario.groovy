@@ -129,7 +129,11 @@ class MergeScenario implements Observer {
 			FSTTerminal node = (FSTTerminal) arg
 
 			if(!node.getType().contains("-Content")){
-				this.hasConflicts = true
+				if(!this.hasConflicts){
+					this.hasConflicts = true
+					this.removeNonMCBaseNodes()
+				}
+				
 				this.createConflict(node)
 			}
 		}
@@ -197,7 +201,14 @@ class MergeScenario implements Observer {
 
 		return report
 	}
-
+	
+	private void removeNonMCBaseNodes(){
+		for(FSTNode baseNode: this.fstGenMerge.baseNodes){
+			if(!(baseNode.getType().equals("MethodDecl") || baseNode.getType().equals("ConstructorDecl"))){
+				this.fstGenMerge.baseNodes.remove(baseNode)
+			}
+		}
+	}
 	public static void main(String[] args){
 		MergeScenario ms = new MergeScenario('/Users/paolaaccioly/Desktop/Teste/jdimeTests/rev.revisions')
 		ms.analyzeConflicts()
