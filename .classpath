@@ -10,6 +10,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/fstgen"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/fstmerge"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/Users/paolaaccioly/Documents/testeConflictsAnalyzer/conflictsAnalyzer/commons-io-2.4.jar"/>
+	<classpathentry kind="lib" path="/commons-io-2.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
