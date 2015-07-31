@@ -13,20 +13,10 @@ class RunStudy {
 	private String projectRepo
 	private String gitminerLocation
 	private String downloadPath
-	private ArrayList<Project> projects
-	private int analyzedProjects, analyzedMergeScenarios,
-	conflictingMergeScenarios
-
-	private double projectsConflictRate
-
 	private Hashtable<String, Conflict> projectsSummary
 
 	public RunStudy(){
-		this.projects = new ArrayList<Project>()
 		ConflictPrinter.setconflictReportHeader()
-		if(previousResultsExists()){
-			loadPreviousResults()
-		}
 	}
 
 	public void run(String[] args){
@@ -40,112 +30,9 @@ class RunStudy {
 		}
 
 	}
-
-	public boolean previousResultsExists(){
-		boolean result = false
-		File projects = new File('projectsPatternData.csv')
-		if(projects.exists()){
-			result = true
-		}
-		return result
-	}
-	
-	public ArrayList<Project> getProjects(){
-		return this.projects
-	}
 	
 	public Hashtable<String, Conflict> getProjectsSummary(){
 		return this.projectsSummary
-	}
-
-	public void initializeProjectsMetrics(){
-		this.analyzedProjects = this.projects.size()
-		this.analyzedMergeScenarios = sumAnalyzedMergeScenarios()
-		this.conflictingMergeScenarios = sumConflictingMergeScenarios()
-		computeConflictRate()
-	}
-	
-	public int sumAnalyzedMergeScenarios(){
-		int sum = 0
-		for(Project project : this.projects){
-			sum = sum + project.analyzedMergeScenarios
-		}
-		return sum
-	}
-	
-	public int sumConflictingMergeScenarios(){
-		int sum = 0
-		for(Project project : this.projects){
-			sum = sum + project.conflictingMergeScenarios
-		}
-		return sum
-	}
-	
-	public void loadPreviousResults(){
-		println 'Started loading previous results'
-		readProjectData()
-		initializeProjectsMetrics()
-		println 'Finished loading previous results'
-	}
-
-	public void readProjectData(){
-		def projectFile = new File("projectsPatternData.csv")
-		boolean header = true
-		projectFile.eachLine {
-			if((!header) && (!it.empty)){
-				initializeProject(it)
-			}
-			header = false
-		}
-		ConflictPrinter.printProjectData(this.projects)
-		this.callRScript()
-	}
-
-	public void initializeProject(String line){
-		String[] data = line.split(", ")
-		String projectName = data[0]
-		int totalScenarios = Integer.parseInt(data[1])
-		int conflictingScenarios = Integer.parseInt(data[2])
-		HashMap<String, Conflict> projectSummary = this.initializeProjectSummary(data)
-		HashMap <String, Integer> sscmSummary = this.initializeSameSignatureCMSummary(data)
-		Project project = new Project(projectName, totalScenarios, conflictingScenarios, 
-			projectSummary, sscmSummary)
-		this.projects.add(project)
-	}
-	
-	private HashMap<String, Conflict> initializeProjectSummary(String[] data){
-		
-		HashMap<String, Conflict> projectSummary = new HashMap<String, Conflict>()
-		String noPattern = SSMergeConflicts.NOPATTERN.toString()
-		int i = 3
-		for(SSMergeConflicts c : SSMergeConflicts.values()){
-			String type = c.toString()
-			Conflict conflict = new Conflict(type)
-			conflict.setNumberOfConflicts(Integer.parseInt(data[i]))
-			i++
-			if(!type.equals(noPattern)){
-				conflict.setDifferentSpacing(Integer.parseInt(data[i]))
-				i++
-				conflict.setConsecutiveLines(Integer.parseInt(data[i]))
-				i++
-				conflict.setFalsePositivesIntersection(Integer.parseInt(data[i]))
-			}
-			projectSummary.put(type, conflict)
-			i++
-		}
-		
-		return projectSummary
-	}
-	
-	private HashMap<String, Integer> initializeSameSignatureCMSummary(String[] data){
-		HashMap<String, Integer> summary = new HashMap<String, Integer>()
-		int i = 36
-		for(PatternSameSignatureCM p : PatternSameSignatureCM.values()){
-			String cause = p.toString()
-			summary.put(cause, Integer.parseInt(data[i]))
-			i++
-		}
-		return summary
 	}
 	
 	public void updateGitMinerConfig(String configFile){
@@ -241,32 +128,8 @@ class RunStudy {
 		println "starting to run the conflicts analyzer on project " + projectName
 		Project project = new Project(projectName, revisionFile)
 		project.analyzeConflicts()
-		this.projects.add(project)
-		ConflictPrinter.printProjectData(this.projects)
+		ConflictPrinter.printProjectData(project)
 		this.callRScript()
-	}
-
-	public double getProjectsConflictRate(){
-		return this.projectsConflictRate
-	}
-
-	public void updateConflictRate(Project p){
-		this.analyzedProjects++
-		this.analyzedMergeScenarios += p.analyzedMergeScenarios
-		this.conflictingMergeScenarios += p.conflictingMergeScenarios
-		computeConflictRate()
-	}
-
-	private computeConflictRate() {
-
-		if(this.analyzedMergeScenarios!=0){
-			double cr = (this.conflictingMergeScenarios/
-					this.analyzedMergeScenarios) * 100
-			this.projectsConflictRate = cr.round(2)
-		}
-		else{
-			this.projectsConflictRate = 0
-		}
 	}
 	
 	public void callRScript(){

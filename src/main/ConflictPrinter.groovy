@@ -32,23 +32,19 @@ public class ConflictPrinter {
 		return this.conflictReportHeader
 	}
 
-	public static void printProjectData(ArrayList<Project> projects){
+	public static void printProjectData(Project p){
 		String fileName = 'projectsPatternData.csv'
 		def out = new File(fileName)
-		// deleting old files if it exists
-		out.delete()
-		out = new File(fileName)
-
-		String row
-
-		row = 'Project, Merge_Scenarios, Conflicting_Scenarios, ' +
+		
+		if(!out.exists()){
+		String row = 'Project, Merge_Scenarios, Conflicting_Scenarios, ' +
 		this.conflictReportHeader + '\n'
 
 		out.append(row)
-
-		for(Project p : projects){
-			out.append(p.toString() + '\n')
 		}
+
+			out.append(p.toString() + '\n')
+
 	}
 
 	public static void printMergeScenarioReport(MergeScenario mergeScenario, String projectName){
