@@ -139,7 +139,7 @@ class RunStudy {
 	
 	private HashMap<String, Integer> initializeSameSignatureCMSummary(String[] data){
 		HashMap<String, Integer> summary = new HashMap<String, Integer>()
-		int i = 37
+		int i = 36
 		for(PatternSameSignatureCM p : PatternSameSignatureCM.values()){
 			String cause = p.toString()
 			summary.put(cause, Integer.parseInt(data[i]))

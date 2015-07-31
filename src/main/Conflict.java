@@ -151,7 +151,7 @@ public  class Conflict {
 
 	public void checkFalsePositives(){
 		this.conflicts = splitConflictsInsideMethods();
-		if(this.type.equals(SSMergeConflicts.SameSignatureCM.toString())){
+		if(!this.type.equals(SSMergeConflicts.SameSignatureCM.toString())){
 
 			if(conflicts.size() > 1){	
 				for(String s : conflicts){
@@ -174,12 +174,17 @@ public  class Conflict {
 	}
 
 	private ArrayList<String> splitConflictsInsideMethods(){
-		String [] temp = this.body.split("<<<<<<<");
 		ArrayList<String> conflicts = new ArrayList<String>();
-		for(int i = 1; i < temp.length; i++){
-			String temp2 = temp[i].split(">>>>>>>")[0];
-			conflicts.add(temp2);
+		if(this.body.contains("<<<<<<<") && this.body.contains(">>>>>>>")){
+			String [] temp = this.body.split("<<<<<<<");
+			for(int i = 1; i < temp.length; i++){
+				String temp2 = temp[i].split(">>>>>>>")[0];
+				conflicts.add(temp2);
+			}
+		}else{
+			conflicts.add(this.body);
 		}
+		
 
 		return conflicts;
 	}
