@@ -94,7 +94,12 @@ public class ConflictPrinter {
 
 			for(Conflict c: mergedFile.getConflicts()){
 
-				def row = ['Conflict type: '+ c.getType() + '\n' + 'Conflict body: ' + '\n' + c.getBody() ]
+				def row = ['Conflict type: '+ c.getType() + '\n' + 
+					'Different Spacing: ' + c.getDifferentSpacing() + '\n'  +
+					'Consecutive Lines: ' + c.getConsecutiveLines() + '\n'+ 
+					'Intersection: ' + c.getFalsePositivesIntersection() + '\n' +
+					'Cause same signature: ' + c.getCauseSameSignatureCM() + '\n' +
+					'Conflict body: ' + '\n' + c.getBody() ]
 				out.append row.join(',')
 				out.append '\n'
 				row = ['File path: ' + c.getFilePath()]
