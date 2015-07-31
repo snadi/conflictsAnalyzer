@@ -107,11 +107,11 @@ class MergedFile {
 
 	public String toString(){
 
-		String result = this.path + ' ' + this.getNumberOfConflicts() + ' ' +
-				this.getConflictsInsideMethods() + ' '+ this.getMethodsWithConflicts() +
-				' ' + this.getConflictsOutsideMethods() + ' '
-				ConflictSummary.printConflictsSummary(this.mergedFileSummary) + ' ' +
-				ConflictSummary.printSameSignatureCMSummary(this.sameSignatureCMSummary) + '\n'
+		String result = this.path + ', ' + this.getNumberOfConflicts() + ', ' +
+				this.getConflictsInsideMethods() + ', '+ this.getMethodsWithConflicts() +
+				', ' + this.getConflictsOutsideMethods() + ', ' +
+				ConflictSummary.printConflictsSummary(this.mergedFileSummary) + ', ' +
+				ConflictSummary.printSameSignatureCMSummary(this.sameSignatureCMSummary) 
 
 		return result
 	}

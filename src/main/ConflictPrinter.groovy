@@ -13,19 +13,19 @@ public class ConflictPrinter {
 		for(SSMergeConflicts c : SSMergeConflicts.values()){
 			String type = c.toString()
 			this.conflictReportHeader = this.conflictReportHeader +
-			type + ' '
+			type + ', '
 			if(!type.equals(noPattern)){
 				this.conflictReportHeader = this.conflictReportHeader +
-				type + 'DS ' + type + 'CL ' +
-				type + 'IFP '
+				type + 'DS, ' + type + 'CL, ' +
+				type + 'IFP, '
 			}
 		}
 		
 		for(PatternSameSignatureCM p : PatternSameSignatureCM.values()){
 			String cause = p.toString()
-			this.conflictReportHeader = this.conflictReportHeader + cause + ' '
+			this.conflictReportHeader = this.conflictReportHeader + cause + ', '
 		}
-		this.conflictReportHeader.trim()
+		this.conflictReportHeader = this.conflictReportHeader.substring(0, this.conflictReportHeader.length()-2)
 	}
 	
 	public static String getConflictReportHeader(){
@@ -41,7 +41,7 @@ public class ConflictPrinter {
 
 		String row
 
-		row = 'Project Merge_Scenarios Conflicting_Scenarios ' +
+		row = 'Project, Merge_Scenarios, Conflicting_Scenarios, ' +
 		this.conflictReportHeader + '\n'
 
 		out.append(row)
@@ -57,8 +57,8 @@ public class ConflictPrinter {
 		File out = new File("ResultData" + File.separator + projectName + File.separator + 'MergeScenariosReport.csv')
 
 		if(!out.exists()){
-			String fileHeader = 'Merge_scenario Total_Files Files_Edited_By_One_Dev ' +
-					'Files_That_Remained_The_Same Files_Merged Files_With_Conflicts Total_Conflicts ' +
+			String fileHeader = 'Merge_scenario, Total_Files, Files_Edited_By_One_Dev, ' +
+					'Files_That_Remained_The_Same, Files_Merged, Files_With_Conflicts, Total_Conflicts, ' +
 					 this.conflictReportHeader + '\n'
 			out.append(fileHeader)
 		}
@@ -72,9 +72,9 @@ public class ConflictPrinter {
 		File out = new File('ResultData' + File.separator + projectName + File.separator +
 				'Merge_Scenarios' + File.separator + mergeScenario.name + '.csv')
 		if(!out.exists()){
-			String header = 'File Total_of_Conflicts ' +
-					'Conflicts_Inside_Methods Methods_with_Conflicts ' +
-					'Conflicts_Outside_Methods ' +
+			String header = 'File, Total_of_Conflicts, ' +
+					'Conflicts_Inside_Methods, Methods_with_Conflicts, ' +
+					'Conflicts_Outside_Methods, ' +
 					this.conflictReportHeader + '\n'
 			out.append(header)
 		}

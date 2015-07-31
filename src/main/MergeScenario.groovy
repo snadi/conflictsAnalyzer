@@ -207,11 +207,11 @@ class MergeScenario implements Observer {
 	}
 
 	public String toString(){
-		String report = this.name + ' ' + this.compareFiles.getNumberOfTotalFiles() +
-				' ' + this.compareFiles.getFilesEditedByOneDev() + ' ' +
-				this.compareFiles.getFilesThatRemainedTheSame() + ' ' + this.mergedFiles.size() +
-				' ' + this.getNumberOfFilesWithConflicts() + ' ' +
-				ConflictSummary.printConflictsSummary(this.mergeScenarioSummary) + ' ' +
+		String report = this.name + ', ' + this.compareFiles.getNumberOfTotalFiles() +
+				', ' + this.compareFiles.getFilesEditedByOneDev() + ', ' +
+				this.compareFiles.getFilesThatRemainedTheSame() + ', ' + this.mergedFiles.size() +
+				', ' + this.getNumberOfFilesWithConflicts() + ', ' +
+				ConflictSummary.printConflictsSummary(this.mergeScenarioSummary) + ', ' +
 				ConflictSummary.printSameSignatureCMSummary(this.sameSignatureCMSummary)
 
 		return report

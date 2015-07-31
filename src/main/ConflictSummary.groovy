@@ -10,15 +10,15 @@ public class ConflictSummary {
 		for(SSMergeConflicts c : SSMergeConflicts.values()){
 			String type = c.toString()
 			Conflict conflict = projectSummary.get(type)
-			result = result + conflict.getNumberOfConflicts() + ' '
+			result = result + conflict.getNumberOfConflicts() + ', '
 			if(!type.equals(noPattern)){
-				result = result + conflict.getDifferentSpacing() + ' ' +
-						conflict.getConsecutiveLines() + ' ' + conflict.getFalsePositivesIntersection() +
-						' '
+				result = result + conflict.getDifferentSpacing() + ', ' +
+						conflict.getConsecutiveLines() + ', ' + conflict.getFalsePositivesIntersection() +
+						', '
 			}
 		}
-
-		return result.trim()
+		result = result.subSequence(0, result.length()-2)
+		return result
 	}
 
 	public static HashMap<String, Conflict> initializeConflictsSummary(){
@@ -78,8 +78,9 @@ public class ConflictSummary {
 		String result = ''
 		for(PatternSameSignatureCM p : PatternSameSignatureCM.values()){
 			String cause = p.toString()
-			result = result + summary.get(cause) + ' '
+			result = result + summary.get(cause) + ', '
 		}
-		return result.trim()
+		result = result.subSequence(0, result.length()-2)
+		return result
 	}
 }

@@ -102,7 +102,7 @@ class RunStudy {
 	}
 
 	public void initializeProject(String line){
-		String[] data = line.split(" ")
+		String[] data = line.split(", ")
 		String projectName = data[0]
 		int totalScenarios = Integer.parseInt(data[1])
 		int conflictingScenarios = Integer.parseInt(data[2])

@@ -60,7 +60,7 @@ htmlFile = paste(exportPath, "conflictResults.html", sep="")
 deleteAllFiles(exportPath)
 
 #read and edit conflict rate table
-conflictRateTemp = read.table(file=paste(importPath, conflictRateFile, sep=""), header=T)
+conflictRateTemp = read.table(file=paste(importPath, conflictRateFile, sep=""), header=T, sep=",")
 conflictRate2 = data.frame(conflictRateTemp$Project, conflictRateTemp$Merge_Scenarios, conflictRateTemp$Conflicting_Scenarios)
 colnames(conflictRate2) <- c("Project", "Merge_Scenarios", "Conflicting_Scenarios")
 sumMergeScenarios = sum(conflictRate2$Merge_Scenarios)

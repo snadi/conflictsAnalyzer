@@ -162,11 +162,11 @@ class Project {
 	}
 	
 	public String toString(){
-		String result = this.name + ' ' + this.analyzedMergeScenarios + ' ' +
-		this.conflictingMergeScenarios + ' ' +
-		ConflictSummary.printConflictsSummary(this.projectSummary) + ' ' +
+		String result = this.name + ', ' + this.analyzedMergeScenarios + ', ' +
+		this.conflictingMergeScenarios + ', ' +
+		ConflictSummary.printConflictsSummary(this.projectSummary) + ', ' +
 		ConflictSummary.printSameSignatureCMSummary(this.sameSignatureCMSummary)
 
-		return result.trim()
+		return result
 	}	
 }
