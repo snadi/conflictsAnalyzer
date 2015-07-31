@@ -28,8 +28,6 @@ class MergeScenario implements Observer {
 
 	private CompareFiles compareFiles
 	
-	private static LinkedList<FSTNode> baseNodes
-	
 	private FSTGenMerger fstGenMerge
 	
 	private Map<String, Integer> sameSignatureCMSummary
@@ -139,7 +137,7 @@ class MergeScenario implements Observer {
 			if(!node.getType().contains("-Content")){
 				if(!this.hasConflicts){
 					this.hasConflicts = true
-					this.removeNonMCBaseNodes()
+					this.removeNonMCBaseNodes(fstGenMerge.baseNodes)
 				}
 				
 				this.createConflict(node)
@@ -150,7 +148,7 @@ class MergeScenario implements Observer {
 	public void createConflict(FSTTerminal node){
 		Conflict conflict = new Conflict(node, this.path);
 		if(conflict.getType().equals(SSMergeConflicts.SameSignatureCM.toString())){
-			conflict.setCauseSameSignatureCM(this.fstGenMerge.baseNodes)
+			conflict.setCauseSameSignatureCM(fstGenMerge.baseNodes)
 			this.updateSameSignatureCMSummary(conflict.getCauseSameSignatureCM())
 		}
 		this.matchConflictWithFile(conflict)
@@ -217,10 +215,11 @@ class MergeScenario implements Observer {
 		return report
 	}
 	
-	private void removeNonMCBaseNodes(){
-		for(FSTNode baseNode: this.fstGenMerge.baseNodes){
+	private void removeNonMCBaseNodes(LinkedList<FSTNode> bNodes){
+		LinkedList<FSTNode> baseNodes = new LinkedList<FSTNode>(bNodes)
+		for(FSTNode baseNode: baseNodes){
 			if(!(baseNode.getType().equals("MethodDecl") || baseNode.getType().equals("ConstructorDecl"))){
-				this.fstGenMerge.baseNodes.remove(baseNode)
+				bNodes.remove(baseNode)
 			}
 		}
 	}
