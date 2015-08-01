@@ -122,6 +122,7 @@ class RunStudy {
 		println "starting to query the gremlin database and download merge revision"
 		GremlinQueryApp gq = new GremlinQueryApp()
 		String revisionFile = gq.run(projectName, projectRepo, graphBase, this.downloadPath)
+		return revisionFile
 	}
 
 	public void runConflictsAnalyzer(String projectName, String revisionFile){
