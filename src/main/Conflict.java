@@ -49,17 +49,21 @@ public  class Conflict {
 	private ArrayList<String> conflicts;
 
 	private double similarityThreshold;
+	
+	private String nodeName;
 
 
 	public Conflict(FSTTerminal node, String path){
 		this.body = node.getBody();
+		this.nodeName = node.getName();
 		this.nodeType = node.getType();
 		this.matchPattern();
 		this.retrieveFilePath(node, path);
 		this.countConflictsInsideMethods();
 		this.checkFalsePositives();
 		this.causeSameSignatureCM = "";
-		this.similarityThreshold = 0.8;
+		this.similarityThreshold = 0.7;
+
 	}
 
 	public Conflict (String type){
@@ -85,6 +89,11 @@ public  class Conflict {
 
 	private boolean isSmallMethod(String [] splitConflict){
 		boolean smallMethod = false;
+		
+		if(isGetOrSet()){
+			smallMethod = true;
+		}
+		
 		if(splitConflict[0].equals("") && (splitConflict[2].split("\n").length < 5) ){
 			smallMethod = true;
 			this.causeSameSignatureCM = PatternSameSignatureCM.smallMethod.toString(); 
@@ -96,7 +105,15 @@ public  class Conflict {
 
 		return smallMethod;
 	}
-
+	
+	private boolean isGetOrSet(){
+		boolean result = false;
+		if(this.nodeName.contains("get") || this.nodeName.contains("set")){
+			result = true;
+		}
+		return result;
+	}
+	
 	private void isRenamedOrCopiedMethod(LinkedList<FSTNode> baseNodes, String [] splitConflict){
 
 		double similarity = this.getSimilarity(splitConflict);
@@ -167,10 +184,13 @@ public  class Conflict {
 	private void auxCheckFalsePositives(String s) {
 		String [] splitConflictBody = this.splitConflictBody(s);
 		boolean diffSpacing = this.checkDifferentSpacing(splitConflictBody);
-		boolean consecLines = this.checkConsecutiveLines(splitConflictBody);
-		if(diffSpacing && consecLines){
-			this.falsePositivesIntersection++;
+		if(!this.body.contains(SSMERGE_SEPARATOR)){
+			boolean consecLines = this.checkConsecutiveLines(splitConflictBody);
+			if(diffSpacing && consecLines){
+				this.falsePositivesIntersection++;
+			}
 		}
+		
 	}
 
 	private ArrayList<String> splitConflictsInsideMethods(){
