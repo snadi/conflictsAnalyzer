@@ -57,6 +57,7 @@ public  class Conflict {
 		this.body = node.getBody();
 		this.nodeName = node.getName();
 		this.nodeType = node.getType();
+		this.conflicts = splitConflictsInsideMethods();
 		this.matchPattern();
 		this.retrieveFilePath(node, path);
 		this.countConflictsInsideMethods();
@@ -167,7 +168,7 @@ public  class Conflict {
 	}
 
 	public void checkFalsePositives(){
-		this.conflicts = splitConflictsInsideMethods();
+		
 		if(!this.type.equals(SSMergeConflicts.SameSignatureCM.toString())){
 
 			if(conflicts.size() > 1){	
@@ -382,13 +383,15 @@ public  class Conflict {
 	public String setMethodPattern(){
 
 		String type = "";
-
-		if(isInsideMethod()){
-			type = SSMergeConflicts.EditSameMC.toString();
-		}else{
+		
+		String [] tokens = this.splitConflictBody(this.conflicts.get(0));
+		
+		if(!isInsideMethod() && tokens[1].equals("")){
 			type = SSMergeConflicts.SameSignatureCM.toString();
+		}else{
+			type = SSMergeConflicts.EditSameMC.toString();
 		}
-
+	
 		return type;
 
 	}
