@@ -49,7 +49,7 @@ public  class Conflict {
 	private ArrayList<String> conflicts;
 
 	private double similarityThreshold;
-	
+
 	private String nodeName;
 
 
@@ -90,11 +90,11 @@ public  class Conflict {
 
 	private boolean isSmallMethod(String [] splitConflict){
 		boolean smallMethod = false;
-		
+
 		if(isGetOrSet()){
 			smallMethod = true;
 		}
-		
+
 		if(splitConflict[0].equals("") && (splitConflict[2].split("\n").length < 5) ){
 			smallMethod = true;
 			this.causeSameSignatureCM = PatternSameSignatureCM.smallMethod.toString(); 
@@ -106,7 +106,7 @@ public  class Conflict {
 
 		return smallMethod;
 	}
-	
+
 	private boolean isGetOrSet(){
 		boolean result = false;
 		if(this.nodeName.contains("get") || this.nodeName.contains("set")){
@@ -114,7 +114,7 @@ public  class Conflict {
 		}
 		return result;
 	}
-	
+
 	private void isRenamedOrCopiedMethod(LinkedList<FSTNode> baseNodes, String [] splitConflict){
 
 		double similarity = this.getSimilarity(splitConflict);
@@ -168,32 +168,28 @@ public  class Conflict {
 	}
 
 	public void checkFalsePositives(){
-		
-		if(!this.type.equals(SSMergeConflicts.SameSignatureCM.toString())){
 
-			if(conflicts.size() > 1){	
-				for(String s : conflicts){
-					this.auxCheckFalsePositives(s);
-				}
-			} else{
-				this.auxCheckFalsePositives(conflicts.get(0));
-			}	
-			
-		}
+		if(conflicts.size() > 1){	
+			for(String s : conflicts){
+				this.auxCheckFalsePositives(s);
+			}
+		} else{
+			this.auxCheckFalsePositives(conflicts.get(0));
+		}	
 	}
 
 	private void auxCheckFalsePositives(String s) {
 		String [] splitConflictBody = this.splitConflictBody(s);
 		boolean diffSpacing = this.checkDifferentSpacing(splitConflictBody);
-		if(!this.body.contains(SSMERGE_SEPARATOR)){
+		if(this.type.equals(SSMergeConflicts.EditSameMC.toString())){
 			boolean consecLines = this.checkConsecutiveLines(splitConflictBody);
 			if(diffSpacing && consecLines){
 				this.falsePositivesIntersection++;
 			}
 		}
-		
-	}
 
+	}
+	
 	private ArrayList<String> splitConflictsInsideMethods(){
 		ArrayList<String> conflicts = new ArrayList<String>();
 		if(this.body.contains("<<<<<<<") && this.body.contains(">>>>>>>")){
@@ -205,7 +201,7 @@ public  class Conflict {
 		}else{
 			conflicts.add(this.body);
 		}
-		
+
 
 		return conflicts;
 	}
@@ -296,7 +292,7 @@ public  class Conflict {
 			if(tokens.length == 3){
 				splitBody[2] = tokens[2].trim();
 			}
-			
+
 
 		}
 
@@ -383,15 +379,15 @@ public  class Conflict {
 	public String setMethodPattern(){
 
 		String type = "";
-		
+
 		String [] tokens = this.splitConflictBody(this.conflicts.get(0));
-		
+
 		if(!isInsideMethod() && tokens[1].equals("")){
 			type = SSMergeConflicts.SameSignatureCM.toString();
 		}else{
 			type = SSMergeConflicts.EditSameMC.toString();
 		}
-	
+
 		return type;
 
 	}
