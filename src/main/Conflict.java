@@ -272,7 +272,10 @@ public  class Conflict {
 			String[] tokens = body.split(FSTGenMerger.MERGE_SEPARATOR);
 			splitBody[0] = tokens[0].replace(FSTGenMerger.SEMANTIC_MERGE_MARKER, "").trim();
 			splitBody[1] = tokens[1].trim();
-			splitBody[2] = tokens[2].trim();
+			if(tokens.length == 3){
+				splitBody[2] = tokens[2].trim();
+			}
+			
 
 		}
 
