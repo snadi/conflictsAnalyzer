@@ -111,6 +111,7 @@ class Project {
 
 	private printResults(MergeScenario ms) {
 		ConflictPrinter.printMergeScenarioReport(ms, this.name)
+		ConflictPrinter.updateProjectData(this)
 	}
 
 	private void updateAndPrintSummary(MergeScenario ms){

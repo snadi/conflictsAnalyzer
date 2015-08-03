@@ -46,7 +46,22 @@ public class ConflictPrinter {
 			out.append(p.toString() + '\n')
 
 	}
+	
+	public static void updateProjectData(Project p){
+		String fileName = "ResultData" + File.separator + p.getName() + File.separator + 'ProjectReport.csv'
+		def out = new File(fileName)
+		
+		out.delete()
+		out = new File(fileName)
+		
+		
+		String row = 'Project, Merge_Scenarios, Conflicting_Scenarios, ' +
+		this.conflictReportHeader + '\n'
 
+		out.append(row)
+		out.append(p.toString() + '\n')
+
+	}
 	public static void printMergeScenarioReport(MergeScenario mergeScenario, String projectName){
 
 
