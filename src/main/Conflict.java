@@ -97,11 +97,11 @@ public  class Conflict {
 			smallMethod = true;
 		}
 
-		if(splitConflict[0].equals("") && (splitConflict[2].split("\n").length < 5) ){
+		if(splitConflict[0].equals("") && (splitConflict[2].split("\n").length <= 6) ){
 			smallMethod = true;
 			this.causeSameSignatureCM = PatternSameSignatureCM.smallMethod.toString(); 
 
-		}else if((splitConflict[0].split("\n").length < 5) && (splitConflict[2].split("\n").length < 5)){
+		}else if((splitConflict[0].split("\n").length <= 6) && (splitConflict[2].split("\n").length <= 6)){
 			smallMethod = true;
 			this.causeSameSignatureCM = PatternSameSignatureCM.smallMethod.toString(); 
 		}
@@ -231,10 +231,18 @@ public  class Conflict {
 
 		String[] temp = splitConflictBody.clone();
 		String[] threeWay = this.removeInvisibleChars(temp);
-		if(threeWay[0].equals(threeWay[1]) || threeWay[2].equals(threeWay[1])){
-			this.differentSpacing++;
-			falsePositive = true;
+		if(threeWay[1].equals("")){
+			if(threeWay[0].equals(threeWay[1]) || threeWay[2].equals(threeWay[1])){
+				this.differentSpacing++;
+				falsePositive = true;
+			}
+		}else{
+			if(threeWay[0].equals(threeWay[2])){
+				this.differentSpacing++;
+				falsePositive = true;
+			}
 		}
+		
 
 		return falsePositive;
 	}
