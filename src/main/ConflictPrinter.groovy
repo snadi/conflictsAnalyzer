@@ -69,7 +69,8 @@ public class ConflictPrinter {
 
 		if(!out.exists()){
 			String fileHeader = 'Merge_scenario, Total_Files, Files_Edited_By_One_Dev, ' +
-					'Files_That_Remained_The_Same, Files_Merged, Files_With_Conflicts, ' +
+					'Files_That_Remained_The_Same, Files_Added_By_Ove_Dev, Files_Merged, ' + 
+					'Files_With_Conflicts, ' +
 					 this.conflictReportHeader + '\n'
 			out.append(fileHeader)
 		}

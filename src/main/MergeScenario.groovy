@@ -34,7 +34,8 @@ class MergeScenario implements Observer {
 	
 	private int possibleRenamings
 
-
+	private int filesAddedByOneDev
+	
 	public MergeScenario(String path){
 	
 		this.path = path
@@ -184,6 +185,7 @@ class MergeScenario implements Observer {
 		if(!matchedFile){
 			MergedFile mf = new MergedFile(conflict.getFilePath())
 			this.mergedFiles.add(mf)
+			this.filesAddedByOneDev++
 			this.addConflictToFile(conflict, this.mergedFiles.size-1)
 		}
 	}
@@ -217,7 +219,8 @@ class MergeScenario implements Observer {
 	public String toString(){
 		String report = this.name + ', ' + this.compareFiles.getNumberOfTotalFiles() +
 				', ' + this.compareFiles.getFilesEditedByOneDev() + ', ' +
-				this.compareFiles.getFilesThatRemainedTheSame() + ', ' + this.mergedFiles.size() +
+				this.compareFiles.getFilesThatRemainedTheSame() + ', ' +
+				this.filesAddedByOneDev +', ' + this.mergedFiles.size() +
 				', ' + this.getNumberOfFilesWithConflicts() + ', ' + 
 				ConflictSummary.printConflictsSummary(this.mergeScenarioSummary) + ', ' +
 				ConflictSummary.printSameSignatureCMSummary(this.sameSignatureCMSummary) + ', ' +
