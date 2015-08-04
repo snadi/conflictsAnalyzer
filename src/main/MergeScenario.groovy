@@ -180,6 +180,12 @@ class MergeScenario implements Observer {
 				i++
 			}
 		}
+		
+		if(!matchedFile){
+			MergedFile mf = new MergedFile(conflict.getFilePath())
+			this.mergedFiles.add(mf)
+			this.addConflictToFile(conflict, this.mergedFiles.size-1)
+		}
 	}
 
 	private void addConflictToFile(Conflict conflict, int index){

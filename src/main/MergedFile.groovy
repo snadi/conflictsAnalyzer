@@ -116,7 +116,7 @@ class MergedFile {
 				', ' + this.getConflictsOutsideMethods() + ', ' +
 				ConflictSummary.printConflictsSummary(this.mergedFileSummary) + ', ' +
 				ConflictSummary.printSameSignatureCMSummary(this.sameSignatureCMSummary) + ', ' +
-				this.possibleRenamings
+				this.possibleRenamings + '\n'
 
 		return result
 	}

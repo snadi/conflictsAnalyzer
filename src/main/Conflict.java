@@ -59,11 +59,10 @@ public  class Conflict {
 		this.body = node.getBody();
 		this.nodeName = node.getName();
 		this.nodeType = node.getType();
-		this.possibleRenaming = 0;
 		this.conflicts = splitConflictsInsideMethods();
+		this.countConflictsInsideMethods();
 		this.matchPattern();
 		this.retrieveFilePath(node, path);
-		this.countConflictsInsideMethods();
 		this.checkFalsePositives();
 		this.causeSameSignatureCM = "";
 		this.similarityThreshold = 0.7;
@@ -178,15 +177,20 @@ public  class Conflict {
 			}
 		} else{
 			this.auxCheckFalsePositives(conflicts.get(0));
+
 		}	
 	}
 
 	private void auxCheckFalsePositives(String s) {
 		String [] splitConflictBody = this.splitConflictBody(s);
 		boolean diffSpacing = this.checkDifferentSpacing(splitConflictBody);
+		
 		if(this.type.equals(SSMergeConflicts.EditSameMC.toString())){
-			boolean consecLines = this.checkConsecutiveLines(splitConflictBody);
-			
+			boolean consecLines = false;
+			if(this.possibleRenaming == 0){
+				consecLines = this.checkConsecutiveLines(splitConflictBody);
+			}
+
 			if(diffSpacing && consecLines){
 				this.falsePositivesIntersection++;
 			}
@@ -194,11 +198,15 @@ public  class Conflict {
 
 	}
 	
-	private int isPossibleRenaming(String[] splitBody){
+	private int isPossibleRenaming(){
 		int result = 0;
-		if(splitBody[0].equals("") || splitBody[2].equals("")){
+		String [] splitBody = this.splitConflictBody(this.conflicts.get(0));
+		
+		if(!splitBody[1].equals("") && 
+				(splitBody[0].equals("") || splitBody[2].equals(""))){
 			result = 1;
 		}
+
 		return result;
 	}
 	
@@ -241,7 +249,8 @@ public  class Conflict {
 	public boolean checkConsecutiveLines(String[] splitConflictBody){
 		boolean falsePositive = false;
 
-		if(!splitConflictBody[0].equals("")){
+		if(!splitConflictBody[0].equals("") && 
+				(!splitConflictBody[0].equals("") && !splitConflictBody[2].equals(""))) {
 			String [] leftLines = splitConflictBody[0].split("\n");
 			String [] baseLines = splitConflictBody[1].split("\n");
 			String [] rightLines = splitConflictBody[2].split("\n");
@@ -392,30 +401,59 @@ public  class Conflict {
 
 		String type = "";
 
-		String [] tokens = this.splitConflictBody(this.conflicts.get(0));
-
-		if(!isInsideMethod() && tokens[1].equals("")){
-			type = SSMergeConflicts.SameSignatureCM.toString();
-		}else{
+		if(isInsideMethod()){
 			type = SSMergeConflicts.EditSameMC.toString();
-			this.possibleRenaming = this.isPossibleRenaming(tokens);
+			
+		}else{
+			type = this.matchConflictOutsideMethod();
 		}
-
+		
 		return type;
 
 	}
 
 	public boolean isInsideMethod(){
+
 		boolean isInsideMethod = false;
 
 		String [] p1 = this.body.split("<<<<<<<");
-		String [] p2 = this.body.split(">>>>>>>");
-		String [] p3 = p2[p2.length -1].split("\n");
-		if(!p1[0].equals("") && p3.length > 1){
+		if(!p1[0].equals("")){
 			isInsideMethod = true;
 		}
 
 		return isInsideMethod;
+	}
+	
+	private String matchConflictOutsideMethod() {
+		String type = "";
+		
+		if(this.body.contains("|||||||")){
+			String [] p1 = this.body.split("\\|\\|\\|\\|\\|\\|\\|");
+			String [] p2 = p1[1].split("=======");
+			String [] a = p2[0].split("\n");
+
+			if(a.length > 1){
+
+				type = SSMergeConflicts.EditSameMC.toString();
+				if(this.numberOfConflicts == 1){
+					this.possibleRenaming = this.isPossibleRenaming();
+				}
+			}else{
+
+				type = SSMergeConflicts.SameSignatureCM.toString();
+
+			}
+		}else{
+			String [] a1 = this.body.split("=======");
+			String [] a2 = a1[0].split("\n");
+			if(a2.length > 1){
+				type = SSMergeConflicts.EditSameMC.toString();
+			}else{
+				type = SSMergeConflicts.SameSignatureCM.toString();
+			}
+		}
+		
+		return type;
 	}
 
 	public void retrieveFilePath(FSTNode node, String path){

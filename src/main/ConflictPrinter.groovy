@@ -110,6 +110,7 @@ public class ConflictPrinter {
 			for(Conflict c: mergedFile.getConflicts()){
 
 				def row = ['Conflict type: '+ c.getType() + '\n' + 
+					'Number of Conflicts: ' + c.getNumberOfConflicts() + '\n' +
 					'Different Spacing: ' + c.getDifferentSpacing() + '\n'  +
 					'Consecutive Lines: ' + c.getConsecutiveLines() + '\n'+ 
 					'Intersection: ' + c.getFalsePositivesIntersection() + '\n' +
