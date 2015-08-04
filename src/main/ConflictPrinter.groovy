@@ -25,7 +25,7 @@ public class ConflictPrinter {
 			String cause = p.toString()
 			this.conflictReportHeader = this.conflictReportHeader + cause + ', '
 		}
-		this.conflictReportHeader = this.conflictReportHeader.substring(0, this.conflictReportHeader.length()-2)
+		this.conflictReportHeader = this.conflictReportHeader + 'PossibleRenamings'
 	}
 	
 	public static String getConflictReportHeader(){
@@ -69,7 +69,7 @@ public class ConflictPrinter {
 
 		if(!out.exists()){
 			String fileHeader = 'Merge_scenario, Total_Files, Files_Edited_By_One_Dev, ' +
-					'Files_That_Remained_The_Same, Files_Merged, Files_With_Conflicts, Total_Conflicts, ' +
+					'Files_That_Remained_The_Same, Files_Merged, Files_With_Conflicts, ' +
 					 this.conflictReportHeader + '\n'
 			out.append(fileHeader)
 		}
@@ -114,6 +114,7 @@ public class ConflictPrinter {
 					'Consecutive Lines: ' + c.getConsecutiveLines() + '\n'+ 
 					'Intersection: ' + c.getFalsePositivesIntersection() + '\n' +
 					'Cause same signature: ' + c.getCauseSameSignatureCM() + '\n' +
+					'Possible renaming: ' + c.getPossibleRenaming() + '\n' +
 					'Conflict body: ' + '\n' + c.getBody() ]
 				out.append row.join(',')
 				out.append '\n'

@@ -31,8 +31,12 @@ class MergeScenario implements Observer {
 	private FSTGenMerger fstGenMerge
 	
 	private Map<String, Integer> sameSignatureCMSummary
+	
+	private int possibleRenamings
+
 
 	public MergeScenario(String path){
+	
 		this.path = path
 		this.setName()
 		//this.removeVarArgs()
@@ -104,7 +108,7 @@ class MergeScenario implements Observer {
 	public void updateMergeScenarioSummary(Conflict conflict){
 		this.mergeScenarioSummary = ConflictSummary.updateConflictsSummary(this.mergeScenarioSummary
 				, conflict)
-
+		this.possibleRenamings = this.possibleRenamings + conflict.getPossibleRenaming()
 	}
 
 	public boolean getHasConflicts(){
@@ -208,9 +212,10 @@ class MergeScenario implements Observer {
 		String report = this.name + ', ' + this.compareFiles.getNumberOfTotalFiles() +
 				', ' + this.compareFiles.getFilesEditedByOneDev() + ', ' +
 				this.compareFiles.getFilesThatRemainedTheSame() + ', ' + this.mergedFiles.size() +
-				', ' + this.getNumberOfFilesWithConflicts() + ', ' +
+				', ' + this.getNumberOfFilesWithConflicts() + ', ' + 
 				ConflictSummary.printConflictsSummary(this.mergeScenarioSummary) + ', ' +
-				ConflictSummary.printSameSignatureCMSummary(this.sameSignatureCMSummary)
+				ConflictSummary.printSameSignatureCMSummary(this.sameSignatureCMSummary) + ', ' +
+				this.possibleRenamings
 
 		return report
 	}
@@ -223,6 +228,15 @@ class MergeScenario implements Observer {
 			}
 		}
 	}
+	
+	public int getPossibleRenamings() {
+		return possibleRenamings;
+	}
+
+	public void setPossibleRenamings(int possibleRenamings) {
+		this.possibleRenamings = possibleRenamings;
+	}
+
 	public static void main(String[] args){
 		MergeScenario ms = new MergeScenario('/Users/paolaaccioly/Desktop/Teste/jdimeTests/rev.revisions')
 		ms.analyzeConflicts()
@@ -232,6 +246,7 @@ class MergeScenario implements Observer {
 		 Conflict conflict = mergeScenarioSummary.get(type)
 		 conflict.setNumberOfConflicts(5);
 		 println 'hello world'*/
+
 	}
 
 }

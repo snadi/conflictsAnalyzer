@@ -43,6 +43,8 @@ public  class Conflict {
 	private int numberOfConflicts;
 
 	private int falsePositivesIntersection;
+	
+	private int possibleRenaming;
 
 	private String causeSameSignatureCM;
 
@@ -57,6 +59,7 @@ public  class Conflict {
 		this.body = node.getBody();
 		this.nodeName = node.getName();
 		this.nodeType = node.getType();
+		this.possibleRenaming = 0;
 		this.conflicts = splitConflictsInsideMethods();
 		this.matchPattern();
 		this.retrieveFilePath(node, path);
@@ -183,11 +186,20 @@ public  class Conflict {
 		boolean diffSpacing = this.checkDifferentSpacing(splitConflictBody);
 		if(this.type.equals(SSMergeConflicts.EditSameMC.toString())){
 			boolean consecLines = this.checkConsecutiveLines(splitConflictBody);
+			
 			if(diffSpacing && consecLines){
 				this.falsePositivesIntersection++;
 			}
 		}
 
+	}
+	
+	private int isPossibleRenaming(String[] splitBody){
+		int result = 0;
+		if(splitBody[0].equals("") || splitBody[2].equals("")){
+			result = 1;
+		}
+		return result;
 	}
 	
 	private ArrayList<String> splitConflictsInsideMethods(){
@@ -386,6 +398,7 @@ public  class Conflict {
 			type = SSMergeConflicts.SameSignatureCM.toString();
 		}else{
 			type = SSMergeConflicts.EditSameMC.toString();
+			this.possibleRenaming = this.isPossibleRenaming(tokens);
 		}
 
 		return type;
@@ -509,6 +522,14 @@ public  class Conflict {
 
 	public void setConsecutiveLines(int consecutiveLines) {
 		this.consecutiveLines = consecutiveLines;
+	}
+
+	public int getPossibleRenaming() {
+		return possibleRenaming;
+	}
+
+	public void setPossibleRenaming(int possibleRenaming) {
+		this.possibleRenaming = possibleRenaming;
 	}
 
 	public static void main(String[] args) {

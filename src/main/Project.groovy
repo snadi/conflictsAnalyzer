@@ -19,6 +19,8 @@ class Project {
 	private File mergeScenarioFile
 	
 	private Map<String, Integer> sameSignatureCMSummary
+	
+	private int possibleRenamings;
 
 	public Project(String projectName, String mergeScenariosPath){
 
@@ -150,7 +152,9 @@ class Project {
 		for(SSMergeConflicts c : SSMergeConflicts.values()){
 			Conflict conflict = ms.getMergeScenarioSummary().get(c.toString())
 			this.projectSummary = ConflictSummary.updateConflictsSummary(this.projectSummary, conflict)
+			
 		}
+		this.possibleRenamings = this.possibleRenamings + ms.getPossibleRenamings()
 	}
 	
 	private void updateSameSignatureCMSummary(MergeScenario ms){
@@ -166,7 +170,8 @@ class Project {
 		String result = this.name + ', ' + this.analyzedMergeScenarios + ', ' +
 		this.conflictingMergeScenarios + ', ' +
 		ConflictSummary.printConflictsSummary(this.projectSummary) + ', ' +
-		ConflictSummary.printSameSignatureCMSummary(this.sameSignatureCMSummary)
+		ConflictSummary.printSameSignatureCMSummary(this.sameSignatureCMSummary) + ', ' +
+		this.possibleRenamings
 
 		return result
 	}	

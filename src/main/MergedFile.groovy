@@ -20,12 +20,15 @@ class MergedFile {
 	private int conflictsInsideMethods
 
 	private int conflictsOutsideMethods
+	
+	private int possibleRenamings;
 
 	private Map<String,Conflict> mergedFileSummary
 	
 	private Map<String, Integer> sameSignatureCMSummary
 
 	public MergedFile(String path){
+	
 		this.path = path
 		this.conflicts = new ArrayList<Conflict>()
 		this.createMergedFileSummary()
@@ -57,6 +60,7 @@ class MergedFile {
 					c.getNumberOfConflicts()
 
 			this.methodsWithConflicts++
+			this.possibleRenamings = this.possibleRenamings + c.getPossibleRenaming()
 		}else{
 			this.conflictsOutsideMethods++
 		}
@@ -111,7 +115,8 @@ class MergedFile {
 				this.getConflictsInsideMethods() + ', '+ this.getMethodsWithConflicts() +
 				', ' + this.getConflictsOutsideMethods() + ', ' +
 				ConflictSummary.printConflictsSummary(this.mergedFileSummary) + ', ' +
-				ConflictSummary.printSameSignatureCMSummary(this.sameSignatureCMSummary) 
+				ConflictSummary.printSameSignatureCMSummary(this.sameSignatureCMSummary) + ', ' +
+				this.possibleRenamings
 
 		return result
 	}
