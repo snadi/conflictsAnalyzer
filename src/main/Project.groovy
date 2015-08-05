@@ -22,28 +22,13 @@ class Project {
 	
 	private int possibleRenamings;
 
-	public Project(String projectName, String mergeScenariosPath){
-
+	public Project(String projectName){
+		this.mergeScenarios = new ArrayList<MergeScenario>()
 		this.name = projectName
 		initializeProjectSummary()
-		createMergeScenarios(mergeScenariosPath)
 		initializeProjectMetrics()
 		this.createSameSignatureCMSummary()
 		this.createProjectDir()
-	}
-	
-	/*The following constructor is used to initialize projects
-	 * that were already analyzed
-	 */
-	public Project(String projectName, int totalScenarios, int conflictingscenarios,
-	HashMap<String, Conflict> projectSummary, HashMap<String, Integer> sscmSummary){
-
-		this.name = projectName
-		this.analyzedMergeScenarios = totalScenarios
-		this.conflictingMergeScenarios = conflictingscenarios
-		this.computeConflictingRate()
-		this.projectSummary = projectSummary
-		this.sameSignatureCMSummary = sscmSummary
 	}
 	
 	
@@ -63,11 +48,6 @@ class Project {
 		this.conflictRate = 0.0
 	}
 
-	public void createMergeScenarios(String mergeScenariosPath){
-		this.mergeScenarios = new ArrayList<MergeScenario>()
-		this.mergeScenarioFile = new File(mergeScenariosPath)
-
-	}
 
 	public void setMergeScenarios(ArrayList<MergeScenario> ms){
 
@@ -101,14 +81,12 @@ class Project {
 		return this.projectSummary
 	}
 
-	public void analyzeConflicts(){
-		this.mergeScenarioFile.eachLine {
-			MergeScenario ms = new MergeScenario(it)
+	public void analyzeConflicts(String revisionFile){
+			MergeScenario ms = new MergeScenario(revisionFile)
 			this.mergeScenarios.add(ms)
 			ms.analyzeConflicts()
 			updateAndPrintSummary(ms)
 			ms.deleteMSDir()
-		}
 	}
 
 	private printResults(MergeScenario ms) {

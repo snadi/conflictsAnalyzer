@@ -22,13 +22,58 @@ class RunStudy {
 	public void run(String[] args){
 		def projectsList = new File(args[0])
 		updateGitMinerConfig(args[1])
+		
+		//for each project
 		projectsList.eachLine {
+			//run gitminer
 			setProjectNameAndRepo(it)
 			String graphBase = runGitMiner()
-			String revisionFile = runGremlinQuery(graphBase)
-			runConflictsAnalyzer(this.projectName, revisionFile)
+			
+			//get list of merge commits
+			ArrayList<MergeCommit> listMergeCommits = runGremlinQuery(graphBase)
+			
+			//create project and extractor
+			Extractor extractor = this.createExtractor(this.projectName, graphBase)
+			Project project = new Project(this.projectName)
+			
+			//for each merge scenario, clone and run SSMerge on it
+			analyseMergeScenario(listMergeCommits, extractor, project)
+			
+			//print project report and call R script
+			ConflictPrinter.printProjectData(project)
+			this.callRScript()
 		}
 
+	}
+
+	private void analyseMergeScenario(ArrayList listMergeCommits, Extractor extractor, 
+		Project project) {
+		
+		//if project execution breaks, update current with next merge scenario number
+		int current = 0;
+		int end = listMergeCommits.size()
+		
+		while(current < end){
+			int index = current + 1;
+			println 'Analyzing merge scenario [' + index + '] from a total of [' + end +
+					'] merge scenarios\n'
+
+			MergeCommit mc = listMergeCommits.get(current)
+			String revisionFile = extractor.extractCommit(mc)
+			if(!revisionFile.equals("")){
+				runConflictsAnalyzer(project, revisionFile)
+			}
+			current++
+		}
+	
+	}
+	
+	private Extractor createExtractor(String projectName, String graphBase){
+		GremlinProject gProject = new GremlinProject(this.projectName,
+			this.projectRepo, graphBase)
+	   Extractor extractor = new Extractor(gProject, this.downloadPath)
+	   
+	   return extractor
 	}
 	
 	public Hashtable<String, Conflict> getProjectsSummary(){
@@ -118,19 +163,17 @@ class RunStudy {
 		gitminerProps.store(gitminerPropsFile.newWriter(), null)
 	}
 
-	public String runGremlinQuery(String graphBase){
+	public ArrayList<MergeCommit> runGremlinQuery(String graphBase){
 		println "starting to query the gremlin database and download merge revision"
 		GremlinQueryApp gq = new GremlinQueryApp()
-		String revisionFile = gq.run(projectName, projectRepo, graphBase, this.downloadPath)
-		return revisionFile
+		ArrayList<MergeCommit> listMergeCommits = gq.run(projectName, projectRepo, graphBase)
+		return listMergeCommits
 	}
 
-	public void runConflictsAnalyzer(String projectName, String revisionFile){
-		println "starting to run the conflicts analyzer on project " + projectName
-		Project project = new Project(projectName, revisionFile)
-		project.analyzeConflicts()
-		ConflictPrinter.printProjectData(project)
-		this.callRScript()
+	public void runConflictsAnalyzer(Project project, String revisionFile){
+		println "starting to run the conflicts analyzer on revision " + revisionFile
+		project.analyzeConflicts(revisionFile)
+		
 	}
 	
 	public void callRScript(){
