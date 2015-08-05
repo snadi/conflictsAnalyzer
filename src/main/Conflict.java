@@ -19,7 +19,7 @@ enum SSMergeConflicts {
 }
 
 enum PatternSameSignatureCM {
-	smallMethod, renamedMethod, copiedMethod, noPattern
+	smallMethod, renamedMethod, copiedMethod, copiedFile, noPattern
 }
 
 public  class Conflict {
@@ -79,15 +79,20 @@ public  class Conflict {
 
 
 
-	public void setCauseSameSignatureCM(LinkedList<FSTNode> baseNodes) {
-		String [] splitConflictBody = this.splitConflictBody(this.conflicts.get(0));
-		boolean isSmallMethod = this.isSmallMethod(splitConflictBody);
-		if(!isSmallMethod){
-			this.isRenamedOrCopiedMethod(baseNodes, splitConflictBody);
+	public void setCauseSameSignatureCM(LinkedList<FSTNode> baseNodes, boolean fileAddedByOneDev) {
+		if(!fileAddedByOneDev){
+			String [] splitConflictBody = this.splitConflictBody(this.conflicts.get(0));
+			boolean isSmallMethod = this.isSmallMethod(splitConflictBody);
+			if(!isSmallMethod){
+				this.isRenamedOrCopiedMethod(baseNodes, splitConflictBody);
+			}
+			if(this.causeSameSignatureCM.equals("")){
+				this.causeSameSignatureCM = PatternSameSignatureCM.noPattern.toString();
+			}
+		}else{
+			this.causeSameSignatureCM = PatternSameSignatureCM.copiedFile.toString();
 		}
-		if(this.causeSameSignatureCM.equals("")){
-			this.causeSameSignatureCM = PatternSameSignatureCM.noPattern.toString();
-		}
+
 	}
 
 	private boolean isSmallMethod(String [] splitConflict){

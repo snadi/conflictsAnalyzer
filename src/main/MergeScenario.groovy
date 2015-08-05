@@ -152,13 +152,8 @@ class MergeScenario implements Observer {
 
 	public void createConflict(FSTTerminal node){
 		Conflict conflict = new Conflict(node, this.path);
-		if(conflict.getType().equals(SSMergeConflicts.SameSignatureCM.toString())){
-			conflict.setCauseSameSignatureCM(fstGenMerge.baseNodes)
-			this.updateSameSignatureCMSummary(conflict.getCauseSameSignatureCM())
-		}
 		this.matchConflictWithFile(conflict)
 		this.updateMergeScenarioSummary(conflict)
-
 
 	}
 	
@@ -176,7 +171,8 @@ class MergeScenario implements Observer {
 			String mergedFilePath = this.mergedFiles.elementData(i).path.replaceFirst(rev_base, this.name)
 			if(conflictPath.equals(mergedFilePath)){
 				matchedFile = true
-				this.addConflictToFile(conflict, i)
+				boolean addedByOneDev = this.mergedFiles.get(i).isAddedByOneDev()
+				this.addConflictToFile(conflict, i, addedByOneDev)
 			}else{
 				i++
 			}
@@ -184,16 +180,26 @@ class MergeScenario implements Observer {
 		
 		if(!matchedFile){
 			MergedFile mf = new MergedFile(conflict.getFilePath())
+			mf.setAddedByOneDev(true)
 			this.mergedFiles.add(mf)
 			this.filesAddedByOneDev++
-			this.addConflictToFile(conflict, this.mergedFiles.size-1)
+			this.addConflictToFile(conflict, this.mergedFiles.size-1, true)
 		}
+		
 	}
 
-	private void addConflictToFile(Conflict conflict, int index){
-
+	private void addConflictToFile(Conflict conflict, int index, boolean matched){
+		
+		if(conflict.getType().equals(SSMergeConflicts.SameSignatureCM.toString())){
+			
+			conflict.setCauseSameSignatureCM(fstGenMerge.baseNodes, matched)
+			String cause = conflict.getCauseSameSignatureCM()
+			this.updateSameSignatureCMSummary(cause)
+		}
+		
 		this.mergedFiles.elementData(index).conflicts.add(conflict)
 		this.mergedFiles.elementData(index).updateMetrics(conflict)
+
 	}
 
 	public String printMetrics(){

@@ -21,14 +21,16 @@ class MergedFile {
 
 	private int conflictsOutsideMethods
 	
-	private int possibleRenamings;
+	private int possibleRenamings
+	
+	private boolean addedByOneDev
 
 	private Map<String,Conflict> mergedFileSummary
 	
 	private Map<String, Integer> sameSignatureCMSummary
 
 	public MergedFile(String path){
-	
+		addedByOneDev = false;
 		this.path = path
 		this.conflicts = new ArrayList<Conflict>()
 		this.createMergedFileSummary()
@@ -107,7 +109,14 @@ class MergedFile {
 
 		return this.conflictsOutsideMethods
 	}
+	
+	public boolean isAddedByOneDev() {
+		return addedByOneDev;
+	}
 
+	public void setAddedByOneDev(boolean addedByOneDev) {
+		this.addedByOneDev = addedByOneDev;
+	}
 
 	public String toString(){
 
