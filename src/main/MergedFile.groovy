@@ -57,7 +57,8 @@ class MergedFile {
 
 	public void updateMetrics(Conflict c){
 		this.numberOfConflicts = this.numberOfConflicts + c.getNumberOfConflicts()
-		if(c.getType().equals(SSMergeConflicts.EditSameMC.toString())){
+		if(c.getType().equals(SSMergeConflicts.EditSameMC.toString()) ||
+			c.getType().equals(SSMergeConflicts.SameSignatureCM.toString())){
 			this.conflictsInsideMethods = this.conflictsInsideMethods +
 					c.getNumberOfConflicts()
 

@@ -100,6 +100,7 @@ public  class Conflict {
 
 		if(isGetOrSet()){
 			smallMethod = true;
+			this.causeSameSignatureCM = PatternSameSignatureCM.smallMethod.toString(); 
 		}
 
 		if(splitConflict[0].equals("") && (splitConflict[2].split("\n").length <= 6) ){
@@ -236,16 +237,18 @@ public  class Conflict {
 
 		String[] temp = splitConflictBody.clone();
 		String[] threeWay = this.removeInvisibleChars(temp);
-		if(threeWay[1].equals("")){
+		if(!threeWay[1].equals("")){
 			if(threeWay[0].equals(threeWay[1]) || threeWay[2].equals(threeWay[1])){
 				this.differentSpacing++;
 				falsePositive = true;
 			}
 		}else{
-			if(threeWay[0].equals(threeWay[2])){
+			
+			if(threeWay[0].equals("") || threeWay[0].equals(threeWay[2])){
 				this.differentSpacing++;
 				falsePositive = true;
 			}
+			
 		}
 		
 
