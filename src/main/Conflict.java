@@ -431,11 +431,20 @@ public  class Conflict {
 	public boolean isInsideMethod(){
 
 		boolean isInsideMethod = false;
-
-		String [] p1 = this.body.split("<<<<<<<");
-		if(!p1[0].equals("")){
+		
+		if(this.numberOfConflicts > 1){
 			isInsideMethod = true;
+		}else{
+			String [] p1 = this.body.split("<<<<<<<");
+			String [] p2 = this.body.split(">>>>>>>");
+			String [] p3 = p2[1].split("\n");
+			
+			if(!p1[0].equals("") && p3.length > 1){
+			
+					isInsideMethod = true;
+			}
 		}
+		
 
 		return isInsideMethod;
 	}

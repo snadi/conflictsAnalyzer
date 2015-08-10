@@ -28,6 +28,7 @@ class RunStudy {
 			//run gitminer
 			setProjectNameAndRepo(it)
 			String graphBase = runGitMiner()
+			//String graphBase = this.gitminerLocation + 'graph_cassandra.db'
 			
 			//get list of merge commits
 			ArrayList<MergeCommit> listMergeCommits = runGremlinQuery(graphBase)
