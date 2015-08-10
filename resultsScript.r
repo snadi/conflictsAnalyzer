@@ -27,6 +27,8 @@ computePatternPercentages <- function(conflicts, patternName){
   return(patternPercentages)
 }
 
+
+
 deleteAllFiles <- function(exportPath) {
   
   fileToRemove = paste(exportPath, "conflictResults.html", sep="")
@@ -48,7 +50,7 @@ deleteAllFiles <- function(exportPath) {
 
 main<-function(){
 importPath = "/Users/paolaaccioly/Documents/testeConflictsAnalyzer/conflictsAnalyzer/"
-exportPath = "/Users/paolaaccioly/Documents/testeConflictsAnalyzer/graphs/"
+exportPath = "/Users/paolaaccioly/Dropbox/Public/conflictpattern/"
 
 conflictRateFile="projectsPatternData.csv"
 #conflictPatternFile="patternsData.csv"
@@ -117,11 +119,65 @@ percentages <- computePatternPercentages(conflictRateTemp, "EditSameMC")
 boxplot(percentages,xlab="Projects", ylab="EditSameMC (%)", col="blue", outline=FALSE)
 dev.off
 
+#false positives EditSameMC
+BarPlotESMCFP = paste("BarPlotESMCFP.png")
+png(paste(exportPath, BarPlotESMCFP, sep=""))
+sumEditSameMCDS = sum(conflictRateTemp$EditSameMCDS)
+sumEditSameMCCL = sum(conflictRateTemp$EditSameMCCL)
+sumEditSameMCIFP = sum(conflictRateTemp$EditSameMCIFP)
+realEditSameMC = EditSameMC - sumEditSameMCDS - sumEditSameMCCL + sumEditSameMCIFP
+EditSameMCDS = sumEditSameMCDS - sumEditSameMCIFP
+EditSameMCCL = sumEditSameMCCL - sumEditSameMCIFP
+Values <- c(realEditSameMC, EditSameMCDS, EditSameMCCL, sumEditSameMCIFP)
+Group <- c("Real conflicts", "Conflicts due to different identation", "Conflicts due to consecutive lines",
+            "Intersection")
+df <- data.frame(Group, Values)
+bp<- ggplot(df, aes(x="EditSameMC", y=Values, fill=Group))+
+  geom_bar(width = 1, stat = "identity")
+print(bp)
+dev.off
+
+
 #SameSignatureCM
 BoxplotSSCM = paste("BoxplotSSCM.png")
 png(paste(exportPath, BoxplotSSCM, sep=""))
 percentages <- computePatternPercentages(conflictRateTemp, "SameSignatureCM")
 boxplot(percentages,xlab="Projects", ylab="SameSignatureCM (%)", col="red", outline=FALSE)
+dev.off
+
+#false positives SameSignatureCM
+BarPlotSSCMFP = paste("BarPlotSSCMFP.png")
+png(paste(exportPath, BarPlotSSCMFP, sep=""))
+sumSameSignatureMCDS = sum(conflictRateTemp$SameSignatureCMDS)
+sumSameSignatureMCCL = sum(conflictRateTemp$SameSignatureCMCL)
+sumSameSignatureMCIFP = sum(conflictRateTemp$SameSignatureCMIFP)
+realSameSignatureMC = SameSignatureCM - sumSameSignatureMCDS - sumSameSignatureMCCL + sumSameSignatureMCIFP
+SameSignatureMCDS = sumSameSignatureMCDS - sumSameSignatureMCIFP
+SameSignatureCMCL = sumSameSignatureMCCL - sumSameSignatureMCIFP
+Values <- c(realSameSignatureMC, SameSignatureMCDS, SameSignatureCMCL, sumSameSignatureMCIFP)
+Group <- c("Real conflicts", "Conflicts due to different identation", "Conflicts due to consecutive lines",
+           "Intersection")
+df <- data.frame(Group, Values)
+bp<- ggplot(df, aes(x="SameSignatureMC", y=Values, fill=Group))+
+  geom_bar(width = 1, stat = "identity")
+print(bp)
+dev.off
+
+#causes for SameSignatureCM
+BoxplotCSSCM = paste("CausesSameSignatureCM.png")
+png(paste(exportPath, BoxplotCSSCM, sep=""))
+sumSmallMethod = sum(conflictRateTemp$smallMethod)
+sumRenamedMethod = sum(conflictRateTemp$renamedMethod)
+sumCopiedMethod= sum(conflictRateTemp$copiedMethod)
+sumCopiedFile = sum(conflictRateTemp$copiedFile)
+sumNoPattern = sum(conflictRateTemp$noPattern)
+Values <- c(sumSmallMethod, sumRenamedMethod, sumCopiedMethod, sumCopiedFile, sumNoPattern)
+Causes <- c("Small methods", "Renamed methods", "Copied methods", "Merge with commits from the same branch",
+            "None of the above")
+df <- data.frame(Causes, Values)
+bp<- ggplot(df, aes(x="", y=Values, fill=Causes))+
+      geom_bar(width = 1, stat = "identity")
+print(bp)
 dev.off
 
 #ImplementList
@@ -206,6 +262,13 @@ HTMLInsertGraph(file=htmlFile, GraphFileName=barChartFileName, Align="center", a
 
 HTML("<hr><h2>Conflicts Table</h2>", file=htmlFile, append=TRUE)
 HTML(conflictsTable, file=htmlFile, append=TRUE)
+
+HTML("<hr><h2>False Positives Occurences</h2>", file=htmlFile, append=TRUE)
+HTMLInsertGraph(file=htmlFile, GraphFileName=BarPlotESMCFP, Align="center", append=TRUE)
+HTMLInsertGraph(file=htmlFile, GraphFileName=BarPlotSSCMFP, Align="center", append=TRUE)
+
+HTML("<hr><h2>Causes for SameSignatureCM occurrences</h2>", file=htmlFile, append=TRUE)
+HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotCSSCM, Align="center", append=TRUE)
 
 HTML("<hr><h2>Conflict Patterns Percentages by Project Boxplots</h2>", file=htmlFile, append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=boxplotLBMCF, Align="center", append=TRUE)
