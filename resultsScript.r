@@ -27,8 +27,6 @@ computePatternPercentages <- function(conflicts, patternName){
   return(patternPercentages)
 }
 
-
-
 deleteAllFiles <- function(exportPath) {
   
   fileToRemove = paste(exportPath, "conflictResults.html", sep="")
@@ -176,7 +174,8 @@ realAddSameFd <- sum(conflictRateTemp$AddSameFd) - sum(conflictRateTemp$AddSameF
   sum(conflictRateTemp$AddSameFdCL) + sum(conflictRateTemp$AddSameFdIFP)
 realEditSameFd <- sum(conflictRateTemp$EditSameFd) - sum(conflictRateTemp$EditSameFdDS) - 
   sum(conflictRateTemp$EditSameFdCL) + sum(conflictRateTemp$EditSameFdIFP)
-realExtendsList <- sum(conflictRateTemp$ExtendsList)
+realExtendsList <- sum(conflictRateTemp$ExtendsList) - sum(conflictRateTemp$ExtendsListDS) - 
+  sum(conflictRateTemp$ExtendsListCL) + sum(conflictRateTemp$ExtendsListIFP)
 
 barChartFP = paste("barChartFP.png")
 png(paste(exportPath, barChartFP, sep=""))
@@ -193,6 +192,15 @@ p <- ggplot(dat, aes(x = Conflicts, y = Frequency)) +
 
 print(p)
 dev.off
+
+#conflicts table
+Conflicts_Patterns <- c("DefaultValueAnnotation", "ImplementList", "ModifierList", "EditSameMC", 
+                        "SameSignatureCM", "AddSameFd", "EditSameFd", "ExtendsList", "TOTAL")
+conflictsSum <- sum(realDefaultValueAnnotation, realImplementList, realModifierList, realEditSameMC, 
+                    realSameSignatureMC, realAddSameFd, realEditSameFd, realExtendsList)
+Occurrences <- c(realDefaultValueAnnotation, realImplementList, realModifierList, realEditSameMC, 
+                 realSameSignatureMC, realAddSameFd, realEditSameFd, realExtendsList, conflictsSum)
+realconflictsTable <- data.frame(Conflicts_Patterns, Occurrences)
 
 #causes for SameSignatureCM
 BoxplotCSSCM = paste("CausesSameSignatureCM.png")
@@ -296,6 +304,7 @@ HTML(conflictsTable, file=htmlFile, append=TRUE)
 
 HTML("<hr><h2>Conflicts Patterns Occurrences Without the False Positives</h2>", file=htmlFile, append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=barChartFP, Align="center", append=TRUE)
+HTML(realconflictsTable, file=htmlFile, append=TRUE)
 
 HTML("<hr><h2>False Positives Occurences</h2>", file=htmlFile, append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=BarPlotESMCFP, Align="center", append=TRUE)
