@@ -74,9 +74,10 @@ conflictRate["Conflict_Rate(%)"] <- (conflictRate$Conflicting_Scenarios/conflict
 attach(conflictRate)
 
 #boxplot conflicting rate
+library(beanplot)
 boxplotCRFileName = paste("BoxplotCR.png")
 png(paste(exportPath, boxplotCRFileName, sep=""))
-boxplot(conflictRate$Conflict_Rate,xlab="Projects", ylab="Conflict Rate %", col="darkgreen")
+beanplot(conflictRate$Conflict_Rate, xlab="Projects", ylab="Conflict Rate %",col="green")
 dev.off
 
 #read conflict patterns values 
@@ -99,7 +100,7 @@ library(ggplot2)
 p <- ggplot(dat, aes(x = Conflicts, y = Frequency)) +
   geom_bar(stat = "identity") +
   geom_text(aes(label = sprintf("%.2f%%", Frequency/sum(Frequency) * 100)), 
-            vjust = -.5)
+            vjust = -.5) + theme_grey(base_size = 8) 
 
 print(p)
 dev.off
@@ -161,6 +162,36 @@ df <- data.frame(Group, Values)
 bp<- ggplot(df, aes(x="SameSignatureMC", y=Values, fill=Group))+
   geom_bar(width = 1, stat = "identity")
 print(bp)
+dev.off
+
+#bar plot without false positives
+realDefaultValueAnnotation <- sum(conflictRateTemp$DefaultValueAnnotation) - 
+  sum(conflictRateTemp$DefaultValueAnnotationDS) - sum(conflictRateTemp$DefaultValueAnnotationCS) + 
+  sum(conflictRateTemp$DefaultValueAnnotationIFP)
+realImplementList <- sum(conflictRateTemp$ImplementList) - sum(conflictRateTemp$ImplementListDS) - 
+  sum(conflictRateTemp$ImplementListCL) + sum(conflictRateTemp$ImplementListIFP)
+realModifierList <- sum(conflictRateTemp$ModifierList) - sum(conflictRateTemp$ModifierListDS) - 
+  sum(conflictRateTemp$ModifierListCL) + sum(conflictRateTemp$ModifierListIFP)
+realAddSameFd <- sum(conflictRateTemp$AddSameFd) - sum(conflictRateTemp$AddSameFdDS) - 
+  sum(conflictRateTemp$AddSameFdCL) + sum(conflictRateTemp$AddSameFdIFP)
+realEditSameFd <- sum(conflictRateTemp$EditSameFd) - sum(conflictRateTemp$EditSameFdDS) - 
+  sum(conflictRateTemp$EditSameFdCL) + sum(conflictRateTemp$EditSameFdIFP)
+realExtendsList <- sum(conflictRateTemp$ExtendsList)
+
+barChartFP = paste("barChartFP.png")
+png(paste(exportPath, barChartFP, sep=""))
+slices <- c(realDefaultValueAnnotation, realImplementList, realModifierList, realEditSameMC, 
+            realSameSignatureMC, realAddSameFd, realEditSameFd, realExtendsList)
+labels <- c("DefaultValueA", "ImplementList", "ModifierList", "EditSameMC", "SameSignatureCM", 
+            "AddSameFd", "EditSameFd", "ExtendsList") 
+dat <- data.frame(Frequency = slices,Conflicts = labels)
+
+p <- ggplot(dat, aes(x = Conflicts, y = Frequency)) +
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = sprintf("%.2f%%", Frequency/sum(Frequency) * 100)), 
+            vjust = -.5) + theme_grey(base_size = 8) 
+
+print(p)
 dev.off
 
 #causes for SameSignatureCM
@@ -262,6 +293,9 @@ HTMLInsertGraph(file=htmlFile, GraphFileName=barChartFileName, Align="center", a
 
 HTML("<hr><h2>Conflicts Table</h2>", file=htmlFile, append=TRUE)
 HTML(conflictsTable, file=htmlFile, append=TRUE)
+
+HTML("<hr><h2>Conflicts Patterns Occurrences Without the False Positives</h2>", file=htmlFile, append=TRUE)
+HTMLInsertGraph(file=htmlFile, GraphFileName=barChartFP, Align="center", append=TRUE)
 
 HTML("<hr><h2>False Positives Occurences</h2>", file=htmlFile, append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=BarPlotESMCFP, Align="center", append=TRUE)
