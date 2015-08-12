@@ -51,6 +51,7 @@ importPath = "/Users/paolaaccioly/Documents/testeConflictsAnalyzer/conflictsAnal
 exportPath = "/Users/paolaaccioly/Dropbox/Public/conflictpattern/"
 
 conflictRateFile="projectsPatternData.csv"
+realConflictRateFile = "realConflictRate.csv"
 #conflictPatternFile="patternsData.csv"
 
 #HTML file
@@ -71,11 +72,34 @@ conflictRate = rbind(conflictRate2, total)
 conflictRate["Conflict_Rate(%)"] <- (conflictRate$Conflicting_Scenarios/conflictRate$Merge_Scenarios)*100
 attach(conflictRate)
 
+#read and edit real conflict rate table
+  realConflictRateFileTemp = read.table(file=paste(importPath,realConflictRateFile , sep=""), header=T, sep=",")
+  realconflictRate2 = data.frame(realConflictRateFileTemp$Projects, realConflictRateFileTemp$Merge.Scenarios, realConflictRateFileTemp$Conflicting.Scenarios)
+  colnames(realconflictRate2) <- c("Projects", "Merge.Scenarios", "Conflicting.Scenarios")
+  realsumMergeScenarios = sum(realconflictRate2$Merge.Scenarios)
+  realsumConflictionScenarios = sum(realconflictRate2$Conflicting.Scenarios)
+  realtotal = data.frame(Projects="TOTAL", Merge.Scenarios=realsumMergeScenarios, 
+                         Conflicting.Scenarios=realsumConflictionScenarios)
+  realconflictRate = rbind(realconflictRate2, realtotal)
+  
+  realconflictRate["Conflict.Rate(%)"] <- (realconflictRate$Conflicting.Scenarios/realconflictRate$Merge.Scenarios)*100
+  attach(realconflictRate)
+
+
+
+
 #boxplot conflicting rate
 library(beanplot)
 boxplotCRFileName = paste("BoxplotCR.png")
 png(paste(exportPath, boxplotCRFileName, sep=""))
 beanplot(conflictRate$Conflict_Rate, xlab="Projects", ylab="Conflict Rate %",col="green")
+dev.off
+
+#boxplot real conflicting rate
+
+realboxplotCRFileName = paste("realBoxplotCR.png")
+png(paste(exportPath, realboxplotCRFileName, sep=""))
+beanplot(realconflictRate$Conflict.Rate, xlab="Projects", ylab="Conflict Rate %",col="green")
 dev.off
 
 #read conflict patterns values 
@@ -127,12 +151,13 @@ sumEditSameMCIFP = sum(conflictRateTemp$EditSameMCIFP)
 realEditSameMC = EditSameMC - sumEditSameMCDS - sumEditSameMCCL + sumEditSameMCIFP
 EditSameMCDS = sumEditSameMCDS - sumEditSameMCIFP
 EditSameMCCL = sumEditSameMCCL - sumEditSameMCIFP
-Values <- c(realEditSameMC, EditSameMCDS, EditSameMCCL, sumEditSameMCIFP)
+Values <- c(realEditSameMC , EditSameMCDS , EditSameMCCL, sumEditSameMCIFP)
 Group <- c("Real conflicts", "Conflicts due to different identation", "Conflicts due to consecutive lines",
             "Intersection")
 df <- data.frame(Group, Values)
 bp<- ggplot(df, aes(x="EditSameMC", y=Values, fill=Group))+
   geom_bar(width = 1, stat = "identity")
+
 print(bp)
 dev.off
 
@@ -287,7 +312,7 @@ dev.off
 library(R2HTML)
 
 title = paste("<hr><h1>Results for Conflict Rate and Conflict Patterns Occurrences</h1>", sep="")
-
+HTML("<link rel=stylesheet type=text/css href=R2HTML.css>", file=htmlFile, append=TRUE)
 HTML.title(title, file=htmlFile, append=TRUE)
 
 HTML("<hr><h2>Conflict Rate</h2>", file=htmlFile, append=TRUE)
@@ -309,6 +334,12 @@ HTML(realconflictsTable, file=htmlFile, append=TRUE)
 HTML("<hr><h2>False Positives Occurences</h2>", file=htmlFile, append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=BarPlotESMCFP, Align="center", append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=BarPlotSSCMFP, Align="center", append=TRUE)
+
+HTML("<hr><h2>Conflict Rate Without False Positives</h2>", file=htmlFile, append=TRUE)
+HTML(realconflictRate, file=htmlFile, append=TRUE)
+
+HTML("<hr><h2>Conflict Rate Boxplot Without False Positives</h2>", file=htmlFile, append=TRUE)
+HTMLInsertGraph(file=htmlFile, GraphFileName=realboxplotCRFileName, Align="center", append=TRUE)
 
 HTML("<hr><h2>Causes for SameSignatureCM occurrences</h2>", file=htmlFile, append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotCSSCM, Align="center", append=TRUE)

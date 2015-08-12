@@ -11,12 +11,6 @@ import merger.FSTGenMerger;
 import util.StringSimilarity;
 
 
-enum SSMergeConflicts {
-
-	ModifierList, DefaultValueAnnotation, ImplementList, EditSameMC, AddSameFd, 
-	EditSameFd, SameSignatureCM, ExtendsList, NOPATTERN
-
-}
 
 enum PatternSameSignatureCM {
 	smallMethod, renamedMethod, copiedMethod, copiedFile, noPattern
