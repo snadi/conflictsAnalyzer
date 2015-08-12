@@ -58,17 +58,25 @@ public class ConflictSummary {
 		for(PatternSameSignatureCM p : PatternSameSignatureCM.values()){
 			String type = p.toString();
 			sameSignatureCMSummary.put(type, 0)
+			String ds = type + 'DS'
+			sameSignatureCMSummary.put(ds, 0)
 		}
 
 		return sameSignatureCMSummary
 	}
 
-	public static HashMap<String, Conflict> updateSameSignatureCMSummary(HashMap<String, Integer> summary, String cause){
+	public static HashMap<String, Conflict> updateSameSignatureCMSummary(HashMap<String, Integer> summary, String cause, int ds){
 
 		String conflictType = cause
 		int quantity = summary.get(conflictType)
 		quantity++
 		summary.put(conflictType, quantity)
+		if(ds==1){
+			String diffSpacing = conflictType + 'DS'
+			int quantity2 = summary.get(diffSpacing)
+			quantity2++
+			summary.put(diffSpacing, quantity2)
+		}
 
 		return summary
 
@@ -78,7 +86,10 @@ public class ConflictSummary {
 		String result = ''
 		for(PatternSameSignatureCM p : PatternSameSignatureCM.values()){
 			String cause = p.toString()
-			result = result + summary.get(cause) + ', '
+			String diffSpacing = cause + 'DS'
+			result = result + summary.get(cause) + ', ' + summary.get(diffSpacing) + ', '
+			
+			
 		}
 		result = result.subSequence(0, result.length()-2)
 		return result

@@ -23,7 +23,8 @@ public class ConflictPrinter {
 		
 		for(PatternSameSignatureCM p : PatternSameSignatureCM.values()){
 			String cause = p.toString()
-			this.conflictReportHeader = this.conflictReportHeader + cause + ', '
+			String diffSpacing = cause + 'DS'
+			this.conflictReportHeader = this.conflictReportHeader + cause + ', ' + diffSpacing + ', '
 		}
 		this.conflictReportHeader = this.conflictReportHeader + 'PossibleRenamings'
 	}

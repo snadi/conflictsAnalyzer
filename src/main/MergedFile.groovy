@@ -70,14 +70,14 @@ class MergedFile {
 
 		this.updateMergedFileSummary(c)
 		if(c.getType().equals(SSMergeConflicts.SameSignatureCM.toString())){
-			this.updateSameSignatureCMSummary(c.getCauseSameSignatureCM())
+			this.updateSameSignatureCMSummary(c.getCauseSameSignatureCM(), c.getDifferentSpacing())
 		}
 		
 	}
 	
-	private void updateSameSignatureCMSummary(String cause){
+	private void updateSameSignatureCMSummary(String cause, int ds){
 		this.sameSignatureCMSummary = ConflictSummary.
-		updateSameSignatureCMSummary(this.sameSignatureCMSummary, cause)
+		updateSameSignatureCMSummary(this.sameSignatureCMSummary, cause, ds)
 	}
 
 	public String getPath(){

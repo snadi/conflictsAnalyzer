@@ -51,7 +51,7 @@ importPath = "/Users/paolaaccioly/Documents/testeConflictsAnalyzer/conflictsAnal
 exportPath = "/Users/paolaaccioly/Dropbox/Public/conflictpattern/"
 
 conflictRateFile="projectsPatternData.csv"
-realConflictRateFile = "realConflictRate.csv"
+#realConflictRateFile = "realConflictRate.csv"
 #conflictPatternFile="patternsData.csv"
 
 #HTML file
@@ -73,17 +73,17 @@ conflictRate["Conflict_Rate(%)"] <- (conflictRate$Conflicting_Scenarios/conflict
 attach(conflictRate)
 
 #read and edit real conflict rate table
-  realConflictRateFileTemp = read.table(file=paste(importPath,realConflictRateFile , sep=""), header=T, sep=",")
-  realconflictRate2 = data.frame(realConflictRateFileTemp$Projects, realConflictRateFileTemp$Merge.Scenarios, realConflictRateFileTemp$Conflicting.Scenarios)
-  colnames(realconflictRate2) <- c("Projects", "Merge.Scenarios", "Conflicting.Scenarios")
-  realsumMergeScenarios = sum(realconflictRate2$Merge.Scenarios)
-  realsumConflictionScenarios = sum(realconflictRate2$Conflicting.Scenarios)
-  realtotal = data.frame(Projects="TOTAL", Merge.Scenarios=realsumMergeScenarios, 
-                         Conflicting.Scenarios=realsumConflictionScenarios)
-  realconflictRate = rbind(realconflictRate2, realtotal)
-  
-  realconflictRate["Conflict.Rate(%)"] <- (realconflictRate$Conflicting.Scenarios/realconflictRate$Merge.Scenarios)*100
-  attach(realconflictRate)
+#  realConflictRateFileTemp = read.table(file=paste(importPath,realConflictRateFile , sep=""), header=T, sep=",")
+# realconflictRate2 = data.frame(realConflictRateFileTemp$Projects, realConflictRateFileTemp$Merge.Scenarios, realConflictRateFileTemp$Conflicting.Scenarios)
+# colnames(realconflictRate2) <- c("Projects", "Merge.Scenarios", "Conflicting.Scenarios")
+# realsumMergeScenarios = sum(realconflictRate2$Merge.Scenarios)
+# realsumConflictionScenarios = sum(realconflictRate2$Conflicting.Scenarios)
+# realtotal = data.frame(Projects="TOTAL", Merge.Scenarios=realsumMergeScenarios,
+#                        Conflicting.Scenarios=realsumConflictionScenarios)
+# realconflictRate = rbind(realconflictRate2, realtotal)
+#
+# realconflictRate["Conflict.Rate(%)"] <- (realconflictRate$Conflicting.Scenarios/realconflictRate$Merge.Scenarios)*100
+# attach(realconflictRate)
 
 
 

@@ -157,9 +157,9 @@ class MergeScenario implements Observer {
 
 	}
 	
-	private void updateSameSignatureCMSummary(String cause){
+	private void updateSameSignatureCMSummary(String cause, int ds){
 		this.sameSignatureCMSummary = ConflictSummary.
-		updateSameSignatureCMSummary(this.sameSignatureCMSummary, cause)
+		updateSameSignatureCMSummary(this.sameSignatureCMSummary, cause, ds)
 	}
 	
 	private void matchConflictWithFile(Conflict conflict){
@@ -194,7 +194,7 @@ class MergeScenario implements Observer {
 			
 			conflict.setCauseSameSignatureCM(fstGenMerge.baseNodes, matched)
 			String cause = conflict.getCauseSameSignatureCM()
-			this.updateSameSignatureCMSummary(cause)
+			this.updateSameSignatureCMSummary(cause, conflict.getDifferentSpacing())
 		}
 		
 		this.mergedFiles.elementData(index).conflicts.add(conflict)

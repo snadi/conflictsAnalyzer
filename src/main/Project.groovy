@@ -137,10 +137,17 @@ class Project {
 	
 	private void updateSameSignatureCMSummary(MergeScenario ms){
 		for(PatternSameSignatureCM p : PatternSameSignatureCM.values()){
+			//update cause
 			String cause = p.toString()
 			int quantity = ms.sameSignatureCMSummary.get(cause)
 			quantity = quantity + this.sameSignatureCMSummary.get(cause)
 			this.sameSignatureCMSummary.put(cause, quantity)
+			
+			//update false positives
+			String diffSpacing = cause + 'DS'
+			int quantity2 = ms.sameSignatureCMSummary.get(diffSpacing)
+			quantity2 = quantity2 + this.sameSignatureCMSummary.get(diffSpacing)
+			this.sameSignatureCMSummary.put(diffSpacing, quantity2)
 		}
 	}
 	
