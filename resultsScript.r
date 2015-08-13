@@ -10,7 +10,9 @@ computePatternPercentages <- function(conflicts, patternName){
   for(i in 1:numberOfRows){
     sumConflicts <- 0
     
-    for(j in 4:9){
+    indexes <- c(4,8,12,16,20,24,28,32)
+    
+    for(j in indexes){
       sumConflicts <- sum(sumConflicts, conflicts[i,j])
     }
     
@@ -92,15 +94,15 @@ attach(conflictRate)
 library(beanplot)
 boxplotCRFileName = paste("BoxplotCR.png")
 png(paste(exportPath, boxplotCRFileName, sep=""))
-beanplot(conflictRate$Conflict_Rate, xlab="Projects", ylab="Conflict Rate %",col="green")
+beanplot(conflictRate$Conflict_Rate, xlab="Projects", ylab="Conflict Rate %",col="green", log = "y")
 dev.off
 
 #boxplot real conflicting rate
 
-realboxplotCRFileName = paste("realBoxplotCR.png")
-png(paste(exportPath, realboxplotCRFileName, sep=""))
-beanplot(realconflictRate$Conflict.Rate, xlab="Projects", ylab="Conflict Rate %",col="green")
-dev.off
+#realboxplotCRFileName = paste("realBoxplotCR.png")
+#png(paste(exportPath, realboxplotCRFileName, sep=""))
+#beanplot(realconflictRate$Conflict.Rate, xlab="Projects", ylab="Conflict Rate %",col="green")
+#dev.off
 
 #read conflict patterns values 
 DefaultValueAnnotation <- sum(conflictRateTemp$DefaultValueAnnotation)
@@ -335,11 +337,11 @@ HTML("<hr><h2>False Positives Occurences</h2>", file=htmlFile, append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=BarPlotESMCFP, Align="center", append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=BarPlotSSCMFP, Align="center", append=TRUE)
 
-HTML("<hr><h2>Conflict Rate Without False Positives</h2>", file=htmlFile, append=TRUE)
-HTML(realconflictRate, file=htmlFile, append=TRUE)
+#HTML("<hr><h2>Conflict Rate Without False Positives</h2>", file=htmlFile, append=TRUE)
+#HTML(realconflictRate, file=htmlFile, append=TRUE)
 
-HTML("<hr><h2>Conflict Rate Boxplot Without False Positives</h2>", file=htmlFile, append=TRUE)
-HTMLInsertGraph(file=htmlFile, GraphFileName=realboxplotCRFileName, Align="center", append=TRUE)
+#HTML("<hr><h2>Conflict Rate Boxplot Without False Positives</h2>", file=htmlFile, append=TRUE)
+#HTMLInsertGraph(file=htmlFile, GraphFileName=realboxplotCRFileName, Align="center", append=TRUE)
 
 HTML("<hr><h2>Causes for SameSignatureCM occurrences</h2>", file=htmlFile, append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotCSSCM, Align="center", append=TRUE)
