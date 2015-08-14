@@ -6,21 +6,35 @@ computePatternPercentages <- function(conflicts, patternName){
   patternPercentages <- c()
   
   numberOfRows <- nrow(conflicts)
+  ds <- paste(patternName, "DS", sep="")
+  cl <- paste(patternName, "CL", sep="")
+  ifp <- paste(patternName, "IFP", sep="")
   
   for(i in 1:numberOfRows){
     sumConflicts <- 0
+    diffSpacing <- 0
+    consecLines <- 0
+    intersection <- 0
     
     indexes <- c(4,8,12,16,20,24,28,32)
     
     for(j in indexes){
       sumConflicts <- sum(sumConflicts, conflicts[i,j])
+      diffSpacing <- sum(diffSpacing, conflicts[i,j+1])
+      consecLines <- sum(consecLines, conflicts[i,j+2])
+      intersection <- sum(intersection, conflicts[i,j+3])
     }
-    
+    realSumConflicts = sumConflicts - diffSpacing - consecLines + intersection
     value <- conflicts[i, patternName]
+    valueDS <- conflicts[i, ds]
+    valueCL <- conflicts[i, cl]
+    valueIFP <- conflicts[i, ifp]
+    realValue = value - valueDS - valueCL + valueIFP
+    
     if(sumConflicts == 0){
       percentage <- 0
     }else{
-      percentage <- (value/sumConflicts)*100
+      percentage <- (realValue/realSumConflicts)*100
     }
     
     patternPercentages  <- append(patternPercentages, percentage)
@@ -169,7 +183,8 @@ npercentageEditSameMCCL <- paste(c("Conflicts due to consecutive lines-", percen
 npercentagesumEditSameMCIFP <- paste(c("Intersection-", percentagesumEditSameMCIFP, "%"), 
                                     collapse = "")
 
-Values <- c(realEditSameMC , EditSameMCDS , EditSameMCCL, sumEditSameMCIFP)
+Values <- c(percentageRealEditSameMC , percentageEditSameMCDS , percentageEditSameMCCL, 
+            percentagesumEditSameMCIFP)
 Group <- c(npercentageRealEditSameMC, npercentageEditSameMCDS, npercentageEditSameMCCL,
            npercentagesumEditSameMCIFP)
 
@@ -203,7 +218,7 @@ npercentageRealSameSignatureMC <- paste(c("Possible conflicts-",percentageRealSa
                                         collapse = "")
 
 
-Values <- c(realSameSignatureMC, sumSameSignatureMCDS)
+Values <- c(percentageRealSameSignatureMC, percentageSumSameSignatureMCDS)
 Group <- c(npercentageRealSameSignatureMC, npercentageSumSameSignatureMCDS)
 df <- data.frame(Group, Values)
 bp<- ggplot(df, aes(x="SameSignatureMC", y=Values, fill=Group))+
@@ -280,7 +295,7 @@ Values <- c(sumSmallMethod, sumRenamedMethod, sumCopiedMethod, sumCopiedFile, su
 Causes <- c(nsumSmallMethod, nsumRenamedMethod, nsumCopiedMethod, nsumCopiedFile,
             nsumNoPattern)
 df <- data.frame(Causes, Values)
-bp<- ggplot(df, aes(x="", y=Values, fill=Causes))+
+bp<- ggplot(df, aes(x="Causes", y=Values, fill=Causes))+
       geom_bar(width = 1, stat = "identity")
 print(bp)
 dev.off
