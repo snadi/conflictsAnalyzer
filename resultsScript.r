@@ -67,7 +67,7 @@ importPath = "/Users/paolaaccioly/Documents/testeConflictsAnalyzer/conflictsAnal
 exportPath = "/Users/paolaaccioly/Dropbox/Public/conflictpattern/"
 
 conflictRateFile="projectsPatternData.csv"
-#realConflictRateFile = "realConflictRate.csv"
+realConflictRateFile = "realConflictRate.csv"
 #conflictPatternFile="patternsData.csv"
 
 #HTML file
@@ -89,17 +89,17 @@ conflictRate["Conflict_Rate(%)"] <- (conflictRate$Conflicting_Scenarios/conflict
 attach(conflictRate)
 
 #read and edit real conflict rate table
-#  realConflictRateFileTemp = read.table(file=paste(importPath,realConflictRateFile , sep=""), header=T, sep=",")
-# realconflictRate2 = data.frame(realConflictRateFileTemp$Projects, realConflictRateFileTemp$Merge.Scenarios, realConflictRateFileTemp$Conflicting.Scenarios)
-# colnames(realconflictRate2) <- c("Projects", "Merge.Scenarios", "Conflicting.Scenarios")
-# realsumMergeScenarios = sum(realconflictRate2$Merge.Scenarios)
-# realsumConflictionScenarios = sum(realconflictRate2$Conflicting.Scenarios)
-# realtotal = data.frame(Projects="TOTAL", Merge.Scenarios=realsumMergeScenarios,
-#                        Conflicting.Scenarios=realsumConflictionScenarios)
-# realconflictRate = rbind(realconflictRate2, realtotal)
-#
-# realconflictRate["Conflict.Rate(%)"] <- (realconflictRate$Conflicting.Scenarios/realconflictRate$Merge.Scenarios)*100
-# attach(realconflictRate)
+  realConflictRateFileTemp = read.table(file=paste(importPath,realConflictRateFile , sep=""), header=T, sep=",")
+ realconflictRate2 = data.frame(realConflictRateFileTemp$Projects, realConflictRateFileTemp$Merge.Scenarios, realConflictRateFileTemp$Conflicting.Scenarios)
+ colnames(realconflictRate2) <- c("Projects", "Merge.Scenarios", "Conflicting.Scenarios")
+ realsumMergeScenarios = sum(realconflictRate2$Merge.Scenarios)
+ realsumConflictionScenarios = sum(realconflictRate2$Conflicting.Scenarios)
+ realtotal = data.frame(Projects="TOTAL", Merge.Scenarios=realsumMergeScenarios,
+                        Conflicting.Scenarios=realsumConflictionScenarios)
+ realconflictRate = rbind(realconflictRate2, realtotal)
+
+ realconflictRate["Conflict.Rate(%)"] <- (realconflictRate$Conflicting.Scenarios/realconflictRate$Merge.Scenarios)*100
+ attach(realconflictRate)
 
 
 
@@ -113,10 +113,10 @@ dev.off
 
 #boxplot real conflicting rate
 
-#realboxplotCRFileName = paste("realBoxplotCR.png")
-#png(paste(exportPath, realboxplotCRFileName, sep=""))
-#beanplot(realconflictRate$Conflict.Rate, xlab="Projects", ylab="Conflict Rate %",col="green")
-#dev.off
+realboxplotCRFileName = paste("realBoxplotCR.png")
+png(paste(exportPath, realboxplotCRFileName, sep=""))
+beanplot(realconflictRate$Conflict.Rate, xlab="Projects", ylab="Conflict Rate %",col="green")
+dev.off
 
 #read conflict patterns values 
 DefaultValueAnnotation <- sum(conflictRateTemp$DefaultValueAnnotation)
@@ -358,8 +358,8 @@ allConflictsPercentage <- data.frame(EditSameMC, SameSignatureCM,
                                      ImplementList, ModifierList, 
                                      AddSameFd, EditSameFd, 
                                      DefaultValueA, ExtendsList)
-op <- par(mar = c(5, 8, 4, 2) + 0.1) #adjust margins, default is c(5, 4, 4, 2) + 0.1
-boxplot(allConflictsPercentage, xlab="", ylab="", col="green", horizontal = TRUE, las=2, cex.axis=1)
+op <- par(mar = c(3, 8, 2, 2) + 0.1) #adjust margins, default is c(5, 4, 4, 2) + 0.1
+boxplot(allConflictsPercentage, xlab="", ylab="", col="green", horizontal = TRUE, las=1, cex.axis=1)
 par(op)
 dev.off
 
@@ -412,11 +412,11 @@ HTML("<hr><h2>False Positives Occurences</h2>", file=htmlFile, append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=BarPlotESMCFP, Align="center", append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=BarPlotSSCMFP, Align="center", append=TRUE)
 
-#HTML("<hr><h2>Conflict Rate Without False Positives</h2>", file=htmlFile, append=TRUE)
-#HTML(realconflictRate, file=htmlFile, append=TRUE)
+HTML("<hr><h2>Conflict Rate Without False Positives</h2>", file=htmlFile, append=TRUE)
+HTML(realconflictRate, file=htmlFile, append=TRUE)
 
-#HTML("<hr><h2>Conflict Rate Boxplot Without False Positives</h2>", file=htmlFile, append=TRUE)
-#HTMLInsertGraph(file=htmlFile, GraphFileName=realboxplotCRFileName, Align="center", append=TRUE)
+HTML("<hr><h2>Conflict Rate Boxplot Without False Positives</h2>", file=htmlFile, append=TRUE)
+HTMLInsertGraph(file=htmlFile, GraphFileName=realboxplotCRFileName, Align="center", append=TRUE)
 
 HTML("<hr><h2>Causes for SameSignatureCM occurrences</h2>", file=htmlFile, append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotCSSCM, Align="center", append=TRUE)
