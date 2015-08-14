@@ -141,7 +141,7 @@ conflictsTable <- data.frame(Conflicts_Patterns, Occurrences)
 boxplotLBMCF = paste("BoxplotLBMCF.png")
 png(paste(exportPath, boxplotLBMCF, sep=""))
 percentages <- computePatternPercentages(conflictRateTemp, "EditSameMC")
-boxplot(percentages,xlab="Projects", ylab="EditSameMC (%)", col="blue", outline=FALSE)
+boxplot(percentages,xlab="Projects", ylab="EditSameMC (%)", col="blue")
 dev.off
 
 #false positives EditSameMC
@@ -153,9 +153,26 @@ sumEditSameMCIFP = sum(conflictRateTemp$EditSameMCIFP)
 realEditSameMC = EditSameMC - sumEditSameMCDS - sumEditSameMCCL + sumEditSameMCIFP
 EditSameMCDS = sumEditSameMCDS - sumEditSameMCIFP
 EditSameMCCL = sumEditSameMCCL - sumEditSameMCIFP
+#round percentages
+percentageRealEditSameMC <- round((realEditSameMC/EditSameMC)*100,digit=1)
+percentageEditSameMCDS <- round((EditSameMCDS/EditSameMC)*100,digit=1)
+percentageEditSameMCCL <- round((EditSameMCCL/EditSameMC)*100,digit=1)
+percentagesumEditSameMCIFP <- round((sumEditSameMCIFP/EditSameMC)*100,digit=1)
+
+
+npercentageRealEditSameMC <- paste(c("Possible conflicts-",percentageRealEditSameMC , "%"), collapse = "")
+
+npercentageEditSameMCDS <- paste(c("Conflicts due to different identation-",percentageEditSameMCDS ,
+                                  "%"), collapse = "")
+npercentageEditSameMCCL <- paste(c("Conflicts due to consecutive lines-", percentageEditSameMCCL,
+                                  "%"), collapse = "")
+npercentagesumEditSameMCIFP <- paste(c("Intersection-", percentagesumEditSameMCIFP, "%"), 
+                                    collapse = "")
+
 Values <- c(realEditSameMC , EditSameMCDS , EditSameMCCL, sumEditSameMCIFP)
-Group <- c("Real conflicts", "Conflicts due to different identation", "Conflicts due to consecutive lines",
-            "Intersection")
+Group <- c(npercentageRealEditSameMC, npercentageEditSameMCDS, npercentageEditSameMCCL,
+           npercentagesumEditSameMCIFP)
+
 df <- data.frame(Group, Values)
 bp<- ggplot(df, aes(x="EditSameMC", y=Values, fill=Group))+
   geom_bar(width = 1, stat = "identity")
@@ -168,21 +185,26 @@ dev.off
 BoxplotSSCM = paste("BoxplotSSCM.png")
 png(paste(exportPath, BoxplotSSCM, sep=""))
 percentages <- computePatternPercentages(conflictRateTemp, "SameSignatureCM")
-boxplot(percentages,xlab="Projects", ylab="SameSignatureCM (%)", col="red", outline=FALSE)
+boxplot(percentages,xlab="Projects", ylab="SameSignatureCM (%)", col="red")
 dev.off
 
 #false positives SameSignatureCM
 BarPlotSSCMFP = paste("BarPlotSSCMFP.png")
 png(paste(exportPath, BarPlotSSCMFP, sep=""))
 sumSameSignatureMCDS = sum(conflictRateTemp$SameSignatureCMDS)
-sumSameSignatureMCCL = sum(conflictRateTemp$SameSignatureCMCL)
-sumSameSignatureMCIFP = sum(conflictRateTemp$SameSignatureCMIFP)
-realSameSignatureMC = SameSignatureCM - sumSameSignatureMCDS - sumSameSignatureMCCL + sumSameSignatureMCIFP
-SameSignatureMCDS = sumSameSignatureMCDS - sumSameSignatureMCIFP
-SameSignatureCMCL = sumSameSignatureMCCL - sumSameSignatureMCIFP
-Values <- c(realSameSignatureMC, SameSignatureMCDS, SameSignatureCMCL, sumSameSignatureMCIFP)
-Group <- c("Real conflicts", "Conflicts due to different identation", "Conflicts due to consecutive lines",
-           "Intersection")
+realSameSignatureMC = SameSignatureCM - sumSameSignatureMCDS
+
+percentageSumSameSignatureMCDS <- round((sumSameSignatureMCDS/SameSignatureCM)*100, digit=1)
+percentageRealSameSignatureMC <- round ((realSameSignatureMC/SameSignatureCM)*100, digit=1)
+
+npercentageSumSameSignatureMCDS <- paste(c("Conflicts due to different identation-",percentageSumSameSignatureMCDS , "%"), 
+                                         collapse = "")
+npercentageRealSameSignatureMC <- paste(c("Possible conflicts-",percentageRealSameSignatureMC , "%"), 
+                                        collapse = "")
+
+
+Values <- c(realSameSignatureMC, sumSameSignatureMCDS)
+Group <- c(npercentageRealSameSignatureMC, npercentageSumSameSignatureMCDS)
 df <- data.frame(Group, Values)
 bp<- ggplot(df, aes(x="SameSignatureMC", y=Values, fill=Group))+
   geom_bar(width = 1, stat = "identity")
@@ -232,14 +254,31 @@ realconflictsTable <- data.frame(Conflicts_Patterns, Occurrences)
 #causes for SameSignatureCM
 BoxplotCSSCM = paste("CausesSameSignatureCM.png")
 png(paste(exportPath, BoxplotCSSCM, sep=""))
-sumSmallMethod = sum(conflictRateTemp$smallMethod)
-sumRenamedMethod = sum(conflictRateTemp$renamedMethod)
-sumCopiedMethod= sum(conflictRateTemp$copiedMethod)
-sumCopiedFile = sum(conflictRateTemp$copiedFile)
-sumNoPattern = sum(conflictRateTemp$noPattern)
+
+sumSmallMethod = round(((sum(conflictRateTemp$smallMethod) - sum(conflictRateTemp$smallMethodDS))/
+                          realSameSignatureMC)*100, digit=1)
+
+sumRenamedMethod = round(((sum(conflictRateTemp$renamedMethod) - sum(conflictRateTemp$renamedMethodDS))/
+  realSameSignatureMC)*100, digit=1)
+
+sumCopiedMethod= round(((sum(conflictRateTemp$copiedMethod) - sum(conflictRateTemp$copiedMethodDS))/
+  realSameSignatureMC)*100, digit=1)
+
+sumCopiedFile = round(((sum(conflictRateTemp$copiedFile) - sum(conflictRateTemp$copiedFileDS))/
+                         realSameSignatureMC)*100, digit=1)
+
+sumNoPattern = round(((sum(conflictRateTemp$noPattern) - sum(conflictRateTemp$noPatternDS))/
+                        realSameSignatureMC)*100, digit=1)
+
+nsumSmallMethod <- paste(c("Small methods-", sumSmallMethod, "%"), collapse = "")
+nsumRenamedMethod <- paste(c("Renamed methods-", sumRenamedMethod, "%"), collapse = "")
+nsumCopiedMethod <- paste(c("Copied methods-", sumCopiedMethod, "%"), collapse = "")
+nsumCopiedFile <- paste(c("Merge from the same branch-", sumCopiedFile, "%"), collapse = "")
+nsumNoPattern <- paste(c("No pattern detected-", sumNoPattern, "%"), collapse = "")
+
 Values <- c(sumSmallMethod, sumRenamedMethod, sumCopiedMethod, sumCopiedFile, sumNoPattern)
-Causes <- c("Small methods", "Renamed methods", "Copied methods", "Merge with commits from the same branch",
-            "None of the above")
+Causes <- c(nsumSmallMethod, nsumRenamedMethod, nsumCopiedMethod, nsumCopiedFile,
+            nsumNoPattern)
 df <- data.frame(Causes, Values)
 bp<- ggplot(df, aes(x="", y=Values, fill=Causes))+
       geom_bar(width = 1, stat = "identity")
@@ -250,42 +289,42 @@ dev.off
 BoxplotIL = paste("BoxplotIL.png")
 png(paste(exportPath, BoxplotIL, sep=""))
 percentages <- computePatternPercentages(conflictRateTemp, "ImplementList")
-boxplot(percentages,xlab="Projects", ylab="ImplementList (%)", col="chocolate4", outline=FALSE)
+boxplot(percentages,xlab="Projects", ylab="ImplementList (%)", col="chocolate4")
 dev.off
 
 #ModifierList
 BoxplotML = paste("BoxplotML.png")
 png(paste(exportPath, BoxplotML, sep=""))
 percentages <- computePatternPercentages(conflictRateTemp, "ModifierList")
-boxplot(percentages,xlab="Projects", ylab="ModifierList (%)", col="green", outline=FALSE)
+boxplot(percentages,xlab="Projects", ylab="ModifierList (%)", col="green")
 dev.off
 
 #AddSameFd
 BoxplotSIF = paste("BoxplotSIF.png")
 png(paste(exportPath, BoxplotSIF, sep=""))
 percentages <- computePatternPercentages(conflictRateTemp, "AddSameFd")
-boxplot(percentages,xlab="Projects", ylab="AddSameFd (%)", col="darkgoldenrod2", outline=FALSE)
+boxplot(percentages,xlab="Projects", ylab="AddSameFd (%)", col="darkgoldenrod2")
 dev.off
 
 #EditSameFd
 BoxplotESF = paste("BoxplotESF.png")
 png(paste(exportPath, BoxplotESF, sep=""))
 percentages <- computePatternPercentages(conflictRateTemp, "EditSameFd")
-boxplot(percentages,xlab="Projects", ylab="EditSameFd (%)", col="gray", outline=FALSE)
+boxplot(percentages,xlab="Projects", ylab="EditSameFd (%)", col="gray")
 dev.off
 
 #DefaultValueAnnotation
 BoxplotDVA = paste("BoxplotDVA.png")
 png(paste(exportPath, BoxplotDVA, sep=""))
 percentages <- computePatternPercentages(conflictRateTemp, "DefaultValueAnnotation")
-boxplot(percentages,xlab="Projects", ylab="DefaultValueAnnotation (%)", col="darkviolet", outline=FALSE)
+boxplot(percentages,xlab="Projects", ylab="DefaultValueAnnotation (%)", col="darkviolet")
 dev.off
 
 #ExtendsList
 BoxplotEL = paste("BoxplotEL.png")
 png(paste(exportPath, BoxplotEL, sep=""))
 percentages <- computePatternPercentages(conflictRateTemp, "ExtendsList")
-boxplot(percentages,xlab="Projects", ylab="ExtendsList (%)", col="chocolate4", outline=FALSE)
+boxplot(percentages,xlab="Projects", ylab="ExtendsList (%)", col="chocolate4")
 dev.off
 
 
