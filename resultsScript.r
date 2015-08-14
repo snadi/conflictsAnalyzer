@@ -31,7 +31,7 @@ computePatternPercentages <- function(conflicts, patternName){
     valueIFP <- conflicts[i, ifp]
     realValue = value - valueDS - valueCL + valueIFP
     
-    if(sumConflicts == 0){
+    if(realSumConflicts == 0){
       percentage <- 0
     }else{
       percentage <- (realValue/realSumConflicts)*100
@@ -108,7 +108,7 @@ attach(conflictRate)
 library(beanplot)
 boxplotCRFileName = paste("BoxplotCR.png")
 png(paste(exportPath, boxplotCRFileName, sep=""))
-beanplot(conflictRate$Conflict_Rate, xlab="Projects", ylab="Conflict Rate %",col="green", log = "y")
+beanplot(conflictRate$Conflict_Rate, xlab="Projects", ylab="Conflict Rate %",col="green")
 dev.off
 
 #boxplot real conflicting rate
@@ -154,8 +154,8 @@ conflictsTable <- data.frame(Conflicts_Patterns, Occurrences)
 #EditSameMC 
 boxplotLBMCF = paste("BoxplotLBMCF.png")
 png(paste(exportPath, boxplotLBMCF, sep=""))
-percentages <- computePatternPercentages(conflictRateTemp, "EditSameMC")
-boxplot(percentages,xlab="Projects", ylab="EditSameMC (%)", col="blue")
+EditSameMCpercentages <- computePatternPercentages(conflictRateTemp, "EditSameMC")
+boxplot(EditSameMCpercentages,xlab="Projects", ylab="EditSameMC (%)", col="blue")
 dev.off
 
 #false positives EditSameMC
@@ -199,8 +199,8 @@ dev.off
 #SameSignatureCM
 BoxplotSSCM = paste("BoxplotSSCM.png")
 png(paste(exportPath, BoxplotSSCM, sep=""))
-percentages <- computePatternPercentages(conflictRateTemp, "SameSignatureCM")
-boxplot(percentages,xlab="Projects", ylab="SameSignatureCM (%)", col="red")
+SameSignatureCMpercentages <- computePatternPercentages(conflictRateTemp, "SameSignatureCM")
+boxplot(SameSignatureCMpercentages,xlab="Projects", ylab="SameSignatureCM (%)", col="red")
 dev.off
 
 #false positives SameSignatureCM
@@ -303,43 +303,64 @@ dev.off
 #ImplementList
 BoxplotIL = paste("BoxplotIL.png")
 png(paste(exportPath, BoxplotIL, sep=""))
-percentages <- computePatternPercentages(conflictRateTemp, "ImplementList")
-boxplot(percentages,xlab="Projects", ylab="ImplementList (%)", col="chocolate4")
+ImplementListpercentages <- computePatternPercentages(conflictRateTemp, "ImplementList")
+boxplot(ImplementListpercentages,xlab="Projects", ylab="ImplementList (%)", col="chocolate4")
 dev.off
 
 #ModifierList
 BoxplotML = paste("BoxplotML.png")
 png(paste(exportPath, BoxplotML, sep=""))
-percentages <- computePatternPercentages(conflictRateTemp, "ModifierList")
-boxplot(percentages,xlab="Projects", ylab="ModifierList (%)", col="green")
+ModifierListpercentages <- computePatternPercentages(conflictRateTemp, "ModifierList")
+boxplot(ModifierListpercentages,xlab="Projects", ylab="ModifierList (%)", col="green")
 dev.off
 
 #AddSameFd
 BoxplotSIF = paste("BoxplotSIF.png")
 png(paste(exportPath, BoxplotSIF, sep=""))
-percentages <- computePatternPercentages(conflictRateTemp, "AddSameFd")
-boxplot(percentages,xlab="Projects", ylab="AddSameFd (%)", col="darkgoldenrod2")
+AddSameFdpercentages <- computePatternPercentages(conflictRateTemp, "AddSameFd")
+boxplot(AddSameFdpercentages,xlab="Projects", ylab="AddSameFd (%)", col="darkgoldenrod2")
 dev.off
 
 #EditSameFd
 BoxplotESF = paste("BoxplotESF.png")
 png(paste(exportPath, BoxplotESF, sep=""))
-percentages <- computePatternPercentages(conflictRateTemp, "EditSameFd")
-boxplot(percentages,xlab="Projects", ylab="EditSameFd (%)", col="gray")
+EditSameFdpercentages <- computePatternPercentages(conflictRateTemp, "EditSameFd")
+boxplot(EditSameFdpercentages,xlab="Projects", ylab="EditSameFd (%)", col="gray")
 dev.off
 
 #DefaultValueAnnotation
 BoxplotDVA = paste("BoxplotDVA.png")
 png(paste(exportPath, BoxplotDVA, sep=""))
-percentages <- computePatternPercentages(conflictRateTemp, "DefaultValueAnnotation")
-boxplot(percentages,xlab="Projects", ylab="DefaultValueAnnotation (%)", col="darkviolet")
+DefaultValueAnnotationpercentages <- computePatternPercentages(conflictRateTemp, "DefaultValueAnnotation")
+boxplot(DefaultValueAnnotationpercentages,xlab="Projects", ylab="DefaultValueAnnotation (%)", col="darkviolet")
 dev.off
 
 #ExtendsList
 BoxplotEL = paste("BoxplotEL.png")
 png(paste(exportPath, BoxplotEL, sep=""))
-percentages <- computePatternPercentages(conflictRateTemp, "ExtendsList")
-boxplot(percentages,xlab="Projects", ylab="ExtendsList (%)", col="chocolate4")
+ExtendsListpercentages <- computePatternPercentages(conflictRateTemp, "ExtendsList")
+boxplot(ExtendsListpercentages,xlab="Projects", ylab="ExtendsList (%)", col="chocolate4")
+dev.off
+
+
+#all conflicts percentages boxplot
+BoxplotAllConflicts = paste("BoxplotAllConflicts.png")
+png(paste(exportPath, BoxplotAllConflicts, sep=""))
+EditSameMC <- EditSameMCpercentages
+SameSignatureCM <- SameSignatureCMpercentages
+ImplementList <- ImplementListpercentages
+ModifierList <- ModifierListpercentages
+AddSameFd <- AddSameFdpercentages
+EditSameFd <- EditSameFdpercentages
+DefaultValueA <- DefaultValueAnnotationpercentages
+ExtendsList <- ExtendsListpercentages
+allConflictsPercentage <- data.frame(EditSameMC, SameSignatureCM, 
+                                     ImplementList, ModifierList, 
+                                     AddSameFd, EditSameFd, 
+                                     DefaultValueA, ExtendsList)
+op <- par(mar = c(5, 8, 4, 2) + 0.1) #adjust margins, default is c(5, 4, 4, 2) + 0.1
+boxplot(allConflictsPercentage, xlab="", ylab="", col="green", horizontal = TRUE, las=2, cex.axis=1)
+par(op)
 dev.off
 
 
@@ -400,15 +421,16 @@ HTMLInsertGraph(file=htmlFile, GraphFileName=BarPlotSSCMFP, Align="center", appe
 HTML("<hr><h2>Causes for SameSignatureCM occurrences</h2>", file=htmlFile, append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotCSSCM, Align="center", append=TRUE)
 
-HTML("<hr><h2>Conflict Patterns Percentages by Project Boxplots</h2>", file=htmlFile, append=TRUE)
-HTMLInsertGraph(file=htmlFile, GraphFileName=boxplotLBMCF, Align="center", append=TRUE)
-HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotSSCM, Align="center", append=TRUE)
-HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotIL, Align="center", append=TRUE)
-HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotML, Align="center", append=TRUE)
-HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotSIF, Align="center", append=TRUE)
-HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotESF, Align="center", append=TRUE)
-HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotDVA, Align="center", append=TRUE)
-HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotEL, Align="center", append=TRUE)
+HTML("<hr><h2>Conflict Pattern Percentages by Project</h2>", file=htmlFile, append=TRUE)
+#HTMLInsertGraph(file=htmlFile, GraphFileName=boxplotLBMCF, Align="center", append=TRUE)
+#HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotSSCM, Align="center", append=TRUE)
+#HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotIL, Align="center", append=TRUE)
+#HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotML, Align="center", append=TRUE)
+#HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotSIF, Align="center", append=TRUE)
+#HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotESF, Align="center", append=TRUE)
+#HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotDVA, Align="center", append=TRUE)
+#HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotEL, Align="center", append=TRUE)
+HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotAllConflicts, Align="center", append=TRUE)
 
 time = Sys.time()
 HTML("<hr><h2>Last Time Updated:</h2>", file=htmlFile, append=TRUE)
