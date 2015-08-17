@@ -194,6 +194,11 @@ conflictRate = rbind(conflictRate2, total)
 conflictRate["Conflict_Rate(%)"] <- (conflictRate$Conflicting_Scenarios/conflictRate$Merge_Scenarios)*100
 attach(conflictRate)
 
+newTable <- head(conflictRate, -1)
+Mean <- mean(newTable$Conflict_Rate)
+Standard.deviation <- sd(newTable$Conflict_Rate)
+metrics <- data.frame(Mean, Standard.deviation)
+
 #read and edit real conflict rate table
   realConflictRateFileTemp = read.table(file=paste(importPath,realConflictRateFile , sep=""), header=T, sep=",")
  realconflictRate2 = data.frame(realConflictRateFileTemp$Projects, realConflictRateFileTemp$Merge.Scenarios, realConflictRateFileTemp$Conflicting.Scenarios)
@@ -207,8 +212,10 @@ attach(conflictRate)
  realconflictRate["Conflict.Rate(%)"] <- (realconflictRate$Conflicting.Scenarios/realconflictRate$Merge.Scenarios)*100
  attach(realconflictRate)
 
-
-
+realNewTable <- head(realconflictRate, -1)
+Mean <- mean(realNewTable$Conflict.Rate)
+Standard.deviation <- sd(realNewTable$Conflict.Rate)
+realMetrics <- data.frame(Mean, Standard.deviation)
 
 #beanplot conflicting rate
 library(beanplot)
@@ -548,6 +555,7 @@ HTML.title(title, file=htmlFile, append=TRUE)
 
 HTML("<hr><h2>Conflict Rate</h2>", file=htmlFile, append=TRUE)
 HTML(conflictRate, file=htmlFile, append=TRUE)
+HTML(metrics, file=htmlFile, append=TRUE)
 
 HTML("<hr><h2>Conflict Rate Beanplot and Boxplot</h2>", file=htmlFile, append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=beanplotCRFileName, Align="center", append=TRUE)
@@ -562,6 +570,7 @@ HTML(conflictsTable, file=htmlFile, append=TRUE)
 HTML("<hr><h2>Conflicts Patterns Occurrences Without the False Positives</h2>", file=htmlFile, append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=barChartFP, Align="center", append=TRUE)
 HTML(realconflictsTable, file=htmlFile, append=TRUE)
+HTML(realMetrics, file=htmlFile, append=TRUE)
 
 HTML("<hr><h2>False Positives Occurences</h2>", file=htmlFile, append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=BarPlotESMCFP, Align="center", append=TRUE)
