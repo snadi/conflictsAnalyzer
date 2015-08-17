@@ -80,7 +80,83 @@ computeSameSignatureCausesPercentages <- function(conflicts, causeName){
   return(causePercentages)
 }
 
+computeEditSameMCFPPercentages <- function(conflicts, editSameMethodCause){
+  
+  editSameMethodPercentages <- c()
+  numberOfRows <- nrow(conflicts)
 
+  for(i in 1:numberOfRows){
+    sumConflicts <- conflicts[i,16]
+    valueDS <- conflicts[i,17]
+    valueCL <- conflicts[i,18]
+    valueIFP <- conflicts[i,19]
+
+    if(editSameMethodCause == "EditSameMC"){ 
+      value <- sumConflicts - valueDS - valueCL + valueIFP
+    }else if(editSameMethodCause == "EditSameMCDS"){
+      value <- valueDS - valueIFP
+    }else if(editSameMethodCause == "EditSameMCCL"){
+      value <- valueCL - valueIFP
+    }else if(editSameMethodCause == "EditSameMCIFP"){
+      value <- valueIFP
+    }
+    
+    if(sumConflicts == 0){
+      percentage <- 0
+    }else{
+      percentage <- (value/sumConflicts)*100
+    }
+    
+    editSameMethodPercentages  <- append(editSameMethodPercentages, percentage)
+    
+  }
+  return(editSameMethodPercentages)
+}
+
+dataFrameEditSameMCFPPercentages <- function(conflicts){
+  Possible.conflicts <- computeEditSameMCFPPercentages(conflicts, "EditSameMC")
+  Different.identation <- computeEditSameMCFPPercentages(conflicts, "EditSameMCDS")
+  Consecutive.lines <- computeEditSameMCFPPercentages(conflicts, "EditSameMCCL")
+  Intersection <- computeEditSameMCFPPercentages(conflicts, "EditSameMCIFP")
+  
+  result <- data.frame(Possible.conflicts, Different.identation, Consecutive.lines, Intersection)
+  return(result)
+}
+
+computeSameSignatureFPPercentages <- function(conflicts, sameSignatureCause){
+  
+  sameSignaturePercentages <- c()
+  numberOfRows <- nrow(conflicts)
+  
+  for(i in 1:numberOfRows){
+    sumConflicts <- conflicts[i,28]
+    valueDS <- conflicts[i,29]
+    
+    if(sameSignatureCause == "SameSignatureCM"){ 
+      value <- sumConflicts - valueDS
+    }else if(sameSignatureCause == "SameSignatureCMDS"){
+      value <- valueDS
+    }
+    
+    if(sumConflicts == 0){
+      percentage <- 0
+    }else{
+      percentage <- (value/sumConflicts)*100
+    }
+    
+    sameSignaturePercentages  <- append(sameSignaturePercentages, percentage)
+    
+  }
+  return(sameSignaturePercentages)
+}
+
+dataFrameSameSignatureFPPercentages <- function(conflicts){
+  Possible.conflicts <- computeSameSignatureFPPercentages(conflicts, "SameSignatureCM")
+  Different.identation <- computeSameSignatureFPPercentages(conflicts, "SameSignatureCMDS")
+  
+  result <- data.frame(Possible.conflicts, Different.identation)
+  return(result)
+}
 
 deleteAllFiles <- function(exportPath) {
   
@@ -238,6 +314,15 @@ bp<- ggplot(df, aes(x="EditSameMC", y=Values, fill=Group))+
 print(bp)
 dev.off
 
+#boxplot with the editSameMC cause percentages
+BoxplotFPEditSameMC = paste("BoxplotFPEditSameMC.png")
+png(paste(exportPath, BoxplotFPEditSameMC, sep=""))
+allEditSameMCFPPercentages <- dataFrameEditSameMCFPPercentages(conflictRateTemp)
+op <- par(mar = c(3, 8, 2, 2) + 0.1) #adjust margins, default is c(5, 4, 4, 2) + 0.1
+boxplot(allEditSameMCFPPercentages, xlab="", ylab="", col="green", horizontal = TRUE, las=1, cex.axis=1)
+par(op)
+dev.off
+
 
 #SameSignatureCM
 #BoxplotSSCM = paste("BoxplotSSCM.png")
@@ -267,6 +352,15 @@ df <- data.frame(Group, Values)
 bp<- ggplot(df, aes(x="SameSignatureMC", y=Values, fill=Group))+
   geom_bar(width = 1, stat = "identity")
 print(bp)
+dev.off
+
+#boxplot with the sameSignatureCM cause percentages
+BoxplotFPSameSigCM = paste("BoxplotFPSameSigCM.png")
+png(paste(exportPath, BoxplotFPSameSigCM, sep=""))
+allSameSigPercentages <- dataFrameSameSignatureFPPercentages(conflictRateTemp)
+op <- par(mar = c(3, 8, 2, 2) + 0.1) #adjust margins, default is c(5, 4, 4, 2) + 0.1
+boxplot(allSameSigPercentages, xlab="", ylab="", col="green", horizontal = TRUE, las=1, cex.axis=1)
+par(op)
 dev.off
 
 #bar plot without false positives
@@ -471,7 +565,9 @@ HTML(realconflictsTable, file=htmlFile, append=TRUE)
 
 HTML("<hr><h2>False Positives Occurences</h2>", file=htmlFile, append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=BarPlotESMCFP, Align="center", append=TRUE)
+HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotFPEditSameMC, Align="center", append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=BarPlotSSCMFP, Align="center", append=TRUE)
+HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotFPSameSigCM, Align="center", append=TRUE)
 
 HTML("<hr><h2>Conflict Rate Without False Positives</h2>", file=htmlFile, append=TRUE)
 HTML(realconflictRate, file=htmlFile, append=TRUE)
