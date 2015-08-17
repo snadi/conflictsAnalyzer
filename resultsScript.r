@@ -50,17 +50,8 @@ deleteAllFiles <- function(exportPath) {
     file.remove(fileToRemove)
   }
   
-#   fileToRemove = paste(exportPath, "BarChart.png", sep="")
-#     if (file.exists(fileToRemove)) {
-#       file.remove(fileToRemove)
-#     }
-#   
-#   fileToRemove = paste(exportPath, "BoxplotConflicts.png", sep="")
-#   if (file.exists(fileToRemove)) {
-#     file.remove(fileToRemove)
-#   }
-}
 
+}
 
 main<-function(){
 importPath = "/Users/paolaaccioly/Documents/testeConflictsAnalyzer/conflictsAnalyzer/"
@@ -68,7 +59,7 @@ exportPath = "/Users/paolaaccioly/Dropbox/Public/conflictpattern/"
 
 conflictRateFile="projectsPatternData.csv"
 realConflictRateFile = "realConflictRate.csv"
-#conflictPatternFile="patternsData.csv"
+
 
 #HTML file
 htmlFile = paste(exportPath, "conflictResults.html", sep="")
@@ -104,18 +95,31 @@ attach(conflictRate)
 
 
 
-#boxplot conflicting rate
+#beanplot conflicting rate
 library(beanplot)
+beanplotCRFileName = paste("BeanplotCR.png")
+png(paste(exportPath, beanplotCRFileName, sep=""))
+beanplot(conflictRate$Conflict_Rate, xlab="Projects", ylab="Conflict Rate %",col="green")
+dev.off
+
+#boxplot conflicting rate
 boxplotCRFileName = paste("BoxplotCR.png")
 png(paste(exportPath, boxplotCRFileName, sep=""))
-beanplot(conflictRate$Conflict_Rate, xlab="Projects", ylab="Conflict Rate %",col="green")
+boxplot(conflictRate$Conflict_Rate, xlab="Projects", ylab="Conflict Rate %",col="green")
+dev.off
+
+#beanplot real conflicting rate
+
+realbeanplotCRFileName = paste("realBeanplotCR.png")
+png(paste(exportPath, realbeanplotCRFileName, sep=""))
+beanplot(realconflictRate$Conflict.Rate, xlab="Projects", ylab="Conflict Rate %",col="green")
 dev.off
 
 #boxplot real conflicting rate
 
 realboxplotCRFileName = paste("realBoxplotCR.png")
 png(paste(exportPath, realboxplotCRFileName, sep=""))
-beanplot(realconflictRate$Conflict.Rate, xlab="Projects", ylab="Conflict Rate %",col="green")
+boxplot(realconflictRate$Conflict.Rate, xlab="Projects", ylab="Conflict Rate %",col="green")
 dev.off
 
 #read conflict patterns values 
@@ -300,6 +304,8 @@ bp<- ggplot(df, aes(x="Causes", y=Values, fill=Causes))+
 print(bp)
 dev.off
 
+#boxplot
+
 #ImplementList
 BoxplotIL = paste("BoxplotIL.png")
 png(paste(exportPath, BoxplotIL, sep=""))
@@ -395,7 +401,8 @@ HTML.title(title, file=htmlFile, append=TRUE)
 HTML("<hr><h2>Conflict Rate</h2>", file=htmlFile, append=TRUE)
 HTML(conflictRate, file=htmlFile, append=TRUE)
 
-HTML("<hr><h2>Conflict Rate Boxplot</h2>", file=htmlFile, append=TRUE)
+HTML("<hr><h2>Conflict Rate Beanplot and Boxplot</h2>", file=htmlFile, append=TRUE)
+HTMLInsertGraph(file=htmlFile, GraphFileName=beanplotCRFileName, Align="center", append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=boxplotCRFileName, Align="center", append=TRUE)
 
 HTML("<hr><h2>Conflict Patterns Occurrences</h2>", file=htmlFile, append=TRUE)
@@ -415,7 +422,8 @@ HTMLInsertGraph(file=htmlFile, GraphFileName=BarPlotSSCMFP, Align="center", appe
 HTML("<hr><h2>Conflict Rate Without False Positives</h2>", file=htmlFile, append=TRUE)
 HTML(realconflictRate, file=htmlFile, append=TRUE)
 
-HTML("<hr><h2>Conflict Rate Boxplot Without False Positives</h2>", file=htmlFile, append=TRUE)
+HTML("<hr><h2>Conflict Rate Beanplot and Boxplot Without False Positives</h2>", file=htmlFile, append=TRUE)
+HTMLInsertGraph(file=htmlFile, GraphFileName=realbeanplotCRFileName, Align="center", append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=realboxplotCRFileName, Align="center", append=TRUE)
 
 HTML("<hr><h2>Causes for SameSignatureCM occurrences</h2>", file=htmlFile, append=TRUE)
