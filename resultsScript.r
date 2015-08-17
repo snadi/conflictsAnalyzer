@@ -43,6 +43,45 @@ computePatternPercentages <- function(conflicts, patternName){
   return(patternPercentages)
 }
 
+computeSameSignatureCausesPercentages <- function(conflicts, causeName){
+  
+  causePercentages <- c()
+  ds <- paste(causeName, "DS", sep="")
+  
+  numberOfRows <- nrow(conflicts)
+  
+  for(i in 1:numberOfRows){
+    sumCauses <- 0
+    sumCausesDS <- 0
+
+    indexes <- c(37, 39, 41, 43, 45)
+    
+    for(j in indexes){
+      sumCauses <- sum(sumCauses, conflicts[i,j])
+      sumCausesDS <- sum(sumCausesDS, conflicts[i,j+1])
+
+    }
+    
+    realSumCauses <- sumCauses - sumCausesDS
+    causeValue <- conflicts[i, causeName]
+    causeValueDS <- conflicts[i, ds]
+    realCauseValue = causeValue - causeValueDS
+    
+    
+    if(realSumCauses == 0){
+      percentage <- 0
+    }else{
+      percentage <- (realCauseValue/realSumCauses)*100
+    }
+    
+    causePercentages  <- append(causePercentages, percentage)
+    
+  }
+  return(causePercentages)
+}
+
+
+
 deleteAllFiles <- function(exportPath) {
   
   fileToRemove = paste(exportPath, "conflictResults.html", sep="")
@@ -156,11 +195,11 @@ conflictsTable <- data.frame(Conflicts_Patterns, Occurrences)
 #boxplot for each conflict pattern percentages along all projects
 
 #EditSameMC 
-boxplotLBMCF = paste("BoxplotLBMCF.png")
-png(paste(exportPath, boxplotLBMCF, sep=""))
+#boxplotLBMCF = paste("BoxplotLBMCF.png")
+#png(paste(exportPath, boxplotLBMCF, sep=""))
 EditSameMCpercentages <- computePatternPercentages(conflictRateTemp, "EditSameMC")
-boxplot(EditSameMCpercentages,xlab="Projects", ylab="EditSameMC (%)", col="blue")
-dev.off
+#boxplot(EditSameMCpercentages,xlab="Projects", ylab="EditSameMC (%)", col="blue")
+#dev.off
 
 #false positives EditSameMC
 BarPlotESMCFP = paste("BarPlotESMCFP.png")
@@ -201,11 +240,11 @@ dev.off
 
 
 #SameSignatureCM
-BoxplotSSCM = paste("BoxplotSSCM.png")
-png(paste(exportPath, BoxplotSSCM, sep=""))
+#BoxplotSSCM = paste("BoxplotSSCM.png")
+#png(paste(exportPath, BoxplotSSCM, sep=""))
 SameSignatureCMpercentages <- computePatternPercentages(conflictRateTemp, "SameSignatureCM")
-boxplot(SameSignatureCMpercentages,xlab="Projects", ylab="SameSignatureCM (%)", col="red")
-dev.off
+#boxplot(SameSignatureCMpercentages,xlab="Projects", ylab="SameSignatureCM (%)", col="red")
+#dev.off
 
 #false positives SameSignatureCM
 BarPlotSSCMFP = paste("BarPlotSSCMFP.png")
@@ -304,49 +343,64 @@ bp<- ggplot(df, aes(x="Causes", y=Values, fill=Causes))+
 print(bp)
 dev.off
 
+#boxplot with the samesignaturecm cause percentages
+BoxplotAllCauses = paste("BoxplotAllCauses.png")
+png(paste(exportPath, BoxplotAllCauses, sep=""))
+smallMethod <- computeSameSignatureCausesPercentages(conflictRateTemp, "smallMethod")
+renamedMethod <- computeSameSignatureCausesPercentages(conflictRateTemp, "renamedMethod")
+copiedMethod <- computeSameSignatureCausesPercentages(conflictRateTemp, "copiedMethod")
+copiedFile <- computeSameSignatureCausesPercentages(conflictRateTemp, "copiedFile")
+noPattern <- computeSameSignatureCausesPercentages(conflictRateTemp, "noPattern")
+allCausesPercentages <- data.frame(smallMethod, renamedMethod, copiedMethod,
+                                   copiedFile, noPattern )
+op <- par(mar = c(3, 8, 2, 2) + 0.1) #adjust margins, default is c(5, 4, 4, 2) + 0.1
+boxplot(allCausesPercentages, xlab="", ylab="", col="green", horizontal = TRUE, las=1, cex.axis=1)
+par(op)
+dev.off
+
 #boxplot
 
 #ImplementList
-BoxplotIL = paste("BoxplotIL.png")
-png(paste(exportPath, BoxplotIL, sep=""))
+#BoxplotIL = paste("BoxplotIL.png")
+#png(paste(exportPath, BoxplotIL, sep=""))
 ImplementListpercentages <- computePatternPercentages(conflictRateTemp, "ImplementList")
-boxplot(ImplementListpercentages,xlab="Projects", ylab="ImplementList (%)", col="chocolate4")
-dev.off
+#boxplot(ImplementListpercentages,xlab="Projects", ylab="ImplementList (%)", col="chocolate4")
+#dev.off
 
 #ModifierList
-BoxplotML = paste("BoxplotML.png")
-png(paste(exportPath, BoxplotML, sep=""))
+#BoxplotML = paste("BoxplotML.png")
+#png(paste(exportPath, BoxplotML, sep=""))
 ModifierListpercentages <- computePatternPercentages(conflictRateTemp, "ModifierList")
-boxplot(ModifierListpercentages,xlab="Projects", ylab="ModifierList (%)", col="green")
-dev.off
+#boxplot(ModifierListpercentages,xlab="Projects", ylab="ModifierList (%)", col="green")
+#dev.off
 
 #AddSameFd
-BoxplotSIF = paste("BoxplotSIF.png")
-png(paste(exportPath, BoxplotSIF, sep=""))
+#BoxplotSIF = paste("BoxplotSIF.png")
+#png(paste(exportPath, BoxplotSIF, sep=""))
 AddSameFdpercentages <- computePatternPercentages(conflictRateTemp, "AddSameFd")
-boxplot(AddSameFdpercentages,xlab="Projects", ylab="AddSameFd (%)", col="darkgoldenrod2")
-dev.off
+#boxplot(AddSameFdpercentages,xlab="Projects", ylab="AddSameFd (%)", col="darkgoldenrod2")
+#dev.off
 
 #EditSameFd
-BoxplotESF = paste("BoxplotESF.png")
-png(paste(exportPath, BoxplotESF, sep=""))
+#BoxplotESF = paste("BoxplotESF.png")
+#png(paste(exportPath, BoxplotESF, sep=""))
 EditSameFdpercentages <- computePatternPercentages(conflictRateTemp, "EditSameFd")
-boxplot(EditSameFdpercentages,xlab="Projects", ylab="EditSameFd (%)", col="gray")
-dev.off
+#boxplot(EditSameFdpercentages,xlab="Projects", ylab="EditSameFd (%)", col="gray")
+#dev.off
 
 #DefaultValueAnnotation
-BoxplotDVA = paste("BoxplotDVA.png")
-png(paste(exportPath, BoxplotDVA, sep=""))
+#BoxplotDVA = paste("BoxplotDVA.png")
+#png(paste(exportPath, BoxplotDVA, sep=""))
 DefaultValueAnnotationpercentages <- computePatternPercentages(conflictRateTemp, "DefaultValueAnnotation")
-boxplot(DefaultValueAnnotationpercentages,xlab="Projects", ylab="DefaultValueAnnotation (%)", col="darkviolet")
-dev.off
+#boxplot(DefaultValueAnnotationpercentages,xlab="Projects", ylab="DefaultValueAnnotation (%)", col="darkviolet")
+#dev.off
 
 #ExtendsList
-BoxplotEL = paste("BoxplotEL.png")
-png(paste(exportPath, BoxplotEL, sep=""))
+#BoxplotEL = paste("BoxplotEL.png")
+#png(paste(exportPath, BoxplotEL, sep=""))
 ExtendsListpercentages <- computePatternPercentages(conflictRateTemp, "ExtendsList")
-boxplot(ExtendsListpercentages,xlab="Projects", ylab="ExtendsList (%)", col="chocolate4")
-dev.off
+#boxplot(ExtendsListpercentages,xlab="Projects", ylab="ExtendsList (%)", col="chocolate4")
+#dev.off
 
 
 #all conflicts percentages boxplot
@@ -428,6 +482,7 @@ HTMLInsertGraph(file=htmlFile, GraphFileName=realboxplotCRFileName, Align="cente
 
 HTML("<hr><h2>Causes for SameSignatureCM occurrences</h2>", file=htmlFile, append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotCSSCM, Align="center", append=TRUE)
+HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotAllCauses, Align="center", append=TRUE)
 
 HTML("<hr><h2>Conflict Pattern Percentages by Project</h2>", file=htmlFile, append=TRUE)
 #HTMLInsertGraph(file=htmlFile, GraphFileName=boxplotLBMCF, Align="center", append=TRUE)
