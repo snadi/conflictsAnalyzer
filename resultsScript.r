@@ -224,24 +224,26 @@ png(paste(exportPath, beanplotCRFileName, sep=""))
 beanplot(conflictRate$Conflict_Rate, xlab="Projects", ylab="Conflict Rate %",col="green")
 dev.off
 
-#boxplot conflicting rate
+#boxplot conflicting rate with and without false positives
 boxplotCRFileName = paste("BoxplotCR.png")
 png(paste(exportPath, boxplotCRFileName, sep=""))
-boxplot(conflictRate$Conflict_Rate, xlab="Projects", ylab="Conflict Rate %",col="green")
+conflictRateWFP <- realconflictRate
+dataConflict <-data.frame(conflictRate$Conflict_Rate, conflictRateWFP$Conflict.Rate)
+boxplot(dataConflict, ylab="Conflict Rate %",col="green")
 dev.off
 
-#beanplot real conflicting rate
+#beanplot conflicting rate with and without false positives
 
 realbeanplotCRFileName = paste("realBeanplotCR.png")
 png(paste(exportPath, realbeanplotCRFileName, sep=""))
-beanplot(realconflictRate$Conflict.Rate, xlab="Projects", ylab="Conflict Rate %",col="green")
+beanplot(dataConflict,  ylab="Conflict Rate %",col="green")
 dev.off
 
 #boxplot real conflicting rate
 
 realboxplotCRFileName = paste("realBoxplotCR.png")
 png(paste(exportPath, realboxplotCRFileName, sep=""))
-boxplot(realconflictRate$Conflict.Rate, xlab="Projects", ylab="Conflict Rate %",col="green")
+boxplot(realconflictRate$Conflict.Rate, xlab="Projects", ylab="Conflict Rate %",col="coral")
 dev.off
 
 #read conflict patterns values 
@@ -315,8 +317,8 @@ Group <- c(npercentageRealEditSameMC, npercentageEditSameMCDS, npercentageEditSa
            npercentagesumEditSameMCIFP)
 
 df <- data.frame(Group, Values)
-bp<- ggplot(df, aes(x="EditSameMC", y=Values, fill=Group))+
-  geom_bar(width = 1, stat = "identity")
+bp<- ggplot(df, aes(x="", y=Values, fill=Group))+
+  geom_bar(width = 1, stat = "identity") + ggtitle("EditSameMC")
 
 print(bp)
 dev.off
@@ -439,8 +441,8 @@ Values <- c(sumSmallMethod, sumRenamedMethod, sumCopiedMethod, sumCopiedFile, su
 Causes <- c(nsumSmallMethod, nsumRenamedMethod, nsumCopiedMethod, nsumCopiedFile,
             nsumNoPattern)
 df <- data.frame(Causes, Values)
-bp<- ggplot(df, aes(x="Causes", y=Values, fill=Causes))+
-      geom_bar(width = 1, stat = "identity")
+bp<- ggplot(df, aes(x="", y=Values, fill=Causes))+
+      geom_bar(width = 1, stat = "identity") + ggtitle("SameSignatureCM")
 print(bp)
 dev.off
 
@@ -557,8 +559,8 @@ HTML("<hr><h2>Conflict Rate</h2>", file=htmlFile, append=TRUE)
 HTML(conflictRate, file=htmlFile, append=TRUE)
 HTML(metrics, file=htmlFile, append=TRUE)
 
-HTML("<hr><h2>Conflict Rate Beanplot and Boxplot</h2>", file=htmlFile, append=TRUE)
-HTMLInsertGraph(file=htmlFile, GraphFileName=beanplotCRFileName, Align="center", append=TRUE)
+HTML("<hr><h2>Conflict Rate Beanplot and Boxplot with and without false positives</h2>", file=htmlFile, append=TRUE)
+HTMLInsertGraph(file=htmlFile, GraphFileName=realbeanplotCRFileName, Align="center", append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=boxplotCRFileName, Align="center", append=TRUE)
 
 HTML("<hr><h2>Conflict Patterns Occurrences</h2>", file=htmlFile, append=TRUE)
@@ -581,9 +583,9 @@ HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotFPSameSigCM, Align="center",
 HTML("<hr><h2>Conflict Rate Without False Positives</h2>", file=htmlFile, append=TRUE)
 HTML(realconflictRate, file=htmlFile, append=TRUE)
 
-HTML("<hr><h2>Conflict Rate Beanplot and Boxplot Without False Positives</h2>", file=htmlFile, append=TRUE)
-HTMLInsertGraph(file=htmlFile, GraphFileName=realbeanplotCRFileName, Align="center", append=TRUE)
-HTMLInsertGraph(file=htmlFile, GraphFileName=realboxplotCRFileName, Align="center", append=TRUE)
+#HTML("<hr><h2>Conflict Rate Beanplot and Boxplot Without False Positives</h2>", file=htmlFile, append=TRUE)
+#HTMLInsertGraph(file=htmlFile, GraphFileName=realbeanplotCRFileName, Align="center", append=TRUE)
+#HTMLInsertGraph(file=htmlFile, GraphFileName=realboxplotCRFileName, Align="center", append=TRUE)
 
 HTML("<hr><h2>Causes for SameSignatureCM occurrences</h2>", file=htmlFile, append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotCSSCM, Align="center", append=TRUE)
