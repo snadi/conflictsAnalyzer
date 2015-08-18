@@ -1,6 +1,19 @@
 #to do list:
 #place new column with conflict rate percentage
 
+diffConflictRateFunc <- function(conflictRate, conflictRateWFP){
+  diffConflictRate <- c()
+  
+  numberOfRows <- length(conflictRateWFP)
+  
+  for(i in 1:numberOfRows){
+    diff = conflictRate[i] - conflictRateWFP[i]
+    diffConflictRate  <- append(diffConflictRate, diff)
+  }
+  
+  return(diffConflictRate)
+}
+
 computePatternPercentages <- function(conflicts, patternName){
   
   patternPercentages <- c()
@@ -244,6 +257,13 @@ dev.off
 realboxplotCRFileName = paste("realBoxplotCR.png")
 png(paste(exportPath, realboxplotCRFileName, sep=""))
 boxplot(realconflictRate$Conflict.Rate, xlab="Projects", ylab="Conflict Rate %",col="coral")
+dev.off
+
+#boxplot diff conflict rates
+diffConflictRates <- diffConflictRateFunc(conflictRate$Conflict_Rate, conflictRateWFP$Conflict.Rate)
+boxplotDiffCR = paste("boxplotDiffCR.png")
+png(paste(exportPath, boxplotDiffCR, sep=""))
+boxplot(diffConflictRates, xlab="Projects", ylab="Differenc of Conflict Rates %",col="green")
 dev.off
 
 #read conflict patterns values 
@@ -562,6 +582,9 @@ HTML(metrics, file=htmlFile, append=TRUE)
 HTML("<hr><h2>Conflict Rate Beanplot and Boxplot with and without false positives</h2>", file=htmlFile, append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=realbeanplotCRFileName, Align="center", append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=boxplotCRFileName, Align="center", append=TRUE)
+
+HTML("<hr><h2>Difference of Conflict Rates with and without false positives</h2>", file=htmlFile, append=TRUE)
+HTMLInsertGraph(file=htmlFile, GraphFileName=boxplotDiffCR, Align="center", append=TRUE)
 
 HTML("<hr><h2>Conflict Patterns Occurrences</h2>", file=htmlFile, append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=barChartFileName, Align="center", append=TRUE)
