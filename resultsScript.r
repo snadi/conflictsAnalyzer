@@ -187,6 +187,7 @@ exportPath = "/Users/paolaaccioly/Dropbox/Public/conflictpattern/"
 
 conflictRateFile="projectsPatternData.csv"
 realConflictRateFile = "realConflictRate.csv"
+filesMetrics="filesMetrics.csv"
 
 
 #HTML file
@@ -197,11 +198,13 @@ deleteAllFiles(exportPath)
 
 #read and edit conflict rate table
 conflictRateTemp = read.table(file=paste(importPath, conflictRateFile, sep=""), header=T, sep=",")
-conflictRate2 = data.frame(conflictRateTemp$Project, conflictRateTemp$Merge_Scenarios, conflictRateTemp$Conflicting_Scenarios)
+conflictRate2 = data.frame(conflictRateTemp$Project, conflictRateTemp$Merge_Scenarios, 
+                           conflictRateTemp$Conflicting_Scenarios)
 colnames(conflictRate2) <- c("Project", "Merge_Scenarios", "Conflicting_Scenarios")
 sumMergeScenarios = sum(conflictRate2$Merge_Scenarios)
 sumConflictionScenarios = sum(conflictRate2$Conflicting_Scenarios)
-total = data.frame(Project="TOTAL", Merge_Scenarios=sumMergeScenarios, Conflicting_Scenarios=sumConflictionScenarios)
+total = data.frame(Project="TOTAL", Merge_Scenarios=sumMergeScenarios, 
+                   Conflicting_Scenarios=sumConflictionScenarios)
 conflictRate = rbind(conflictRate2, total)
 
 conflictRate["Conflict_Rate(%)"] <- (conflictRate$Conflicting_Scenarios/conflictRate$Merge_Scenarios)*100
@@ -214,7 +217,8 @@ metrics <- data.frame(Mean, Standard.deviation)
 
 #read and edit real conflict rate table
   realConflictRateFileTemp = read.table(file=paste(importPath,realConflictRateFile , sep=""), header=T, sep=",")
- realconflictRate2 = data.frame(realConflictRateFileTemp$Projects, realConflictRateFileTemp$Merge.Scenarios, realConflictRateFileTemp$Conflicting.Scenarios)
+ realconflictRate2 = data.frame(realConflictRateFileTemp$Projects, realConflictRateFileTemp$Merge.Scenarios, 
+                                realConflictRateFileTemp$Conflicting.Scenarios)
  colnames(realconflictRate2) <- c("Projects", "Merge.Scenarios", "Conflicting.Scenarios")
  realsumMergeScenarios = sum(realconflictRate2$Merge.Scenarios)
  realsumConflictionScenarios = sum(realconflictRate2$Conflicting.Scenarios)
@@ -222,7 +226,8 @@ metrics <- data.frame(Mean, Standard.deviation)
                         Conflicting.Scenarios=realsumConflictionScenarios)
  realconflictRate = rbind(realconflictRate2, realtotal)
 
- realconflictRate["Conflict.Rate(%)"] <- (realconflictRate$Conflicting.Scenarios/realconflictRate$Merge.Scenarios)*100
+ realconflictRate["Conflict.Rate(%)"] <- 
+  (realconflictRate$Conflicting.Scenarios/realconflictRate$Merge.Scenarios)*100
  attach(realconflictRate)
 
 realNewTable <- head(realconflictRate, -1)
@@ -279,8 +284,10 @@ ExtendsList <- sum(conflictRateTemp$ExtendsList)
 # bar plot all conflicts
 barChartFileName = paste("BarChart.png")
 png(paste(exportPath, barChartFileName, sep=""))
-slices <- c(DefaultValueAnnotation, ImplementList, ModifierList, EditSameMC, SameSignatureCM, AddSameFd, EditSameFd, ExtendsList)
-labels <- c("DefaultValueA", "ImplementList", "ModifierList", "EditSameMC", "SameSignatureCM", "AddSameFd", "EditSameFd", "ExtendsList") 
+slices <- c(DefaultValueAnnotation, ImplementList, ModifierList, EditSameMC, SameSignatureCM, AddSameFd, 
+            EditSameFd, ExtendsList)
+labels <- c("DefaultValueA", "ImplementList", "ModifierList", "EditSameMC", "SameSignatureCM", "AddSameFd", 
+            "EditSameFd", "ExtendsList") 
 dat <- data.frame(Frequency = slices,Conflicts = labels)
 library(ggplot2)
 p <- ggplot(dat, aes(x = Conflicts, y = Frequency)) +
@@ -292,19 +299,18 @@ print(p)
 dev.off
 
 #conflicts table
-Conflicts_Patterns <- c("DefaultValueAnnotation", "ImplementList", "ModifierList", "EditSameMC", "SameSignatureCM", "AddSameFd", "EditSameFd", "ExtendsList", "TOTAL")
-conflictsSum <- sum(DefaultValueAnnotation, ImplementList, ModifierList, EditSameMC, SameSignatureCM,AddSameFd, EditSameFd, ExtendsList)
-Occurrences <- c(DefaultValueAnnotation, ImplementList, ModifierList, EditSameMC, SameSignatureCM,AddSameFd, EditSameFd, ExtendsList, conflictsSum)
+Conflicts_Patterns <- c("DefaultValueAnnotation", "ImplementList", "ModifierList", "EditSameMC", 
+                        "SameSignatureCM", "AddSameFd", "EditSameFd", "ExtendsList", "TOTAL")
+conflictsSum <- sum(DefaultValueAnnotation, ImplementList, ModifierList, EditSameMC, SameSignatureCM,
+                    AddSameFd, EditSameFd, ExtendsList)
+Occurrences <- c(DefaultValueAnnotation, ImplementList, ModifierList, EditSameMC, SameSignatureCM,
+                 AddSameFd, EditSameFd, ExtendsList, conflictsSum)
 conflictsTable <- data.frame(Conflicts_Patterns, Occurrences)
 
 #boxplot for each conflict pattern percentages along all projects
 
-#EditSameMC 
-#boxplotLBMCF = paste("BoxplotLBMCF.png")
-#png(paste(exportPath, boxplotLBMCF, sep=""))
 EditSameMCpercentages <- computePatternPercentages(conflictRateTemp, "EditSameMC")
-#boxplot(EditSameMCpercentages,xlab="Projects", ylab="EditSameMC (%)", col="blue")
-#dev.off
+
 
 #false positives EditSameMC
 BarPlotESMCFP = paste("BarPlotESMCFP.png")
@@ -353,12 +359,9 @@ par(op)
 dev.off
 
 
-#SameSignatureCM
-#BoxplotSSCM = paste("BoxplotSSCM.png")
-#png(paste(exportPath, BoxplotSSCM, sep=""))
+
 SameSignatureCMpercentages <- computePatternPercentages(conflictRateTemp, "SameSignatureCM")
-#boxplot(SameSignatureCMpercentages,xlab="Projects", ylab="SameSignatureCM (%)", col="red")
-#dev.off
+
 
 #false positives SameSignatureCM
 BarPlotSSCMFP = paste("BarPlotSSCMFP.png")
@@ -369,7 +372,8 @@ realSameSignatureMC = SameSignatureCM - sumSameSignatureMCDS
 percentageSumSameSignatureMCDS <- round((sumSameSignatureMCDS/SameSignatureCM)*100, digit=1)
 percentageRealSameSignatureMC <- round ((realSameSignatureMC/SameSignatureCM)*100, digit=1)
 
-npercentageSumSameSignatureMCDS <- paste(c("Conflicts due to different identation-",percentageSumSameSignatureMCDS , "%"), 
+npercentageSumSameSignatureMCDS <- paste(c("Conflicts due to different identation-",
+                                           percentageSumSameSignatureMCDS , "%"), 
                                          collapse = "")
 npercentageRealSameSignatureMC <- paste(c("Possible conflicts-",percentageRealSameSignatureMC , "%"), 
                                         collapse = "")
@@ -481,50 +485,17 @@ boxplot(allCausesPercentages, xlab="", ylab="", col="green", horizontal = TRUE, 
 par(op)
 dev.off
 
-#boxplot
-
-#ImplementList
-#BoxplotIL = paste("BoxplotIL.png")
-#png(paste(exportPath, BoxplotIL, sep=""))
 ImplementListpercentages <- computePatternPercentages(conflictRateTemp, "ImplementList")
-#boxplot(ImplementListpercentages,xlab="Projects", ylab="ImplementList (%)", col="chocolate4")
-#dev.off
 
-#ModifierList
-#BoxplotML = paste("BoxplotML.png")
-#png(paste(exportPath, BoxplotML, sep=""))
 ModifierListpercentages <- computePatternPercentages(conflictRateTemp, "ModifierList")
-#boxplot(ModifierListpercentages,xlab="Projects", ylab="ModifierList (%)", col="green")
-#dev.off
 
-#AddSameFd
-#BoxplotSIF = paste("BoxplotSIF.png")
-#png(paste(exportPath, BoxplotSIF, sep=""))
 AddSameFdpercentages <- computePatternPercentages(conflictRateTemp, "AddSameFd")
-#boxplot(AddSameFdpercentages,xlab="Projects", ylab="AddSameFd (%)", col="darkgoldenrod2")
-#dev.off
 
-#EditSameFd
-#BoxplotESF = paste("BoxplotESF.png")
-#png(paste(exportPath, BoxplotESF, sep=""))
 EditSameFdpercentages <- computePatternPercentages(conflictRateTemp, "EditSameFd")
-#boxplot(EditSameFdpercentages,xlab="Projects", ylab="EditSameFd (%)", col="gray")
-#dev.off
 
-#DefaultValueAnnotation
-#BoxplotDVA = paste("BoxplotDVA.png")
-#png(paste(exportPath, BoxplotDVA, sep=""))
 DefaultValueAnnotationpercentages <- computePatternPercentages(conflictRateTemp, "DefaultValueAnnotation")
-#boxplot(DefaultValueAnnotationpercentages,xlab="Projects", ylab="DefaultValueAnnotation (%)", col="darkviolet")
-#dev.off
 
-#ExtendsList
-#BoxplotEL = paste("BoxplotEL.png")
-#png(paste(exportPath, BoxplotEL, sep=""))
 ExtendsListpercentages <- computePatternPercentages(conflictRateTemp, "ExtendsList")
-#boxplot(ExtendsListpercentages,xlab="Projects", ylab="ExtendsList (%)", col="chocolate4")
-#dev.off
-
 
 #all conflicts percentages boxplot
 BoxplotAllConflicts = paste("BoxplotAllConflicts.png")
@@ -541,8 +512,9 @@ allConflictsPercentage <- data.frame(EditSameMC, SameSignatureCM,
                                      ImplementList, ModifierList, 
                                      AddSameFd, EditSameFd, 
                                      DefaultValueA, ExtendsList)
-op <- par(mar = c(3, 8, 2, 2) + 0.1) #adjust margins, default is c(5, 4, 4, 2) + 0.1
-boxplot(allConflictsPercentage, xlab="", ylab="", col="green", horizontal = TRUE, las=1, cex.axis=1)
+op <- par(mar = c(5, 8, 2, 2) + 0.1) #adjust margins, default is c(5, 4, 4, 2) + 0.1
+boxplot(allConflictsPercentage, xlab="Percentage for each project (%)", ylab="", col="green", 
+        horizontal = TRUE, las=1, cex.axis=1)
 par(op)
 dev.off
 
@@ -561,11 +533,15 @@ EditSameFd <- lastProject$EditSameFd
 ExtendsList <- lastProject$ExtendsList
 barPlotFileName = paste(name, "BarPlot.png", sep="")
 png(paste(exportPath, barPlotFileName, sep=""))
-slices <- c(DefaultValueAnnotation, ImplementList, ModifierList, EditSameMC, SameSignatureCM, AddSameFd, EditSameFd, ExtendsList)
-labels <- c("DefaultValueAnnotation", "ImplementList", "ModifierList", "EditSameMC", "SameSignatureCM", "AddSameFd", "EditSameFd", "ExtendsList") 
+slices <- c(DefaultValueAnnotation, ImplementList, ModifierList, EditSameMC, SameSignatureCM, AddSameFd, 
+            EditSameFd, ExtendsList)
+labels <- c("DefaultValueAnnotation", "ImplementList", "ModifierList", "EditSameMC", "SameSignatureCM", 
+            "AddSameFd", "EditSameFd", "ExtendsList") 
 par(las=2)
 par(mar=c(5,8,4,2))
-barplot(slices, main=name, horiz=TRUE, names.arg=labels, cex.names=0.8, col=c("darkviolet","chocolate4", "darkgreen", "darkblue", "red" , "darkgoldenrod2"))
+barplot(slices, main=name, horiz=TRUE, names.arg=labels, cex.names=0.8, col=c("darkviolet","chocolate4", 
+                                                                              "darkgreen", "darkblue", "red" ,
+                                                                              "darkgoldenrod2"))
 dev.off
 
 #HTML code
@@ -578,8 +554,12 @@ HTML.title(title, file=htmlFile, append=TRUE)
 HTML("<hr><h2>Conflict Rate</h2>", file=htmlFile, append=TRUE)
 HTML(conflictRate, file=htmlFile, append=TRUE)
 HTML(metrics, file=htmlFile, append=TRUE)
+HTML("<hr><h2>Conflict Rate Without False Positives</h2>", file=htmlFile, append=TRUE)
+HTML(realconflictRate, file=htmlFile, append=TRUE)
+HTML(realMetrics, file=htmlFile, append=TRUE)
 
-HTML("<hr><h2>Conflict Rate Beanplot and Boxplot with and without false positives</h2>", file=htmlFile, append=TRUE)
+HTML("<hr><h2>Conflict Rate Beanplot and Boxplot with and without false positives</h2>", file=htmlFile, 
+     append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=realbeanplotCRFileName, Align="center", append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=boxplotCRFileName, Align="center", append=TRUE)
 
@@ -592,10 +572,10 @@ HTMLInsertGraph(file=htmlFile, GraphFileName=barChartFileName, Align="center", a
 HTML("<hr><h2>Conflicts Table</h2>", file=htmlFile, append=TRUE)
 HTML(conflictsTable, file=htmlFile, append=TRUE)
 
+
 HTML("<hr><h2>Conflicts Patterns Occurrences Without the False Positives</h2>", file=htmlFile, append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=barChartFP, Align="center", append=TRUE)
 HTML(realconflictsTable, file=htmlFile, append=TRUE)
-HTML(realMetrics, file=htmlFile, append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotAllConflicts, Align="center", append=TRUE)
 
 HTML("<hr><h2>False Positives Occurences</h2>", file=htmlFile, append=TRUE)
@@ -604,27 +584,9 @@ HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotFPEditSameMC, Align="center"
 HTMLInsertGraph(file=htmlFile, GraphFileName=BarPlotSSCMFP, Align="center", append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotFPSameSigCM, Align="center", append=TRUE)
 
-HTML("<hr><h2>Conflict Rate Without False Positives</h2>", file=htmlFile, append=TRUE)
-HTML(realconflictRate, file=htmlFile, append=TRUE)
-
-#HTML("<hr><h2>Conflict Rate Beanplot and Boxplot Without False Positives</h2>", file=htmlFile, append=TRUE)
-#HTMLInsertGraph(file=htmlFile, GraphFileName=realbeanplotCRFileName, Align="center", append=TRUE)
-#HTMLInsertGraph(file=htmlFile, GraphFileName=realboxplotCRFileName, Align="center", append=TRUE)
-
 HTML("<hr><h2>Causes for SameSignatureCM occurrences</h2>", file=htmlFile, append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotCSSCM, Align="center", append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotAllCauses, Align="center", append=TRUE)
-
-#HTML("<hr><h2>Conflict Pattern Percentages by Project</h2>", file=htmlFile, append=TRUE)
-#HTMLInsertGraph(file=htmlFile, GraphFileName=boxplotLBMCF, Align="center", append=TRUE)
-#HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotSSCM, Align="center", append=TRUE)
-#HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotIL, Align="center", append=TRUE)
-#HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotML, Align="center", append=TRUE)
-#HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotSIF, Align="center", append=TRUE)
-#HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotESF, Align="center", append=TRUE)
-#HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotDVA, Align="center", append=TRUE)
-#HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotEL, Align="center", append=TRUE)
-
 
 time = Sys.time()
 HTML("<hr><h2>Last Time Updated:</h2>", file=htmlFile, append=TRUE)
