@@ -596,6 +596,7 @@ HTML("<hr><h2>Conflicts Patterns Occurrences Without the False Positives</h2>", 
 HTMLInsertGraph(file=htmlFile, GraphFileName=barChartFP, Align="center", append=TRUE)
 HTML(realconflictsTable, file=htmlFile, append=TRUE)
 HTML(realMetrics, file=htmlFile, append=TRUE)
+HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotAllConflicts, Align="center", append=TRUE)
 
 HTML("<hr><h2>False Positives Occurences</h2>", file=htmlFile, append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=BarPlotESMCFP, Align="center", append=TRUE)
@@ -614,7 +615,7 @@ HTML("<hr><h2>Causes for SameSignatureCM occurrences</h2>", file=htmlFile, appen
 HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotCSSCM, Align="center", append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotAllCauses, Align="center", append=TRUE)
 
-HTML("<hr><h2>Conflict Pattern Percentages by Project</h2>", file=htmlFile, append=TRUE)
+#HTML("<hr><h2>Conflict Pattern Percentages by Project</h2>", file=htmlFile, append=TRUE)
 #HTMLInsertGraph(file=htmlFile, GraphFileName=boxplotLBMCF, Align="center", append=TRUE)
 #HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotSSCM, Align="center", append=TRUE)
 #HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotIL, Align="center", append=TRUE)
@@ -623,7 +624,7 @@ HTML("<hr><h2>Conflict Pattern Percentages by Project</h2>", file=htmlFile, appe
 #HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotESF, Align="center", append=TRUE)
 #HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotDVA, Align="center", append=TRUE)
 #HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotEL, Align="center", append=TRUE)
-HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotAllConflicts, Align="center", append=TRUE)
+
 
 time = Sys.time()
 HTML("<hr><h2>Last Time Updated:</h2>", file=htmlFile, append=TRUE)
