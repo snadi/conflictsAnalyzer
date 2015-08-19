@@ -200,10 +200,10 @@ deleteAllFiles(exportPath)
 conflictRateTemp = read.table(file=paste(importPath, conflictRateFile, sep=""), header=T, sep=",")
 conflictRate2 = data.frame(conflictRateTemp$Project, conflictRateTemp$Merge_Scenarios, 
                            conflictRateTemp$Conflicting_Scenarios)
-colnames(conflictRate2) <- c("Project", "Merge_Scenarios", "Conflicting_Scenarios")
+colnames(conflictRate2) <- c("Projects", "Merge_Scenarios", "Conflicting_Scenarios")
 sumMergeScenarios = sum(conflictRate2$Merge_Scenarios)
 sumConflictionScenarios = sum(conflictRate2$Conflicting_Scenarios)
-total = data.frame(Project="TOTAL", Merge_Scenarios=sumMergeScenarios, 
+total = data.frame(Projects="TOTAL", Merge_Scenarios=sumMergeScenarios, 
                    Conflicting_Scenarios=sumConflictionScenarios)
 conflictRate = rbind(conflictRate2, total)
 
@@ -237,16 +237,13 @@ realMetrics <- data.frame(Mean, Standard.deviation)
 
 #beanplot conflicting rate
 library(beanplot)
-beanplotCRFileName = paste("BeanplotCR.png")
-png(paste(exportPath, beanplotCRFileName, sep=""))
-beanplot(conflictRate$Conflict_Rate, xlab="Projects", ylab="Conflict Rate %",col="green")
-dev.off
 
 #boxplot conflicting rate with and without false positives
 boxplotCRFileName = paste("BoxplotCR.png")
 png(paste(exportPath, boxplotCRFileName, sep=""))
 conflictRateWFP <- realconflictRate
 dataConflict <-data.frame(conflictRate$Conflict_Rate, conflictRateWFP$Conflict.Rate)
+colnames(dataConflict) <- c("With False Positives", "Without False Positives")
 boxplot(dataConflict, ylab="Conflict Rate %",col="green")
 dev.off
 
@@ -257,19 +254,54 @@ png(paste(exportPath, realbeanplotCRFileName, sep=""))
 beanplot(dataConflict,  ylab="Conflict Rate %",col="green")
 dev.off
 
-#boxplot real conflicting rate
-
-realboxplotCRFileName = paste("realBoxplotCR.png")
-png(paste(exportPath, realboxplotCRFileName, sep=""))
-boxplot(realconflictRate$Conflict.Rate, xlab="Projects", ylab="Conflict Rate %",col="coral")
-dev.off
 
 #boxplot diff conflict rates
 diffConflictRates <- diffConflictRateFunc(conflictRate$Conflict_Rate, conflictRateWFP$Conflict.Rate)
 boxplotDiffCR = paste("boxplotDiffCR.png")
 png(paste(exportPath, boxplotDiffCR, sep=""))
-boxplot(diffConflictRates, xlab="Projects", ylab="Differenc of Conflict Rates %",col="green")
+boxplot(diffConflictRates, xlab="Projects", ylab="Difference of Conflict Rates %",col="green")
 dev.off
+
+#mens comparison
+#read and edit file metrics table
+fileMetricsTemp = read.table(file=paste(importPath,filesMetrics , sep=""), header=T, sep=",")
+fileMetrics2 = data.frame(fileMetricsTemp$Project, fileMetricsTemp$Total_files, fileMetricsTemp$Files_merged, 
+                          fileMetricsTemp$Files_With_Conflicts)
+colnames(fileMetrics2) <- c("Project", "Total_files", "Files_merged", "Files_With_Conflicts")
+sumTotalFiles = sum(fileMetricsTemp$Total_files)
+sumFilesMerged=sum(fileMetricsTemp$Files_merged)
+sumFilesWithConflict=sum(fileMetricsTemp$Files_With_Conflicts)
+
+total = data.frame(Project="TOTAL", Total_files=sumTotalFiles,
+                   Files_merged=sumFilesMerged, Files_With_Conflicts=sumFilesWithConflict)
+fileMetricsTable = rbind(fileMetrics2, total)
+
+fileMetricsTable["P_Files_Merged(%)"] <- 
+  (fileMetricsTable$Files_merged/fileMetricsTable$Total_files)*100
+
+fileMetricsTable["P_Files_With_Conflicts(%)"] <- 
+  (fileMetricsTable$Files_With_Conflicts/fileMetricsTable$Total_files)*100
+
+attach(fileMetricsTable)
+
+fl <- data.frame(fileMetricsTable$P_Files_Merged, fileMetricsTable$P_Files_With_Conflicts)
+colnames(fl) <- c("Files_Merged", "Files_With_Conflicts")
+
+#beanplot file metrics
+fileMetricsBeanPlot = paste("fileMetricsBeanPlot.png")
+png(paste(exportPath, fileMetricsBeanPlot, sep=""))
+beanplot(fl, xlab="", ylab="Percentage (%)",col="green")
+dev.off
+#boxplot file metrics
+fileMetricsBoxPlot = paste("fileMetricsBoxPlot.png")
+png(paste(exportPath, fileMetricsBoxPlot, sep=""))
+boxplot(fl, xlab="", ylab="Percentage (%)",col="green")
+dev.off
+
+
+fmSummary <- data.frame(mean(fl$Files_Merged), sd(fl$Files_Merged), mean(fl$Files_With_Conflicts),
+                   sd(fl$Files_With_Conflicts))
+colnames(fmSummary) <- c("FM_Mean", "FM_SD", "FWC_Mean", "FWC_SD")
 
 #read conflict patterns values 
 DefaultValueAnnotation <- sum(conflictRateTemp$DefaultValueAnnotation)
@@ -565,6 +597,12 @@ HTMLInsertGraph(file=htmlFile, GraphFileName=boxplotCRFileName, Align="center", 
 
 HTML("<hr><h2>Difference of Conflict Rates with and without false positives</h2>", file=htmlFile, append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=boxplotDiffCR, Align="center", append=TRUE)
+
+HTML("<hr><h2>Comparison with Mens Conjecture</h2>", file=htmlFile, append=TRUE)
+HTML(fileMetricsTable, file=htmlFile, append=TRUE)
+HTML(fmSummary, file=htmlFile, append=TRUE)
+HTMLInsertGraph(file=htmlFile, GraphFileName=fileMetricsBeanPlot, Align="center", append=TRUE)
+HTMLInsertGraph(file=htmlFile, GraphFileName=fileMetricsBoxPlot, Align="center", append=TRUE)
 
 HTML("<hr><h2>Conflict Patterns Occurrences</h2>", file=htmlFile, append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=barChartFileName, Align="center", append=TRUE)
