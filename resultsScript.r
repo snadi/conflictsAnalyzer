@@ -1,16 +1,21 @@
 #to do list:
 #place new column with conflict rate percentage
 
-diffConflictRateFunc <- function(conflictRate, conflictRateWFP){
+diffConflictRateFunc <- function(conflictRate, conflictRateWithoutFP){
   diffConflictRate <- c()
   
-  numberOfRows <- length(conflictRateWFP)
+  numberOfRows <- length(conflictRateWithoutFP)
   
   for(i in 1:numberOfRows){
-    diff = conflictRate[i] - conflictRateWFP[i]
+    
+    if(conflictRate[i]==0){
+      diff = 0
+    } else{
+      diff = (1- (conflictRateWithoutFP[i]/conflictRate[i]))*100
+    }
     diffConflictRate  <- append(diffConflictRate, diff)
-  }
-  
+    
+  }  
   return(diffConflictRate)
 }
 
@@ -268,22 +273,31 @@ conflictRateWFP <- realconflictRate
 dataConflict <-data.frame(conflictRate$Conflict_Rate, conflictRateWFP$Conflict.Rate)
 colnames(dataConflict) <- c("With False Positives", "Without False Positives")
 boxplot(dataConflict, ylab="Conflict Rate %",col="green")
-dev.off
+dev.off()
 
 #beanplot conflicting rate with and without false positives
 
 realbeanplotCRFileName = paste("realBeanplotCR.png")
 png(paste(exportPath, realbeanplotCRFileName, sep=""))
-beanplot(dataConflict,  ylab="Conflict Rate %",col="green")
-dev.off
+beanplot(dataConflict,  ylab="Conflict Rate %",col="green", cex=1.5)
+dev.off()
 
 
 #boxplot diff conflict rates
-diffConflictRates <- diffConflictRateFunc(conflictRate$Conflict_Rate, conflictRateWFP$Conflict.Rate)
+diffConflictRates <- diffConflictRateFunc(newTable$Conflict_Rate, realNewTable$Conflict.Rate)
 boxplotDiffCR = paste("boxplotDiffCR.png")
 png(paste(exportPath, boxplotDiffCR, sep=""))
 boxplot(diffConflictRates, xlab="Projects", ylab="Difference of Conflict Rates %",col="green")
-dev.off
+dev.off()
+
+diffConflictRatesTable <- data.frame(mean(diffConflictRates), sd(diffConflictRates) )
+colnames(diffConflictRatesTable) <- c("Mean", "Standard Deviation")
+
+#beanplot diff conflict rates
+beanplotDiffCR = paste("beanplotDiffCR.png")
+png(paste(exportPath, beanplotDiffCR, sep=""))
+beanplot(diffConflictRates, xlab="Projects", ylab="Difference of Conflict Rates %",col="green")
+dev.off()
 
 #mens comparison
 #read and edit file metrics table
@@ -291,9 +305,9 @@ fileMetricsTemp = read.table(file=paste(importPath,filesMetrics , sep=""), heade
 fileMetrics2 = data.frame(fileMetricsTemp$Project, fileMetricsTemp$Total_files, fileMetricsTemp$Files_merged, 
                           fileMetricsTemp$Files_with_conflicts)
 colnames(fileMetrics2) <- c("Project", "Total_files", "Files_merged", "Files_With_Conflicts")
-sumTotalFiles = sum(fileMetricsTemp$Total_files)
-sumFilesMerged=sum(fileMetricsTemp$Files_merged)
-sumFilesWithConflict=sum(fileMetricsTemp$Files_With_Conflicts)
+sumTotalFiles = sum(fileMetrics2$Total_files)
+sumFilesMerged=sum(fileMetrics2$Files_merged)
+sumFilesWithConflict=sum(fileMetrics2$Files_With_Conflicts)
 
 total = data.frame(Project="TOTAL", Total_files=sumTotalFiles,
                    Files_merged=sumFilesMerged, Files_With_Conflicts=sumFilesWithConflict)
@@ -314,12 +328,12 @@ colnames(fl) <- c("Files_Merged", "Files_With_Conflicts")
 fileMetricsBeanPlot = paste("fileMetricsBeanPlot.png")
 png(paste(exportPath, fileMetricsBeanPlot, sep=""))
 beanplot(fl, xlab="", ylab="Percentage (%)",col="green")
-dev.off
+dev.off()
 #boxplot file metrics
 fileMetricsBoxPlot = paste("fileMetricsBoxPlot.png")
 png(paste(exportPath, fileMetricsBoxPlot, sep=""))
 boxplot(fl, xlab="", ylab="Percentage (%)",col="green")
-dev.off
+dev.off()
 
 fmSummary <- data.frame(mean(fl$Files_Merged), sd(fl$Files_Merged), mean(fl$Files_With_Conflicts),
                    sd(fl$Files_With_Conflicts))
@@ -331,13 +345,13 @@ percentagesFWP_FM <- computeFWC_FM_Perncetages(fileMetricsTemp)
 FWP_FMBeanPlot = paste("FWP_FMBeanPlot.png")
 png(paste(exportPath, FWP_FMBeanPlot, sep=""))
 beanplot(percentagesFWP_FM, xlab="FilesWithConflicts/MergedFiles", ylab="Percentage (%)",col="green")
-dev.off
+dev.off()
 
 #boxplot file metrics
 FWP_FMBoxPlot = paste("FWP_FMBoxPlot.png")
 png(paste(exportPath, FWP_FMBoxPlot, sep=""))
 boxplot(percentagesFWP_FM, xlab="FilesWithConflicts/MergedFiles", ylab="Percentage (%)",col="green")
-dev.off
+dev.off()
 
 #mean and sd table
 fwc_mf <- data.frame(mean(percentagesFWP_FM), sd(percentagesFWP_FM))
@@ -368,7 +382,7 @@ p <- ggplot(dat, aes(x = Conflicts, y = Frequency)) +
             vjust = -.5) + theme_grey(base_size = 8) 
 
 print(p)
-dev.off
+dev.off()
 
 #conflicts table
 Conflicts_Patterns <- c("DefaultValueAnnotation", "ImplementList", "ModifierList", "EditSameMC", 
@@ -419,7 +433,7 @@ bp<- ggplot(df, aes(x="", y=Values, fill=Group))+
   geom_bar(width = 1, stat = "identity") + ggtitle("EditSameMC")
 
 print(bp)
-dev.off
+dev.off()
 
 #boxplot with the editSameMC cause percentages
 BoxplotFPEditSameMC = paste("BoxplotFPEditSameMC.png")
@@ -428,7 +442,7 @@ allEditSameMCFPPercentages <- dataFrameEditSameMCFPPercentages(conflictRateTemp)
 op <- par(mar = c(3, 8, 2, 2) + 0.1) #adjust margins, default is c(5, 4, 4, 2) + 0.1
 boxplot(allEditSameMCFPPercentages, xlab="", ylab="", col="green", horizontal = TRUE, las=1, cex.axis=1)
 par(op)
-dev.off
+dev.off()
 
 
 
@@ -457,7 +471,7 @@ df <- data.frame(Group, Values)
 bp<- ggplot(df, aes(x="SameSignatureMC", y=Values, fill=Group))+
   geom_bar(width = 1, stat = "identity")
 print(bp)
-dev.off
+dev.off()
 
 #boxplot with the sameSignatureCM cause percentages
 BoxplotFPSameSigCM = paste("BoxplotFPSameSigCM.png")
@@ -466,7 +480,7 @@ allSameSigPercentages <- dataFrameSameSignatureFPPercentages(conflictRateTemp)
 op <- par(mar = c(3, 8, 2, 2) + 0.1) #adjust margins, default is c(5, 4, 4, 2) + 0.1
 boxplot(allSameSigPercentages, xlab="", ylab="", col="green", horizontal = TRUE, las=1, cex.axis=1)
 par(op)
-dev.off
+dev.off()
 
 #bar plot without false positives
 realDefaultValueAnnotation <- sum(conflictRateTemp$DefaultValueAnnotation) - 
@@ -497,7 +511,7 @@ p <- ggplot(dat, aes(x = Conflicts, y = Frequency)) +
             vjust = -.5) + theme_grey(base_size = 8) 
 
 print(p)
-dev.off
+dev.off()
 
 #conflicts table
 Conflicts_Patterns <- c("DefaultValueAnnotation", "ImplementList", "ModifierList", "EditSameMC", 
@@ -540,7 +554,7 @@ df <- data.frame(Causes, Values)
 bp<- ggplot(df, aes(x="", y=Values, fill=Causes))+
       geom_bar(width = 1, stat = "identity") + ggtitle("SameSignatureCM")
 print(bp)
-dev.off
+dev.off()
 
 #boxplot with the samesignaturecm cause percentages
 BoxplotAllCauses = paste("BoxplotAllCauses.png")
@@ -555,7 +569,7 @@ allCausesPercentages <- data.frame(smallMethod, renamedMethod, copiedMethod,
 op <- par(mar = c(3, 8, 2, 2) + 0.1) #adjust margins, default is c(5, 4, 4, 2) + 0.1
 boxplot(allCausesPercentages, xlab="", ylab="", col="green", horizontal = TRUE, las=1, cex.axis=1)
 par(op)
-dev.off
+dev.off()
 
 ImplementListpercentages <- computePatternPercentages(conflictRateTemp, "ImplementList")
 
@@ -588,7 +602,7 @@ op <- par(mar = c(5, 8, 2, 2) + 0.1) #adjust margins, default is c(5, 4, 4, 2) +
 boxplot(allConflictsPercentage, xlab="Percentage for each project (%)", ylab="", col="green", 
         horizontal = TRUE, las=1, cex.axis=1)
 par(op)
-dev.off
+dev.off()
 
 
 #bar plot last project
@@ -614,7 +628,7 @@ par(mar=c(5,8,4,2))
 barplot(slices, main=name, horiz=TRUE, names.arg=labels, cex.names=0.8, col=c("darkviolet","chocolate4", 
                                                                               "darkgreen", "darkblue", "red" ,
                                                                               "darkgoldenrod2"))
-dev.off
+dev.off()
 
 #HTML code
 library(R2HTML)
@@ -637,6 +651,8 @@ HTMLInsertGraph(file=htmlFile, GraphFileName=boxplotCRFileName, Align="center", 
 
 HTML("<hr><h2>Difference of Conflict Rates with and without false positives</h2>", file=htmlFile, append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=boxplotDiffCR, Align="center", append=TRUE)
+HTMLInsertGraph(file=htmlFile, GraphFileName=beanplotDiffCR, Align="center", append=TRUE)
+HTML(diffConflictRatesTable, file=htmlFile, append=TRUE)
 
 HTML("<hr><h2>Comparison with Mens Conjecture</h2>", file=htmlFile, append=TRUE)
 HTML(fileMetricsTable, file=htmlFile, append=TRUE)
