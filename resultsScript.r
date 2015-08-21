@@ -61,29 +61,6 @@ computePatternPercentages <- function(conflicts, patternName){
   return(patternPercentages)
 }
 
-computeFWC_FM_Perncetages <- function(fileMetrics){
-  
-  fwcPercentages <- c()
-  
-  numberOfRows <- nrow(fileMetrics)
-  
-  for(i in 1:numberOfRows){  
-    
-    filesMerged <- fileMetrics[i,3]
-    filesWithConflicts <- fileMetrics[i,4]
-  
-    if(filesMerged == 0){
-      percentage <- 0
-    }else{
-      percentage <- (filesWithConflicts/filesMerged)*100
-    }
-    
-    fwcPercentages  <- append(fwcPercentages, percentage)
-    
-  }
-  return(fwcPercentages)
-}
-
 computeSameSignatureCausesPercentages <- function(conflicts, causeName){
   
   causePercentages <- c()
@@ -298,64 +275,6 @@ beanplotDiffCR = paste("beanplotDiffCR.png")
 png(paste(exportPath, beanplotDiffCR, sep=""))
 beanplot(diffConflictRates, xlab="Projects", ylab="Difference of Conflict Rates %",col="green")
 dev.off()
-
-#mens comparison
-#read and edit file metrics table
-fileMetricsTemp = read.table(file=paste(importPath,filesMetrics , sep=""), header=T, sep=",")
-fileMetrics2 = data.frame(fileMetricsTemp$Project, fileMetricsTemp$Total_files, fileMetricsTemp$Files_merged, 
-                          fileMetricsTemp$Files_with_conflicts)
-colnames(fileMetrics2) <- c("Project", "Total_files", "Files_merged", "Files_With_Conflicts")
-sumTotalFiles = sum(fileMetrics2$Total_files)
-sumFilesMerged=sum(fileMetrics2$Files_merged)
-sumFilesWithConflict=sum(fileMetrics2$Files_With_Conflicts)
-
-total = data.frame(Project="TOTAL", Total_files=sumTotalFiles,
-                   Files_merged=sumFilesMerged, Files_With_Conflicts=sumFilesWithConflict)
-fileMetricsTable = rbind(fileMetrics2, total)
-
-fileMetricsTable["P_Files_Merged(%)"] <- 
-  (fileMetricsTable$Files_merged/fileMetricsTable$Total_files)*100
-
-fileMetricsTable["P_Files_With_Conflicts(%)"] <- 
-  (fileMetricsTable$Files_With_Conflicts/fileMetricsTable$Total_files)*100
-
-attach(fileMetricsTable)
-
-fl <- data.frame(fileMetricsTable$P_Files_Merged, fileMetricsTable$P_Files_With_Conflicts)
-colnames(fl) <- c("Files_Merged", "Files_With_Conflicts")
-
-#beanplot file metrics
-fileMetricsBeanPlot = paste("fileMetricsBeanPlot.png")
-png(paste(exportPath, fileMetricsBeanPlot, sep=""))
-beanplot(fl, xlab="", ylab="Percentage (%)",col="green")
-dev.off()
-#boxplot file metrics
-fileMetricsBoxPlot = paste("fileMetricsBoxPlot.png")
-png(paste(exportPath, fileMetricsBoxPlot, sep=""))
-boxplot(fl, xlab="", ylab="Percentage (%)",col="green")
-dev.off()
-
-fmSummary <- data.frame(mean(fl$Files_Merged), sd(fl$Files_Merged), mean(fl$Files_With_Conflicts),
-                   sd(fl$Files_With_Conflicts))
-colnames(fmSummary) <- c("FM_Mean", "FM_SD", "FWC_Mean", "FWC_SD")
-
-#percentage of FilesWithConflicts/MergedFiles
-percentagesFWP_FM <- computeFWC_FM_Perncetages(fileMetricsTemp)
-#beanplot file metrics
-FWP_FMBeanPlot = paste("FWP_FMBeanPlot.png")
-png(paste(exportPath, FWP_FMBeanPlot, sep=""))
-beanplot(percentagesFWP_FM, xlab="FilesWithConflicts/MergedFiles", ylab="Percentage (%)",col="green")
-dev.off()
-
-#boxplot file metrics
-FWP_FMBoxPlot = paste("FWP_FMBoxPlot.png")
-png(paste(exportPath, FWP_FMBoxPlot, sep=""))
-boxplot(percentagesFWP_FM, xlab="FilesWithConflicts/MergedFiles", ylab="Percentage (%)",col="green")
-dev.off()
-
-#mean and sd table
-fwc_mf <- data.frame(mean(percentagesFWP_FM), sd(percentagesFWP_FM))
-colnames(fwc_mf) <- c("Mean", "Standard Dev.")
 
 #read conflict patterns values 
 DefaultValueAnnotation <- sum(conflictRateTemp$DefaultValueAnnotation)
@@ -654,16 +573,6 @@ HTMLInsertGraph(file=htmlFile, GraphFileName=boxplotDiffCR, Align="center", appe
 HTMLInsertGraph(file=htmlFile, GraphFileName=beanplotDiffCR, Align="center", append=TRUE)
 HTML(diffConflictRatesTable, file=htmlFile, append=TRUE)
 
-HTML("<hr><h2>Comparison with Mens Conjecture</h2>", file=htmlFile, append=TRUE)
-HTML(fileMetricsTable, file=htmlFile, append=TRUE)
-HTML(fmSummary, file=htmlFile, append=TRUE)
-HTMLInsertGraph(file=htmlFile, GraphFileName=fileMetricsBeanPlot, Align="center", append=TRUE)
-HTMLInsertGraph(file=htmlFile, GraphFileName=fileMetricsBoxPlot, Align="center", append=TRUE)
-
-HTML("<hr><h2>Percentage of Files With Conflicts/MergedFile</h2>", file=htmlFile, append=TRUE)
-HTMLInsertGraph(file=htmlFile, GraphFileName=FWP_FMBeanPlot, Align="center", append=TRUE)
-HTMLInsertGraph(file=htmlFile, GraphFileName=FWP_FMBoxPlot, Align="center", append=TRUE)
-HTML(fwc_mf, file=htmlFile, append=TRUE)
 
 HTML("<hr><h2>Conflict Patterns Occurrences</h2>", file=htmlFile, append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=barChartFileName, Align="center", append=TRUE)

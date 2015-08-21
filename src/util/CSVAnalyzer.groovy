@@ -160,7 +160,7 @@ class CSVAnalyzer {
 			return result
 		}
 		public static void main(String[] args){
-			//CSVAnalyzer.writeRealConflictsCSV()
+			CSVAnalyzer.writeRealConflictsCSV()
 			CSVAnalyzer.writeFileMetricsCSV()
 		}
 
