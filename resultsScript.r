@@ -460,19 +460,17 @@ sumCopiedFile = round(((sum(conflictRateTemp$copiedFile) - sum(conflictRateTemp$
 sumNoPattern = round(((sum(conflictRateTemp$noPattern) - sum(conflictRateTemp$noPatternDS))/
                         realSameSignatureMC)*100, digit=1)
 
-nsumSmallMethod <- paste(c("Small methods-", sumSmallMethod, "%"), collapse = "")
-nsumRenamedMethod <- paste(c("Renamed methods-", sumRenamedMethod, "%"), collapse = "")
-nsumCopiedMethod <- paste(c("Copied methods-", sumCopiedMethod, "%"), collapse = "")
-nsumCopiedFile <- paste(c("Merge from the same branch-", sumCopiedFile, "%"), collapse = "")
-nsumNoPattern <- paste(c("No pattern detected-", sumNoPattern, "%"), collapse = "")
+Frequency <- c(sumSmallMethod, sumRenamedMethod, sumCopiedMethod, sumCopiedFile, sumNoPattern)
+Causes <- c("Small methods", "Renamed Methods", "Copied Methods", "Copied Files",
+            "No Pattern")
+df <- data.frame(Frequency, Causes)
+df$Causes <- reorder(df$Causes, df$Frequency)
+p <- ggplot(df, aes(y = Frequency)) +
+  geom_bar(aes(x = Causes),stat = "identity",fill="green", colour="black") +
+  geom_text(aes(x = Causes, label = sprintf("%.2f%%", Frequency/sum(Frequency) * 100)), hjust = -.1) + coord_flip() +
+  theme_grey(base_size = 18) + labs(x=NULL, y=NULL) + ylim(c(0,70))
 
-Values <- c(sumSmallMethod, sumRenamedMethod, sumCopiedMethod, sumCopiedFile, sumNoPattern)
-Causes <- c(nsumSmallMethod, nsumRenamedMethod, nsumCopiedMethod, nsumCopiedFile,
-            nsumNoPattern)
-df <- data.frame(Causes, Values)
-bp<- ggplot(df, aes(x="", y=Values, fill=Causes))+
-      geom_bar(width = 1, stat = "identity") + ggtitle("SameSignatureCM")
-print(bp)
+print(p)
 dev.off()
 
 #boxplot with the samesignaturecm cause percentages
