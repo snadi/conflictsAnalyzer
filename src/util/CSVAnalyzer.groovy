@@ -33,7 +33,7 @@ class CSVAnalyzer {
 		File out = new File('realConflictRate.csv')
 		out.delete()
 		out = new File('realConflictRate.csv')
-		String line = 'Projects,Merge Scenarios,Conflicting Scenarios\n'
+		String line = 'Project,Merge Scenarios,Conflicting Scenarios\n'
 		out.append(line)
 
 		file.eachLine {
@@ -161,7 +161,7 @@ class CSVAnalyzer {
 		}
 		public static void main(String[] args){
 			CSVAnalyzer.writeRealConflictsCSV()
-			CSVAnalyzer.writeFileMetricsCSV()
+			//CSVAnalyzer.writeFileMetricsCSV()
 		}
 
 

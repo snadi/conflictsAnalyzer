@@ -192,7 +192,6 @@ exportPath = "/Users/paolaaccioly/Dropbox/Public/conflictpattern/"
 
 conflictRateFile="projectsPatternData.csv"
 realConflictRateFile = "realConflictRate.csv"
-filesMetrics="filesMetrics.csv"
 
 
 #HTML file
@@ -221,14 +220,14 @@ Standard.deviation <- sd(newTable$Conflict_Rate)
 metrics <- data.frame(Mean, Standard.deviation)
 
 #read and edit real conflict rate table
-  realConflictRateFileTemp = read.table(file=paste(importPath,realConflictRateFile , sep=""), header=T, sep=",")
- realconflictRate2 = data.frame(realConflictRateFileTemp$Projects, realConflictRateFileTemp$Merge.Scenarios, 
+realConflictRateFileTemp = read.table(file=paste(importPath,realConflictRateFile , sep=""), header=T, sep=",")
+realconflictRate2 = data.frame(realConflictRateFileTemp$Project, realConflictRateFileTemp$Merge.Scenarios, 
                                 realConflictRateFileTemp$Conflicting.Scenarios)
- colnames(realconflictRate2) <- c("Projects", "Merge.Scenarios", "Conflicting.Scenarios")
+ colnames(realconflictRate2) <- c("Project", "Merge.Scenarios", "Conflicting.Scenarios")
  realsumMergeScenarios = sum(realconflictRate2$Merge.Scenarios)
- realsumConflictionScenarios = sum(realconflictRate2$Conflicting.Scenarios)
- realtotal = data.frame(Projects="TOTAL", Merge.Scenarios=realsumMergeScenarios,
-                        Conflicting.Scenarios=realsumConflictionScenarios)
+ realsumConflictingScenarios = sum(realconflictRate2$Conflicting.Scenarios)
+ realtotal = data.frame(Project="TOTAL", Merge.Scenarios=realsumMergeScenarios,
+                        Conflicting.Scenarios=realsumConflictingScenarios)
  realconflictRate = rbind(realconflictRate2, realtotal)
 
  realconflictRate["Conflict.Rate(%)"] <- 
@@ -294,11 +293,12 @@ slices <- c(DefaultValueAnnotation, ImplementList, ModifierList, EditSameMC, Sam
 labels <- c("DefaultValueA", "ImplementList", "ModifierList", "EditSameMC", "SameSignatureCM", "AddSameFd", 
             "EditSameFd", "ExtendsList") 
 dat <- data.frame(Frequency = slices,Conflicts = labels)
+dat$Conflicts <- reorder(dat$Conflicts, dat$Frequency)
 library(ggplot2)
-p <- ggplot(dat, aes(x = Conflicts, y = Frequency)) +
-  geom_bar(stat = "identity") +
-  geom_text(aes(label = sprintf("%.2f%%", Frequency/sum(Frequency) * 100)), 
-            vjust = -.5) + theme_grey(base_size = 8) 
+p <- ggplot(dat, aes(y = Frequency)) +
+  geom_bar(aes(x = Conflicts),stat = "identity",fill="green", colour="black") +
+  geom_text(aes(x = Conflicts, label = sprintf("%.2f%%", Frequency/sum(Frequency) * 100)), hjust = -.1) + coord_flip() +
+  theme_grey(base_size = 18) + labs(x=NULL, y=NULL)  + ylim(c(0,26000))
 
 print(p)
 dev.off()
@@ -358,7 +358,7 @@ dev.off()
 BoxplotFPEditSameMC = paste("BoxplotFPEditSameMC.png")
 png(paste(exportPath, BoxplotFPEditSameMC, sep=""))
 allEditSameMCFPPercentages <- dataFrameEditSameMCFPPercentages(conflictRateTemp)
-op <- par(mar = c(3, 8, 2, 2) + 0.1) #adjust margins, default is c(5, 4, 4, 2) + 0.1
+op <- par(mar = c(3, 8, 2, 2) + 0.1) #adjust margins, default is c(5, 4, 4, 2) + 0.1 bottom, left, top and right
 boxplot(allEditSameMCFPPercentages, xlab="", ylab="", col="green", horizontal = TRUE, las=1, cex.axis=1)
 par(op)
 dev.off()
@@ -422,12 +422,12 @@ slices <- c(realDefaultValueAnnotation, realImplementList, realModifierList, rea
             realSameSignatureMC, realAddSameFd, realEditSameFd, realExtendsList)
 labels <- c("DefaultValueA", "ImplementList", "ModifierList", "EditSameMC", "SameSignatureCM", 
             "AddSameFd", "EditSameFd", "ExtendsList") 
-dat <- data.frame(Frequency = slices,Conflicts = labels)
-
-p <- ggplot(dat, aes(x = Conflicts, y = Frequency)) +
-  geom_bar(stat = "identity") +
-  geom_text(aes(label = sprintf("%.2f%%", Frequency/sum(Frequency) * 100)), 
-            vjust = -.5) + theme_grey(base_size = 8) 
+dat <- data.frame(Conflicts = labels, Frequency = slices)
+dat$Conflicts <- reorder(dat$Conflicts, dat$Frequency)
+p <- ggplot(dat, aes(y = Frequency)) +
+  geom_bar(aes(x = Conflicts),stat = "identity", fill="green", colour="black") +
+  geom_text(aes(x = Conflicts, label = sprintf("%.2f%%", Frequency/sum(Frequency) * 100)), hjust = -.1) +
+  coord_flip() + theme_grey(base_size = 18) + labs(x=NULL, y=NULL) + ylim(c(0,17000))
 
 print(p)
 dev.off()
@@ -517,9 +517,8 @@ allConflictsPercentage <- data.frame(EditSameMC, SameSignatureCM,
                                      ImplementList, ModifierList, 
                                      AddSameFd, EditSameFd, 
                                      DefaultValueA, ExtendsList)
-op <- par(mar = c(5, 8, 2, 2) + 0.1) #adjust margins, default is c(5, 4, 4, 2) + 0.1
-boxplot(allConflictsPercentage, xlab="Percentage for each project (%)", ylab="", col="green", 
-        horizontal = TRUE, las=1, cex.axis=1)
+op <- par(mar = c(2, 12, 1, 1) + 0.1) #adjust margins, default is c(5, 4, 4, 2) + 0.1
+beanplot(allConflictsPercentage, col="green", horizontal = TRUE, las=1, cex.axis=1.5, bw="nrd0")
 par(op)
 dev.off()
 
