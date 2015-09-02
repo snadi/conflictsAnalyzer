@@ -3,8 +3,11 @@ The Conflict Analyzer tool is part of an experiment infrastructure that aims to 
 More information here: http://twiki.cin.ufpe.br/twiki/bin/view/SPG/ConflictPatterns
 
 If you have any questions please contact:
+
 Paola Accioly - prga at cin.ufpe.br
+
 Paulo Borba - phmb at cin.ufpe.br
+
 Guilherme Cavalcanti - gjcc at cin.ufpe.br
 
 Install and run: 
