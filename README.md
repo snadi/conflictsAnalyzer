@@ -1,3 +1,14 @@
+The Conflict Analyzer tool is part of an experiment infrastructure that aims to analyze conflict patterns and their frequency. 
+
+More information here: http://twiki.cin.ufpe.br/twiki/bin/view/SPG/ConflictPatterns
+
+If you have any questions please contact:
+Paola Accioly - prga at cin.ufpe.br
+Paulo Borba - phmb at cin.ufpe.br
+Guilherme Cavalcanti - gjcc at cin.ufpe.br
+
+Install and run: 
+
 In order to run the conflicts analyzer you will need to have Java 7 or higher, groovy, maven and R installed in your machine. 
 After that, you will need to clone the required projects from github and import then inside Eclipse IDE according 
 to the instructions described below:
