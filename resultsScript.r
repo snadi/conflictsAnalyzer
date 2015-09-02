@@ -247,7 +247,7 @@ boxplotCRFileName = paste("BoxplotCR.png")
 png(paste(exportPath, boxplotCRFileName, sep=""))
 conflictRateWFP <- realconflictRate
 dataConflict <-data.frame(conflictRate$Conflict_Rate, conflictRateWFP$Conflict.Rate)
-colnames(dataConflict) <- c("With False Positives", "Without False Positives")
+colnames(dataConflict) <- c("CR", "CR without spacing and consecutive lines conflicts")
 boxplot(dataConflict, ylab="Conflict Rate %",col="green")
 dev.off()
 
@@ -290,7 +290,7 @@ barChartFileName = paste("BarChart.png")
 png(paste(exportPath, barChartFileName, sep=""))
 slices <- c(DefaultValueAnnotation, ImplementList, ModifierList, EditSameMC, SameSignatureCM, AddSameFd, 
             EditSameFd, ExtendsList)
-labels <- c("DefaultValueA", "ImplementList", "ModifierList", "EditSameMC", "SameSignatureCM", "AddSameFd", 
+labels <- c("DefaultValueA", "ImplementsList", "ModifierList", "EditSameMC", "SameSignatureMC", "AddSameFd", 
             "EditSameFd", "ExtendsList") 
 dat <- data.frame(Frequency = slices,Conflicts = labels)
 dat$Conflicts <- reorder(dat$Conflicts, dat$Frequency)
@@ -298,7 +298,7 @@ library(ggplot2)
 p <- ggplot(dat, aes(y = Frequency)) +
   geom_bar(aes(x = Conflicts),stat = "identity",fill="green", colour="black") +
   geom_text(aes(x = Conflicts, label = sprintf("%.2f%%", Frequency/sum(Frequency) * 100)), hjust = -.1) + coord_flip() +
-  theme_grey(base_size = 18) + labs(x=NULL, y=NULL)  + ylim(c(0,26000))
+  theme_grey(base_size = 10) + labs(x=NULL, y=NULL)  + ylim(c(0,26000)) + ggtitle("FSTMerge")
 
 print(p)
 dev.off()
@@ -420,16 +420,17 @@ barChartFP = paste("barChartFP.png")
 png(paste(exportPath, barChartFP, sep=""))
 slices <- c(realDefaultValueAnnotation, realImplementList, realModifierList, realEditSameMC, 
             realSameSignatureMC, realAddSameFd, realEditSameFd, realExtendsList)
-labels <- c("DefaultValueA", "ImplementList", "ModifierList", "EditSameMC", "SameSignatureCM", 
+labels <- c("DefaultValueA", "ImplementsList", "ModifierList", "EditSameMC", "SameSignatureMC", 
             "AddSameFd", "EditSameFd", "ExtendsList") 
-dat <- data.frame(Conflicts = labels, Frequency = slices)
-dat$Conflicts <- reorder(dat$Conflicts, dat$Frequency)
-p <- ggplot(dat, aes(y = Frequency)) +
+dat2 <- data.frame(Conflicts = labels, Frequency = slices)
+dat2$Conflicts <- reorder(dat2$Conflicts, dat2$Frequency)
+p2 <- ggplot(dat2, aes(y = Frequency)) +
   geom_bar(aes(x = Conflicts),stat = "identity", fill="green", colour="black") +
   geom_text(aes(x = Conflicts, label = sprintf("%.2f%%", Frequency/sum(Frequency) * 100)), hjust = -.1) +
-  coord_flip() + theme_grey(base_size = 18) + labs(x=NULL, y=NULL) + ylim(c(0,17000))
+  coord_flip() + theme_grey(base_size = 10) + labs(x=NULL, y=NULL) + ylim(c(0,26000)) + 
+  ggtitle("FSTMerge without spacing and consecutive lines conflicts")
 
-print(p)
+print(p2)
 dev.off()
 
 #conflicts table
@@ -466,9 +467,9 @@ Causes <- c("Small methods", "Renamed Methods", "Copied Methods", "Copied Files"
 df <- data.frame(Frequency, Causes)
 df$Causes <- reorder(df$Causes, df$Frequency)
 p <- ggplot(df, aes(y = Frequency)) +
-  geom_bar(aes(x = Causes),stat = "identity",fill="green", colour="black") +
+  geom_bar(aes(x = Causes),stat = "identity",fill="green", colour="black", width=.8) +
   geom_text(aes(x = Causes, label = sprintf("%.2f%%", Frequency/sum(Frequency) * 100)), hjust = -.1) + coord_flip() +
-  theme_grey(base_size = 18) + labs(x=NULL, y=NULL) + ylim(c(0,70))
+  theme_grey(base_size = 13) + labs(x=NULL, y=NULL) + ylim(c(0,70))
 
 print(p)
 dev.off()
@@ -484,7 +485,7 @@ noPattern <- computeSameSignatureCausesPercentages(conflictRateTemp, "noPattern"
 allCausesPercentages <- data.frame(smallMethod, renamedMethod, copiedMethod,
                                    copiedFile, noPattern )
 op <- par(mar = c(3, 8, 2, 2) + 0.1) #adjust margins, default is c(5, 4, 4, 2) + 0.1
-boxplot(allCausesPercentages, xlab="", ylab="", col="green", horizontal = TRUE, las=1, cex.axis=1)
+boxplot(allCausesPercentages, xlab="", ylab="", col="green", horizontal = TRUE, las=1)
 par(op)
 dev.off()
 
@@ -500,9 +501,9 @@ DefaultValueAnnotationpercentages <- computePatternPercentages(conflictRateTemp,
 
 ExtendsListpercentages <- computePatternPercentages(conflictRateTemp, "ExtendsList")
 
-#all conflicts percentages boxplot
-BoxplotAllConflicts = paste("BoxplotAllConflicts.png")
-png(paste(exportPath, BoxplotAllConflicts, sep=""))
+#all conflicts percentages beanplot
+BeanplotAllConflicts = paste("BeanplotAllConflicts.png")
+png(paste(exportPath, BeanplotAllConflicts, sep=""))
 EditSameMC <- EditSameMCpercentages
 SameSignatureCM <- SameSignatureCMpercentages
 ImplementList <- ImplementListpercentages
@@ -515,11 +516,20 @@ allConflictsPercentage <- data.frame(EditSameMC, SameSignatureCM,
                                      ImplementList, ModifierList, 
                                      AddSameFd, EditSameFd, 
                                      DefaultValueA, ExtendsList)
-op <- par(mar = c(2, 12, 1, 1) + 0.1) #adjust margins, default is c(5, 4, 4, 2) + 0.1
-beanplot(allConflictsPercentage, col="green", horizontal = TRUE, las=1, cex.axis=1.5, bw="nrd0")
+colnames(allConflictsPercentage) <- c("EditSameMC","SameSignatureMC", "ImplementsList", "ModifierList", 
+                                      "AddSameFd", "EditSameFd", "DefaultValueA", "ExtendsList")
+op <- par(mar = c(2, 9, 1, 1) + 0.1) #adjust margins, default is c(5, 4, 4, 2) + 0.1
+beanplot(allConflictsPercentage, col="green", horizontal = TRUE, las=1, cex.axis=1.1, bw="nrd0")
 par(op)
 dev.off()
 
+#all conflicts percentages boxplot
+BoxplotAllConflicts = paste("BoxplotAllConflicts.png")
+png(paste(exportPath, BoxplotAllConflicts, sep=""))
+op <- par(mar = c(2, 8, 1, 1) + 0.1) #adjust margins, default is c(5, 4, 4, 2) + 0.1
+boxplot(allConflictsPercentage, col="green", horizontal = TRUE, las=1, cex.axis=1)
+par(op)
+dev.off()
 
 #bar plot last project
 numberOfRows <- length(conflictRateTemp[,1])
@@ -581,6 +591,7 @@ HTML(conflictsTable, file=htmlFile, append=TRUE)
 HTML("<hr><h2>Conflicts Patterns Occurrences Without the False Positives</h2>", file=htmlFile, append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=barChartFP, Align="center", append=TRUE)
 HTML(realconflictsTable, file=htmlFile, append=TRUE)
+HTMLInsertGraph(file=htmlFile, GraphFileName=BeanplotAllConflicts, Align="center", append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=BoxplotAllConflicts, Align="center", append=TRUE)
 
 HTML("<hr><h2>False Positives Occurences</h2>", file=htmlFile, append=TRUE)
