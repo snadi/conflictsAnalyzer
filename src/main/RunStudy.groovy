@@ -27,8 +27,9 @@ class RunStudy {
 		projectsList.eachLine {
 			//run gitminer
 			setProjectNameAndRepo(it)
-			//String graphBase = runGitMiner()
-			String graphBase = this.gitminerLocation + File.separator + this.projectName + 'graph.db'
+			//attention, if you have already download gitminer base you can comment the line below and use the second line below
+			String graphBase = runGitMiner()
+			//String graphBase = this.gitminerLocation + File.separator + this.projectName + 'graph.db'
 			
 			//get list of merge commits
 			ArrayList<MergeCommit> listMergeCommits = runGremlinQuery(graphBase)
