@@ -146,6 +146,7 @@ class MergeScenario implements Observer {
 				}
 				
 				this.createConflict(node)
+				
 			}
 		}
 	}

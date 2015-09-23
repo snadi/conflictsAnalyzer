@@ -4,6 +4,7 @@ package main;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.regex.Pattern;
 
 import de.ovgu.cide.fstgen.ast.FSTNode;
 import de.ovgu.cide.fstgen.ast.FSTTerminal;
@@ -57,7 +58,7 @@ public  class Conflict {
 		this.countConflictsInsideMethods();
 		this.matchPattern();
 		this.retrieveFilePath(node, path);
-		this.checkFalsePositives();
+		this.checkFalsePositives(node);
 		this.causeSameSignatureCM = "";
 		this.similarityThreshold = 0.7;
 
@@ -169,21 +170,21 @@ public  class Conflict {
 		this.falsePositivesIntersection = falsePositivesIntersection;
 	}
 
-	public void checkFalsePositives(){
+	public void checkFalsePositives(FSTTerminal node){
 
 		if(conflicts.size() > 1){	
 			for(String s : conflicts){
-				this.auxCheckFalsePositives(s);
+				this.auxCheckFalsePositives(s, node);
 			}
 		} else{
-			this.auxCheckFalsePositives(conflicts.get(0));
+			this.auxCheckFalsePositives(conflicts.get(0), node);
 
 		}	
 	}
 
-	private void auxCheckFalsePositives(String s) {
+	private void auxCheckFalsePositives(String s, FSTTerminal node) {
 		String [] splitConflictBody = this.splitConflictBody(s);
-		boolean diffSpacing = this.checkDifferentSpacing(splitConflictBody);
+		boolean diffSpacing = this.checkDifferentSpacing(splitConflictBody, node, s);
 		
 		if(this.type.equals(SSMergeConflicts.EditSameMC.toString())){
 			boolean consecLines = false;
@@ -226,7 +227,7 @@ public  class Conflict {
 		return conflicts;
 	}
 
-	public boolean checkDifferentSpacing(String [] splitConflictBody){
+	public boolean checkDifferentSpacing(String [] splitConflictBody, FSTTerminal node, String originalConflict){
 		boolean falsePositive = false;
 
 		String[] temp = splitConflictBody.clone();
@@ -235,18 +236,52 @@ public  class Conflict {
 			if(threeWay[0].equals(threeWay[1]) || threeWay[2].equals(threeWay[1])){
 				this.differentSpacing++;
 				falsePositive = true;
+				
+				//remove false positives from set
+				if(!threeWay[0].equals(threeWay[1])){
+					
+					this.removeSpacingConflict(node, originalConflict, splitConflictBody[0]);
+				}else{
+					
+					this.removeSpacingConflict(node, originalConflict, splitConflictBody[2]);
+				}
 			}
 		}else{
 			
 			if(threeWay[0].equals("") || threeWay[0].equals(threeWay[2])){
+				
 				this.differentSpacing++;
 				falsePositive = true;
+				
+				//remove false positives from set
+				this.removeSpacingConflict(node, originalConflict, splitConflictBody[2]);
 			}
 			
 		}
 		
 
 		return falsePositive;
+	}
+	
+	private void removeSpacingConflict(FSTTerminal node, String originalConflict, String replacement){
+		String newBody = "";
+		String bodyTemp = node.getBody();
+		
+		
+		if(this.type.equals(SSMergeConflicts.EditSameMC.toString()) || this.type.equals(SSMergeConflicts.SameSignatureCM.toString())){
+			String conflictWithMarkers = "<<<<<<<" + originalConflict + ">>>>>>> ";
+			newBody = bodyTemp.replace(conflictWithMarkers, replacement);
+			String[] a = newBody.split(Pattern.quote(replacement));
+			String[] b = a[1].split("\n");
+			newBody = a[0] + replacement + "\n";
+			for(int i = 1; i < b.length; i++){
+				newBody = newBody + b[i] + "\n";
+			}
+		}else{
+			newBody = bodyTemp.replace(originalConflict, replacement);
+		}
+		
+		node.setBody(newBody);
 	}
 
 	public String[] removeInvisibleChars(String[] input){
@@ -590,33 +625,9 @@ public  class Conflict {
 	}
 
 	public static void main(String[] args) {
-		/*String example = "public void m(){\n" +
-				"<<<<<<< /Users/paolaaccioly/Desktop/Teste/jdimeTests/left/Example.java\n" +
-				"        int a1;\n" +
-				"||||||| /Users/paolaaccioly/Desktop/Teste/jdimeTests/base/Example.java\n" +
-				"        int a;\n" +
-				"=======\n" +
-				"            int a;\n" +
-				">>>>>>> /Users/paolaaccioly/Desktop/Teste/jdimeTests/right/Example.java\n" +
-				"        int b;\n" +
-				"        int c;\n" +
-				"<<<<<<< /Users/paolaaccioly/Desktop/Teste/jdimeTests/left/Example.java\n" +
-				"        int d1;\n" +
-				"||||||| /Users/paolaaccioly/Desktop/Teste/jdimeTests/base/Example.java\n" +
-				"        int d;\n" +
-				"=======\n" +
-				"        int d2;\n" +
-				">>>>>>> /Users/paolaaccioly/Desktop/Teste/jdimeTests/right/Example.java\n" +
-				"    }";
-		String example2 = "hello world";
-		System.out.println(example2.split("mamae")[0]);*/
-		/*String s = "<<<<<<< /Users/paolaaccioly/Documents/testeConflictsAnalyzer/conflictsAnalyzer/fstmerge_tmp1437435093749/fstmerge_var1_6882939852718786152\n" +
-				"		int x;" +
-				"||||||| /Users/paolaaccioly/Documents/testeConflictsAnalyzer/conflictsAnalyzer/fstmerge_tmp1437435093749/fstmerge_base_7436445259957106246\n" +
-				"=======\n" +
-				"		int y;\n"+
-				">>>>>>> /Users/paolaaccioly/Documents/testeConflictsAnalyzer/conflictsAnalyzer/fstmerge_tmp1437435093749/fstmerge_var2_5667963733764531246\n";
-		 */
+		String a = "HelloBrother How are you!";
+		String[] b = a.split("HelloBrother");
+		System.out.println("hello");
 	}
 
 }
