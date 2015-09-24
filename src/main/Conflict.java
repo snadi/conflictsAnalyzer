@@ -48,9 +48,11 @@ public  class Conflict {
 	private double similarityThreshold;
 
 	private String nodeName;
-
+	
+	String replacement;
 
 	public Conflict(FSTTerminal node, String path){
+		this.replacement = "";
 		this.body = node.getBody();
 		this.nodeName = node.getName();
 		this.nodeType = node.getType();
@@ -184,17 +186,29 @@ public  class Conflict {
 
 	private void auxCheckFalsePositives(String s, FSTTerminal node) {
 		String [] splitConflictBody = this.splitConflictBody(s);
-		boolean diffSpacing = this.checkDifferentSpacing(splitConflictBody, node, s);
+		boolean diffSpacing = this.checkDifferentSpacing(splitConflictBody);
+		boolean consecLines = false;
 		
 		if(this.type.equals(SSMergeConflicts.EditSameMC.toString())){
-			boolean consecLines = false;
+			
 			if(this.possibleRenaming == 0){
-				consecLines = this.checkConsecutiveLines(splitConflictBody);
+				consecLines = this.checkConsecutiveLines(splitConflictBody, node, s);
 			}
 
-			if(diffSpacing && consecLines){
-				this.falsePositivesIntersection++;
-			}
+		}
+		
+		//remove false positives
+		if((diffSpacing && consecLines)){
+			this.falsePositivesIntersection++;
+			this.removeSpacingConflict(node, s);
+		}
+		
+		if( diffSpacing && !consecLines){
+			this.removeSpacingConflict(node, s);
+		}
+		
+		if(consecLines && !diffSpacing){
+			this.removeConsecLines(splitConflictBody, node,s);
 		}
 
 	}
@@ -227,7 +241,7 @@ public  class Conflict {
 		return conflicts;
 	}
 
-	public boolean checkDifferentSpacing(String [] splitConflictBody, FSTTerminal node, String originalConflict){
+	public boolean checkDifferentSpacing(String [] splitConflictBody){
 		boolean falsePositive = false;
 
 		String[] temp = splitConflictBody.clone();
@@ -239,11 +253,11 @@ public  class Conflict {
 				
 				//remove false positives from set
 				if(!threeWay[0].equals(threeWay[1])){
+					this.replacement = splitConflictBody[0];
 					
-					this.removeSpacingConflict(node, originalConflict, splitConflictBody[0]);
 				}else{
+					this.replacement = splitConflictBody[2];
 					
-					this.removeSpacingConflict(node, originalConflict, splitConflictBody[2]);
 				}
 			}
 		}else{
@@ -254,7 +268,8 @@ public  class Conflict {
 				falsePositive = true;
 				
 				//remove false positives from set
-				this.removeSpacingConflict(node, originalConflict, splitConflictBody[2]);
+				this.replacement = splitConflictBody[2];
+				
 			}
 			
 		}
@@ -263,22 +278,22 @@ public  class Conflict {
 		return falsePositive;
 	}
 	
-	private void removeSpacingConflict(FSTTerminal node, String originalConflict, String replacement){
+	private void removeSpacingConflict(FSTTerminal node, String originalConflict){
 		String newBody = "";
 		String bodyTemp = node.getBody();
 		
 		
 		if(this.type.equals(SSMergeConflicts.EditSameMC.toString()) || this.type.equals(SSMergeConflicts.SameSignatureCM.toString())){
 			String conflictWithMarkers = "<<<<<<<" + originalConflict + ">>>>>>> ";
-			newBody = bodyTemp.replace(conflictWithMarkers, replacement);
-			String[] a = newBody.split(Pattern.quote(replacement));
+			newBody = bodyTemp.replace(conflictWithMarkers, this.replacement);
+			String[] a = newBody.split(Pattern.quote(this.replacement));
 			String[] b = a[1].split("\n");
-			newBody = a[0] + replacement + "\n";
+			newBody = a[0] + this.replacement + "\n";
 			for(int i = 1; i < b.length; i++){
 				newBody = newBody + b[i] + "\n";
 			}
 		}else{
-			newBody = bodyTemp.replace(originalConflict, replacement);
+			newBody = bodyTemp.replace(originalConflict, this.replacement);
 		}
 		
 		node.setBody(newBody);
@@ -291,7 +306,7 @@ public  class Conflict {
 		return input;
 	}
 
-	public boolean checkConsecutiveLines(String[] splitConflictBody){
+	public boolean checkConsecutiveLines(String[] splitConflictBody, FSTTerminal node, String originalConflict){
 		boolean falsePositive = false;
 
 		if(!splitConflictBody[0].equals("") && 
@@ -299,17 +314,20 @@ public  class Conflict {
 			String [] leftLines = splitConflictBody[0].split("\n");
 			String [] baseLines = splitConflictBody[1].split("\n");
 			String [] rightLines = splitConflictBody[2].split("\n");
+			
 			if(!baseLines[0].equals("")){
 				String fixedElement =  baseLines[0];
 				boolean foundOnLeft = this.searchFixedElement(fixedElement, leftLines);
 				if(foundOnLeft){
 					falsePositive = true;
 					this.consecutiveLines++;
+					
 				}else{
 					boolean foundOnRight = this.searchFixedElement(fixedElement, rightLines);
 					if(foundOnRight){
 						falsePositive = true;
 						this.consecutiveLines++;
+					
 					}
 				}
 			}
@@ -318,6 +336,14 @@ public  class Conflict {
 
 		return falsePositive;
 	}
+	
+	private void removeConsecLines(String [] splitConflictBody, FSTTerminal node, String originalConflict){
+		//TODO
+		
+		
+	}
+	
+	
 
 	private boolean searchFixedElement(String fixedElement, String[] variant){
 		boolean foundFixedElement = false;
@@ -625,9 +651,7 @@ public  class Conflict {
 	}
 
 	public static void main(String[] args) {
-		String a = "HelloBrother How are you!";
-		String[] b = a.split("HelloBrother");
-		System.out.println("hello");
+	
 	}
 
 }
