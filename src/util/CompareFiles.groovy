@@ -179,6 +179,8 @@ class CompareFiles {
 		//set right
 		dir = new File(this.revDir + File.separator + this.rightRevName)
 		this.auxSetExtensions(dir)
+		
+		this.extensions.remove('DS_Store')
 	}
 	
 	private void auxSetExtensions(File dir){
