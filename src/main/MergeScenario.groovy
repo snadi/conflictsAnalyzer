@@ -53,6 +53,7 @@ class MergeScenario implements Observer {
 	
 	public void setMergedFiles(){
 		this.compareFiles = new CompareFiles(this.path)
+		
 		this.compareFiles.ignoreFilesWeDontMerge()
 		this.mergedFiles = this.compareFiles.getFilesToBeMerged()
 	}
@@ -94,7 +95,7 @@ class MergeScenario implements Observer {
 	}
 
 	public void runSSMerge(){
-		this.fstGenMerge = new FSTGenMerger()
+		this.fstGenMerge = new FSTGenMerger(this.compareFiles.getExtensions())
 		fstGenMerge.getMergeVisitor().addObserver(this)
 		String[] files = ["--expression", this.path]
 		fstGenMerge.run(files)
