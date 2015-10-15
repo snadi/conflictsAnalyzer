@@ -23,14 +23,12 @@ class CompareFiles {
 	private int filesThatRemainedTheSame
 
 	private ArrayList<MergedFile> filesToBeMerged
-	
-	private HashMap<String, Integer> extensions
 
 	public CompareFiles(String revFile){
 
 		this.setDirNames(revFile)
 		this.filesToBeMerged = new ArrayList<MergedFile>()
-		this.setExtensions()
+		this.removeNonJavaFiles();
 	}
 
 	private void setDirNames(String revFile){
@@ -40,7 +38,7 @@ class CompareFiles {
 		this.baseRevName = revs[1]
 		this.rightRevName = revs[2]
 		this.tempDir = new File(this.revDir + File.separator + 'temp')
-		
+
 
 	}
 
@@ -126,7 +124,7 @@ class CompareFiles {
 	public void restoreFilesWeDontMerge(){
 		//TO DO
 	}
-	
+
 	public int getFilesEditedByOneDev() {
 		return filesEditedByOneDev;
 	}
@@ -134,86 +132,50 @@ class CompareFiles {
 	public int getFilesThatRemainedTheSame() {
 		return filesThatRemainedTheSame;
 	}
-	
-	public void moveNonJavaFiles(File dir){
+
+	public void removeNonJavaFiles(File dir){
 		
-				File[] files = dir.listFiles()
+		File leftFolder = new File (this.revDir + File.separator + this.leftRevName)
+		this.auxRemoveNonJavaFiles(leftFolder)
 		
-				for(int i = 0; i < files.length; i++){
+		File baseFolder = new File (this.revDir + File.separator + this.baseRevName)
+		this.auxRemoveNonJavaFiles(baseFolder)
 		
-					if(files[i].isFile()){
-		
-						String filePath = files[i].getAbsolutePath()
-		
-						if(!(filePath.endsWith(".java"))){
-		
-							if(files[i].delete()){
-								//println(files[i].getName() + " is deleted!");
-							}else{
-								println(files[i].getName() + " delete operation has failed.");
-							}
-						}
-		
-					} else if (files[i].isDirectory()){
-		
-						this.moveNonJavaFiles(files[i])
-					}
-		
-				}
-			}
-	
-	private void auxMoveNonJavaFiles(){
-		
+		File rightFolder = new File (this.revDir + File.separator + this.rightRevName)
+		this.auxRemoveNonJavaFiles(rightFolder)
+
 	}
-	
-	public void setExtensions(){
-		this.extensions = new HashMap<String, Integer>()
-		//set left
-		File dir = new File(this.revDir + File.separator + this.leftRevName)
-		this.auxSetExtensions(dir)
-		
-		//set base
-		dir = new File(this.revDir + File.separator + this.baseRevName)
-		this.auxSetExtensions(dir)
-		
-		//set right
-		dir = new File(this.revDir + File.separator + this.rightRevName)
-		this.auxSetExtensions(dir)
-		
-		this.extensions.remove('DS_Store')
-	}
-	
-	private void auxSetExtensions(File dir){
+
+	private void auxRemoveNonJavaFiles(File dir){
 		File[] files = dir.listFiles()
-		
-		for(File file : files){
-			if(file.isDirectory()){
-				this.auxSetExtensions(file)
-			}else{
-				String extension = this.getExtension(file.getAbsolutePath())
-				this.extensions.put(extension, new Integer(1))
+
+		for(int i = 0; i < files.length; i++){
+
+			if(files[i].isFile()){
+
+				String filePath = files[i].getAbsolutePath()
+
+				if(!(filePath.endsWith(".java"))){
+
+					if(files[i].delete()){
+						//println(files[i].getName() + " is deleted!");
+					}else{
+						println(files[i].getName() + " delete operation has failed.");
+					}
+				}
+
+			} else if (files[i].isDirectory()){
+
+				this.removeNonJavaFiles(files[i])
 			}
+
 		}
 	}
-	
-	private String getExtension(String file){
-		String extension = ''
-		String [] parts = file.split('/')
-		String filename = parts[parts.length - 1]
-		if(filename.contains('.')){
-			parts = filename.split('\\.')
-			extension = parts[parts.length - 1]
-			
-		}else{
-			extension = filename
-		}
-		
-		return extension
+
+	private void auxMoveNonJavaFiles(){
+
 	}
-	
-	public Hashtable<String, Integer> getExtensions(){
-		return this.extensions
-	}
+
 	public static void main(String[] args){
 		CompareFiles cp = new CompareFiles("/Users/paolaaccioly/Documents/testeConflictsAnalyzer/testes/rev/rev.revisions")
 		cp.ignoreFilesWeDontMerge()

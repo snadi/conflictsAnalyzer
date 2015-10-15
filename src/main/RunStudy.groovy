@@ -27,7 +27,8 @@ class RunStudy {
 		projectsList.eachLine {
 			//run gitminer
 			setProjectNameAndRepo(it)
-			//attention, if you have already download gitminer base you can comment the line below and use the second line below
+			//attention, if you have already download gitminer base you can comment 
+			//the line below and use the second line below
 			String graphBase = runGitMiner()
 			//String graphBase = this.gitminerLocation + File.separator + this.projectName + 'graph.db'
 			
@@ -61,7 +62,12 @@ class RunStudy {
 					'] merge scenarios\n'
 
 			MergeCommit mc = listMergeCommits.get(current)
+			
+			/*download left, right, and base revisions, performs the merge and saves in a 
+			separate file*/
 			String revisionFile = extractor.extractCommit(mc)
+			
+			
 			if(!revisionFile.equals("")){
 				runConflictsAnalyzer(project, revisionFile)
 			}
