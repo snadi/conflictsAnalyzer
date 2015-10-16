@@ -65,8 +65,10 @@ class RunStudy {
 			
 			/*download left, right, and base revisions, performs the merge and saves in a 
 			separate file*/
-			String revisionFile = extractor.extractCommit(mc)
+			ExtractorResult result = extractor.extractCommit(mc)
+			println result.getNonJavaFilesWithConflict()
 			
+			String revisionFile = result.getRevisionFile()
 			
 			if(!revisionFile.equals("")){
 				runConflictsAnalyzer(project, revisionFile)
