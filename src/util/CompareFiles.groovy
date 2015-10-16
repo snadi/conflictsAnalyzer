@@ -28,7 +28,6 @@ class CompareFiles {
 
 		this.setDirNames(revFile)
 		this.filesToBeMerged = new ArrayList<MergedFile>()
-		this.removeNonJavaFiles();
 	}
 
 	private void setDirNames(String revFile){
@@ -47,8 +46,11 @@ class CompareFiles {
 	}
 
 	public void ignoreFilesWeDontMerge(){
+		//delete non java files
+		this.removeNonJavaFiles();
+
+		//move files that remained the same or only one version differs
 		String baseFolder = this.revDir + File.separator + this.baseRevName
-		//this.moveNonJavaFiles()
 		this.iterateRevFolders(this.leftRevName, this.baseRevName, baseFolder, this.rightRevName)
 	}
 
@@ -122,7 +124,51 @@ class CompareFiles {
 	}
 
 	public void restoreFilesWeDontMerge(){
-		//TO DO
+
+		//copy non java files from rev_merged_git dir
+		File sourcedir = new File(this.revDir + File.separator + 'rev_merged_git');
+		this.moveFiles(sourcedir)
+
+		//copy java files from temp2
+		sourcedir = new File(this.revDir + File.separator + 'temp2');
+		if(sourcedir.exists()){
+			this.moveFiles(sourcedir)
+		}
+		
+	}
+
+	private void moveFiles(File sourceDir){
+		File[] files = sourceDir.listFiles()
+
+		for(File file : files){
+
+			if(file.isDirectory()){
+				this.moveFiles(file)
+			}else{
+				this.auxMoveFiles(file)
+			}
+		}
+	}
+
+	private void auxMoveFiles(File sourceDir){
+		String temp = ''
+		String leftId = this.leftRevName.substring(this.leftRevName.length() - 5)
+		String rightId = this.rightRevName.substring(this.rightRevName.length() - 5)
+		String revName = 'rev_' + leftId + '-' + rightId
+		
+		String source = sourceDir.getAbsolutePath()
+
+		if(source.contains('rev_merged_git') ){
+			
+			if(!(source.endsWith(".java"))){
+				temp = sourceDir.getAbsolutePath().replaceFirst('rev_merged_git' , revName)
+				FileUtils.moveFile(sourceDir, new File(temp))
+			}
+			
+		}else{
+			temp = sourceDir.getAbsolutePath().replaceFirst('temp2', revName)
+			FileUtils.moveFile(sourceDir, new File(temp))
+		}
 	}
 
 	public int getFilesEditedByOneDev() {
@@ -134,13 +180,13 @@ class CompareFiles {
 	}
 
 	public void removeNonJavaFiles(File dir){
-		
+
 		File leftFolder = new File (this.revDir + File.separator + this.leftRevName)
 		this.auxRemoveNonJavaFiles(leftFolder)
-		
+
 		File baseFolder = new File (this.revDir + File.separator + this.baseRevName)
 		this.auxRemoveNonJavaFiles(baseFolder)
-		
+
 		File rightFolder = new File (this.revDir + File.separator + this.rightRevName)
 		this.auxRemoveNonJavaFiles(rightFolder)
 
@@ -149,28 +195,29 @@ class CompareFiles {
 	private void auxRemoveNonJavaFiles(File dir){
 		File[] files = dir.listFiles()
 
-		for(int i = 0; i < files.length; i++){
+		for(File file : files){
 
-			if(files[i].isFile()){
+			if(file.isFile()){
 
-				String filePath = files[i].getAbsolutePath()
+				String filePath = file.getAbsolutePath()
 
 				if(!(filePath.endsWith(".java"))){
 
-					if(files[i].delete()){
+					if(file.delete()){
 						//println(files[i].getName() + " is deleted!");
 					}else{
-						println(files[i].getName() + " delete operation has failed.");
+						println(file.getName() + " delete operation has failed.");
 					}
 				}
 
-			} else if (files[i].isDirectory()){
+			} else if (file.isDirectory()){
 
-				this.removeNonJavaFiles(files[i])
+				this.removeNonJavaFiles(file)
 			}
 
 		}
 	}
+
 
 	private void auxMoveNonJavaFiles(){
 
