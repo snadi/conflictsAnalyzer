@@ -1,5 +1,6 @@
 package main
 
+import java.util.HashMap;
 import java.util.Map;
 
 class Project {
@@ -81,12 +82,16 @@ class Project {
 		return this.projectSummary
 	}
 
-	public void analyzeConflicts(String revisionFile){
-			MergeScenario ms = new MergeScenario(revisionFile)
+	public boolean analyzeConflicts(String revisionFile, boolean resultGitMerge){
+			
+			MergeScenario ms = new MergeScenario(revisionFile, resultGitMerge)
 			this.mergeScenarios.add(ms)
 			ms.analyzeConflicts()
+			boolean result = ms.hasConflictsThatWereNotSolved()
 			updateAndPrintSummary(ms)
 			//ms.deleteMSDir()
+			
+			return result
 	}
 
 	private printResults(MergeScenario ms) {

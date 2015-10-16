@@ -27,18 +27,21 @@ class MergeScenario implements Observer {
 	private boolean hasConflicts
 
 	private CompareFiles compareFiles
-	
+
 	private FSTGenMerger fstGenMerge
-	
+
 	private Map<String, Integer> sameSignatureCMSummary
-	
+
 	private int possibleRenamings
 
 	private int filesAddedByOneDev
-	
-	public MergeScenario(String path){
-	
+
+	private boolean gitMergeHasNoConflicts
+
+	public MergeScenario(String path, boolean resultGitMerge){
+
 		this.path = path
+		this.gitMergeHasNoConflicts = resultGitMerge
 		this.setName()
 		//this.removeVarArgs()
 		this.hasConflicts = false
@@ -50,7 +53,7 @@ class MergeScenario implements Observer {
 	public void createSameSignatureCMSummary(){
 		this.sameSignatureCMSummary = ConflictSummary.initializeSameSignatureCMSummary()
 	}
-	
+
 	public void setMergedFiles(){
 		this.compareFiles = new CompareFiles(this.path)
 		this.compareFiles.ignoreFilesWeDontMerge()
@@ -98,7 +101,7 @@ class MergeScenario implements Observer {
 		fstGenMerge.getMergeVisitor().addObserver(this)
 		String[] files = ["--expression", this.path]
 		fstGenMerge.run(files)
-		
+
 	}
 
 
@@ -144,9 +147,9 @@ class MergeScenario implements Observer {
 					this.hasConflicts = true
 					this.removeNonMCBaseNodes(fstGenMerge.baseNodes)
 				}
-				
+
 				this.createConflict(node)
-				
+
 			}
 		}
 	}
@@ -157,12 +160,12 @@ class MergeScenario implements Observer {
 		this.updateMergeScenarioSummary(conflict)
 
 	}
-	
+
 	private void updateSameSignatureCMSummary(String cause, int ds){
 		this.sameSignatureCMSummary = ConflictSummary.
-		updateSameSignatureCMSummary(this.sameSignatureCMSummary, cause, ds)
+				updateSameSignatureCMSummary(this.sameSignatureCMSummary, cause, ds)
 	}
-	
+
 	private void matchConflictWithFile(Conflict conflict){
 		String rev_base = this.compareFiles.baseRevName
 		String conflictPath = conflict.filePath
@@ -178,7 +181,7 @@ class MergeScenario implements Observer {
 				i++
 			}
 		}
-		
+
 		if(!matchedFile){
 			MergedFile mf = new MergedFile(conflict.getFilePath())
 			mf.setAddedByOneDev(true)
@@ -186,18 +189,18 @@ class MergeScenario implements Observer {
 			this.filesAddedByOneDev++
 			this.addConflictToFile(conflict, this.mergedFiles.size-1, true)
 		}
-		
+
 	}
 
 	private void addConflictToFile(Conflict conflict, int index, boolean matched){
-		
+
 		if(conflict.getType().equals(SSMergeConflicts.SameSignatureCM.toString())){
-			
+
 			conflict.setCauseSameSignatureCM(fstGenMerge.baseNodes, matched)
 			String cause = conflict.getCauseSameSignatureCM()
 			this.updateSameSignatureCMSummary(cause, conflict.getDifferentSpacing())
 		}
-		
+
 		this.mergedFiles.elementData(index).conflicts.add(conflict)
 		this.mergedFiles.elementData(index).updateMetrics(conflict)
 
@@ -228,14 +231,14 @@ class MergeScenario implements Observer {
 				', ' + this.compareFiles.getFilesEditedByOneDev() + ', ' +
 				this.compareFiles.getFilesThatRemainedTheSame() + ', ' +
 				this.filesAddedByOneDev +', ' + this.mergedFiles.size() +
-				', ' + this.getNumberOfFilesWithConflicts() + ', ' + 
+				', ' + this.getNumberOfFilesWithConflicts() + ', ' +
 				ConflictSummary.printConflictsSummary(this.mergeScenarioSummary) + ', ' +
 				ConflictSummary.printSameSignatureCMSummary(this.sameSignatureCMSummary) + ', ' +
 				this.possibleRenamings
 
 		return report
 	}
-	
+
 	private void removeNonMCBaseNodes(LinkedList<FSTNode> bNodes){
 		LinkedList<FSTNode> baseNodes = new LinkedList<FSTNode>(bNodes)
 		for(FSTNode baseNode: baseNodes){
@@ -244,13 +247,45 @@ class MergeScenario implements Observer {
 			}
 		}
 	}
-	
+
 	public int getPossibleRenamings() {
 		return possibleRenamings;
 	}
 
 	public void setPossibleRenamings(int possibleRenamings) {
 		this.possibleRenamings = possibleRenamings;
+	}
+
+	public boolean hasConflictsThatWereNotSolved(){
+		boolean result = false
+
+		if(this.gitMergeHasNoConflicts){
+			result = this.hasNonDSConflicts()
+		}else{
+			result = true
+		}
+
+		return result
+	}
+
+	private boolean hasNonDSConflicts(){
+		boolean hasNonDSConflict = false
+
+		int i = 0
+
+		while((!hasNonDSConflict) && (i < SSMergeConflicts.values().length)){
+			String type = SSMergeConflicts.values()[i].toString()
+				
+				Conflict conflict = this.mergeScenarioSummary.get(type)
+				int diff =  conflict.getNumberOfConflicts() - conflict.getDifferentSpacing()
+				
+				if(diff >0){
+					hasNonDSConflict = true
+				}
+			i++
+		}
+
+		return hasNonDSConflict
 	}
 
 	public static void main(String[] args){

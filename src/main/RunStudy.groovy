@@ -1,4 +1,5 @@
 package main
+import java.util.HashMap;
 import java.util.Hashtable
 
 /*this class is supposed to integrate all the 3 steps involved to run the study
@@ -22,26 +23,26 @@ class RunStudy {
 	public void run(String[] args){
 		def projectsList = new File(args[0])
 		updateGitMinerConfig(args[1])
-		
+
 		//for each project
 		projectsList.eachLine {
 			//run gitminer
 			setProjectNameAndRepo(it)
-			//attention, if you have already download gitminer base you can comment 
+			//attention, if you have already download gitminer base you can comment
 			//the line below and use the second line below
 			String graphBase = runGitMiner()
 			//String graphBase = this.gitminerLocation + File.separator + this.projectName + 'graph.db'
-			
+
 			//get list of merge commits
 			ArrayList<MergeCommit> listMergeCommits = runGremlinQuery(graphBase)
-			
+
 			//create project and extractor
 			Extractor extractor = this.createExtractor(this.projectName, graphBase)
 			Project project = new Project(this.projectName)
-			
+
 			//for each merge scenario, clone and run SSMerge on it
 			analyseMergeScenario(listMergeCommits, extractor, project)
-			
+
 			//print project report and call R script
 			ConflictPrinter.printProjectData(project)
 			this.callRScript()
@@ -49,47 +50,59 @@ class RunStudy {
 
 	}
 
-	private void analyseMergeScenario(ArrayList listMergeCommits, Extractor extractor, 
-		Project project) {
-		
+	private void analyseMergeScenario(ArrayList listMergeCommits, Extractor extractor,
+	Project project) {
+
 		//if project execution breaks, update current with next merge scenario number
 		int current = 0;
 		int end = listMergeCommits.size()
-		
+
+		//for each merge scenario analyze it
 		while(current < end){
+
 			int index = current + 1;
 			println 'Analyzing merge scenario [' + index + '] from a total of [' + end +
-					'] merge scenarios\n'
+			'] merge scenarios\n'
 
 			MergeCommit mc = listMergeCommits.get(current)
-			
+
 			/*download left, right, and base revisions, performs the merge and saves in a 
-			separate file*/
-			ExtractorResult result = extractor.extractCommit(mc)
-			println result.getNonJavaFilesWithConflict()
-			
-			String revisionFile = result.getRevisionFile()
-			
+			 separate file*/
+			ExtractorResult mergeResult = extractor.extractCommit(mc)
+
+			String revisionFile = mergeResult.getRevisionFile()
+
 			if(!revisionFile.equals("")){
-				runConflictsAnalyzer(project, revisionFile)
+				
+				//run ssmerge and conflict analysis
+				boolean hasConflicts = runConflictsAnalyzer(project, revisionFile,
+				mergeResult.getNonJavaFilesWithConflict().isEmpty())
+				println hasConflicts
+				
+				if(!hasConflicts){
+					//build system and call joana analysis
+				}			
 			}
+
+			//increment current
 			current++
+
 		}
-	
+
 	}
-	
+
 	private Extractor createExtractor(String projectName, String graphBase){
 		GremlinProject gProject = new GremlinProject(this.projectName,
-			this.projectRepo, graphBase)
-	   Extractor extractor = new Extractor(gProject, this.downloadPath)
-	   
-	   return extractor
+		this.projectRepo, graphBase)
+		Extractor extractor = new Extractor(gProject, this.downloadPath)
+
+		return extractor
 	}
-	
+
 	public Hashtable<String, Conflict> getProjectsSummary(){
 		return this.projectsSummary
 	}
-	
+
 	public void updateGitMinerConfig(String configFile){
 		Properties gitminerProps =  new Properties()
 		File gitminerPropsFile = new File(this.gitminerConfigProps)
@@ -180,12 +193,12 @@ class RunStudy {
 		return listMergeCommits
 	}
 
-	public void runConflictsAnalyzer(Project project, String revisionFile){
+	public boolean runConflictsAnalyzer(Project project, String revisionFile, boolean resultGitMerge){
 		println "starting to run the conflicts analyzer on revision " + revisionFile
-		project.analyzeConflicts(revisionFile)
-		
+		boolean hasConflicts = project.analyzeConflicts(revisionFile, resultGitMerge)
+		return hasConflicts
 	}
-	
+
 	public void callRScript(){
 		String propsFile = "resultsScript.r"
 		ProcessBuilder pb = new ProcessBuilder("Rscript", propsFile)
@@ -200,7 +213,7 @@ class RunStudy {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public static void main (String[] args){
 		RunStudy study = new RunStudy()
 		String[] files= ['projectsList', 'configuration.properties']
