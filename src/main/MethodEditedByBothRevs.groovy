@@ -1,8 +1,12 @@
 package main
 
-import java.io.File;
+import java.awt.List;
+import java.io.File
 
-import de.ovgu.cide.fstgen.ast.FSTNode;
+import org.apache.ivy.osgi.p2.P2CompositeParser.ChildrenHandler;
+
+import de.ovgu.cide.fstgen.ast.FSTNode
+import de.ovgu.cide.fstgen.ast.FSTNonTerminal;
 import de.ovgu.cide.fstgen.ast.FSTTerminal;
 
 class MethodEditedByBothRevs {
@@ -20,16 +24,29 @@ class MethodEditedByBothRevs {
 	public String START_SEPARATOR
 
 	public String END_SEPARATOR
+	
+	private String packageName
+	
+	private FSTTerminal constructor
 
 	public MethodEditedByBothRevs(FSTTerminal n, String path){
+		this.packageName = ''
 		this.node = n
 		this.setSeparatorStrings()
 		this.retrieveFilePath(this.node, path)
+		this.setSignature()
 		this.annotateMethod()
 		this.leftLines  = new ArrayList<Integer>()
 		this.rightLines = new ArrayList<Integer>()
 	}
-
+	
+	public void setSignature(){
+		String [] tokens = this.filePath.split(File.separator)
+		String className = tokens[tokens.length-1]
+		className = className.substring(0, className.length()-5)
+		this.signature = this.packageName + '.' + className + '.' + this.node.getName()
+	}
+	
 	public void retrieveFilePath(FSTNode n, String path){
 
 		int endIndex = path.length() - 10;
@@ -55,6 +72,17 @@ class MethodEditedByBothRevs {
 	public String retrieveFolderPath(FSTNode n){
 		String filePath = "";
 		String nodetype = n.getType();
+		
+		if(nodetype.equals("CompilationUnit")){
+			this.setPackageName(n)
+			
+		}
+		
+		if(nodetype.equals("ClassDeclaration")){
+			this.setConstructor(n)
+			
+		}
+		
 
 		if(nodetype.equals("Java-File") || nodetype.equals("Folder")){
 
@@ -70,6 +98,25 @@ class MethodEditedByBothRevs {
 
 			return this.retrieveFolderPath(n.getParent());
 		}
+	}
+	
+	
+	private setPackageName(FSTNode node){
+		boolean foundPackage = false
+		FSTNonTerminal nonterminal = (FSTNonTerminal) node;
+		ArrayList<FSTNode> children = nonterminal.getChildren()
+		int i = 0
+		
+		while(!foundPackage && i < children.size()){
+			FSTNode child = children.elementData(i)
+			if(child.getType().equals('PackageDeclaration')){
+				String [] tokens = child.getBody().split(' ')
+				this.packageName = tokens[1].substring(0, tokens[1].length()-1)
+				foundPackage = true
+			}
+			i++
+		}
+		
 	}
 
 	public String getSignature() {
@@ -97,6 +144,28 @@ class MethodEditedByBothRevs {
 
 	public void setFilePath(String filePath) {
 		this.filePath = filePath;
+	}
+	
+	
+	
+	public FSTTerminal getConstructor() {
+		return constructor;
+	}
+
+	public void setConstructor(FSTNode node) {
+		boolean foundConstructor = false
+		FSTNonTerminal nonterminal = (FSTNonTerminal) node;
+		ArrayList<FSTNode> children = nonterminal.getChildren()
+		int i = 0
+		
+		while(!foundConstructor && i < children.size()){
+			FSTNode child = children.elementData(i)
+			if(child.getType().equals('ConstructorDecl')){
+				this.constructor = child
+				foundConstructor = true
+			}
+			i++
+		}
 	}
 
 	public void assignLeftAndRight(){
@@ -139,7 +208,6 @@ class MethodEditedByBothRevs {
 		//delete old file and write new content
 		file.delete()
 		new File(this.filePath).write(newFile)
-		println 'hello'
 	}
 
 
