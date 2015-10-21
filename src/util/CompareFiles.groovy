@@ -212,7 +212,7 @@ class CompareFiles {
 
 			} else if (file.isDirectory()){
 
-				this.removeNonJavaFiles(file)
+				this.auxRemoveNonJavaFiles(file)
 			}
 
 		}

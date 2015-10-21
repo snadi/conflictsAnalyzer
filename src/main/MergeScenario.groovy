@@ -189,7 +189,7 @@ class MergeScenario implements Observer {
 
 		methods.add(method)
 		this.filesWithMethodsToJoana.put(filePath, methods)
-		println 'hello'
+	
 	}
 
 	public void createConflict(FSTTerminal node){
