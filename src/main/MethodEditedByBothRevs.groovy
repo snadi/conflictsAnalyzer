@@ -26,6 +26,8 @@ class MethodEditedByBothRevs {
 	public String END_SEPARATOR
 	
 	private String packageName
+	
+	private FSTTerminal constructor
 
 	public MethodEditedByBothRevs(FSTTerminal n, String path){
 		this.packageName = ''
@@ -71,10 +73,16 @@ class MethodEditedByBothRevs {
 		String filePath = "";
 		String nodetype = n.getType();
 		
-		if(nodetype.contains("CompilationUnit")){
+		if(nodetype.equals("CompilationUnit")){
 			this.setPackageName(n)
 			
 		}
+		
+		if(nodetype.equals("ClassDeclaration")){
+			this.setConstructor(n)
+			
+		}
+		
 
 		if(nodetype.equals("Java-File") || nodetype.equals("Folder")){
 
@@ -92,10 +100,11 @@ class MethodEditedByBothRevs {
 		}
 	}
 	
+	
 	private setPackageName(FSTNode node){
 		boolean foundPackage = false
 		FSTNonTerminal nonterminal = (FSTNonTerminal) node;
-		ArrayList<FSTNode> children = node.getChildren()
+		ArrayList<FSTNode> children = nonterminal.getChildren()
 		int i = 0
 		
 		while(!foundPackage && i < children.size()){
@@ -105,6 +114,7 @@ class MethodEditedByBothRevs {
 				this.packageName = tokens[1].substring(0, tokens[1].length()-1)
 				foundPackage = true
 			}
+			i++
 		}
 		
 	}
@@ -134,6 +144,28 @@ class MethodEditedByBothRevs {
 
 	public void setFilePath(String filePath) {
 		this.filePath = filePath;
+	}
+	
+	
+	
+	public FSTTerminal getConstructor() {
+		return constructor;
+	}
+
+	public void setConstructor(FSTNode node) {
+		boolean foundConstructor = false
+		FSTNonTerminal nonterminal = (FSTNonTerminal) node;
+		ArrayList<FSTNode> children = nonterminal.getChildren()
+		int i = 0
+		
+		while(!foundConstructor && i < children.size()){
+			FSTNode child = children.elementData(i)
+			if(child.getType().equals('ConstructorDecl')){
+				this.constructor = child
+				foundConstructor = true
+			}
+			i++
+		}
 	}
 
 	public void assignLeftAndRight(){
