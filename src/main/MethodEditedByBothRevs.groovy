@@ -1,0 +1,165 @@
+package main
+
+import java.io.File;
+
+import de.ovgu.cide.fstgen.ast.FSTNode;
+import de.ovgu.cide.fstgen.ast.FSTTerminal;
+
+class MethodEditedByBothRevs {
+
+	private String signature
+
+	private ArrayList<Integer> leftLines
+
+	private ArrayList<Integer> rightLines
+
+	private FSTTerminal node
+
+	private String filePath
+
+	public String START_SEPARATOR
+
+	public String END_SEPARATOR
+
+	public MethodEditedByBothRevs(FSTTerminal n, String path){
+		this.node = n
+		this.setSeparatorStrings()
+		this.retrieveFilePath(this.node, path)
+		this.annotateMethod()
+		this.leftLines  = new ArrayList<Integer>()
+		this.rightLines = new ArrayList<Integer>()
+	}
+
+	public void retrieveFilePath(FSTNode n, String path){
+
+		int endIndex = path.length() - 10;
+		String systemDir = path.substring(0, endIndex);
+
+		this.filePath = systemDir + this.retrieveFolderPath(n);
+	}
+
+	private void annotateMethod(){
+		String body = this.node.getBody()
+		String [] lines = body.split('\n')
+		String firstLine = this.START_SEPARATOR + lines[0]
+		String lastLine = this.END_SEPARATOR + lines[lines.length-1]
+		String newBody = firstLine + '\n'
+		for(int i = 1; i < (lines.length-2); i++){
+			newBody = newBody + lines[i] + '\n'
+		}
+		newBody = newBody + lastLine
+
+		this.node.setBody(newBody)
+	}
+
+	public String retrieveFolderPath(FSTNode n){
+		String filePath = "";
+		String nodetype = n.getType();
+
+		if(nodetype.equals("Java-File") || nodetype.equals("Folder")){
+
+			filePath = this.retrieveFolderPath(n.getParent()) + File.separator + n.getName();
+
+			return filePath;
+
+		}else if(nodetype.equals("Feature")){
+
+			return "";
+
+		}else{
+
+			return this.retrieveFolderPath(n.getParent());
+		}
+	}
+
+	public String getSignature() {
+		return signature;
+	}
+	public void setSignature(String signature) {
+		this.signature = signature;
+	}
+	public ArrayList<Integer> getLeftLines() {
+		return leftLines;
+	}
+	public void setLeftLines(ArrayList<Integer> leftLines) {
+		this.leftLines = leftLines;
+	}
+	public ArrayList<Integer> getRightLines() {
+		return rightLines;
+	}
+	public void setRightLines(ArrayList<Integer> rightLines) {
+		this.rightLines = rightLines;
+	}
+
+	public String getFilePath() {
+		return filePath;
+	}
+
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
+	}
+
+	public void assignLeftAndRight(){
+		File file = new File(this.filePath)
+		int i = 1;
+		String newFile = ''
+
+		boolean isMethodBody = false
+
+		file.eachLine {
+
+			if(it.contains(this.START_SEPARATOR)){
+				isMethodBody = true
+				String s = it.replace(this.START_SEPARATOR, '')
+				newFile = newFile + this.processMethodLine(s, i) + '\n'
+			}else{
+			
+				if(!isMethodBody){
+
+					newFile = newFile + it + '\n'
+
+				}else{
+
+					if(it.contains(this.END_SEPARATOR)){
+						isMethodBody = false
+						String s2 = it.replace(this.END_SEPARATOR, '')
+						newFile = newFile + this.processMethodLine(s2,i) + '\n'
+					}else{
+						newFile = newFile + this.processMethodLine(it, i) + '\n'
+					}
+
+				}
+			}
+
+
+
+			i++
+		}
+
+		//delete old file and write new content
+		file.delete()
+		new File(this.filePath).write(newFile)
+		println 'hello'
+	}
+
+
+	private String processMethodLine(String line, int i){
+		String result = ''
+		if(line.contains(Blame.LEFT_SEPARATOR)){
+			this.leftLines.add(new Integer(i))
+			result = line.replace(Blame.LEFT_SEPARATOR, '')
+		}else if(line.contains(Blame.RIGHT_SEPARATOR)){
+			this.rightLines.add(new Integer(i))
+			result = line.replace(Blame.RIGHT_SEPARATOR, '')
+		}else{
+			result = line
+		}
+		return result
+	}
+
+	public void setSeparatorStrings(){
+		this.START_SEPARATOR = '// START ' + this.node.getName() + '//'
+		this.END_SEPARATOR = '// END ' + this.node.getName() + '//'
+	}
+
+}

@@ -2,6 +2,8 @@ package main
 import java.util.HashMap;
 import java.util.Hashtable
 
+import util.CSVAnalyzer;
+
 /*this class is supposed to integrate all the 3 steps involved to run the study
  * gitminer/gremlinQuery/ConflictsAnalyzer
  */
@@ -75,11 +77,15 @@ class RunStudy {
 			if(!revisionFile.equals("")){
 				
 				//run ssmerge and conflict analysis
-				boolean hasConflicts = runConflictsAnalyzer(project, revisionFile,
+				SSMergeResult ssMergeResult = runConflictsAnalyzer(project, revisionFile,
 				mergeResult.getNonJavaFilesWithConflict().isEmpty())
+				
+				boolean hasConflicts = ssMergeResult.getHasConflicts()
 				println hasConflicts
 				
 				if(!hasConflicts){
+					//get line of the files containing methods for joana analysis
+					
 					//build system and call joana analysis
 				}			
 			}
@@ -193,13 +199,15 @@ class RunStudy {
 		return listMergeCommits
 	}
 
-	public boolean runConflictsAnalyzer(Project project, String revisionFile, boolean resultGitMerge){
+	public SSMergeResult runConflictsAnalyzer(Project project, String revisionFile, boolean resultGitMerge){
 		println "starting to run the conflicts analyzer on revision " + revisionFile
-		boolean hasConflicts = project.analyzeConflicts(revisionFile, resultGitMerge)
-		return hasConflicts
+		SSMergeResult result = project.analyzeConflicts(revisionFile, resultGitMerge)
+		return result
 	}
 
 	public void callRScript(){
+		
+		CSVAnalyzer.writeRealConflictsCSV()
 		String propsFile = "resultsScript.r"
 		ProcessBuilder pb = new ProcessBuilder("Rscript", propsFile)
 		pb.redirectOutput(ProcessBuilder.Redirect.INHERIT)

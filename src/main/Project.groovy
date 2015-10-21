@@ -82,12 +82,12 @@ class Project {
 		return this.projectSummary
 	}
 
-	public boolean analyzeConflicts(String revisionFile, boolean resultGitMerge){
+	public SSMergeResult analyzeConflicts(String revisionFile, boolean resultGitMerge){
 			
 			MergeScenario ms = new MergeScenario(revisionFile, resultGitMerge)
 			this.mergeScenarios.add(ms)
 			ms.analyzeConflicts()
-			boolean result = ms.hasConflictsThatWereNotSolved()
+			SSMergeResult result = new SSMergeResult(ms.hasConflictsThatWereNotSolved(), ms.getFilesWithMethodsToJoana())
 			updateAndPrintSummary(ms)
 			//ms.deleteMSDir()
 			
