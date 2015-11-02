@@ -3,6 +3,7 @@ import java.util.HashMap;
 import java.util.Hashtable
 
 import util.CSVAnalyzer;
+import org.apache.commons.io.FileUtils
 
 /*this class is supposed to integrate all the 3 steps involved to run the study
  * gitminer/gremlinQuery/ConflictsAnalyzer
@@ -84,11 +85,11 @@ class RunStudy {
 			if((startDate == null || mc.date.clearTime() >= startDate) && (finalDate == null || mc.date.clearTime() <= finalDate))
 			{
 				println 'Analyzing merge scenario...'
-				
+
 				/*download left, right, and base revisions, performs the merge and saves in a
 				 separate file*/
 				ExtractorResult mergeResult = extractor.extractCommit(mc)
-				
+
 				String revisionFile = mergeResult.getRevisionFile()
 
 				if(!revisionFile.equals("")){
@@ -102,8 +103,24 @@ class RunStudy {
 
 					if(!hasConflicts){
 						//get line of the files containing methods for joana analysis
+						Map<String, ArrayList<MethodEditedByBothRevs>> filesWithMethodsToJoana = ssMergeResult.getFilesWithMethodsToJoana()
+						println filesWithMethodsToJoana.size()
+						if(filesWithMethodsToJoana.size() > 0)
+						{
+							println index + ", " + filesWithMethodsToJoana.keySet()
+							String revPath = revisionFile.replace(".revisions", "")
+							String revGitPath = revPath + File.separator + "git"
+							File revGitFile = new File(revGitPath)
 
-						//build system and call joana analysis
+							def repoDir = new File(downloadPath +File.separator+ projectName + File.separator + "git")
+							FileUtils.copyDirectory(new File(revPath), revGitFile)
+							copyGitFiles(repoDir, repoDir, revGitFile)
+							if(build(revGitPath))
+							{
+								//Call joana analysis
+								println "Calling Joana..."
+							}
+						}
 					}
 				}
 			}
@@ -112,6 +129,44 @@ class RunStudy {
 
 		}
 
+	}
+
+	private def copyGitFiles(File baseDir, File srcDir, File destDir)
+	{
+		String basePath = baseDir.getAbsolutePath()
+		String destPath = destDir.getAbsolutePath()
+		File[] srcFiles = srcDir.listFiles()
+		for(File file : srcFiles)
+		{
+			if(file.getName().contains(".git"))
+			{
+				if(file.isFile())
+				{
+					FileUtils.copyFile(file, new File(file.getAbsolutePath().replace(basePath, destPath)))
+				}else if(file.isDirectory())
+				{
+					FileUtils.copyDirectory(file, new File(file.getAbsolutePath().replace(basePath, destPath)))
+				}
+			}
+		}
+	}
+
+	private boolean build(String revGitPath) {
+		println "Building..."
+		def gradlewPath = revGitPath + File.separator+"gradlew"
+		ProcessBuilder builder = new ProcessBuilder("/bin/bash","-c","chmod +x "+gradlewPath + " && "+gradlewPath+" build -p"+revGitPath);
+		builder.redirectErrorStream(true);
+		Process p = builder.start();
+		BufferedReader buffer 	= new BufferedReader(new InputStreamReader(p.getInputStream()));
+		String currentLine 		= "";
+		def buildLines = new String[3];
+		while ((currentLine=buffer.readLine())!=null) {
+			buildLines[0] = buildLines[1];
+			buildLines[1] = buildLines[2];
+			buildLines[2] = currentLine;
+			println currentLine
+		}
+		return buildLines[0].equals("BUILD SUCCESSFUL")
 	}
 
 	private Extractor createExtractor(String projectName, String graphBase){
