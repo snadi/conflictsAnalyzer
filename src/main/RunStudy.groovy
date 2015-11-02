@@ -29,67 +29,84 @@ class RunStudy {
 		//for each project
 		projectsList.eachLine {
 			//run gitminer
-			setProjectNameAndRepo(it)
+			String[] projectInfo = it.split(",")
+			setProjectNameAndRepo(projectInfo[0])
+			Date startDate = null
+			Date endDate = null
+			if(projectInfo.length > 1 && !projectInfo[1].trim().equals(""))
+			{
+				startDate = Date.parse('dd/MM/yyyy', projectInfo[1])
+			}
+
+			if(projectInfo.length > 2 && !projectInfo[2].trim().equals(""))
+			{
+				endDate = Date.parse('dd/MM/yyyy', projectInfo[2])
+			}
 			//attention, if you have already download gitminer base you can comment
 			//the line below and use the second line below
-			String graphBase = runGitMiner()
-			//String graphBase = this.gitminerLocation + File.separator + this.projectName + 'graph.db'
+			//String graphBase = runGitMiner()
+			String graphBase = this.gitminerLocation + File.separator + this.projectName + 'graph.db'
 
 			//get list of merge commits
 			ArrayList<MergeCommit> listMergeCommits = runGremlinQuery(graphBase)
 
 			//create project and extractor
 			Extractor extractor = this.createExtractor(this.projectName, graphBase)
-			Project project = new Project(this.projectName)
+			Project project = new Project(this.projectName,startDate, endDate)
 
 			//for each merge scenario, clone and run SSMerge on it
 			analyseMergeScenario(listMergeCommits, extractor, project)
 
 			//print project report and call R script
 			ConflictPrinter.printProjectData(project)
-			this.callRScript()
+			//this.callRScript()
 		}
 
 	}
 
 	private void analyseMergeScenario(ArrayList listMergeCommits, Extractor extractor,
-	Project project) {
+			Project project) {
 
 		//if project execution breaks, update current with next merge scenario number
 		int current = 0;
 		int end = listMergeCommits.size()
-
+		Date startDate = project.getStartDate()
+		Date finalDate = project.getEndDate()
 		//for each merge scenario analyze it
 		while(current < end){
 
 			int index = current + 1;
-			println 'Analyzing merge scenario [' + index + '] from a total of [' + end +
-			'] merge scenarios\n'
+			println 'Merge scenario [' + index + '] from a total of [' + end +
+					'] merge scenarios\n'
 
 			MergeCommit mc = listMergeCommits.get(current)
 
-			/*download left, right, and base revisions, performs the merge and saves in a 
-			 separate file*/
-			ExtractorResult mergeResult = extractor.extractCommit(mc)
+			if((startDate == null || mc.date.clearTime() >= startDate) && (finalDate == null || mc.date.clearTime() <= finalDate))
+			{
+				println 'Analyzing merge scenario...'
+				
+				/*download left, right, and base revisions, performs the merge and saves in a
+				 separate file*/
+				ExtractorResult mergeResult = extractor.extractCommit(mc)
+				
+				String revisionFile = mergeResult.getRevisionFile()
 
-			String revisionFile = mergeResult.getRevisionFile()
+				if(!revisionFile.equals("")){
 
-			if(!revisionFile.equals("")){
-				
-				//run ssmerge and conflict analysis
-				SSMergeResult ssMergeResult = runConflictsAnalyzer(project, revisionFile,
-				mergeResult.getNonJavaFilesWithConflict().isEmpty())
-				
-				boolean hasConflicts = ssMergeResult.getHasConflicts()
-				println hasConflicts
-				
-				if(!hasConflicts){
-					//get line of the files containing methods for joana analysis
-					
-					//build system and call joana analysis
-				}			
+					//run ssmerge and conflict analysis
+					SSMergeResult ssMergeResult = runConflictsAnalyzer(project, revisionFile,
+							mergeResult.getNonJavaFilesWithConflict().isEmpty())
+
+					boolean hasConflicts = ssMergeResult.getHasConflicts()
+					println hasConflicts
+
+					if(!hasConflicts){
+						//get line of the files containing methods for joana analysis
+
+						//build system and call joana analysis
+					}
+				}
 			}
-
 			//increment current
 			current++
 
@@ -99,7 +116,7 @@ class RunStudy {
 
 	private Extractor createExtractor(String projectName, String graphBase){
 		GremlinProject gProject = new GremlinProject(this.projectName,
-		this.projectRepo, graphBase)
+				this.projectRepo, graphBase)
 		Extractor extractor = new Extractor(gProject, this.downloadPath)
 
 		return extractor
@@ -206,7 +223,7 @@ class RunStudy {
 	}
 
 	public void callRScript(){
-		
+
 		CSVAnalyzer.writeRealConflictsCSV()
 		String propsFile = "resultsScript.r"
 		ProcessBuilder pb = new ProcessBuilder("Rscript", propsFile)

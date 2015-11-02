@@ -22,14 +22,20 @@ class Project {
 	private Map<String, Integer> sameSignatureCMSummary
 	
 	private int possibleRenamings;
+	
+	private Date startDate
+	
+	private Date endDate
 
-	public Project(String projectName){
+	public Project(String projectName,Date startDate = null, Date finalDate = null){
 		this.mergeScenarios = new ArrayList<MergeScenario>()
 		this.name = projectName
 		initializeProjectSummary()
 		initializeProjectMetrics()
 		this.createSameSignatureCMSummary()
 		this.createProjectDir()
+		this.startDate = startDate
+		this.endDate = finalDate
 	}
 	
 	
@@ -165,4 +171,14 @@ class Project {
 
 		return result
 	}	
+	
+	public Date getStartDate()
+	{
+		startDate
+	}
+	
+	public Date getEndDate()
+	{
+		endDate
+	}
 }
