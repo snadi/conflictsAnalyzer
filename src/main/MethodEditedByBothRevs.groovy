@@ -1,6 +1,6 @@
 package main
 
-import java.awt.List;
+import java.util.List;
 import java.io.File
 
 import org.apache.ivy.osgi.p2.P2CompositeParser.ChildrenHandler;
@@ -8,7 +8,7 @@ import org.apache.ivy.osgi.p2.P2CompositeParser.ChildrenHandler;
 import de.ovgu.cide.fstgen.ast.FSTNode
 import de.ovgu.cide.fstgen.ast.FSTNonTerminal;
 import de.ovgu.cide.fstgen.ast.FSTTerminal;
-
+import util.Util
 class MethodEditedByBothRevs {
 
 	private String signature
@@ -28,9 +28,12 @@ class MethodEditedByBothRevs {
 	private String packageName
 	
 	private FSTTerminal constructor
+	
+	private List<String> imports
 
 	public MethodEditedByBothRevs(FSTTerminal n, String path){
 		this.packageName = ''
+		this.imports = new ArrayList<String>()
 		this.node = n
 		this.setSeparatorStrings()
 		this.retrieveFilePath(this.node, path)
@@ -44,7 +47,8 @@ class MethodEditedByBothRevs {
 		String [] tokens = this.filePath.split(File.separator)
 		String className = tokens[tokens.length-1]
 		className = className.substring(0, className.length()-5)
-		this.signature = this.packageName + '.' + className + '.' + this.node.getName()
+		String methodName = Util.simplifyMethodSignature(this.node.getName())
+		this.signature = this.packageName + '.' + className + '.' + Util.includeFullArgsTypes(methodName, imports)
 	}
 	
 	public void retrieveFilePath(FSTNode n, String path){
@@ -75,6 +79,7 @@ class MethodEditedByBothRevs {
 		
 		if(nodetype.equals("CompilationUnit")){
 			this.setPackageName(n)
+			this.setImportList(n)
 			
 		}
 		
@@ -100,6 +105,20 @@ class MethodEditedByBothRevs {
 		}
 	}
 	
+	private setImportList(FSTNode node){
+		boolean foundPackage = false
+		FSTNonTerminal nonterminal = (FSTNonTerminal) node;
+		ArrayList<FSTNode> children = nonterminal.getChildren()
+		int i = 0
+
+		while(i < children.size()){
+			FSTNode child = children.elementData(i)
+			if(child.getType().equals('ImportDeclaration')){
+				imports.add(child.getBody().replace("import ", "").replace(";", ""))
+			}
+			i++
+		}
+	}
 	
 	private setPackageName(FSTNode node){
 		boolean foundPackage = false
@@ -157,14 +176,28 @@ class MethodEditedByBothRevs {
 		FSTNonTerminal nonterminal = (FSTNonTerminal) node;
 		ArrayList<FSTNode> children = nonterminal.getChildren()
 		int i = 0
-		
+		FSTNode privateConst = null
+
 		while(!foundConstructor && i < children.size()){
 			FSTNode child = children.elementData(i)
 			if(child.getType().equals('ConstructorDecl')){
-				this.constructor = child
-				foundConstructor = true
+				
+				FSTTerminal childTerm = (FSTTerminal) child;
+				List<String> modifiersList = Util.getModifiersList(childTerm.getBody())
+				if(!Util.isPrivateMethod(modifiersList))
+				{
+					this.constructor = child
+					foundConstructor = true
+				}else
+				{
+					privateConst = child
+				}
 			}
 			i++
+		}
+		if(!foundConstructor)
+		{
+			this.constructor = privateConst
 		}
 	}
 
