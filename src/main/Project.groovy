@@ -1,5 +1,6 @@
 package main
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,8 +27,12 @@ class Project {
 	private Date startDate
 	
 	private Date endDate
+	
+	private String binPath
+	
+	private String srcPath
 
-	public Project(String projectName,Date startDate = null, Date finalDate = null){
+	public Project(String projectName, Date startDate = null, Date finalDate = null, String binPath = "/bin", String srcPath = "/src"){
 		this.mergeScenarios = new ArrayList<MergeScenario>()
 		this.name = projectName
 		initializeProjectSummary()
@@ -36,6 +41,8 @@ class Project {
 		this.createProjectDir()
 		this.startDate = startDate
 		this.endDate = finalDate
+		this.binPath = binPath
+		this.srcPath = srcPath
 	}
 	
 	
@@ -180,5 +187,15 @@ class Project {
 	public Date getEndDate()
 	{
 		endDate
+	}
+	
+	public String getBinPath()
+	{
+		binPath
+	}
+	
+	public String getSrcPath()
+	{
+		srcPath
 	}
 }

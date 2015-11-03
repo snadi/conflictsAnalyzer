@@ -26,14 +26,17 @@ class RunStudy {
 	public void run(String[] args){
 		def projectsList = new File(args[0])
 		updateGitMinerConfig(args[1])
-
+		List<String> lines = projectsList.readLines()
+		lines.remove(0)
 		//for each project
-		projectsList.eachLine {
+		lines.each() {
 			//run gitminer
 			String[] projectInfo = it.split(",")
 			setProjectNameAndRepo(projectInfo[0])
 			Date startDate = null
 			Date endDate = null
+			String binPath = "/bin"
+			String srcPath = "/src"
 			if(projectInfo.length > 1 && !projectInfo[1].trim().equals(""))
 			{
 				startDate = Date.parse('dd/MM/yyyy', projectInfo[1])
@@ -42,6 +45,13 @@ class RunStudy {
 			if(projectInfo.length > 2 && !projectInfo[2].trim().equals(""))
 			{
 				endDate = Date.parse('dd/MM/yyyy', projectInfo[2])
+			}
+			if(projectInfo.length > 3 && !projectInfo[3].trim().equals("")){
+				binPath = projectInfo[3].trim()
+			}
+
+			if(projectInfo.length > 4 && !projectInfo[4].trim().equals("")){
+				srcPath = projectInfo[4].trim()
 			}
 			//attention, if you have already download gitminer base you can comment
 			//the line below and use the second line below
@@ -53,7 +63,7 @@ class RunStudy {
 
 			//create project and extractor
 			Extractor extractor = this.createExtractor(this.projectName, graphBase)
-			Project project = new Project(this.projectName,startDate, endDate)
+			Project project = new Project(this.projectName,startDate, endDate, binPath, srcPath)
 
 			//for each merge scenario, clone and run SSMerge on it
 			analyseMergeScenario(listMergeCommits, extractor, project)
@@ -104,7 +114,6 @@ class RunStudy {
 					if(!hasConflicts){
 						//get line of the files containing methods for joana analysis
 						Map<String, ArrayList<MethodEditedByBothRevs>> filesWithMethodsToJoana = ssMergeResult.getFilesWithMethodsToJoana()
-						println filesWithMethodsToJoana.size()
 						if(filesWithMethodsToJoana.size() > 0)
 						{
 							println index + ", " + filesWithMethodsToJoana.keySet()
