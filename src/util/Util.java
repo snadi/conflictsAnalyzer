@@ -34,7 +34,7 @@ public class Util {
 
 		simplifiedMethodSignature = firstPart + normalizeParameters(parameters) + lastPart;
 		simplifiedMethodSignature = simplifiedMethodSignature.replace("{FormalParametersInternal}", "");
-		return simplifiedMethodSignature;
+		return removeGenerics(simplifiedMethodSignature);
 	}
 	
 	private static String normalizeParameters(String parameters){
