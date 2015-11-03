@@ -4,6 +4,8 @@ import java.util.Hashtable
 
 import util.CSVAnalyzer;
 import org.apache.commons.io.FileUtils
+import util.Util
+
 
 /*this class is supposed to integrate all the 3 steps involved to run the study
  * gitminer/gremlinQuery/ConflictsAnalyzer
@@ -117,17 +119,50 @@ class RunStudy {
 						if(filesWithMethodsToJoana.size() > 0)
 						{
 							println index + ", " + filesWithMethodsToJoana.keySet()
-							String revPath = revisionFile.replace(".revisions", "")
-							String revGitPath = revPath + File.separator + "git"
-							File revGitFile = new File(revGitPath)
 
-							def repoDir = new File(downloadPath +File.separator+ projectName + File.separator + "git")
-							FileUtils.copyDirectory(new File(revPath), revGitFile)
-							copyGitFiles(repoDir, repoDir, revGitFile)
-							if(build(revGitPath))
+							//Map ssmerge objects to joana objects
+							Map<String, ModifiedMethod> methods = getJoanaMap(filesWithMethodsToJoana)
+							if(methods.size() > 0)
 							{
-								//Call joana analysis
-								println "Calling Joana..."
+								String revPath = revisionFile.replace(".revisions", "")
+								String revGitPath = revPath + File.separator + "git"
+								File revGitFile = new File(revGitPath)
+	
+								def repoDir = new File(downloadPath +File.separator+ projectName + File.separator + "git")
+								FileUtils.copyDirectory(new File(revPath), revGitFile)
+								copyGitFiles(repoDir, repoDir, revGitFile)
+								//Temporary solution
+								if(index == 1081)
+								{
+									//File wrongFile = new File(repoDir.getAbsolutePath()+"/src/main/java/rx/internal/operators/OperatorOnBackpressureDrop.java")
+									File wrongFile = new File(revGitPath+"/src/main/java/rx/internal/operators/OperatorOnBackpressureDrop.java")
+									List<String> wrongFileLines = wrongFile.readLines()
+									wrongFile.delete()
+									wrongFile.createNewFile()
+									wrongFileLines.set(96, "		};")
+	
+									wrongFileLines.each {
+										wrongFile.append(it+"\n")
+									}
+								}else if(index == 1163){
+									File wrongFile = new File(revGitPath+"/src/main/java/rx/internal/operators/OperatorMulticast.java")
+									List<String> wrongFileLines = wrongFile.readLines()
+									wrongFile.delete()
+									wrongFile.createNewFile()
+									wrongFileLines.add(172, "			source.subscribe(sub);")
+	
+									wrongFileLines.each {
+										wrongFile.append(it+"\n")
+									}
+								}
+								//End of temporary solution
+								if(build(revGitPath))
+								{
+									//call joana analysis
+									println "Calling Joana"
+									JoanaInvocation joana = new JoanaInvocation(revGitPath, methods, project.getBinPath(), project.getSrcPath())
+									joana.run()
+								}
 							}
 						}
 					}
@@ -138,6 +173,29 @@ class RunStudy {
 
 		}
 
+	}
+
+	private Map getJoanaMap(Map filesWithMethodsToJoana) {
+		Map<String, ModifiedMethod> methods = new HashMap<String, ModifiedMethod>()
+		for(String file : filesWithMethodsToJoana.keySet()) {
+			for(MethodEditedByBothRevs method : filesWithMethodsToJoana.get(file)){
+				if(method.leftLines.size > 0 && method.rightLines.size > 0)
+				{
+					List<String> constArgs;
+					def constructor = method.getConstructor()
+					if(constructor != null)
+					{
+						constArgs = Util.getArgs(Util.simplifyMethodSignature(constructor.getName()));
+					}else {
+						constArgs = new ArrayList<String>()
+					}
+					methods.put(method.getSignature(), new ModifiedMethod(method.getSignature(), constArgs, method.getLeftLines(), method.getRightLines()))
+				}else{
+					println "One or more empty contributions on: "+method.getSignature()
+				}
+			}
+		}
+		return methods
 	}
 
 	private def copyGitFiles(File baseDir, File srcDir, File destDir)
