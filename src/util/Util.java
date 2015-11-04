@@ -161,21 +161,41 @@ public class Util {
 			boolean found = false;
 			String[] importSplit;
 			String importStr;
-			while(j < imports.size() && !found)
+			if(!isPrimitiveType(arg))
 			{
-				importStr = imports.get(j);
-				importSplit = importStr.split("\\.");
-				found = importSplit[importSplit.length - 1].equals(arg);
-				if(found)
+				while(j < imports.size() && !found)
 				{
-					args.set(i, importStr);
+					importStr = imports.get(j);
+					importSplit = importStr.split("\\.");
+					String typeName = arg.replace("[]", "");
+					found = importSplit[importSplit.length - 1].equals(typeName);
+					if(found)
+					{
+						args.set(i, arg.replace(typeName, importStr));
+					}
+					j++;
 				}
-				j++;
+				if(!found)
+				{
+					args.set(i, "java.lang."+arg);
+				}
 			}
 			i++;
 		}
 		String newArgsStr = String.join(",", args);
 		return signature.replace(oldArgsStr, newArgsStr);
+	}
+		
+	public static boolean isPrimitiveType(String typeStr)
+	{
+		return typeStr.equals("byte") ||
+				typeStr.equals("short") ||
+				typeStr.equals("int") ||
+				typeStr.equals("long") ||
+				typeStr.equals("float") ||
+				typeStr.equals("double") ||
+				typeStr.equals("char") ||
+				typeStr.equals("boolean");
 	}
 		
 	public static void main(String[] args) {
@@ -195,5 +215,8 @@ public class Util {
 		imports.add("java.util.List");
 		System.out.println(includeFullArgsTypes(removeGenerics(simplifyMethodSignature(("soma(List<Integer>-List<Integer>-int-int) throws Exeception"))), imports));
 		System.out.println(includeFullArgsTypes(removeGenerics(simplifyMethodSignature(("soma(List<Integer>-List<Integer>-Scheduler-Scheduler) throws Exeception"))), imports));
+		System.out.println(includeFullArgsTypes(removeGenerics(simplifyMethodSignature(("soma(String-String-Scheduler-Scheduler-Object-Object) throws Exeception"))), imports));
+		System.out.println(includeFullArgsTypes(removeGenerics(simplifyMethodSignature(("soma(String[]-String[]-Scheduler[]-Scheduler[]-Object-Object) throws Exeception"))), imports));
+		System.out.println(includeFullArgsTypes(removeGenerics(simplifyMethodSignature(("soma(Character.Subset-Character.Subset) throws Exeception"))), imports));
 	}
 }
