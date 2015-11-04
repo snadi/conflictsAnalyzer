@@ -85,6 +85,8 @@ class RunStudy {
 		int end = listMergeCommits.size()
 		Date startDate = project.getStartDate()
 		Date finalDate = project.getEndDate()
+		String joanaReportsPath = new File(downloadPath).getParent() + File.separator + "joana_reports" + File.separator + project.name
+	
 		//for each merge scenario analyze it
 		while(current < end){
 
@@ -160,7 +162,8 @@ class RunStudy {
 								{
 									//call joana analysis
 									println "Calling Joana"
-									JoanaInvocation joana = new JoanaInvocation(revGitPath, methods, project.getBinPath(), project.getSrcPath())
+									String reportsFilePath = joanaReportsPath + File.separator + (new File(revPath).getName())
+									JoanaInvocation joana = new JoanaInvocation(revGitPath, methods, project.getBinPath(), project.getSrcPath(), reportsFilePath)
 									joana.run()
 								}
 							}
