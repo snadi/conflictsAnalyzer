@@ -85,8 +85,10 @@ class RunStudy {
 		int end = listMergeCommits.size()
 		Date startDate = project.getStartDate()
 		Date finalDate = project.getEndDate()
-		String joanaReportsPath = new File(downloadPath).getParent() + File.separator + "joana_reports" + File.separator + project.name
-	
+		String reportsPath = new File(downloadPath).getParent() + File.separator + "reports" + File.separator + project.name
+		File reportsDir = new File(reportsPath)
+		reportsDir.deleteDir()
+		reportsDir.mkdirs()
 		//for each merge scenario analyze it
 		while(current < end){
 
@@ -158,11 +160,14 @@ class RunStudy {
 									}
 								}
 								//End of temporary solution
-								if(build(revGitPath))
+								String reportsFilePath = reportsPath + File.separator + (new File(revPath).getName())
+								new File(reportsFilePath).mkdirs()	
+								File buildResultFile = new File(reportsFilePath + File.separator + "build_report.txt")
+								buildResultFile.createNewFile()
+								if(build(revGitPath, buildResultFile))
 								{
 									//call joana analysis
 									println "Calling Joana"
-									String reportsFilePath = joanaReportsPath + File.separator + (new File(revPath).getName())
 									JoanaInvocation joana = new JoanaInvocation(revGitPath, methods, project.getBinPath(), project.getSrcPath(), reportsFilePath)
 									joana.run()
 								}
@@ -221,7 +226,7 @@ class RunStudy {
 		}
 	}
 
-	private boolean build(String revGitPath) {
+	private boolean build(String revGitPath, File buildResultFile) {
 		println "Building..."
 		def gradlewPath = revGitPath + File.separator+"gradlew"
 		ProcessBuilder builder = new ProcessBuilder("/bin/bash","-c","chmod +x "+gradlewPath + " && "+gradlewPath+" build -p"+revGitPath);
@@ -234,6 +239,7 @@ class RunStudy {
 			buildLines[0] = buildLines[1];
 			buildLines[1] = buildLines[2];
 			buildLines[2] = currentLine;
+			buildResultFile.append(currentLine+"\n")
 			println currentLine
 		}
 		return buildLines[0].equals("BUILD SUCCESSFUL")
