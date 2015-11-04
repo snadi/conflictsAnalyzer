@@ -123,12 +123,20 @@ class RunStudy {
 						if(filesWithMethodsToJoana.size() > 0)
 						{
 							println index + ", " + filesWithMethodsToJoana.keySet()
-
+							String revPath = revisionFile.replace(".revisions", "")
+							String reportsFilePath = reportsPath + File.separator + (new File(revPath).getName())
+							new File(reportsFilePath).mkdirs()
+							File emptyContribs = new File(reportsFilePath + File.separator + "emptyContributions.txt")
+							emptyContribs.createNewFile()
 							//Map ssmerge objects to joana objects
-							Map<String, ModifiedMethod> methods = getJoanaMap(filesWithMethodsToJoana)
+							Map<String, ModifiedMethod> methods = getJoanaMap(emptyContribs, filesWithMethodsToJoana)
+							if(emptyContribs.length() == 0)
+							{
+								emptyContribs.delete()
+							}
 							if(methods.size() > 0)
 							{
-								String revPath = revisionFile.replace(".revisions", "")
+								
 								String revGitPath = revPath + File.separator + "git"
 								File revGitFile = new File(revGitPath)
 	
@@ -160,8 +168,7 @@ class RunStudy {
 									}
 								}
 								//End of temporary solution
-								String reportsFilePath = reportsPath + File.separator + (new File(revPath).getName())
-								new File(reportsFilePath).mkdirs()	
+							
 								File buildResultFile = new File(reportsFilePath + File.separator + "build_report.txt")
 								buildResultFile.createNewFile()
 								if(build(revGitPath, buildResultFile))
@@ -183,7 +190,7 @@ class RunStudy {
 
 	}
 
-	private Map getJoanaMap(Map filesWithMethodsToJoana) {
+	private Map getJoanaMap(File emptyContributions,Map filesWithMethodsToJoana) {
 		Map<String, ModifiedMethod> methods = new HashMap<String, ModifiedMethod>()
 		for(String file : filesWithMethodsToJoana.keySet()) {
 			for(MethodEditedByBothRevs method : filesWithMethodsToJoana.get(file)){
@@ -200,6 +207,10 @@ class RunStudy {
 					methods.put(method.getSignature(), new ModifiedMethod(method.getSignature(), constArgs, method.getLeftLines(), method.getRightLines()))
 				}else{
 					println "One or more empty contributions on: "+method.getSignature()
+					emptyContributions.append("One or more empty contributions on: "+method.getSignature()+"\n")
+					emptyContributions.append("   Left Contribution:"+method.leftLines+"\n")
+					emptyContributions.append("   Right Contribution:"+method.rightLines+"\n")
+					emptyContributions.append("\n")
 				}
 			}
 		}
