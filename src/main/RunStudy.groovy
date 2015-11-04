@@ -86,9 +86,7 @@ class RunStudy {
 		Date startDate = project.getStartDate()
 		Date finalDate = project.getEndDate()
 		String reportsPath = new File(downloadPath).getParent() + File.separator + "reports" + File.separator + project.name
-		File reportsDir = new File(reportsPath)
-		reportsDir.deleteDir()
-		reportsDir.mkdirs()
+
 		//for each merge scenario analyze it
 		while(current < end){
 
@@ -125,7 +123,9 @@ class RunStudy {
 							println index + ", " + filesWithMethodsToJoana.keySet()
 							String revPath = revisionFile.replace(".revisions", "")
 							String reportsFilePath = reportsPath + File.separator + (new File(revPath).getName())
-							new File(reportsFilePath).mkdirs()
+							File reportsRevDir = new File(reportsFilePath)
+							reportsRevDir.deleteDir()
+							reportsRevDir.mkdirs()
 							File emptyContribs = new File(reportsFilePath + File.separator + "emptyContributions.txt")
 							emptyContribs.createNewFile()
 							//Map ssmerge objects to joana objects
