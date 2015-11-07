@@ -79,7 +79,6 @@ class RunStudy {
 
 	private void analyseMergeScenario(ArrayList listMergeCommits, Extractor extractor,
 			Project project) {
-
 		//if project execution breaks, update current with next merge scenario number
 		int current = 0;
 		int end = listMergeCommits.size()
@@ -114,7 +113,6 @@ class RunStudy {
 
 					boolean hasConflicts = ssMergeResult.getHasConflicts()
 					println hasConflicts
-
 					if(!hasConflicts){
 						//get line of the files containing methods for joana analysis
 						Map<String, ArrayList<MethodEditedByBothRevs>> filesWithMethodsToJoana = ssMergeResult.getFilesWithMethodsToJoana()
@@ -143,31 +141,6 @@ class RunStudy {
 								def repoDir = new File(downloadPath +File.separator+ projectName + File.separator + "git")
 								FileUtils.copyDirectory(new File(revPath), revGitFile)
 								copyGitFiles(repoDir, repoDir, revGitFile)
-								//Temporary solution
-								if(index == 1081)
-								{
-									//File wrongFile = new File(repoDir.getAbsolutePath()+"/src/main/java/rx/internal/operators/OperatorOnBackpressureDrop.java")
-									File wrongFile = new File(revGitPath+"/src/main/java/rx/internal/operators/OperatorOnBackpressureDrop.java")
-									List<String> wrongFileLines = wrongFile.readLines()
-									wrongFile.delete()
-									wrongFile.createNewFile()
-									wrongFileLines.set(96, "		};")
-	
-									wrongFileLines.each {
-										wrongFile.append(it+"\n")
-									}
-								}else if(index == 1163){
-									File wrongFile = new File(revGitPath+"/src/main/java/rx/internal/operators/OperatorMulticast.java")
-									List<String> wrongFileLines = wrongFile.readLines()
-									wrongFile.delete()
-									wrongFile.createNewFile()
-									wrongFileLines.add(172, "			source.subscribe(sub);")
-	
-									wrongFileLines.each {
-										wrongFile.append(it+"\n")
-									}
-								}
-								//End of temporary solution
 							
 								File buildResultFile = new File(reportsFilePath + File.separator + "build_report.txt")
 								buildResultFile.createNewFile()
@@ -180,7 +153,7 @@ class RunStudy {
 								}
 							}
 						}
-					}
+					}				
 				}
 			}
 			//increment current
