@@ -65,7 +65,7 @@ class MethodEditedByBothRevs {
 		String firstLine = this.START_SEPARATOR + lines[0]
 		String lastLine = this.END_SEPARATOR + lines[lines.length-1]
 		String newBody = firstLine + '\n'
-		for(int i = 1; i < (lines.length-2); i++){
+		for(int i = 1; i < (lines.length-1); i++){
 			newBody = newBody + lines[i] + '\n'
 		}
 		newBody = newBody + lastLine
