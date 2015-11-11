@@ -175,10 +175,6 @@ public class Util {
 					}
 					j++;
 				}
-				if(!found)
-				{
-					args.set(i, "java.lang."+arg);
-				}
 			}
 			i++;
 		}
