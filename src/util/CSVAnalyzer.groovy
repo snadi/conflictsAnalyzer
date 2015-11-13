@@ -29,7 +29,8 @@ class CSVAnalyzer {
 	}
 
 	public static void writeRealConflictsCSV(){
-		File file = new File('/Users/paolaaccioly/Documents/testeConflictsAnalyzer/conflictsAnalyzer/projectsPatternData.csv')
+		String filepath = System.getProperty("user.dir") + File.separator + 'projectsPatternData.csv'
+		File file = new File(filepath)
 		File out = new File('realConflictRate.csv')
 		out.delete()
 		out = new File('realConflictRate.csv')
@@ -43,7 +44,7 @@ class CSVAnalyzer {
 			if(!projectName.equals("Project")){
 				int i = countMergeScenarioWithRealConflicts(projectName)
 				line = projectName + ',' + analyzedMergeScenarios + ',' + i + '\n'
-				println line
+				//println line
 				out.append(line)
 			}
 		}

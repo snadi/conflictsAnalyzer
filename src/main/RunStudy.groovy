@@ -1,6 +1,8 @@
 package main
 import java.util.Hashtable
 
+import util.CSVAnalyzer;
+
 /*this class is supposed to integrate all the 3 steps involved to run the study
  * gitminer/gremlinQuery/ConflictsAnalyzer
  */
@@ -179,6 +181,7 @@ class RunStudy {
 	}
 	
 	public void callRScript(){
+		CSVAnalyzer.writeRealConflictsCSV()
 		String propsFile = "resultsScript.r"
 		ProcessBuilder pb = new ProcessBuilder("Rscript", propsFile)
 		pb.redirectOutput(ProcessBuilder.Redirect.INHERIT)
