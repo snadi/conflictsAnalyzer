@@ -233,8 +233,8 @@ deleteAllFiles <- function(exportPath) {
 }
 
 main<-function(){
-importPath = "/Users/paolaaccioly/Documents/testeConflictsAnalyzer/conflictsAnalyzer/"
-exportPath = "/Users/paolaaccioly/Dropbox/Public/conflictpattern/"
+importPath = "/Users/paolaaccioly/Documents/Doutorado/workspace_CASM/conflictsAnalyzer/"
+exportPath = "/Users/paolaaccioly/Documents/Doutorado/workspace_CASM/graphs/"
 
 conflictRateFile="projectsPatternData.csv"
 realConflictRateFile = "realConflictRate.csv"
@@ -301,7 +301,7 @@ dev.off()
 
 realbeanplotCRFileName = paste("realBeanplotCR.png")
 png(paste(exportPath, realbeanplotCRFileName, sep=""))
-beanplot(dataConflict,  ylab="Conflicting Scenarios %",col="green", cex=1.5)
+beanplot(dataConflict,  ylab="Conflicting Scenarios %",col="green", cex=1.5, bw="nrd0")
 dev.off()
 
 
@@ -318,7 +318,7 @@ colnames(diffConflictRatesTable) <- c("Mean", "Standard Deviation")
 #beanplot diff conflict rates
 beanplotDiffCR = paste("beanplotDiffCR.png")
 png(paste(exportPath, beanplotDiffCR, sep=""))
-beanplot(diffConflictRates, xlab="Projects", ylab="Difference of Conflict Rates %",col="green")
+beanplot(diffConflictRates, xlab="Projects", ylab="Difference of Conflict Rates %",col="green", bw="nrd0")
 dev.off()
 
 #read conflict patterns values 
