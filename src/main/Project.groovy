@@ -31,8 +31,10 @@ class Project {
 	private String binPath
 	
 	private String srcPath
+	
+	private String libPaths
 
-	public Project(String projectName, Date startDate = null, Date finalDate = null, String binPath = "/bin", String srcPath = "/src"){
+	public Project(String projectName, Date startDate = null, Date finalDate = null, String binPath = "/bin", String srcPath = "/src", String libPaths = null){
 		this.mergeScenarios = new ArrayList<MergeScenario>()
 		this.name = projectName
 		initializeProjectSummary()
@@ -43,6 +45,7 @@ class Project {
 		this.endDate = finalDate
 		this.binPath = binPath
 		this.srcPath = srcPath
+		this.libPaths = libPaths
 	}
 	
 	
@@ -198,4 +201,10 @@ class Project {
 	{
 		srcPath
 	}
+	
+	public String getLibPaths()
+	{
+		libPaths
+	}
+	
 }

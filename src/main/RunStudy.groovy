@@ -39,6 +39,7 @@ class RunStudy {
 			Date endDate = null
 			String binPath = "/bin"
 			String srcPath = "/src"
+			String libPaths = null
 			if(projectInfo.length > 1 && !projectInfo[1].trim().equals(""))
 			{
 				startDate = Date.parse('dd/MM/yyyy', projectInfo[1])
@@ -55,6 +56,11 @@ class RunStudy {
 			if(projectInfo.length > 4 && !projectInfo[4].trim().equals("")){
 				srcPath = projectInfo[4].trim()
 			}
+			
+			if(projectInfo.length > 5 && !projectInfo[5].trim().equals(""))
+			{
+				libPaths = projectInfo[5].trim()
+			}
 			//attention, if you have already download gitminer base you can comment
 			//the line below and use the second line below
 			//String graphBase = runGitMiner()
@@ -65,7 +71,7 @@ class RunStudy {
 
 			//create project and extractor
 			Extractor extractor = this.createExtractor(this.projectName, graphBase)
-			Project project = new Project(this.projectName,startDate, endDate, binPath, srcPath)
+			Project project = new Project(this.projectName,startDate, endDate, binPath, srcPath, libPaths)
 
 			//for each merge scenario, clone and run SSMerge on it
 			analyseMergeScenario(listMergeCommits, extractor, project)
@@ -148,7 +154,7 @@ class RunStudy {
 								{
 									//call joana analysis
 									println "Calling Joana"
-									JoanaInvocation joana = new JoanaInvocation(revGitPath, methods, project.getBinPath(), project.getSrcPath(), reportsFilePath)
+									JoanaInvocation joana = new JoanaInvocation(revGitPath, methods, project.getBinPath(), project.getSrcPath(), project.getLibPaths(), reportsFilePath)
 									joana.run()
 								}
 							}
@@ -213,7 +219,7 @@ class RunStudy {
 	private boolean build(String revGitPath, File buildResultFile) {
 		println "Building..."
 		def gradlewPath = revGitPath + File.separator+"gradlew"
-		ProcessBuilder builder = new ProcessBuilder("/bin/bash","-c","chmod +x "+gradlewPath + " && "+gradlewPath+" build -p"+revGitPath);
+		ProcessBuilder builder = new ProcessBuilder("/bin/bash","-c","chmod +x "+gradlewPath + " && "+gradlewPath+" build -p"+revGitPath /*+ " -x test"*/);
 		builder.redirectErrorStream(true);
 		Process p = builder.start();
 		BufferedReader buffer 	= new BufferedReader(new InputStreamReader(p.getInputStream()));

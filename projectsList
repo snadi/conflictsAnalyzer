@@ -1,2 +1,2 @@
-Project, Start Date (optional), End Date (optional), Bin Path (optional), Src Path (optional)
-ReactiveX/RxJava, 06/01/2015, , /build/classes/main, /src/main/java
+Project, Start Date (optional), End Date (optional), Bin Path (optional), Src Path (optional), Jars Paths (optional)
+voldemort/voldemort, 19/11/2014, , /dist/classes, /src/java, /lib/*
