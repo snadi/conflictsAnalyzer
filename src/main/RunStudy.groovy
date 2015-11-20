@@ -3,6 +3,9 @@ import java.util.HashMap;
 import java.util.Hashtable
 
 import util.CSVAnalyzer;
+import org.apache.commons.io.FileUtils
+import util.Util
+
 
 /*this class is supposed to integrate all the 3 steps involved to run the study
  * gitminer/gremlinQuery/ConflictsAnalyzer
@@ -25,71 +28,134 @@ class RunStudy {
 	public void run(String[] args){
 		def projectsList = new File(args[0])
 		updateGitMinerConfig(args[1])
-
+		List<String> lines = projectsList.readLines()
+		lines.remove(0)
 		//for each project
-		projectsList.eachLine {
+		lines.each() {
 			//run gitminer
-			setProjectNameAndRepo(it)
+			String[] projectInfo = it.split(",")
+			setProjectNameAndRepo(projectInfo[0])
+			Date startDate = null
+			Date endDate = null
+			String binPath = "/bin"
+			String srcPath = "/src"
+			if(projectInfo.length > 1 && !projectInfo[1].trim().equals(""))
+			{
+				startDate = Date.parse('dd/MM/yyyy', projectInfo[1])
+			}
+
+			if(projectInfo.length > 2 && !projectInfo[2].trim().equals(""))
+			{
+				endDate = Date.parse('dd/MM/yyyy', projectInfo[2])
+			}
+			if(projectInfo.length > 3 && !projectInfo[3].trim().equals("")){
+				binPath = projectInfo[3].trim()
+			}
+
+			if(projectInfo.length > 4 && !projectInfo[4].trim().equals("")){
+				srcPath = projectInfo[4].trim()
+			}
 			//attention, if you have already download gitminer base you can comment
 			//the line below and use the second line below
-			String graphBase = runGitMiner()
-			//String graphBase = this.gitminerLocation + File.separator + this.projectName + 'graph.db'
+			//String graphBase = runGitMiner()
+			String graphBase = this.gitminerLocation + File.separator + this.projectName + 'graph.db'
 
 			//get list of merge commits
 			ArrayList<MergeCommit> listMergeCommits = runGremlinQuery(graphBase)
 
 			//create project and extractor
 			Extractor extractor = this.createExtractor(this.projectName, graphBase)
-			Project project = new Project(this.projectName)
+			Project project = new Project(this.projectName,startDate, endDate, binPath, srcPath)
 
 			//for each merge scenario, clone and run SSMerge on it
 			analyseMergeScenario(listMergeCommits, extractor, project)
 
 			//print project report and call R script
 			ConflictPrinter.printProjectData(project)
-			this.callRScript()
+			//this.callRScript()
 		}
 
 	}
 
 	private void analyseMergeScenario(ArrayList listMergeCommits, Extractor extractor,
-	Project project) {
-
+			Project project) {
 		//if project execution breaks, update current with next merge scenario number
 		int current = 0;
 		int end = listMergeCommits.size()
+		Date startDate = project.getStartDate()
+		Date finalDate = project.getEndDate()
+		String reportsPath = new File(downloadPath).getParent() + File.separator + "reports" + File.separator + project.name
 
 		//for each merge scenario analyze it
 		while(current < end){
 
 			int index = current + 1;
-			println 'Analyzing merge scenario [' + index + '] from a total of [' + end +
-			'] merge scenarios\n'
+			println 'Merge scenario [' + index + '] from a total of [' + end +
+					'] merge scenarios\n'
 
 			MergeCommit mc = listMergeCommits.get(current)
 
-			/*download left, right, and base revisions, performs the merge and saves in a 
-			 separate file*/
-			ExtractorResult mergeResult = extractor.extractCommit(mc)
+			if((startDate == null || mc.date.clearTime() >= startDate) && (finalDate == null || mc.date.clearTime() <= finalDate))
+			{
+				println 'Analyzing merge scenario...'
 
-			String revisionFile = mergeResult.getRevisionFile()
+				/*download left, right, and base revisions, performs the merge and saves in a
+				 separate file*/
+				ExtractorResult mergeResult = extractor.extractCommit(mc)
 
-			if(!revisionFile.equals("")){
-				
-				//run ssmerge and conflict analysis
-				SSMergeResult ssMergeResult = runConflictsAnalyzer(project, revisionFile,
-				mergeResult.getNonJavaFilesWithConflict().isEmpty())
-				
-				boolean hasConflicts = ssMergeResult.getHasConflicts()
-				println hasConflicts
-				
-				if(!hasConflicts){
-					//get line of the files containing methods for joana analysis
-					
-					//build system and call joana analysis
-				}			
+				String revisionFile = mergeResult.getRevisionFile()
+
+				if(!revisionFile.equals("")){
+
+					//run ssmerge and conflict analysis
+					SSMergeResult ssMergeResult = runConflictsAnalyzer(project, revisionFile,
+							mergeResult.getNonJavaFilesWithConflict().isEmpty())
+
+					boolean hasConflicts = ssMergeResult.getHasConflicts()
+					println hasConflicts
+					if(!hasConflicts){
+						//get line of the files containing methods for joana analysis
+						Map<String, ArrayList<MethodEditedByBothRevs>> filesWithMethodsToJoana = ssMergeResult.getFilesWithMethodsToJoana()
+						if(filesWithMethodsToJoana.size() > 0)
+						{
+							println index + ", " + filesWithMethodsToJoana.keySet()
+							String revPath = revisionFile.replace(".revisions", "")
+							String reportsFilePath = reportsPath + File.separator + (new File(revPath).getName())
+							File reportsRevDir = new File(reportsFilePath)
+							reportsRevDir.deleteDir()
+							reportsRevDir.mkdirs()
+							File emptyContribs = new File(reportsFilePath + File.separator + "emptyContributions.txt")
+							emptyContribs.createNewFile()
+							//Map ssmerge objects to joana objects
+							Map<String, ModifiedMethod> methods = getJoanaMap(emptyContribs, filesWithMethodsToJoana)
+							if(emptyContribs.length() == 0)
+							{
+								emptyContribs.delete()
+							}
+							if(methods.size() > 0)
+							{
+								
+								String revGitPath = revPath + File.separator + "git"
+								File revGitFile = new File(revGitPath)
+	
+								def repoDir = new File(downloadPath +File.separator+ projectName + File.separator + "git")
+								FileUtils.copyDirectory(new File(revPath), revGitFile)
+								copyGitFiles(repoDir, repoDir, revGitFile)
+							
+								File buildResultFile = new File(reportsFilePath + File.separator + "build_report.txt")
+								buildResultFile.createNewFile()
+								if(build(revGitPath, buildResultFile))
+								{
+									//call joana analysis
+									println "Calling Joana"
+									JoanaInvocation joana = new JoanaInvocation(revGitPath, methods, project.getBinPath(), project.getSrcPath(), reportsFilePath)
+									joana.run()
+								}
+							}
+						}
+					}				
+				}
 			}
-
 			//increment current
 			current++
 
@@ -97,9 +163,75 @@ class RunStudy {
 
 	}
 
+	private Map getJoanaMap(File emptyContributions,Map filesWithMethodsToJoana) {
+		Map<String, ModifiedMethod> methods = new HashMap<String, ModifiedMethod>()
+		for(String file : filesWithMethodsToJoana.keySet()) {
+			for(MethodEditedByBothRevs method : filesWithMethodsToJoana.get(file)){
+				if(method.leftLines.size > 0 && method.rightLines.size > 0)
+				{
+					List<String> constArgs;
+					def constructor = method.getConstructor()
+					if(constructor != null)
+					{
+						constArgs = Util.getArgs(Util.simplifyMethodSignature(constructor.getName()));
+					}else {
+						constArgs = new ArrayList<String>()
+					}
+					methods.put(method.getSignature(), new ModifiedMethod(method.getSignature(), constArgs, method.getLeftLines(), method.getRightLines()))
+				}else{
+					println "One or more empty contributions on: "+method.getSignature()
+					emptyContributions.append("One or more empty contributions on: "+method.getSignature()+"\n")
+					emptyContributions.append("   Left Contribution:"+method.leftLines+"\n")
+					emptyContributions.append("   Right Contribution:"+method.rightLines+"\n")
+					emptyContributions.append("\n")
+				}
+			}
+		}
+		return methods
+	}
+
+	private def copyGitFiles(File baseDir, File srcDir, File destDir)
+	{
+		String basePath = baseDir.getAbsolutePath()
+		String destPath = destDir.getAbsolutePath()
+		File[] srcFiles = srcDir.listFiles()
+		for(File file : srcFiles)
+		{
+			if(file.getName().contains(".git"))
+			{
+				if(file.isFile())
+				{
+					FileUtils.copyFile(file, new File(file.getAbsolutePath().replace(basePath, destPath)))
+				}else if(file.isDirectory())
+				{
+					FileUtils.copyDirectory(file, new File(file.getAbsolutePath().replace(basePath, destPath)))
+				}
+			}
+		}
+	}
+
+	private boolean build(String revGitPath, File buildResultFile) {
+		println "Building..."
+		def gradlewPath = revGitPath + File.separator+"gradlew"
+		ProcessBuilder builder = new ProcessBuilder("/bin/bash","-c","chmod +x "+gradlewPath + " && "+gradlewPath+" build -p"+revGitPath);
+		builder.redirectErrorStream(true);
+		Process p = builder.start();
+		BufferedReader buffer 	= new BufferedReader(new InputStreamReader(p.getInputStream()));
+		String currentLine 		= "";
+		def buildLines = new String[3];
+		while ((currentLine=buffer.readLine())!=null) {
+			buildLines[0] = buildLines[1];
+			buildLines[1] = buildLines[2];
+			buildLines[2] = currentLine;
+			buildResultFile.append(currentLine+"\n")
+			println currentLine
+		}
+		return buildLines[0].equals("BUILD SUCCESSFUL")
+	}
+
 	private Extractor createExtractor(String projectName, String graphBase){
 		GremlinProject gProject = new GremlinProject(this.projectName,
-		this.projectRepo, graphBase)
+				this.projectRepo, graphBase)
 		Extractor extractor = new Extractor(gProject, this.downloadPath)
 
 		return extractor
@@ -206,7 +338,7 @@ class RunStudy {
 	}
 
 	public void callRScript(){
-		
+
 		CSVAnalyzer.writeRealConflictsCSV()
 		String propsFile = "resultsScript.r"
 		ProcessBuilder pb = new ProcessBuilder("Rscript", propsFile)
