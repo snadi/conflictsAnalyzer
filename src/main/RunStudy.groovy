@@ -183,7 +183,7 @@ class RunStudy {
 					}else {
 						constArgs = new ArrayList<String>()
 					}
-					methods.put(method.getSignature(), new ModifiedMethod(method.getSignature(), constArgs, method.getLeftLines(), method.getRightLines()))
+					methods.put(method.getSignature(), new ModifiedMethod(method.getSignature(), constArgs, method.getLeftLines(), method.getRightLines(), method.getImportsList()))
 				}else{
 					println "One or more empty contributions on: "+method.getSignature()
 					emptyContributions.append("One or more empty contributions on: "+method.getSignature()+"\n")
