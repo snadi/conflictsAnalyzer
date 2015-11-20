@@ -9,7 +9,9 @@ class SSMergeResult {
 	
 	private Map<String, ArrayList<MethodEditedByBothRevs>> filesWithMethodsToJoana
 	
+
 	public SSMergeResult(boolean hc, Map<String, ArrayList<MethodEditedByBothRevs>> fwmtj){
+
 		
 		this.hasConflicts = hc
 		this.filesWithMethodsToJoana = fwmtj

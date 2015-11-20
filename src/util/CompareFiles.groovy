@@ -51,7 +51,38 @@ class CompareFiles {
 
 		//move files that remained the same or only one version differs
 		String baseFolder = this.revDir + File.separator + this.baseRevName
+		moveFilesOnSingleVersion(baseFolder.replaceFirst(baseRevName, leftRevName),this.leftRevName, this.rightRevName, this.baseRevName)
+		moveFilesOnSingleVersion(baseFolder.replaceFirst(baseRevName, rightRevName),this.rightRevName, this.leftRevName, this.baseRevName)
 		this.iterateRevFolders(this.leftRevName, this.baseRevName, baseFolder, this.rightRevName)
+	}
+	
+	public void moveFilesOnSingleVersion(String currentFolder, String currentRevName, String otherRevName, String baseRevName)
+	{
+		File directory = new File(currentFolder)
+		if(directory.exists())
+		{
+			File[] fList = directory.listFiles()
+			for(File file: fList)
+			{
+				if(file.isDirectory())
+				{
+					moveFilesOnSingleVersion(file.getAbsolutePath(), currentRevName, otherRevName, baseRevName);
+				}else{
+					String otherFilePath = file.getAbsolutePath().replaceFirst(currentRevName, otherRevName)
+					String baseFilePath = file.getAbsolutePath().replaceFirst(currentRevName, baseRevName)
+					File otherFile = new File(otherFilePath)
+					File baseFile = new File(baseFilePath)
+					if(!otherFile.exists() && !baseFile.exists())
+					{
+						this.moveAndDeleteFiles(currentRevName, file)
+					}else if(baseFile.exists() && !otherFile.exists())
+					{
+						file.delete()
+						baseFile.delete()
+					}
+				}
+			}
+		}
 	}
 
 	private void iterateRevFolders(String leftRevName, String baseRevName, String baseFolder, String rightRevName){
@@ -108,13 +139,18 @@ class CompareFiles {
 
 	}
 
-	private void moveAndDeleteFiles(String revName, File toBeMoved, File toBeDeleted1, File toBeDeleted2){
+	private void moveAndDeleteFiles(String revName, File toBeMoved, File toBeDeleted1 = null, File toBeDeleted2 = null){
 
 		String temp = toBeMoved.getAbsolutePath().replaceFirst(revName, 'temp2')
 		FileUtils.moveFile(toBeMoved, new File(temp))
-		FileUtils.forceDelete(toBeDeleted1)
-		FileUtils.forceDelete(toBeDeleted2)
-
+		if(toBeDeleted1 != null)
+		{
+			FileUtils.forceDelete(toBeDeleted1)
+		}
+		if(toBeDeleted2 != null)
+		{
+			FileUtils.forceDelete(toBeDeleted2)
+		}
 	}
 
 	public int getNumberOfTotalFiles(){

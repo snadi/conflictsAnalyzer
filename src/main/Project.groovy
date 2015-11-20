@@ -1,5 +1,6 @@
 package main
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,14 +23,26 @@ class Project {
 	private Map<String, Integer> sameSignatureCMSummary
 	
 	private int possibleRenamings;
+	
+	private Date startDate
+	
+	private Date endDate
+	
+	private String binPath
+	
+	private String srcPath
 
-	public Project(String projectName){
+	public Project(String projectName, Date startDate = null, Date finalDate = null, String binPath = "/bin", String srcPath = "/src"){
 		this.mergeScenarios = new ArrayList<MergeScenario>()
 		this.name = projectName
 		initializeProjectSummary()
 		initializeProjectMetrics()
 		this.createSameSignatureCMSummary()
 		this.createProjectDir()
+		this.startDate = startDate
+		this.endDate = finalDate
+		this.binPath = binPath
+		this.srcPath = srcPath
 	}
 	
 	
@@ -165,4 +178,24 @@ class Project {
 
 		return result
 	}	
+	
+	public Date getStartDate()
+	{
+		startDate
+	}
+	
+	public Date getEndDate()
+	{
+		endDate
+	}
+	
+	public String getBinPath()
+	{
+		binPath
+	}
+	
+	public String getSrcPath()
+	{
+		srcPath
+	}
 }
