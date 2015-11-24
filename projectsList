@@ -1,2 +1,1 @@
-Project, Start Date (optional), End Date (optional), Bin Path (optional), Src Path (optional), Jars Paths (optional)
-voldemort/voldemort, 19/11/2014, , /dist/classes, /src/java, /lib/*
+voldemort/voldemort

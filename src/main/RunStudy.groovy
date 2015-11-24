@@ -28,39 +28,55 @@ class RunStudy {
 	public void run(String[] args){
 		def projectsList = new File(args[0])
 		updateGitMinerConfig(args[1])
+		def projectsDatesFolder = args[2]
 		List<String> lines = projectsList.readLines()
-		lines.remove(0)
+		//lines.remove(0)
 		//for each project
 		lines.each() {
 			//run gitminer
-			String[] projectInfo = it.split(",")
-			setProjectNameAndRepo(projectInfo[0])
-			Date startDate = null
-			Date endDate = null
-			String binPath = "/bin"
-			String srcPath = "/src"
-			String libPaths = null
-			if(projectInfo.length > 1 && !projectInfo[1].trim().equals(""))
-			{
-				startDate = Date.parse('dd/MM/yyyy', projectInfo[1])
-			}
-
-			if(projectInfo.length > 2 && !projectInfo[2].trim().equals(""))
-			{
-				endDate = Date.parse('dd/MM/yyyy', projectInfo[2])
-			}
-			if(projectInfo.length > 3 && !projectInfo[3].trim().equals("")){
-				binPath = projectInfo[3].trim()
-			}
-
-			if(projectInfo.length > 4 && !projectInfo[4].trim().equals("")){
-				srcPath = projectInfo[4].trim()
-			}
+			setProjectNameAndRepo(it)
+			def projectDatesFile = new File(projectsDatesFolder + File.separator + this.projectName + ".txt")
+			List<String> projectPeriodsList = projectDatesFile.readLines()
+			projectPeriodsList.remove(0)
+			List<ProjectPeriod> periods = new ArrayList<ProjectPeriod>()
 			
-			if(projectInfo.length > 5 && !projectInfo[5].trim().equals(""))
-			{
-				libPaths = projectInfo[5].trim()
+			projectPeriodsList.each(){ infoLine ->
+				String[] projectInfo = infoLine.split(",")
+				Date startDate = null
+				Date endDate = null
+				String binPath = "/bin"
+				String srcPath = "/src"
+				String libPaths = null
+				String buildSystem = null
+				if(projectInfo.length > 0 && !projectInfo[0].trim().equals(""))
+				{
+					startDate = Date.parse('dd/MM/yyyy', projectInfo[0])
+				}
+
+				if(projectInfo.length > 1 && !projectInfo[1].trim().equals(""))
+				{
+					endDate = Date.parse('dd/MM/yyyy', projectInfo[1])
+				}
+				if(projectInfo.length > 2 && !projectInfo[2].trim().equals("")){
+					binPath = projectInfo[2].trim()
+				}
+
+				if(projectInfo.length > 3 && !projectInfo[3].trim().equals("")){
+					srcPath = projectInfo[3].trim()
+				}
+
+				if(projectInfo.length > 4 && !projectInfo[4].trim().equals(""))
+				{
+					libPaths = projectInfo[4].trim()
+				}
+
+				if(projectInfo.length > 5 && !projectInfo[5].trim().equals(""))
+				{
+					buildSystem = projectInfo[5].trim()
+				}
+				periods.add(new ProjectPeriod(startDate, endDate, binPath, srcPath, libPaths, buildSystem))
 			}
+
 			//attention, if you have already download gitminer base you can comment
 			//the line below and use the second line below
 			//String graphBase = runGitMiner()
@@ -71,7 +87,7 @@ class RunStudy {
 
 			//create project and extractor
 			Extractor extractor = this.createExtractor(this.projectName, graphBase)
-			Project project = new Project(this.projectName,startDate, endDate, binPath, srcPath, libPaths)
+			Project project = new Project(this.projectName, periods)
 
 			//for each merge scenario, clone and run SSMerge on it
 			analyseMergeScenario(listMergeCommits, extractor, project)
@@ -88,8 +104,8 @@ class RunStudy {
 		//if project execution breaks, update current with next merge scenario number
 		int current = 0;
 		int end = listMergeCommits.size()
-		Date startDate = project.getStartDate()
-		Date finalDate = project.getEndDate()
+
+		List<ProjectPeriod> periods = project.getProjectPeriods()
 		String reportsPath = new File(downloadPath).getParent() + File.separator + "reports" + File.separator + project.name
 
 		//for each merge scenario analyze it
@@ -100,8 +116,25 @@ class RunStudy {
 					'] merge scenarios\n'
 
 			MergeCommit mc = listMergeCommits.get(current)
+			int currentPeriod = 0
+			boolean periodMatch = false
+			ProjectPeriod period = null
+			Date startDate = null
+			Date finalDate = null
 
-			if((startDate == null || mc.date.clearTime() >= startDate) && (finalDate == null || mc.date.clearTime() <= finalDate))
+			while(currentPeriod < periods.size() && !periodMatch)
+			{
+				period = periods[currentPeriod]
+				startDate = period.getStartDate()
+				finalDate = period.getEndDate()
+				periodMatch = (startDate == null || mc.date.clearTime() >= startDate) && (finalDate == null || mc.date.clearTime() <= finalDate)
+				if(!periodMatch)
+				{
+					currentPeriod++
+				}
+			}
+
+			if(periodMatch)
 			{
 				println 'Analyzing merge scenario...'
 
@@ -140,26 +173,26 @@ class RunStudy {
 							}
 							if(methods.size() > 0)
 							{
-								
+
 								String revGitPath = revPath + File.separator + "git"
 								File revGitFile = new File(revGitPath)
-	
+
 								def repoDir = new File(downloadPath +File.separator+ projectName + File.separator + "git")
 								FileUtils.copyDirectory(new File(revPath), revGitFile)
 								copyGitFiles(repoDir, repoDir, revGitFile)
-							
+
 								File buildResultFile = new File(reportsFilePath + File.separator + "build_report.txt")
 								buildResultFile.createNewFile()
-								if(build(revGitPath, buildResultFile))
+								if(build(period.getBuildSystem(),revGitPath, buildResultFile))
 								{
 									//call joana analysis
 									println "Calling Joana"
-									JoanaInvocation joana = new JoanaInvocation(revGitPath, methods, project.getBinPath(), project.getSrcPath(), project.getLibPaths(), reportsFilePath)
+									JoanaInvocation joana = new JoanaInvocation(revGitPath, methods, period.getBinPath(), period.getSrcPath(), period.getLibPaths(), reportsFilePath)
 									joana.run()
 								}
 							}
 						}
-					}				
+					}
 				}
 			}
 			//increment current
@@ -216,23 +249,41 @@ class RunStudy {
 		}
 	}
 
-	private boolean build(String revGitPath, File buildResultFile) {
+	private boolean build(String fullBuildSystem, String revGitPath, File buildResultFile) {
 		println "Building..."
-		def gradlewPath = revGitPath + File.separator+"gradlew"
-		ProcessBuilder builder = new ProcessBuilder("/bin/bash","-c","chmod +x "+gradlewPath + " && "+gradlewPath+" build -p"+revGitPath /*+ " -x test"*/);
+		int lastSeparator = fullBuildSystem.lastIndexOf(File.separator) + 1
+		String buildSystem = fullBuildSystem.substring(lastSeparator)
+		String buildSystemLocation = fullBuildSystem.substring(0, lastSeparator)
+		def buildCmd = buildSystemLocation + File.separator
+		if(buildSystem.equals("gradlew"))
+		{
+			def gradlewPath = revGitPath + File.separator+"gradlew"
+			buildCmd = "chmod +x "+gradlewPath + " && "+gradlewPath+" build -p"+revGitPath  /*+" -x test"*/
+		}else if(buildSystem.equals("gradle"))
+		{
+			buildCmd += "gradle build -p"+revGitPath/*+" -x test"*/
+		}else if(buildSystem.equals("ant"))
+		{
+			buildCmd += "ant build -buildfile "+ revGitPath + File.separator +"build.xml"
+		}
+
+		ProcessBuilder builder = new ProcessBuilder("/bin/bash","-c",buildCmd);
 		builder.redirectErrorStream(true);
 		Process p = builder.start();
 		BufferedReader buffer 	= new BufferedReader(new InputStreamReader(p.getInputStream()));
 		String currentLine 		= "";
-		def buildLines = new String[3];
+		List<String> buildLines = new ArrayList<String>()
 		while ((currentLine=buffer.readLine())!=null) {
-			buildLines[0] = buildLines[1];
-			buildLines[1] = buildLines[2];
-			buildLines[2] = currentLine;
+			buildLines.add(currentLine)
 			buildResultFile.append(currentLine+"\n")
 			println currentLine
 		}
-		return buildLines[0].equals("BUILD SUCCESSFUL")
+		int i = buildLines.size() - 1
+		while(i >= 0 && !buildLines.get(i).equals("BUILD SUCCESSFUL") && !buildLines.get(i).equals("BUILD FAILED"))
+		{
+			i--;
+		}
+		return i >= 0 && buildLines.get(i).equals("BUILD SUCCESSFUL")
 	}
 
 	private Extractor createExtractor(String projectName, String graphBase){
@@ -362,8 +413,9 @@ class RunStudy {
 
 	public static void main (String[] args){
 		RunStudy study = new RunStudy()
-		String[] files= ['projectsList', 'configuration.properties']
+		String[] files= ['projectsList', 'configuration.properties', 'ProjectsDatesInfo']
 		study.run(files)
+		//println study.build("/usr/local/bin/ant", "/Users/Roberto/Documents/UFPE/Msc/Projeto/projects/temp/voldemort", new File("/Users/Roberto/Documents/UFPE/Msc/Projeto/projects/temp/report.txt"))
 	}
 
 }
