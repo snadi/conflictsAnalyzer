@@ -164,7 +164,10 @@ class MethodEditedByBothRevs {
 		this.filePath = filePath;
 	}
 	
-	
+	public List<String> getImportsList()
+	{
+		imports
+	}
 	
 	public FSTTerminal getConstructor() {
 		return constructor;

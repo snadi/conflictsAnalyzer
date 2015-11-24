@@ -24,25 +24,16 @@ class Project {
 	
 	private int possibleRenamings;
 	
-	private Date startDate
+	private List<ProjectPeriod> periods;
 	
-	private Date endDate
-	
-	private String binPath
-	
-	private String srcPath
-
-	public Project(String projectName, Date startDate = null, Date finalDate = null, String binPath = "/bin", String srcPath = "/src"){
+	public Project(String projectName, List<ProjectPeriod> periods = null){
 		this.mergeScenarios = new ArrayList<MergeScenario>()
 		this.name = projectName
 		initializeProjectSummary()
 		initializeProjectMetrics()
 		this.createSameSignatureCMSummary()
 		this.createProjectDir()
-		this.startDate = startDate
-		this.endDate = finalDate
-		this.binPath = binPath
-		this.srcPath = srcPath
+		this.periods = periods
 	}
 	
 	
@@ -179,23 +170,8 @@ class Project {
 		return result
 	}	
 	
-	public Date getStartDate()
+	public List<ProjectPeriod> getProjectPeriods()
 	{
-		startDate
-	}
-	
-	public Date getEndDate()
-	{
-		endDate
-	}
-	
-	public String getBinPath()
-	{
-		binPath
-	}
-	
-	public String getSrcPath()
-	{
-		srcPath
+		periods
 	}
 }
