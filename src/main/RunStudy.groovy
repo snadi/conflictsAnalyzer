@@ -72,7 +72,7 @@ class RunStudy {
 
 			//print project report and call R script
 			ConflictPrinter.printProjectData(project)
-			//this.callRScript()
+			this.callRScript()
 		}
 
 	}

@@ -3,7 +3,6 @@ package main
 import java.util.List;
 import java.io.File
 
-import org.apache.ivy.osgi.p2.P2CompositeParser.ChildrenHandler;
 
 import de.ovgu.cide.fstgen.ast.FSTNode
 import de.ovgu.cide.fstgen.ast.FSTNonTerminal;
