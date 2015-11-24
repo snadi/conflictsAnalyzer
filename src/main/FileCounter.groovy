@@ -1,8 +1,5 @@
 package main
 
-
-import javax.swing.colorchooser.DefaultSwatchChooserPanel.MainSwatchKeyListener;
-
 class FileCounter {
 
 	def countFiles(dir) {
