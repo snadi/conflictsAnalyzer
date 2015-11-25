@@ -63,7 +63,8 @@ class RunStudy {
 					'] merge scenarios\n'
 
 			MergeCommit mc = listMergeCommits.get(current)
-			String revisionFile = extractor.extractCommit(mc)
+			ExtractorResult er = extractor.extractCommit(mc)
+			String revisionFile = er.getRevisionFile()
 			if(!revisionFile.equals("")){
 				runConflictsAnalyzer(project, revisionFile)
 			}
