@@ -18,11 +18,13 @@ class RunStudy {
 	private Hashtable<String, Conflict> projectsSummary
 
 	public RunStudy(){
+		
 		ConflictPrinter.setconflictReportHeader()
 	}
 
 	public void run(String[] args){
 		def projectsList = new File(args[0])
+		this.createResultDir()
 		updateGitMinerConfig(args[1])
 		
 		//for each project
@@ -197,10 +199,19 @@ class RunStudy {
 		}
 	}
 	
+	private void createResultDir(){
+		File resultDir = new File ('ResultData')
+		if(!resultDir.exists()){
+			resultDir.mkdirs()
+		}
+	}
+	
 	public static void main (String[] args){
 		RunStudy study = new RunStudy()
 		String[] files= ['projectsList', 'configuration.properties']
 		study.run(files)
+		
+		
 	}
 
 }
