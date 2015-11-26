@@ -301,8 +301,10 @@ class RunStudy {
 		}else if(buildSystem.equals("ant"))
 		{
 			buildCmd += "ant build -buildfile "+ revGitPath + File.separator +"build.xml"
+		}else if(buildSystem.equals("mvn")){
+		buildCmd += "mvn compile "+ revGitPath + File.separator +"pom.xml"
 		}
-
+		//start here
 		ProcessBuilder builder = new ProcessBuilder("/bin/bash","-c",buildCmd);
 		builder.redirectErrorStream(true);
 		Process p = builder.start();
