@@ -34,8 +34,12 @@ to the instructions described below:
 4- clone conflictsanalyzer
 
     git clone https://github.com/prga/conflictsAnalyzer.git
+    
+5- clone joana
+    
+    git clone https://github.com/rsmbf/joana.git
 
-After cloning these 4 projects (gitminer, GremlinQuery, featurehouse, and conflictsAnalyzer), you need to import 3 projects
+After cloning those 5 projects (gitminer, GremlinQuery, featurehouse, conflictsAnalyzer, and joana), you need to import 4 projects
 inside Eclipse IDE
 
 5-Open Eclipse
@@ -57,10 +61,16 @@ right click on project’s folder -> maven -> update project
 
 import->general-> existing projects into workspace
 
-select featurehouse folder click open, check that all 4 projects are selected (CIDE_generateAST, CIDE2_ast, 
+select featurehouse folder, click open, check that all 4 projects are selected (CIDE_generateAST, CIDE2_ast, 
 fstcomp, fstgen, fstmerge), and click finish
 
-8-import conflictsAnalyzer
+8- import joana
+
+import->general-> existing projects into workspace
+
+select joana folder, click open, and check that all projects are selected. Click finish
+
+9-import conflictsAnalyzer
 
 import-> existing projects into workspace
 
