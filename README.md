@@ -31,9 +31,13 @@ to the instructions described below:
 
     git clone https://github.com/prga/featurehouse.git
 
-4- clone conflictsanalyzer
+4- clone conflictsanalyzer and checkout to CA_SemanticConflicts branch
 
     git clone https://github.com/prga/conflictsAnalyzer.git
+    cd conflictsAnalyzer
+    git fetch && git checkout CA_SemanticConflicts
+    cd ..
+    
     
 5- clone joana
     
