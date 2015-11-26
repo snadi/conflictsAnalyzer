@@ -74,7 +74,11 @@ import->general-> existing projects into workspace
 
 select joana folder, click open, and check that all projects are selected. Click finish
 
-9-import conflictsAnalyzer
+9- set an api baseline
+
+http://help.eclipse.org/mars/index.jsp?topic=%2Forg.eclipse.pde.doc.user%2Ftasks%2Fapi_tooling_baseline.htm
+
+10 -import conflictsAnalyzer
 
 import-> existing projects into workspace
 
