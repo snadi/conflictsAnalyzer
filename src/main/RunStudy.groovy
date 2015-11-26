@@ -26,14 +26,14 @@ class RunStudy {
 	}
 
 	public void run(String[] args){
-		
+
 		//read input files
 		def projectsList = new File(args[0])
 		updateGitMinerConfig(args[1])
 		def projectsDatesFolder = args[2]
 		List<String> lines = projectsList.readLines()
 		this.createResultDir()
-		
+
 		//lines.remove(0)
 		//for each project
 		lines.each() {
@@ -140,9 +140,10 @@ class RunStudy {
 
 			MergeCommit mc = listMergeCommits.get(current)
 
-			boolean periodMatch = this.getPeriodMatch(periods, mc)
+			MatchingProjectPeriod p = this.getPeriodMatch(periods, mc)
 
-			if(periodMatch)
+
+			if(p.periodMatch)
 			{
 				println 'Analyzing merge scenario...'
 
@@ -162,7 +163,8 @@ class RunStudy {
 					println hasConflicts
 					if(!hasConflicts){
 						//get line of the files containing methods for joana analysis
-						Map<String, ArrayList<MethodEditedByBothRevs>> filesWithMethodsToJoana = ssMergeResult.getFilesWithMethodsToJoana()
+						Map<String, ArrayList<MethodEditedByBothRevs>> filesWithMethodsToJoana =
+								ssMergeResult.getFilesWithMethodsToJoana()
 						if(filesWithMethodsToJoana.size() > 0)
 						{
 							println index + ", " + filesWithMethodsToJoana.keySet()
@@ -191,11 +193,12 @@ class RunStudy {
 
 								File buildResultFile = new File(reportsFilePath + File.separator + "build_report.txt")
 								buildResultFile.createNewFile()
-								if(build(period.getBuildSystem(),revGitPath, buildResultFile))
+								if(build(p.period.getBuildSystem(),revGitPath, buildResultFile))
 								{
 									//call joana analysis
 									println "Calling Joana"
-									JoanaInvocation joana = new JoanaInvocation(revGitPath, methods, period.getBinPath(), period.getSrcPath(), period.getLibPaths(), reportsFilePath)
+									JoanaInvocation joana = new JoanaInvocation(revGitPath, methods, p.period.getBinPath(),
+											p.period.getSrcPath(), p.period.getLibPaths(), reportsFilePath)
 									joana.run()
 								}
 							}
@@ -210,7 +213,7 @@ class RunStudy {
 
 	}
 
-	private boolean getPeriodMatch(List<ProjectPeriod> periods, MergeCommit mc){
+	private MatchingProjectPeriod getPeriodMatch(List<ProjectPeriod> periods, MergeCommit mc){
 		boolean periodMatch = false
 
 		int currentPeriod = 0
@@ -231,7 +234,8 @@ class RunStudy {
 			}
 		}
 
-		return periodMatch
+		MatchingProjectPeriod result = new MatchingProjectPeriod(periodMatch, period)
+		return result
 	}
 
 	private Map getJoanaMap(File emptyContributions,Map filesWithMethodsToJoana) {
