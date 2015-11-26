@@ -26,59 +26,29 @@ class RunStudy {
 	}
 
 	public void run(String[] args){
+		
+		//read input files
 		def projectsList = new File(args[0])
 		updateGitMinerConfig(args[1])
 		def projectsDatesFolder = args[2]
 		List<String> lines = projectsList.readLines()
+		this.createResultDir()
+		
 		//lines.remove(0)
 		//for each project
 		lines.each() {
-			//run gitminer
+
+			//set project name
 			setProjectNameAndRepo(it)
-			def projectDatesFile = new File(projectsDatesFolder + File.separator + this.projectName + ".txt")
-			List<String> projectPeriodsList = projectDatesFile.readLines()
-			projectPeriodsList.remove(0)
-			List<ProjectPeriod> periods = new ArrayList<ProjectPeriod>()
-			
-			projectPeriodsList.each(){ infoLine ->
-				String[] projectInfo = infoLine.split(",")
-				Date startDate = null
-				Date endDate = null
-				String binPath = "/bin"
-				String srcPath = "/src"
-				String libPaths = null
-				String buildSystem = null
-				if(projectInfo.length > 0 && !projectInfo[0].trim().equals(""))
-				{
-					startDate = Date.parse('dd/MM/yyyy', projectInfo[0])
-				}
 
-				if(projectInfo.length > 1 && !projectInfo[1].trim().equals(""))
-				{
-					endDate = Date.parse('dd/MM/yyyy', projectInfo[1])
-				}
-				if(projectInfo.length > 2 && !projectInfo[2].trim().equals("")){
-					binPath = projectInfo[2].trim()
-				}
+			//set projectPeriodsList
+			List<ProjectPeriod> periods = getProjectPeriods(projectsDatesFolder)
 
-				if(projectInfo.length > 3 && !projectInfo[3].trim().equals("")){
-					srcPath = projectInfo[3].trim()
-				}
+			//run gitminer
 
-				if(projectInfo.length > 4 && !projectInfo[4].trim().equals(""))
-				{
-					libPaths = projectInfo[4].trim()
-				}
+			/*attention, if you have already downloaded gitminer base you can comment
+			 the line below and use the second line below*/
 
-				if(projectInfo.length > 5 && !projectInfo[5].trim().equals(""))
-				{
-					buildSystem = projectInfo[5].trim()
-				}
-				periods.add(new ProjectPeriod(startDate, endDate, binPath, srcPath, libPaths, buildSystem))
-			}
-
-			//attention, if you have already download gitminer base you can comment
-			//the line below and use the second line below
 			//String graphBase = runGitMiner()
 			String graphBase = this.gitminerLocation + File.separator + this.projectName + 'graph.db'
 
@@ -99,6 +69,59 @@ class RunStudy {
 
 	}
 
+	private ArrayList<ProjectPeriod> getProjectPeriods(String projectsDatesFolder) {
+
+		ArrayList<ProjectPeriod> periods = new ArrayList<ProjectPeriod>()
+		def projectDatesFile = new File(projectsDatesFolder + File.separator + this.projectName + ".txt")
+		List<String> projectPeriodsList = projectDatesFile.readLines()
+		projectPeriodsList.remove(0)
+
+		projectPeriodsList.each(){ infoLine ->
+			String[] projectInfo = infoLine.split(",")
+			Date startDate = null
+			Date endDate = null
+			String binPath = "/bin"
+			String srcPath = "/src"
+			String libPaths = null
+			String buildSystem = null
+			if(projectInfo.length > 0 && !projectInfo[0].trim().equals(""))
+			{
+				startDate = Date.parse('dd/MM/yyyy', projectInfo[0])
+			}
+
+			if(projectInfo.length > 1 && !projectInfo[1].trim().equals(""))
+			{
+				endDate = Date.parse('dd/MM/yyyy', projectInfo[1])
+			}
+			if(projectInfo.length > 2 && !projectInfo[2].trim().equals("")){
+				binPath = projectInfo[2].trim()
+			}
+
+			if(projectInfo.length > 3 && !projectInfo[3].trim().equals("")){
+				srcPath = projectInfo[3].trim()
+			}
+
+			if(projectInfo.length > 4 && !projectInfo[4].trim().equals(""))
+			{
+				libPaths = projectInfo[4].trim()
+			}
+
+			if(projectInfo.length > 5 && !projectInfo[5].trim().equals(""))
+			{
+				buildSystem = projectInfo[5].trim()
+			}
+			periods.add(new ProjectPeriod(startDate, endDate, binPath, srcPath, libPaths, buildSystem))
+		}
+		return periods
+	}
+
+	private void createResultDir(){
+		File resultDir = new File ('ResultData')
+		if(!resultDir.exists()){
+			resultDir.mkdirs()
+		}
+	}
+
 	private void analyseMergeScenario(ArrayList listMergeCommits, Extractor extractor,
 			Project project) {
 		//if project execution breaks, update current with next merge scenario number
@@ -116,23 +139,8 @@ class RunStudy {
 					'] merge scenarios\n'
 
 			MergeCommit mc = listMergeCommits.get(current)
-			int currentPeriod = 0
-			boolean periodMatch = false
-			ProjectPeriod period = null
-			Date startDate = null
-			Date finalDate = null
 
-			while(currentPeriod < periods.size() && !periodMatch)
-			{
-				period = periods[currentPeriod]
-				startDate = period.getStartDate()
-				finalDate = period.getEndDate()
-				periodMatch = (startDate == null || mc.date.clearTime() >= startDate) && (finalDate == null || mc.date.clearTime() <= finalDate)
-				if(!periodMatch)
-				{
-					currentPeriod++
-				}
-			}
+			boolean periodMatch = this.getPeriodMatch(periods, mc)
 
 			if(periodMatch)
 			{
@@ -200,6 +208,30 @@ class RunStudy {
 
 		}
 
+	}
+
+	private boolean getPeriodMatch(List<ProjectPeriod> periods, MergeCommit mc){
+		boolean periodMatch = false
+
+		int currentPeriod = 0
+		ProjectPeriod period = null
+		Date startDate = null
+		Date finalDate = null
+
+		while(currentPeriod < periods.size() && !periodMatch)
+		{
+			period = periods[currentPeriod]
+			startDate = period.getStartDate()
+			finalDate = period.getEndDate()
+			periodMatch = (startDate == null || mc.date.clearTime() >= startDate) &&
+					(finalDate == null || mc.date.clearTime() <= finalDate)
+			if(!periodMatch)
+			{
+				currentPeriod++
+			}
+		}
+
+		return periodMatch
 	}
 
 	private Map getJoanaMap(File emptyContributions,Map filesWithMethodsToJoana) {
