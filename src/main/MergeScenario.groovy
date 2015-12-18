@@ -260,7 +260,7 @@ class MergeScenario implements Observer {
 		 mergeScenarioSummary.put(type, new Conflict(type))
 		 Conflict conflict = mergeScenarioSummary.get(type)
 		 conflict.setNumberOfConflicts(5);
-		 println 'hello world'*/
+		 println 'hello world' test*/
 
 	}
 
