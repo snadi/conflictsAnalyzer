@@ -81,8 +81,8 @@ class Project {
 		return this.projectSummary
 	}
 
-	public void analyzeConflicts(String revisionFile){
-			MergeScenario ms = new MergeScenario(revisionFile)
+	public void analyzeConflicts(ExtractorResult extractResult){
+			MergeScenario ms = new MergeScenario(extractResult)
 			this.mergeScenarios.add(ms)
 			ms.analyzeConflicts()
 			updateAndPrintSummary(ms)

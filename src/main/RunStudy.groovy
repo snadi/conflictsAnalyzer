@@ -43,7 +43,7 @@ class RunStudy {
 			Project project = new Project(this.projectName)
 			
 			//for each merge scenario, clone and run SSMerge on it
-			analyseMergeScenario(listMergeCommits, extractor, project)
+			analyseMergeScenarios(listMergeCommits, extractor, project)
 			
 			//print project report and call R script
 			ConflictPrinter.printProjectData(project)
@@ -52,7 +52,7 @@ class RunStudy {
 
 	}
 
-	private void analyseMergeScenario(ArrayList listMergeCommits, Extractor extractor, 
+	private void analyseMergeScenarios(ArrayList listMergeCommits, Extractor extractor, 
 		Project project) {
 		
 		//if project execution breaks, update current with next merge scenario number
@@ -68,7 +68,7 @@ class RunStudy {
 			ExtractorResult er = extractor.extractCommit(mc)
 			String revisionFile = er.getRevisionFile()
 			if(!revisionFile.equals("")){
-				runConflictsAnalyzer(project, revisionFile)
+				runConflictsAnalyzer(project, er)
 			}
 			current++
 		}
@@ -177,9 +177,10 @@ class RunStudy {
 		return listMergeCommits
 	}
 
-	public void runConflictsAnalyzer(Project project, String revisionFile){
-		println "starting to run the conflicts analyzer on revision " + revisionFile
-		project.analyzeConflicts(revisionFile)
+	public void runConflictsAnalyzer(Project project, ExtractorResult extractResult){
+		
+		println "starting to run the conflicts analyzer on revision " + extractResult.revisionFile
+		project.analyzeConflicts(extractResult)
 		
 	}
 	

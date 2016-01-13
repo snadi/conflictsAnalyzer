@@ -73,8 +73,8 @@ public  class Conflict {
 
 
 
-	public void setCauseSameSignatureCM(LinkedList<FSTNode> baseNodes, boolean fileAddedByOneDev) {
-		if(!fileAddedByOneDev){
+	public void setCauseSameSignatureCM(LinkedList<FSTNode> baseNodes, boolean fileAddedByBothDevs) {
+		if(!fileAddedByBothDevs){
 			String [] splitConflictBody = this.splitConflictBody(this.conflicts.get(0));
 			boolean isSmallMethod = this.isSmallMethod(splitConflictBody);
 			if(!isSmallMethod){

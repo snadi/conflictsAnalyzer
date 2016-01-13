@@ -16,8 +16,6 @@ import de.ovgu.cide.fstgen.ast.FSTTerminal;
 
 class MergeScenario implements Observer {
 
-	private String path
-
 	private String name
 
 	private ArrayList<MergedFile> mergedFiles
@@ -34,11 +32,14 @@ class MergeScenario implements Observer {
 	
 	private int possibleRenamings
 
-	private int filesAddedByOneDev
+	private int filesAddedByBothDevs
 	
-	public MergeScenario(String path){
+	private ExtractorResult extractResult
 	
-		this.path = path
+	public MergeScenario(ExtractorResult er){
+		
+		this.extractResult = er
+		
 		this.setName()
 		//this.removeVarArgs()
 		this.hasConflicts = false
@@ -52,7 +53,8 @@ class MergeScenario implements Observer {
 	}
 	
 	public void setMergedFiles(){
-		this.compareFiles = new CompareFiles(this.path)
+		this.compareFiles = new CompareFiles(extractResult.revisionFile)
+		/*pre process step*/
 		this.compareFiles.ignoreFilesWeDontMerge()
 		this.mergedFiles = this.compareFiles.getFilesToBeMerged()
 	}
@@ -66,7 +68,7 @@ class MergeScenario implements Observer {
 	}
 
 	public void setName(){
-		String [] temp = this.path.split('/')
+		String [] temp = extractResult.revisionFile.split('/')
 		String revFile = temp[temp.length -1]
 		this.name = revFile.substring(0, revFile.length()-10)
 	}
@@ -82,21 +84,21 @@ class MergeScenario implements Observer {
 	}
 
 	public void deleteMSDir(){
-		String msPath = this.path.substring(0, (this.path.length()-26))
+		String msPath = extractResult.revisionFile.substring(0, (extractResult.revisionFile.length()-26))
 		File dir = new File(msPath)
 		boolean deleted = dir.deleteDir()
 		if(deleted){
-			println 'Merge scenario ' + this.path + ' deleted!'
+			println 'Merge scenario ' + extractResult.revisionFile + ' deleted!'
 		}else{
 
-			println 'Merge scenario ' + this.path + ' not deleted!'
+			println 'Merge scenario ' + extractResult.revisionFile + ' not deleted!'
 		}
 	}
 
 	public void runSSMerge(){
 		this.fstGenMerge = new FSTGenMerger()
 		fstGenMerge.getMergeVisitor().addObserver(this)
-		String[] files = ["--expression", this.path]
+		String[] files = ["--expression", extractResult.revisionFile]
 		fstGenMerge.run(files)
 		
 	}
@@ -124,7 +126,7 @@ class MergeScenario implements Observer {
 		}else if(OS.contains('linux')){
 			sSed = "xargs sed -i s/\\.\\.\\./[]/g"
 		}
-		String msPath = this.path.substring(0, (this.path.length()-26))
+		String msPath = extractResult.revisionFile.substring(0, (extractResult.revisionFile.length()-26))
 		String command = "grep -rl ... " + msPath
 		def procGrep = command.execute()
 		def procSed = sSed.execute()
@@ -151,7 +153,7 @@ class MergeScenario implements Observer {
 	}
 
 	public void createConflict(FSTTerminal node){
-		Conflict conflict = new Conflict(node, this.path);
+		Conflict conflict = new Conflict(node, extractResult.revisionFile);
 		this.matchConflictWithFile(conflict)
 		this.updateMergeScenarioSummary(conflict)
 
@@ -182,7 +184,7 @@ class MergeScenario implements Observer {
 			MergedFile mf = new MergedFile(conflict.getFilePath())
 			mf.setAddedByOneDev(true)
 			this.mergedFiles.add(mf)
-			this.filesAddedByOneDev++
+			this.filesAddedByBothDevs++
 			this.addConflictToFile(conflict, this.mergedFiles.size-1, true)
 		}
 		
@@ -226,7 +228,7 @@ class MergeScenario implements Observer {
 		String report = this.name + ', ' + this.compareFiles.getNumberOfTotalFiles() +
 				', ' + this.compareFiles.getFilesEditedByOneDev() + ', ' +
 				this.compareFiles.getFilesThatRemainedTheSame() + ', ' +
-				this.filesAddedByOneDev +', ' + this.mergedFiles.size() +
+				this.filesAddedByBothDevs +', ' + this.mergedFiles.size() +
 				', ' + this.getNumberOfFilesWithConflicts() + ', ' + 
 				ConflictSummary.printConflictsSummary(this.mergeScenarioSummary) + ', ' +
 				ConflictSummary.printSameSignatureCMSummary(this.sameSignatureCMSummary) + ', ' +
