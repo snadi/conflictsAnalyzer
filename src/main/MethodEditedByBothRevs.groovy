@@ -47,8 +47,8 @@ class MethodEditedByBothRevs {
 		String className = tokens[tokens.length-1]
 		className = className.substring(0, className.length()-5)
 		String methodName = Util.simplifyMethodSignature(this.node.getName())
-		String returnType = Util.getMethodReturnType(this.node.getBody(), imports)
-		this.signature = returnType + " " +this.packageName + '.' + className + '.' + Util.includeFullArgsTypes(methodName, imports)
+		String returnType = Util.getMethodReturnType(this.node.getBody(), imports, packageName, new File(filePath).getParent())
+		this.signature = returnType + " " +this.packageName + '.' + className + '.' + Util.includeFullArgsTypes(methodName, imports, packageName, new File(filePath).getParent())
 	}
 	
 	public void retrieveFilePath(FSTNode n, String path){
