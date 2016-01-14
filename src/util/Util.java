@@ -150,6 +150,32 @@ public class Util {
 		return res;
 	}
 	
+	private static String getFullType(String arg, List<String> imports)
+	{
+		String fullType = arg;
+		if(!isPrimitiveType(arg))
+		{
+			String[] importSplit;
+			String importStr;
+			int j = 0;
+			boolean found = false;
+			while(j < imports.size() && !found)
+			{
+				importStr = imports.get(j);
+				importSplit = importStr.split("\\.");
+				String typeName = arg.replace("[]", "");
+				found = importSplit[importSplit.length - 1].equals(typeName);
+				
+				if(found)
+				{
+					fullType = arg.replace(typeName, importStr);
+				}
+				j++;
+			}
+		}
+		return fullType;
+	}
+	
 	public static String includeFullArgsTypes(String signature, List<String> imports)
 	{
 		List<String> args = getArgs(signature);
@@ -157,24 +183,11 @@ public class Util {
 		int i = 0;
 		for(String arg : args)
 		{
-			int j = 0;
-			boolean found = false;
-			String[] importSplit;
-			String importStr;
-			if(!isPrimitiveType(arg))
+			String fullType = getFullType(arg, imports);
+			
+			if(!fullType.equals(arg))
 			{
-				while(j < imports.size() && !found)
-				{
-					importStr = imports.get(j);
-					importSplit = importStr.split("\\.");
-					String typeName = arg.replace("[]", "");
-					found = importSplit[importSplit.length - 1].equals(typeName);
-					if(found)
-					{
-						args.set(i, arg.replace(typeName, importStr));
-					}
-					j++;
-				}
+				args.set(i, fullType);
 			}
 			i++;
 		}
@@ -192,6 +205,34 @@ public class Util {
 				typeStr.equals("double") ||
 				typeStr.equals("char") ||
 				typeStr.equals("boolean");
+	}
+	
+	private static boolean isGeneric(String str) {
+		return str.startsWith("<");
+	}
+		
+	public static String getMethodReturnType(String methodSignature, List<String> imports) {
+		String[] strs = methodSignature.split("\\s+");
+		int i = 0;
+		while(i < strs.length && strs[i].startsWith("@"))
+		{
+			i++;
+		}
+		while(i < strs.length && isMethodModifier(strs[i]))
+		{
+			i++;
+		}
+		String returnType = "";
+		if(i < strs.length)
+		{
+			if (!isGeneric(strs[i])) {
+				returnType = strs[i];
+			} else {
+				returnType = getMethodReturnType(removeGenerics(methodSignature), imports);
+			}
+		}		
+		returnType = removeGenerics(returnType);
+		return returnType.equals("void") ? returnType : getFullType(returnType, imports);
 	}
 		
 	public static void main(String[] args) {
@@ -214,5 +255,18 @@ public class Util {
 		System.out.println(includeFullArgsTypes(removeGenerics(simplifyMethodSignature(("soma(String-String-Scheduler-Scheduler-Object-Object) throws Exeception"))), imports));
 		System.out.println(includeFullArgsTypes(removeGenerics(simplifyMethodSignature(("soma(String[]-String[]-Scheduler[]-Scheduler[]-Object-Object) throws Exeception"))), imports));
 		System.out.println(includeFullArgsTypes(removeGenerics(simplifyMethodSignature(("soma(Character.Subset-Character.Subset) throws Exeception"))), imports));
+		System.out.println(removeGenerics("public List<Integer> soma(List<Integer> a, List<Integer> b, int c, int d) throws Exeception {return 1;}"));
+		System.out.println(getMethodReturnType("public List<Integer> soma(List<Integer> a, List<Integer> b, int c, int d) throws Exeception {return 1;}", imports));
+		System.out.println(getMethodReturnType("public static List<Integer> soma(List<Integer> a, List<Integer> b, int c, int d) throws Exeception {return 1;}", imports));
+		System.out.println(getMethodReturnType("public void soma(List<Integer> a, List<Integer> b, int c, int d) throws Exeception {return 1;}", imports));
+		System.out.println(getMethodReturnType("public static void soma(List<Integer> a, List<Integer> b, int c, int d) throws Exeception {return 1;}", imports));
+		System.out.println(getMethodReturnType("public int soma(List<Integer> a, List<Integer> b, int c, int d) throws Exeception {return 1;}", imports));
+		System.out.println(getMethodReturnType("public static int soma(List<Integer> a, List<Integer> b, int c, int d) throws Exeception {return 1;}", imports));
+		System.out.println(getMethodReturnType("public static synchronized int soma(List<Integer> a, List<Integer> b, int c, int d) throws Exeception {return 1;}", imports));
+		System.out.println(getMethodReturnType("public static native synchronized int soma(List<Integer> a, List<Integer> b, int c, int d) throws Exeception {return 1;}", imports));
+		System.out.println(getMethodReturnType("static synchronized int soma(List<Integer> a, List<Integer> b, int c, int d) throws Exeception {return 1;}", imports));
+		System.out.println(getMethodReturnType("synchronized int soma(List<Integer> a, List<Integer> b, int c, int d) throws Exeception {return 1;}", imports));
+		System.out.println("Type: "+getMethodReturnType("@Override   "
+				+ "synchronized int soma(List<Integer> a, List<Integer> b, int c, int d) throws Exeception {return 1;}", imports));
 	}
 }
