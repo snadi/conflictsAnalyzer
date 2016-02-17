@@ -105,7 +105,7 @@ public class ConflictPrinter {
 		out.append(delimiter)
 		out.append '\n'
 
-		out.append('Revision: ' + mergeScenario.path + '\n')
+		out.append('Revision: ' + mergeScenario.extractResult.revisionFile + '\n')
 
 		for(MergedFile mergedFile: mergeScenario.getMergedFiles()){
 
