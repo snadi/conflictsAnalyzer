@@ -119,7 +119,7 @@ class CompareFiles {
 	public void restoreFilesWeDontMerge(){
 		//TO DO
 	}
-	
+
 	public int getFilesEditedByOneDev() {
 		return filesEditedByOneDev;
 	}
@@ -127,7 +127,98 @@ class CompareFiles {
 	public int getFilesThatRemainedTheSame() {
 		return filesThatRemainedTheSame;
 	}
-	
+
+	//normalized study methods
+	public void removeNonJavaFiles(){
+		String dir = this.revDir + File.separator
+		//remove from commit
+		File file = new File(dir + this.baseRevName)
+		this.auxRemoveNonJavaFiles(file)
+		//remove from parent1
+		file = new File(dir + leftRevName)
+		this.auxRemoveNonJavaFiles(file)
+
+		//remove from parent2 --- if it exists
+		if(!this.rightRevName.contains('none')){
+			file = new File(dir + rightRevName)
+			this.auxRemoveNonJavaFiles(file)
+		}
+	}
+
+	private void auxRemoveNonJavaFiles(File dir){
+		File[] files = dir.listFiles()
+
+		for(File file in files){
+
+			if(file.isDirectory()){
+				this.auxRemoveNonJavaFiles(file)
+			}else{
+				if(!file.name.endsWith('.java')){
+					file.delete()
+				}
+			}
+		}
+	}
+
+	public void removeEqualFiles(){
+
+		String baseFolder =  this.revDir + File.separator + this.baseRevName
+
+		if(this.rightRevName.contains('none')){
+			this.auxRemoveEqualFiles(this.leftRevName, this.baseRevName, baseFolder, null)
+		}else{
+
+			this.auxRemoveEqualFiles(this.leftRevName, this.baseRevName, baseFolder, this.rightRevName)
+		}
+
+	}
+
+	private void auxRemoveEqualFiles(String left, String commit, String folder, String right){
+		File directory = new File (folder)
+		if(directory.exists()){
+			File[] files = directory.listFiles()
+			for(File file in files){
+				if(file.isDirectory()){
+					auxRemoveEqualFiles(left, commit, file.getAbsolutePath(), right)
+				}else{
+
+					this.compareAndRemoveFiles(leftRevName, commit, file, rightRevName)
+				}
+			}
+		}
+	}
+
+	private void compareAndRemoveFiles(String left, File commitFile, String right){
+		boolean leftEqualsBase, rightEqualsBase = false
+		String leftFilePath  = commitFile.getAbsolutePath().replaceFirst(this.baseRevName, this.leftRevName)
+		File l = new File(leftFilePath)
+		if(commitFile.exists() && l.exists()){
+			leftEqualsBase = FileUtils.contentEquals(left, commitFile)
+		}
+
+		if(right != null){
+			String rightFilePath = commitFile.getAbsolutePath().replaceFirst(this.baseRevName, this.rightRevName)
+			File r = new File(rightFilePath)
+			if(commitFile.exists() && r.exists()){
+				rightEqualsBase = FileUtils.contentEquals(commitFile, r)
+				if(leftEqualsBase && rightEqualsBase){
+					l.delete()
+					r.delete()
+					commitFile.delete()
+				}
+			}
+		}else{
+			if(leftEqualsBase){
+				l.delete()
+				commitFile.delete()
+			}
+		}
+
+
+
+	}
+	//normalized study methods
+
 	public static void main(String[] args){
 		CompareFiles cp = new CompareFiles("/Users/paolaaccioly/Documents/testeConflictsAnalyzer/testes/rev/rev.revisions")
 		cp.ignoreFilesWeDontMerge()

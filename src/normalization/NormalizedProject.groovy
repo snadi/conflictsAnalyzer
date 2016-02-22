@@ -51,8 +51,7 @@ class NormalizedProject {
 		//if project execution breaks, update current with next merge scenario number
 		while(current < end){
 			
-			int index = current + 1;
-			println 'Analyzing merge scenario [' + index + '] from a total of [' + end +
+			println 'Analyzing merge scenario [' + current + '] from a total of [' + end +
 					'] merge scenarios\n'
 
 			MergeCommit mc = commits.get(current)
@@ -78,8 +77,9 @@ class NormalizedProject {
 	
 	public void analyseChanges (MergeCommit mc, ExtractorResult er){
 		EvoScenario scenario = new EvoScenario(mc, er)
-		this.evoScenarios.add(scenario)
 		scenario.analyseChanges()
+		this.evoScenarios.add(scenario)
+		
 		
 	}
 	
