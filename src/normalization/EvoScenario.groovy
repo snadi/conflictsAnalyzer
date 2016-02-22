@@ -18,12 +18,12 @@ class EvoScenario implements Observer{
 	int numberOfChangesInsideMethodsLines
 	
 	public EvoScenario(MergeCommit mc, ExtractorResult er){
-		this.isMergeCommit(mc)
+		this.setIsMergeCommit(mc)
 		this.name = er.revisionFile
 	}
 	
 	public void setIsMergeCommit(MergeCommit mc){
-		if(!mc.parent1.equals('') && !mc.parent2.equals('')){
+		if(!mc.parent2.equals('')){
 			this.isMergeCommit = true
 		}else{
 			this.isMergeCommit = false
@@ -36,6 +36,6 @@ class EvoScenario implements Observer{
 	}
 	
 	public void analyseChanges (){
-		
+		//TODO
 	}
 }

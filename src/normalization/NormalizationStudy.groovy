@@ -19,13 +19,13 @@ class NormalizationStudy {
 			String projectName = this.getProjectName(it)
 			NormalizedProject p = new NormalizedProject(projectName, resultData)
 			
-			//read conflict report
+			//TODO read conflict report
 			p.loadConflictsSummary()
 			
 			//compute number of Changes
 			p.computeNumberOfChanges(projectRepo, gitMinerDir, downloadDir)
 			
-			//print results
+			//TODO print results
 			NormalizedConflictPrinter.printNormalizedProjectData(p)
 			
 			//TODO run r script
@@ -42,6 +42,7 @@ class NormalizationStudy {
 	
 	public static void main (String[] args){
 		NormalizationStudy normalization = new NormalizationStudy()
+		
 		normalization.normalizeData('projectsList', 'ResultData', 
 			'/Users/paolaaccioly/Documents/Doutorado/workspace_fse/gitminer', 
 			'/Users/paolaaccioly/Documents/Doutorado/workspace_fse/downloads')

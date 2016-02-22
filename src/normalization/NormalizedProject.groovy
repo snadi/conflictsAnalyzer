@@ -25,6 +25,7 @@ class NormalizedProject {
 	public NormalizedProject(String n, String resultData){
 		this.name = n
 		this.resultDir = resultData
+		this.evoScenarios = new ArrayList<EvoScenario>()
 	}
 	
 	public void loadConflictsSummary(){
@@ -32,7 +33,7 @@ class NormalizedProject {
 	}
 	
 	public void computeNumberOfChanges(String projectRepo, String gitMinerDir, String downloadDir){
-		//get merge list
+		//get commits list
 		ArrayList<MergeCommit> commits = this.runGremLinQuery(projectRepo, gitMinerDir)
 		
 		//create extractor
@@ -44,7 +45,7 @@ class NormalizedProject {
 	
 	public void analyseEvoScenarios(ArrayList<MergeCommit> commits, Extractor extractor ){
 		
-		int current = 0;
+		int current = 1; //jumps the first project commit
 		int end = commits.size()
 		
 		//if project execution breaks, update current with next merge scenario number
@@ -67,8 +68,8 @@ class NormalizedProject {
 	
 	public void analyseEvoScenario(MergeCommit scenario, Extractor extractor){
 		
-		//tem que mudar esse metodo!
-		ExtractorResult er = extractor.extractCommit(scenario)
+		
+		ExtractorResult er = extractor.extractEvoScenario(scenario)
 		String revisionFile = er.getRevisionFile()
 		if(!revisionFile.equals("")){
 			this.analyseChanges(scenario, er)
