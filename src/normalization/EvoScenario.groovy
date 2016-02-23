@@ -1,6 +1,9 @@
 package normalization
 
 import de.ovgu.cide.fstgen.ast.FSTTerminal
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.Observable
 
 import main.ExtractorResult;
@@ -30,7 +33,7 @@ class EvoScenario implements Observer{
 		this.setIsMergeCommit(mc)
 		this.extractorResult = er
 		this.setName()
-		this.preProcessFiles()
+		//this.preProcessFiles()
 		this.changesSummary = new HashMap<String, Integer>()
 	}
 
@@ -66,9 +69,9 @@ class EvoScenario implements Observer{
 	public void computeChanges(FSTTerminal node){
 		String [] tokens = this.getBody(node)
 		String nodeType = node.getType()
-		
+
 		this.compareTwoNodes(tokens[0], tokens[1], nodeType)
-		
+
 		if(this.isMergeCommit){
 			this.compareTwoNodes(tokens[2], tokens[1], nodeType)
 		}
@@ -77,58 +80,111 @@ class EvoScenario implements Observer{
 	private void compareTwoNodes(String newFile, String oldFile, String nodeType){
 		if(!newFile.equals(oldFile)){
 			this.updateChangesSummary(nodeType)
-			
+
 			if(this.isMethodOrConstructor(nodeType)){
 				this.computeChangesInsideMC(newFile, oldFile)
 			}
 		}
 	}
-	
-	private void updateChangesSummary(String nodeType){
-		int value = this.changesSummary.get(nodeType)
-		this.changesSummary.put(nodeType, value++)
-		
-	}
-	
-	private void computeChangesInsideMC(String newFile, String oldFile){
-		//run unix diff and compute changes considering chunks and lines
-	}
-	
-	public boolean isMethodOrConstructor(String nodeType){
-		boolean result = nodeType.equals("MethodDecl") || nodeType.equals("ConstructorDecl");
-		return result;
-	}
-	
-	private String[] getBody(FSTTerminal node){
-		String body = node.getBody() + " "
-		String[] tokens = body.split(FSTGenMerger.MERGE_SEPARATOR);
 
-		try {
-			tokens[0] = tokens[0].replace(FSTGenMerger.SEMANTIC_MERGE_MARKER, "").trim();
-			tokens[1] = tokens[1].trim();
-			tokens[2] = tokens[2].trim();
-		} catch (ArrayIndexOutOfBoundsException e) {
-			System.err.println("|"+body+"|");
-			e.printStackTrace();
+	private void updateChangesSummary(String nodeType){
+		if(!this.changesSummary.containsKey(nodeType)){
+			this.changesSummary.put(nodeType, 1)
+		}else{
+			int value = this.changesSummary.get(nodeType)
+			this.changesSummary.put(nodeType, value++)
 		}
 
-		return tokens
+
 	}
 
-	public void analyseChanges (){
-		this.fstGenMerge = new FSTGenMerger()
-		fstGenMerge.getMergeVisitor().addObserver(this)
-		String[] files = ["--expression", this.extractorResult.revisionFile]
-		fstGenMerge.run(files)
+	public void computeChangesInsideMC(String newFile, String oldFile){
+		//if base is empty count as one change
+		if(oldFile.equals('')){
+			this.numberOfChangesInsideMethodsChunks++
+			this.numberOfChangesInsideMethodsLines = this.numberOfChangesInsideMethodsLines +
+					newFile.split('\n').length
+		}else{
+			//run unix diff and compute changes considering chunks and lines
+			File oldF = new File('old')
+			oldF.write(oldFile)
+			File newF = new File('new')
+			newF.write(newFile)
+
+			String diffCmd = 'diff -u ' + newF.getAbsolutePath() + ' ' + oldF.getAbsolutePath()
+			Runtime run = Runtime.getRuntime()
+			Process pr = run.exec(diffCmd)
+			String result = pr.text
+			this.readUnixDiffResult(result)
+			oldF.delete()
+			newF.delete()
+
+		}
 	}
 
-	public static void main (String[] args){
-		MergeCommit mc = new MergeCommit()
-		mc.sha = 'd6a2526b5420125ba543282720d7036340e2c7e0'
-		mc.parent1 = '80b2502eff13fb63e8e875dbbe5356ef306940e7'
-		mc.parent2 = '2fe0652b877b2bca7dabd9416d007c1c6dd87043'
-		ExtractorResult er = new ExtractorResult()
-		er.revisionFile = '/Users/paolaaccioly/Documents/Doutorado/workspace_fse/downloads/TGM/revisions/rev_d6a25/rev_80b25-2fe06.revisions'
-		EvoScenario evo = new EvoScenario(mc, er)
+	private void readUnixDiffResult(String result){
+		String [] lines = result.split('\n')
+		boolean startedChunk = false
+		for(String line in lines){
+			if(line.startsWith('+ ') || line.startsWith('- ') || line.startsWith('! ')){
+				this.numberOfChangesInsideMethodsLines++
+				startedChunk = true
+			}else{
+				if(startedChunk){
+					startedChunk = false
+					this.numberOfChangesInsideMethodsChunks++
+				}
+			}
+			
+		}
 	}
+
+
+public boolean isMethodOrConstructor(String nodeType){
+	boolean result = nodeType.equals("MethodDecl") || nodeType.equals("ConstructorDecl");
+	return result;
+}
+
+private String[] getBody(FSTTerminal node){
+	String body = node.getBody() + " "
+	String[] tokens = body.split(FSTGenMerger.MERGE_SEPARATOR);
+
+	try {
+		tokens[0] = tokens[0].replace(FSTGenMerger.SEMANTIC_MERGE_MARKER, "").trim();
+		tokens[1] = tokens[1].trim();
+		tokens[2] = tokens[2].trim();
+	} catch (ArrayIndexOutOfBoundsException e) {
+		System.err.println("|"+body+"|");
+		e.printStackTrace();
+	}
+
+	return tokens
+}
+
+public void analyseChanges (){
+	this.fstGenMerge = new FSTGenMerger()
+	fstGenMerge.getMergeVisitor().addObserver(this)
+	String[] files = ["--expression", this.extractorResult.revisionFile]
+	fstGenMerge.run(files)
+}
+
+public static void main (String[] args){
+	MergeCommit mc = new MergeCommit()
+	mc.sha = 'd6a2526b5420125ba543282720d7036340e2c7e0'
+	mc.parent1 = '80b2502eff13fb63e8e875dbbe5356ef306940e7'
+	mc.parent2 = ''
+	ExtractorResult er = new ExtractorResult()
+	er.revisionFile = '/Users/paolaaccioly/Documents/Doutorado/workspace_fse/downloads/TGM/revisions/rev_d6a25/rev_80b25-2fe06.revisions'
+	EvoScenario evo = new EvoScenario(mc, er)
+	String newFile = new File('/Users/paolaaccioly/Desktop/left.txt').getText()
+	String oldFile = new File('/Users/paolaaccioly/Desktop/base.txt').getText()
+	evo.compareTwoNodes(newFile, oldFile, 'MethodDecl')
+	println() 'hello'
+
+	/*String diffCmd = 'diff -u /Users/paolaaccioly/Desktop/left.txt /Users/paolaaccioly/Desktop/base.txt'
+	 Runtime run = Runtime.getRuntime()
+	 Process pr = run.exec(diffCmd)
+	 String result = pr.getText()
+	 println result*/
+}
 }
