@@ -4,27 +4,23 @@ import main.Extractor
 import main.ExtractorResult
 import main.GremlinProject
 import main.GremlinQueryApp
-import main.MergeCommit;
+import main.MergeCommit
+import main.SSMergeNodes;;
 
 class NormalizedProject {
 	
 	String name
 	
-	String resultDir 
+	int numberOfChangesInsideMethodsChunks
 	
-	int numberChangesOutsideMethods
+	int numberOfChangesInsideMethodsLines
 	
-	int numberChangesInsideMethods
-	
-	Map<String, Integer> conflictsSummary
-	
-	Map<String, Double> normalizedConflictSummary
+	Map<String, Integer> changesSummary
 	
 	ArrayList<EvoScenario> evoScenarios
 	
-	public NormalizedProject(String n, String resultData){
+	public NormalizedProject(String n){
 		this.name = n
-		this.resultDir = resultData
 		this.evoScenarios = new ArrayList<EvoScenario>()
 	}
 	
@@ -66,8 +62,6 @@ class NormalizedProject {
 	}
 	
 	public void analyseEvoScenario(MergeCommit scenario, Extractor extractor){
-		
-		
 		ExtractorResult er = extractor.extractEvoScenario(scenario)
 		String revisionFile = er.getRevisionFile()
 		if(!revisionFile.equals("")){
@@ -79,10 +73,51 @@ class NormalizedProject {
 		EvoScenario scenario = new EvoScenario(mc, er)
 		scenario.analyseChanges()
 		this.evoScenarios.add(scenario)
-		
-		
+		this.updateProjectMetrics(scenario)
+		NormalizedConflictPrinter.printEvoScenarioReport(scenario, this.name)
+		scenario.deleteEvoDir()
 	}
 	
+	private void updateProjectMetrics(EvoScenario evo){
+		
+		//update changesSummary
+		for(Map.Entry<String, Integer> changes in evo.changesSummary.entrySet()){
+			String node = changes.key
+			int numberOfChanges = changes.value
+			if(!this.changesSummary.containsKey(node)){
+				this.changesSummary.put(node, changes.value)
+			}else{	
+				numberOfChanges = numberOfChanges + this.changesSummary.get(changes.key)
+				this.changesSummary.put(node, numberOfChanges)
+			}
+		}
+		
+		//update other metrics
+		this.numberOfChangesInsideMethodsChunks = this.numberOfChangesInsideMethodsChunks +
+		evo.numberOfChangesInsideMethodsChunks
+		
+		this.numberOfChangesInsideMethodsLines = this.numberOfChangesInsideMethodsLines +
+		evo.numberOfChangesInsideMethodsLines
+	}
+	
+	public String toString(){
+		String result = this.name + ', ' + this.evoScenarios.size() + ', '
+		
+		//print changesSummary
+		for(SSMergeNodes node in SSMergeNodes){
+			if(!this.changesSummary.containsKey(node)){
+				result = result + 0 + ', '	
+			}else{
+				result = result + this.changesSummary.get(node) + ', '
+			}
+		}
+		
+		//print other metrics
+		result = result + ', ' + this.numberOfChangesInsideMethodsChunks + ', ' +
+		this.numberOfChangesInsideMethodsLines
+		
+		return result
+	}
 	
 	public ArrayList<MergeCommit> runGremLinQuery(String projectRepo, String gitMinerDir){
 		ArrayList<MergeCommit> result = new ArrayList<MergeCommit>()
@@ -102,12 +137,5 @@ class NormalizedProject {
 	   
 	   return extractor
 	}
-	
-	public void getCommitsList(){
-		
-	}
-	
-	public String toString(){
-		
-	}
+
 }

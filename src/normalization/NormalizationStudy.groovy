@@ -19,13 +19,9 @@ class NormalizationStudy {
 			String projectName = this.getProjectName(it)
 			NormalizedProject p = new NormalizedProject(projectName, resultData)
 			
-			//TODO read conflict report
-			p.loadConflictsSummary()
-			
 			//compute number of Changes
 			p.computeNumberOfChanges(projectRepo, gitMinerDir, downloadDir)
-			
-			//TODO print results
+		
 			NormalizedConflictPrinter.printNormalizedProjectData(p)
 			
 			//TODO run r script
