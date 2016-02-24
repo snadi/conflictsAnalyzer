@@ -20,6 +20,8 @@ class EvoScenario implements Observer{
 	ExtractorResult extractorResult
 
 	boolean isMergeCommit
+	
+	boolean hasConflictsOnNonJavaFiles
 
 	//node type, number of changes
 	Map <String, Integer> changesSummary
@@ -34,8 +36,17 @@ class EvoScenario implements Observer{
 		this.setIsMergeCommit(mc)
 		this.extractorResult = er
 		this.setName()
+		this.setHasConflictsOnNonJavaFiles()
 		this.preProcessFiles()
 		this.changesSummary = new HashMap<String, Integer>()
+	}
+	
+	public void setHasConflictsOnNonJavaFiles(){
+		if(this.extractorResult.nonJavaFilesWithConflict.size > 0){
+			this.hasConflictsOnNonJavaFiles = true
+		}else{
+			this.hasConflictsOnNonJavaFiles = false
+		}
 	}
 
 	public void setName(){

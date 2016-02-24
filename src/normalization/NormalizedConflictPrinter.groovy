@@ -39,4 +39,16 @@ class NormalizedConflictPrinter {
 		}
 		out.append(evo.toString() + '\n')
 	}
+	
+	public static void printMergeScenariosWithConflictsOnNonJavaFiles(EvoScenario evo, String projectName){
+		String fileName = 'ResultData' + File.separator + projectName + File.separator + 'EvoScenarios.csv'
+		File out = new File(fileName)
+		
+		if(!out.exists()){
+			out.append('MergeScenario\n')
+		}
+		
+		out.append(evo.name + '\n')
+		
+	}
 }
