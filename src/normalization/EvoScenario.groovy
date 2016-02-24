@@ -1,14 +1,16 @@
 package normalization
 
+import de.ovgu.cide.fstgen.ast.FSTNode;
 import de.ovgu.cide.fstgen.ast.FSTTerminal
 
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.InputStreamReader
+import java.util.LinkedList;
 import java.util.Observable
 
 import main.ExtractorResult;
 import main.MergeCommit
-import main.SSMergeNodes;
+import main.SSMergeNode
 import merger.FSTGenMerger;
 import merger.MergeVisitor
 import util.CompareFiles;
@@ -38,7 +40,14 @@ class EvoScenario implements Observer{
 		this.setName()
 		this.setHasConflictsOnNonJavaFiles()
 		this.preProcessFiles()
+		this.initializeChangesSummary()
+	}
+	
+	public void initializeChangesSummary(){
 		this.changesSummary = new HashMap<String, Integer>()
+		for(SSMergeNode node in SSMergeNode){
+			this.changesSummary.put(node.toString(), 0)
+		}
 	}
 	
 	public void setHasConflictsOnNonJavaFiles(){
@@ -74,7 +83,10 @@ class EvoScenario implements Observer{
 	@Override
 	public void update(Observable o, Object arg) {
 		if(o instanceof MergeVisitor && arg instanceof FSTTerminal){
-			this.computeChanges(arg)
+			if(!arg.getType().contains("-Content")){
+				this.computeChanges(arg)
+			}
+			
 		}
 	}
 
@@ -99,15 +111,11 @@ class EvoScenario implements Observer{
 		}
 	}
 
-	private void updateChangesSummary(String nodeType){
-		if(!this.changesSummary.containsKey(nodeType)){
-			this.changesSummary.put(nodeType, 1)
-		}else{
+	private void updateChangesSummary(String nodeType){	
 			int value = this.changesSummary.get(nodeType)
-			this.changesSummary.put(nodeType, value++)
-		}
-
-
+			int newValue = value + 1
+			this.changesSummary.put(nodeType, newValue)
+			println 'hello'
 	}
 
 	public void computeChangesInsideMC(String newFile, String oldFile){
@@ -178,9 +186,24 @@ class EvoScenario implements Observer{
 		fstGenMerge.getMergeVisitor().addObserver(this)
 		String[] files = ["--expression", this.extractorResult.revisionFile]
 		fstGenMerge.run(files)
+		this.analyseLoneBaseNodes(this.fstGenMerge.baseNodes)
 		println 'Finished analyzing scenario ' + this.name
 	}
-
+	
+	
+	public void analyseLoneBaseNodes(LinkedList<FSTNode> bNodes){
+		for(FSTNode node in bNodes){
+			if(node instanceof FSTTerminal){
+				this.updateChangesSummary(node.getType())
+				if(this.isMethodOrConstructor(node.getType())){
+					this.numberOfChangesInsideMethodsChunks++
+					this.numberOfChangesInsideMethodsLines = this.numberOfChangesInsideMethodsLines +
+					node.getBody().split('\n').length
+				}
+			}
+		}
+	}
+	
 	public void deleteEvoDir(){
 		int sub = 0
 		if(this.isMergeCommit){
@@ -203,17 +226,13 @@ class EvoScenario implements Observer{
 		String result = this.name + ', '
 		
 		//print changes considering nodes
-		for(SSMergeNodes node in SSMergeNodes.values()){
-			if(!this.changesSummary.containsKey(node)){
-				result = result + 0 + ', '
-			}else{
-				result = result + this.changesSummary.get(node) + ', '
-			}
+		for(SSMergeNode node in SSMergeNode.values()){
+				result = result + this.changesSummary.get(node.toString()) + ', '
 		}
 		
 		//print other metrics
 		
-		result = result + ', ' + this.numberOfChangesInsideMethodsChunks + ', ' +
+		result = result + this.numberOfChangesInsideMethodsChunks + ', ' +
 		this.numberOfChangesInsideMethodsLines
 		
 		return result
@@ -223,21 +242,28 @@ class EvoScenario implements Observer{
 
 	public static void main (String[] args){
 		MergeCommit mc = new MergeCommit()
-		mc.sha = 'd6a2526b5420125ba543282720d7036340e2c7e0'
-		mc.parent1 = '80b2502eff13fb63e8e875dbbe5356ef306940e7'
+		mc.sha = '448259185594ed4f0b9ea2c6be9197ca3f5573db'
+		mc.parent1 = '5bd4c041add32a8be8790ae715cbad8a713efd6c'
 		mc.parent2 = ''
 		ExtractorResult er = new ExtractorResult()
-		er.revisionFile = '/Users/paolaaccioly/Documents/Doutorado/workspace_fse/downloads/TGM/revisions/rev_d6a25/rev_80b25-2fe06.revisions'
+		er.revisionFile = '/Users/paolaaccioly/Documents/Doutorado/workspace_fse/downloads/TGM/revisions/rev_44825/rev_5bd4c-none.revisions'
 		EvoScenario evo = new EvoScenario(mc, er)
-		String newFile = new File('/Users/paolaaccioly/Desktop/left.txt').getText()
-		String oldFile = new File('/Users/paolaaccioly/Desktop/base.txt').getText()
-		evo.compareTwoNodes(newFile, oldFile, 'MethodDecl')
-		println() 'hello'
-
+		evo.analyseChanges()
+		NormalizedConflictPrinter.printEvoScenarioReport(evo, 'TGM')
+		if(evo.hasConflictsOnNonJavaFiles){
+			NormalizedConflictPrinter.printMergeScenariosWithConflictsOnNonJavaFiles(evo, 'TGM')
+		}
+		//scenario.deleteEvoDir()
+		/*String newFile = new File('/Users/paolaaccioly/Desktop/left.txt').getText()
+		 String oldFile = new File('/Users/paolaaccioly/Desktop/base.txt').getText()
+		 evo.compareTwoNodes(newFile, oldFile, 'MethodDecl')
+		 println() 'hello'*/
+		
 		/*String diffCmd = 'diff -u /Users/paolaaccioly/Desktop/left.txt /Users/paolaaccioly/Desktop/base.txt'
 		 Runtime run = Runtime.getRuntime()
 		 Process pr = run.exec(diffCmd)
 		 String result = pr.getText()
 		 println result*/
+		
 	}
 }

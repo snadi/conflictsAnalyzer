@@ -182,7 +182,7 @@ class CompareFiles {
 					auxRemoveEqualFiles(left, commit, file.getAbsolutePath(), right)
 				}else{
 
-					this.compareAndRemoveFiles(leftRevName, commit, file, rightRevName)
+					this.compareAndRemoveFiles(left, file, right)
 				}
 			}
 		}
@@ -193,14 +193,14 @@ class CompareFiles {
 		String leftFilePath  = commitFile.getAbsolutePath().replaceFirst(this.baseRevName, this.leftRevName)
 		File l = new File(leftFilePath)
 		if(commitFile.exists() && l.exists()){
-			leftEqualsBase = FileUtils.contentEquals(left, commitFile)
+			leftEqualsBase = FileUtils.contentEquals(l, commitFile)
 		}
 
 		if(right != null){
 			String rightFilePath = commitFile.getAbsolutePath().replaceFirst(this.baseRevName, this.rightRevName)
 			File r = new File(rightFilePath)
 			if(commitFile.exists() && r.exists()){
-				rightEqualsBase = FileUtils.contentEquals(commitFile, r)
+				rightEqualsBase = FileUtils.contentEquals(r, commitFile)
 				if(leftEqualsBase && rightEqualsBase){
 					l.delete()
 					r.delete()

@@ -1,19 +1,19 @@
 package normalization
 
-import main.SSMergeNodes;
+import main.SSMergeNode;
 
 class NormalizedConflictPrinter {
 	static String conflictReportHeader
 	
-	public String getReportHeader(){
+	public static String getReportHeader(){
 		String result = ''
 		
 		//print nodes
-		for(SSMergeNodes node in SSMergeNodes.values()){
+		for(SSMergeNode node in SSMergeNode.values()){
 			result = result + node + ', '
 		}
 		
-		result = result + ', ChangesInsideMethodsChunk, ChangesInsideMethodsLines'
+		result = result + 'ChangesInsideMethodsChunk, ChangesInsideMethodsLines'
 		 
 		return result
 	}

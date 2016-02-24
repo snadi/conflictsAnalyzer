@@ -17,7 +17,7 @@ class NormalizationStudy {
 		projectList.eachLine {
 			String projectRepo = it
 			String projectName = this.getProjectName(it)
-			NormalizedProject p = new NormalizedProject(projectName, resultData)
+			NormalizedProject p = new NormalizedProject(projectName)
 			
 			//compute number of Changes
 			p.computeNumberOfChanges(projectRepo, gitMinerDir, downloadDir)
