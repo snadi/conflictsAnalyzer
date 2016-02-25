@@ -84,7 +84,12 @@ class EvoScenario implements Observer{
 	public void update(Observable o, Object arg) {
 		if(o instanceof MergeVisitor && arg instanceof FSTTerminal){
 			if(!arg.getType().contains("-Content")){
-				this.computeChanges(arg)
+				if(arg.getBody().contains(FSTGenMerger.MERGE_SEPARATOR)){
+					this.computeChanges(arg)
+				}else{
+					this.updateMetricsWithSingleNodes(arg)
+				}
+				
 			}
 			
 		}
@@ -115,7 +120,6 @@ class EvoScenario implements Observer{
 			int value = this.changesSummary.get(nodeType)
 			int newValue = value + 1
 			this.changesSummary.put(nodeType, newValue)
-			println 'hello'
 	}
 
 	public void computeChangesInsideMC(String newFile, String oldFile){
@@ -183,10 +187,11 @@ class EvoScenario implements Observer{
 
 	public void analyseChanges (){
 		this.fstGenMerge = new FSTGenMerger()
+		fstGenMerge.getMergeVisitor().setIsMergeCommit(this.isMergeCommit)
 		fstGenMerge.getMergeVisitor().addObserver(this)
 		String[] files = ["--expression", this.extractorResult.revisionFile]
 		fstGenMerge.run(files)
-		this.analyseLoneBaseNodes(this.fstGenMerge.baseNodes)
+		//this.analyseLoneBaseNodes(this.fstGenMerge.baseNodes)
 		println 'Finished analyzing scenario ' + this.name
 	}
 	
@@ -194,14 +199,19 @@ class EvoScenario implements Observer{
 	public void analyseLoneBaseNodes(LinkedList<FSTNode> bNodes){
 		for(FSTNode node in bNodes){
 			if(node instanceof FSTTerminal){
-				this.updateChangesSummary(node.getType())
-				if(this.isMethodOrConstructor(node.getType())){
-					this.numberOfChangesInsideMethodsChunks++
-					this.numberOfChangesInsideMethodsLines = this.numberOfChangesInsideMethodsLines +
-					node.getBody().split('\n').length
-				}
+				this.updateMetricsWithSingleNodes(node)
 			}
 		}
+	}
+	
+	public void updateMetricsWithSingleNodes(FSTTerminal node){
+		this.updateChangesSummary(node.getType())
+		if(this.isMethodOrConstructor(node.getType())){
+			this.numberOfChangesInsideMethodsChunks++
+			this.numberOfChangesInsideMethodsLines = this.numberOfChangesInsideMethodsLines +
+			node.getBody().split('\n').length
+		}
+		
 	}
 	
 	public void deleteEvoDir(){
@@ -242,11 +252,15 @@ class EvoScenario implements Observer{
 
 	public static void main (String[] args){
 		MergeCommit mc = new MergeCommit()
-		mc.sha = '448259185594ed4f0b9ea2c6be9197ca3f5573db'
+		/*mc.sha = '448259185594ed4f0b9ea2c6be9197ca3f5573db'
 		mc.parent1 = '5bd4c041add32a8be8790ae715cbad8a713efd6c'
-		mc.parent2 = ''
+		mc.parent2 = ''*/
+		mc.sha = '3ba28a912a763ff973e3d5ab63ac35a64462c117'
+		mc.parent1 = '448259185594ed4f0b9ea2c6be9197ca3f5573db'
+		mc.parent2 = 'c0c6d0e7b0f175b800925472be4c550e5a39567d'
 		ExtractorResult er = new ExtractorResult()
-		er.revisionFile = '/Users/paolaaccioly/Documents/Doutorado/workspace_fse/downloads/TGM/revisions/rev_44825/rev_5bd4c-none.revisions'
+		//er.revisionFile = '/Users/paolaaccioly/Documents/Doutorado/workspace_fse/downloads/TGM/revisions/rev_44825/rev_5bd4c-none.revisions'
+		er.revisionFile = '/Users/paolaaccioly/Documents/Doutorado/workspace_fse/downloads/TGM/revisions/rev_3ba28/rev_44825-c0c6d.revisions'
 		EvoScenario evo = new EvoScenario(mc, er)
 		evo.analyseChanges()
 		NormalizedConflictPrinter.printEvoScenarioReport(evo, 'TGM')

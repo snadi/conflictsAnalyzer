@@ -107,7 +107,7 @@ class NormalizedProject {
 
 		//print changesSummary
 		for(SSMergeNode node in SSMergeNode.values()){
-			result = result + this.changesSummary.get(node) + ', '
+			result = result + this.changesSummary.get(node.toString()) + ', '
 		}
 
 		//print other metrics
