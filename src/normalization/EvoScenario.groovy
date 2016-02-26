@@ -18,6 +18,8 @@ import util.CompareFiles;
 class EvoScenario implements Observer{
 
 	String name
+	
+	String rev_file
 
 	ExtractorResult extractorResult
 
@@ -45,7 +47,7 @@ class EvoScenario implements Observer{
 	
 	public void initializeChangesSummary(){
 		this.changesSummary = new HashMap<String, Integer>()
-		for(SSMergeNode node in SSMergeNode){
+		for(SSMergeNode node in SSMergeNode.values()){
 			this.changesSummary.put(node.toString(), 0)
 		}
 	}
@@ -61,7 +63,8 @@ class EvoScenario implements Observer{
 	public void setName(){
 		String [] temp = this.extractorResult.revisionFile.split('/')
 		String revFile = temp[temp.length -1]
-		this.name = revFile.substring(0, revFile.length()-10)
+		this.rev_file = revFile.substring(0, revFile.length()-10)
+		this.name = temp[temp.length - 2]
 	}
 
 	public void preProcessFiles(){
@@ -83,7 +86,7 @@ class EvoScenario implements Observer{
 	@Override
 	public void update(Observable o, Object arg) {
 		if(o instanceof MergeVisitor && arg instanceof FSTTerminal){
-			if(!arg.getType().contains("-Content")){
+			if(!arg.getType().contains("-Content") && this.isConflictableNode(arg.getType())){
 				if(arg.getBody().contains(FSTGenMerger.MERGE_SEPARATOR)){
 					this.computeChanges(arg)
 				}else{
@@ -94,7 +97,18 @@ class EvoScenario implements Observer{
 			
 		}
 	}
-
+	
+	public boolean isConflictableNode(String nodeType){
+		boolean result = false;
+		for(SSMergeNode node in SSMergeNode.values()){
+			if(nodeType.equals(node.toString())){
+				result = true
+			}
+		}
+		
+		return result
+	}
+	
 	public void computeChanges(FSTTerminal node){
 		String [] tokens = this.getBody(node)
 		String nodeType = node.getType()
@@ -117,9 +131,16 @@ class EvoScenario implements Observer{
 	}
 
 	private void updateChangesSummary(String nodeType){	
+		try{
 			int value = this.changesSummary.get(nodeType)
 			int newValue = value + 1
 			this.changesSummary.put(nodeType, newValue)
+		}catch(Exception e){
+			println nodeType
+			e.printStackTrace()
+			System.exit(0)
+		}
+			
 	}
 
 	public void computeChangesInsideMC(String newFile, String oldFile){
@@ -252,15 +273,15 @@ class EvoScenario implements Observer{
 
 	public static void main (String[] args){
 		MergeCommit mc = new MergeCommit()
-		/*mc.sha = '448259185594ed4f0b9ea2c6be9197ca3f5573db'
-		mc.parent1 = '5bd4c041add32a8be8790ae715cbad8a713efd6c'
-		mc.parent2 = ''*/
-		mc.sha = '3ba28a912a763ff973e3d5ab63ac35a64462c117'
+		mc.sha = 'a2ac73ff7af23fb23c86b0cd18e1337d2feb1122'
+		mc.parent1 = '935c895593495ede2e0298f8e59a6cfad2a05502'
+		mc.parent2 = ''
+		/*mc.sha = '3ba28a912a763ff973e3d5ab63ac35a64462c117'
 		mc.parent1 = '448259185594ed4f0b9ea2c6be9197ca3f5573db'
-		mc.parent2 = 'c0c6d0e7b0f175b800925472be4c550e5a39567d'
+		mc.parent2 = 'c0c6d0e7b0f175b800925472be4c550e5a39567d'*/
 		ExtractorResult er = new ExtractorResult()
-		//er.revisionFile = '/Users/paolaaccioly/Documents/Doutorado/workspace_fse/downloads/TGM/revisions/rev_44825/rev_5bd4c-none.revisions'
-		er.revisionFile = '/Users/paolaaccioly/Documents/Doutorado/workspace_fse/downloads/TGM/revisions/rev_3ba28/rev_44825-c0c6d.revisions'
+		er.revisionFile = '/Users/paolaaccioly/Documents/Doutorado/workspace_fse/downloads/TGM/revisions/rev_a2ac7/rev_935c8-none.revisions'
+		//er.revisionFile = '/Users/paolaaccioly/Documents/Doutorado/workspace_fse/downloads/TGM/revisions/rev_3ba28/rev_44825-c0c6d.revisions'
 		EvoScenario evo = new EvoScenario(mc, er)
 		evo.analyseChanges()
 		NormalizedConflictPrinter.printEvoScenarioReport(evo, 'TGM')
