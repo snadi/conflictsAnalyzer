@@ -1,6 +1,7 @@
 package nonJavaFilesAnalysis
 
-import main.Extractor;
+import main.Extractor
+import main.ExtractorResult;
 import main.GremlinProject
 import main.MergeCommit;
 
@@ -35,17 +36,29 @@ class NonJavaFilesAnalysis {
 	}
 
 	public void analyseProject(String name, String repo){
-
+		//put project on projects summary
+		ArrayList <String> mergesWithConflictingNonJavaFiles = new ArrayList <String>()
+		this.projectsSummary.put(name, mergesWithConflictingNonJavaFiles)
+		
 		//read merge commit file
 		ArrayList<MergeCommit> mergeCommits = this.readMergeCommitsFile(name)
+		
+		//change start when project analysis crashes
 		int start = 0
 		int end = mergeCommits.size()
 		
 		//initialize extractor
 		Extractor extractor = this.createExtractor(name, repo)
+		
+		//analyze merge commits
 		while(start<end){
 			MergeCommit mc = mergeCommits.getAt(start)
-			
+			ExtractorResult er = extractor.getConflictingfiles(mc.parent1, mc.parent2)
+			if(!er.revisionFile.equals('') && er.nonJavaFilesWithConflict.size>0){
+				mergesWithConflictingNonJavaFiles.add(er.revisionFile)
+				this.projectsSummary.put(name, mergesWithConflictingNonJavaFiles)
+				this.printProjectData()
+			}
 			start++
 		}
 	}
@@ -81,7 +94,12 @@ class NonJavaFilesAnalysis {
 
 		return extractor
 	}
-
+	
+	private printProjectData(){
+		
+	}
+	
+	
 	public static void main(String[] args){
 		NonJavaFilesAnalysis n = new NonJavaFilesAnalysis('projectsList', '/Users/paolaaccioly/Documents/testeConflictsAnalyzer/conflictsAnalyzer/ResultData',
 				'/Users/paolaaccioly/Documents/testeConflictsAnalyzer/downloads')
