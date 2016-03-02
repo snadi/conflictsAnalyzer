@@ -52,12 +52,15 @@ class NonJavaFilesAnalysis {
 		
 		//analyze merge commits
 		while(start<end){
+			
+			int counter = start +1
+			println 'Starting to analyse merge commit [' + counter + '] from [' + end + '] from project ' + name
 			MergeCommit mc = mergeCommits.getAt(start)
 			ExtractorResult er = extractor.getConflictingfiles(mc.parent1, mc.parent2)
 			if(!er.revisionFile.equals('') && er.nonJavaFilesWithConflict.size>0){
 				mergesWithConflictingNonJavaFiles.add(er.revisionFile)
 				this.projectsSummary.put(name, mergesWithConflictingNonJavaFiles)
-				this.printProjectData()
+				this.printMergeCommit(name, er.revisionFile)
 			}
 			start++
 		}
@@ -95,7 +98,17 @@ class NonJavaFilesAnalysis {
 		return extractor
 	}
 	
-	private printProjectData(){
+	private printMergeCommit(String projectName, String rev_name){
+		String dirPath = 'ResultData' + File.separator + projectName
+		File dir = new File(dirPath)
+		if(!dir.exists()){
+			dir.mkdirs()
+		}
+		File out = new File(dirPath + File.separator + 'mergeWithNonJavaFilesConflicting.csv') 
+		if(!out.exists()){
+			out.createNewFile()
+		}
+		out.append(rev_name + '\n')
 		
 	}
 	
