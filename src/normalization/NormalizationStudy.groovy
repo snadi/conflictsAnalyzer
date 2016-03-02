@@ -40,7 +40,7 @@ class NormalizationStudy {
 		NormalizationStudy normalization = new NormalizationStudy()
 		
 		normalization.normalizeData('projectsList', 'ResultData', 
-			'/Users/paolaaccioly/Documents/testeConflictsAnalyzer/gitminer', 
-			'/Users/paolaaccioly/Documents/Doutorado/workspace_fse/downloads')
+			'/media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/workspace_ca/gitminer', 
+			'/media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/workspace_fse/downloads')
 	} 
 }

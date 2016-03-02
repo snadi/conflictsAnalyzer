@@ -79,6 +79,7 @@ class NormalizedProject {
 		this.evoScenarios.add(scenario)
 		this.updateProjectMetrics(scenario)
 		NormalizedConflictPrinter.printEvoScenarioReport(scenario, this.name)
+		NormalizedConflictPrinter.printNormalizedProjectIteration(this)
 		if(scenario.hasConflictsOnNonJavaFiles){
 			NormalizedConflictPrinter.printMergeScenariosWithConflictsOnNonJavaFiles(scenario, this.name)
 		}

@@ -30,6 +30,18 @@ class NormalizedConflictPrinter {
 		
 	}
 	
+	public static void printNormalizedProjectIteration(NormalizedProject p){
+		String fileName = 'ResultData' + File.separator + p.name + File.separator + 'projectsChanges.csv'
+		File out = new File(fileName)
+		out.delete()
+		
+		out.append('Project , NumberOfScenarios, '+ this.getReportHeader() + '\n')
+		
+		
+		out.append(p.toString() + '\n')
+		
+	}
+	
 	public static void printEvoScenarioReport (EvoScenario evo, String projectName){
 		String fileName = 'ResultData' + File.separator + projectName + File.separator + 'EvoScenarios.csv'
 		File out = new File(fileName)
