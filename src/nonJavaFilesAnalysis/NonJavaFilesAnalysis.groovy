@@ -44,7 +44,7 @@ class NonJavaFilesAnalysis {
 		ArrayList<MergeCommit> mergeCommits = this.readMergeCommitsFile(name)
 		
 		//change start when project analysis crashes
-		int start = 0
+		int start = 4903
 		int end = mergeCommits.size()
 		
 		//initialize extractor
