@@ -61,6 +61,16 @@ main<-function(){
     par(op)
     dev.off()
     
+    #boxplot considering three computations of EditSameMC
+    boxplotNodesEditSameMC = paste("boxplotNodesEditSameMC.png")
+    png(paste(exportPath, boxplotNodesEditSameMC, sep=""))
+    tableNodes <- data.frame(normalizationTable$nEditSameMCLines, normalizationTable$nEditSameMCChunks, normalizationTable$nEditSameMC)
+    colnames(tableNodes) <- c("EditSameMCLine","EditSameMCChunk", "EditSameMCNode")
+    op <- par(mar = c(2, 9, 1, 1) + 0.1) #adjust margins, default is c(5, 4, 4, 2) + 0.1
+    boxplot(tableNodes, col="green", horizontal = TRUE, las=1, cex.axis=1.1, bw="nrd0")
+    par(op)
+    dev.off()
+    
     #HTML code
     library(R2HTML)
     
@@ -80,6 +90,9 @@ main<-function(){
     
     HTML("<hr><h2>Conflicts Normalized by the Number of Changed Nodes and Lines for EditSameMC</h2>", file=htmlFile, append=TRUE)
     HTMLInsertGraph(file=htmlFile, GraphFileName=boxplotNodesLines, Align="center", append=TRUE)
+    
+    HTML("<hr><h2>Comparing EditSameMC normalization (Lines, Chunks, and Nodes)</h2>", file=htmlFile, append=TRUE)
+    HTMLInsertGraph(file=htmlFile, GraphFileName=boxplotNodesEditSameMC, Align="center", append=TRUE)
 }
 
 main()
