@@ -235,12 +235,13 @@ public class Util {
 	}
 		
 	public static String getMethodReturnType(String methodSignature, List<String> imports, String packageName, String packagePath) {
-		String[] strs = methodSignature.split("\\s+");
+		String simplMethodSignature = methodSignature.replaceAll("// LEFT //", "").replaceAll("// RIGHT //", "");
+		String[] strs = simplMethodSignature.split("\\s+");
 		int i = 0;
 		while(i < strs.length && strs[i].startsWith("@"))
 		{
 			i++;
-			if(i < strs.length && strs[i - 1].contains("("))
+			if(i < strs.length && strs[i - 1].contains("(") && !strs[i - 1].contains(")"))
 			{				
 				while(i < strs.length && !strs[i].contains(")")){
 					i++;
@@ -304,6 +305,10 @@ public class Util {
     + "    public void testIssue2890NoStackoverflow() throws InterruptedException {"
        + "assertEquals(n, counter.get());"
     + "}", imports, "(default package)",""));
+		System.out.println(getMethodReturnType("@Test(timeout=10000)"
+			    + "    public void testIssue2890NoStackoverflow() throws InterruptedException {"
+			       + "assertEquals(n, counter.get());"
+			    + "}", imports, "(default package)",""));
 		System.out.println(includeFullArgsTypes(removeGenerics(simplifyMethodSignature(("soma(B[]-B[]-C-C-Object-Object-Hello-Hello) throws Exeception"))), imports, "paramsEx", "/Users/Roberto/Documents/UFPE/Msc/Projeto/conflicts_analyzer/TestFlows/src/paramsEx"));
 		System.out.println(includeFullArgsTypes("longAndAdd()", imports, "rx.internal.util","/Users/Roberto/Documents/UFPE/Msc/Projeto/conflicts_analyzer/downloads/RxJava/revisions/rev_5d513_a9cd9/rev_5d513-a9cd9/src/test/java/rx/internal/util"));
 	}
