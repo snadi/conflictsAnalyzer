@@ -269,7 +269,8 @@ class MergeScenario implements Observer {
 				', ' + this.compareFiles.getFilesEditedByOneDev() + ', ' +
 				this.compareFiles.getFilesThatRemainedTheSame() + ', ' +
 				this.filesAddedByOneDev +', ' + this.mergedFiles.size() +
-				', ' + this.getNumberOfFilesWithConflicts() + ', ' +
+				', ' + !this.gitMergeHasNoConflicts +
+				', ' + this.getNumberOfFilesWithConflicts() + ', ' + 		
 				ConflictSummary.printConflictsSummary(this.mergeScenarioSummary) + ', ' +
 				ConflictSummary.printSameSignatureCMSummary(this.sameSignatureCMSummary) + ', ' +
 				this.possibleRenamings

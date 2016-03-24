@@ -38,7 +38,7 @@ public class ConflictPrinter {
 		def out = new File(fileName)
 		
 		if(!out.exists()){
-		String row = 'Project, Merge_Scenarios, Conflicting_Scenarios, ' +
+		String row = 'Project, Merge_Scenarios, Conflicting_Scenarios_Non_Java_Only, Conflicting_Scenarios_Java, ' +
 		this.conflictReportHeader + '\n'
 
 		out.append(row)
@@ -56,7 +56,7 @@ public class ConflictPrinter {
 		out = new File(fileName)
 		
 		
-		String row = 'Project, Merge_Scenarios, Conflicting_Scenarios, ' +
+		String row = 'Project, Merge_Scenarios, Conflicting_Scenarios_Non_Java_Only, Conflicting_Scenarios_Java, ' +
 		this.conflictReportHeader + '\n'
 
 		out.append(row)
@@ -71,7 +71,7 @@ public class ConflictPrinter {
 		if(!out.exists()){
 			String fileHeader = 'Merge_scenario, Total_Files, Files_Edited_By_One_Dev, ' +
 					'Files_That_Remained_The_Same, Files_Added_By_Ove_Dev, Files_Merged, ' + 
-					'Files_With_Conflicts, ' +
+					'Has_Non_Java_File_With_Conflicts, ' + 'Files_With_Conflicts, ' + 
 					 this.conflictReportHeader + '\n'
 			out.append(fileHeader)
 		}
