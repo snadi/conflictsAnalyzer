@@ -13,6 +13,8 @@ class Project {
 	private int analyzedMergeScenarios
 
 	private int conflictingMergeScenarios
+	
+	private int conflictingScenariosOnlyNonJava
 
 	private double conflictRate
 
@@ -50,6 +52,7 @@ class Project {
 	private initializeProjectMetrics() {
 		this.analyzedMergeScenarios = 0
 		this.conflictingMergeScenarios = 0
+		this.conflictingScenariosOnlyNonJava = 0
 		this.conflictRate = 0.0
 	}
 
@@ -116,6 +119,9 @@ class Project {
 		this.analyzedMergeScenarios++
 		if(ms.hasConflicts){
 			this.conflictingMergeScenarios++
+		}else if(ms.hasConflictsThatWereNotSolved())
+		{
+			this.conflictingScenariosOnlyNonJava++
 		}
 		this.computeConflictingRate()
 	}
@@ -162,7 +168,8 @@ class Project {
 	
 	public String toString(){
 		String result = this.name + ', ' + this.analyzedMergeScenarios + ', ' +
-		this.conflictingMergeScenarios + ', ' +
+		this.conflictingScenariosOnlyNonJava + ', ' +
+		this.conflictingMergeScenarios + ', ' + 
 		ConflictSummary.printConflictsSummary(this.projectSummary) + ', ' +
 		ConflictSummary.printSameSignatureCMSummary(this.sameSignatureCMSummary) + ', ' +
 		this.possibleRenamings

@@ -1,4 +1,5 @@
 package util;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -69,7 +70,7 @@ public class Util {
 			}else
 				parameters += chr;
 		}
-		return new ArrayList<String>(Arrays.asList(parameters.replace("{FormalParametersInternal}", "").split(",")));		
+		return (parameters.equals("") ? new ArrayList<String>()  : new ArrayList<String>(Arrays.asList(parameters.replace("{FormalParametersInternal}", "").split(","))));		
 	}
 		
 	private static boolean isStatic(String str) {
@@ -150,31 +151,66 @@ public class Util {
 		return res;
 	}
 	
-	public static String includeFullArgsTypes(String signature, List<String> imports)
+	public static String getFullType(String arg, List<String> imports, String packageName, String packagePath)
+	{
+		String fullType = arg;
+		if(!isPrimitiveType(arg))
+		{
+			String[] importSplit;
+			String importStr = "";
+			int j = 0;
+			boolean found = false;
+			String typeName = arg.replace("[]", "");
+			while(j < imports.size() && !found)
+			{
+				importStr = imports.get(j);
+				importSplit = importStr.split("\\.");
+				
+				found = importSplit[importSplit.length - 1].equals(typeName);
+
+				j++;
+			}
+			if(!found)
+			{
+				File packageFolder = new File(packagePath);
+				String fileName;
+				int k = 0;
+				while(packageFolder.listFiles() != null && k < packageFolder.listFiles().length && !found)
+				{
+					File file = packageFolder.listFiles()[k];
+					fileName = file.getName().replace(".java", "");
+					found = file.isFile() && file.getName().endsWith(".java") && typeName.equals(fileName);
+					if(found)
+					{
+						if(!packageName.equals("(default package)"))
+						{
+							importStr = packageName + "." + typeName;
+						}
+						
+					}
+					k++;
+				}
+			}
+			if(found)
+			{
+				fullType = arg.replace(typeName, importStr);
+			}
+		}
+		return fullType;
+	}
+	
+	public static String includeFullArgsTypes(String signature, List<String> imports, String packageName, String packagePath)
 	{
 		List<String> args = getArgs(signature);
 		String oldArgsStr = String.join(",", args);
 		int i = 0;
 		for(String arg : args)
 		{
-			int j = 0;
-			boolean found = false;
-			String[] importSplit;
-			String importStr;
-			if(!isPrimitiveType(arg))
+			String fullType = getFullType(arg, imports, packageName, packagePath);
+
+			if(!fullType.equals(arg))
 			{
-				while(j < imports.size() && !found)
-				{
-					importStr = imports.get(j);
-					importSplit = importStr.split("\\.");
-					String typeName = arg.replace("[]", "");
-					found = importSplit[importSplit.length - 1].equals(typeName);
-					if(found)
-					{
-						args.set(i, arg.replace(typeName, importStr));
-					}
-					j++;
-				}
+				args.set(i, fullType);
 			}
 			i++;
 		}
@@ -193,6 +229,42 @@ public class Util {
 				typeStr.equals("char") ||
 				typeStr.equals("boolean");
 	}
+	
+	private static boolean isGeneric(String str) {
+		return str.startsWith("<");
+	}
+		
+	public static String getMethodReturnType(String methodSignature, List<String> imports, String packageName, String packagePath) {
+		String simplMethodSignature = methodSignature.replaceAll("// LEFT //", "").replaceAll("// RIGHT //", "");
+		String[] strs = simplMethodSignature.split("\\s+");
+		int i = 0;
+		while(i < strs.length && strs[i].startsWith("@"))
+		{
+			i++;
+			if(i < strs.length && strs[i - 1].contains("(") && !strs[i - 1].contains(")"))
+			{				
+				while(i < strs.length && !strs[i].contains(")")){
+					i++;
+				}
+				i++;
+			}
+		}
+		while(i < strs.length && isMethodModifier(strs[i]))
+		{
+			i++;
+		}
+		String returnType = "";
+		if(i < strs.length)
+		{
+			if (!isGeneric(strs[i])) {
+				returnType = strs[i];
+			} else {
+				returnType = getMethodReturnType(removeGenerics(methodSignature), imports, packageName, packagePath);
+			}
+		}		
+		returnType = removeGenerics(returnType);
+		return returnType.equals("void") ? returnType : getFullType(returnType, imports, packageName, packagePath);
+	}
 		
 	public static void main(String[] args) {
 		System.out.println(getArgs("soma(int-int-boolean-boolean) throws Exception"));
@@ -209,10 +281,35 @@ public class Util {
 		imports.add("rx.Scheduler");
 		imports.add("cin.ufpe.br.A");
 		imports.add("java.util.List");
-		System.out.println(includeFullArgsTypes(removeGenerics(simplifyMethodSignature(("soma(List<Integer>-List<Integer>-int-int) throws Exeception"))), imports));
-		System.out.println(includeFullArgsTypes(removeGenerics(simplifyMethodSignature(("soma(List<Integer>-List<Integer>-Scheduler-Scheduler) throws Exeception"))), imports));
-		System.out.println(includeFullArgsTypes(removeGenerics(simplifyMethodSignature(("soma(String-String-Scheduler-Scheduler-Object-Object) throws Exeception"))), imports));
-		System.out.println(includeFullArgsTypes(removeGenerics(simplifyMethodSignature(("soma(String[]-String[]-Scheduler[]-Scheduler[]-Object-Object) throws Exeception"))), imports));
-		System.out.println(includeFullArgsTypes(removeGenerics(simplifyMethodSignature(("soma(Character.Subset-Character.Subset) throws Exeception"))), imports));
+		System.out.println(includeFullArgsTypes(removeGenerics(simplifyMethodSignature(("soma(List<Integer>-List<Integer>-int-int) throws Exeception"))), imports, "(default package)", "/Users/Roberto/Documents/UFPE/Msc/Projeto/conflicts_analyzer/TestFlows/src"));
+		System.out.println(includeFullArgsTypes(removeGenerics(simplifyMethodSignature(("soma(List<Integer>-List<Integer>-Scheduler-Scheduler) throws Exeception"))), imports, "(default package)", "/Users/Roberto/Documents/UFPE/Msc/Projeto/conflicts_analyzer/TestFlows/src"));
+		System.out.println(includeFullArgsTypes(removeGenerics(simplifyMethodSignature(("soma(String-String-Scheduler-Scheduler-Object-Object) throws Exeception"))), imports, "(default package)", "/Users/Roberto/Documents/UFPE/Msc/Projeto/conflicts_analyzer/TestFlows/src"));
+		System.out.println(includeFullArgsTypes(removeGenerics(simplifyMethodSignature(("soma(String[]-String[]-Scheduler[]-Scheduler[]-Object-Object) throws Exeception"))), imports, "(default package)", "/Users/Roberto/Documents/UFPE/Msc/Projeto/conflicts_analyzer/TestFlows/src"));
+		System.out.println(includeFullArgsTypes(removeGenerics(simplifyMethodSignature(("soma(Character.Subset-Character.Subset) throws Exeception"))), imports, "(default package)", "/Users/Roberto/Documents/UFPE/Msc/Projeto/conflicts_analyzer/TestFlows/src"));
+		System.out.println(removeGenerics("public List<Integer> soma(List<Integer> a, List<Integer> b, int c, int d) throws Exeception {return 1;}"));
+		System.out.println(getMethodReturnType("public List<Integer> soma(List<Integer> a, List<Integer> b, int c, int d) throws Exeception {return 1;}", imports, "(default package)", "/Users/Roberto/Documents/UFPE/Msc/Projeto/conflicts_analyzer/TestFlows/src"));
+		System.out.println(getMethodReturnType("public static List<Integer> soma(List<Integer> a, List<Integer> b, int c, int d) throws Exeception {return 1;}", imports, "(default package)", "/Users/Roberto/Documents/UFPE/Msc/Projeto/conflicts_analyzer/TestFlows/src"));
+		System.out.println(getMethodReturnType("public void soma(List<Integer> a, List<Integer> b, int c, int d) throws Exeception {return 1;}", imports, "(default package)", "/Users/Roberto/Documents/UFPE/Msc/Projeto/conflicts_analyzer/TestFlows/src"));
+		System.out.println(getMethodReturnType("public static void soma(List<Integer> a, List<Integer> b, int c, int d) throws Exeception {return 1;}", imports, "(default package)", "/Users/Roberto/Documents/UFPE/Msc/Projeto/conflicts_analyzer/TestFlows/src"));
+		System.out.println(getMethodReturnType("public int soma(List<Integer> a, List<Integer> b, int c, int d) throws Exeception {return 1;}", imports, "(default package)", "/Users/Roberto/Documents/UFPE/Msc/Projeto/conflicts_analyzer/TestFlows/src"));
+		System.out.println(getMethodReturnType("public static int soma(List<Integer> a, List<Integer> b, int c, int d) throws Exeception {return 1;}", imports, "(default package)", "/Users/Roberto/Documents/UFPE/Msc/Projeto/conflicts_analyzer/TestFlows/src"));
+		System.out.println(getMethodReturnType("public static synchronized int soma(List<Integer> a, List<Integer> b, int c, int d) throws Exeception {return 1;}", imports, "(default package)", "/Users/Roberto/Documents/UFPE/Msc/Projeto/conflicts_analyzer/TestFlows/src"));
+		System.out.println(getMethodReturnType("public static native synchronized int soma(List<Integer> a, List<Integer> b, int c, int d) throws Exeception {return 1;}", imports, "(default package)", "/Users/Roberto/Documents/UFPE/Msc/Projeto/conflicts_analyzer/TestFlows/src"));
+		System.out.println(getMethodReturnType("static synchronized int soma(List<Integer> a, List<Integer> b, int c, int d) throws Exeception {return 1;}", imports, "(default package)", "/Users/Roberto/Documents/UFPE/Msc/Projeto/conflicts_analyzer/TestFlows/src"));
+		System.out.println(getMethodReturnType("synchronized int soma(List<Integer> a, List<Integer> b, int c, int d) throws Exeception {return 1;}", imports, "(default package)", "/Users/Roberto/Documents/UFPE/Msc/Projeto/conflicts_analyzer/TestFlows/src"));
+		System.out.println("Type: "+getMethodReturnType("@Override   "
+				+ "synchronized int soma(List<Integer> a, List<Integer> b, int c, int d) throws Exeception {return 1;}", imports, "(default package)", "/Users/Roberto/Documents/UFPE/Msc/Projeto/conflicts_analyzer/TestFlows/src"));
+		System.out.println(getMethodReturnType("public Hello teste(JoanaEntryPoint a, List<Integer> b, Object c){}", imports, "(default package)", "/Users/Roberto/Documents/UFPE/Msc/Projeto/conflicts_analyzer/TestFlows/src"));
+		System.out.println(getMethodReturnType("public B teste(JoanaEntryPoint a, List<Integer> b, Object c){}", imports, "paramsEx", "/Users/Roberto/Documents/UFPE/Msc/Projeto/conflicts_analyzer/TestFlows/src/paramsEx"));
+		System.out.println(getMethodReturnType("@Test(timeout = 10000)"
+    + "    public void testIssue2890NoStackoverflow() throws InterruptedException {"
+       + "assertEquals(n, counter.get());"
+    + "}", imports, "(default package)",""));
+		System.out.println(getMethodReturnType("@Test(timeout=10000)"
+			    + "    public void testIssue2890NoStackoverflow() throws InterruptedException {"
+			       + "assertEquals(n, counter.get());"
+			    + "}", imports, "(default package)",""));
+		System.out.println(includeFullArgsTypes(removeGenerics(simplifyMethodSignature(("soma(B[]-B[]-C-C-Object-Object-Hello-Hello) throws Exeception"))), imports, "paramsEx", "/Users/Roberto/Documents/UFPE/Msc/Projeto/conflicts_analyzer/TestFlows/src/paramsEx"));
+		System.out.println(includeFullArgsTypes("longAndAdd()", imports, "rx.internal.util","/Users/Roberto/Documents/UFPE/Msc/Projeto/conflicts_analyzer/downloads/RxJava/revisions/rev_5d513_a9cd9/rev_5d513-a9cd9/src/test/java/rx/internal/util"));
 	}
 }

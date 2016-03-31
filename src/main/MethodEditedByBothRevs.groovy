@@ -29,7 +29,7 @@ class MethodEditedByBothRevs {
 	private FSTTerminal constructor
 	
 	private List<String> imports
-
+	
 	public MethodEditedByBothRevs(FSTTerminal n, String path){
 		this.packageName = ''
 		this.imports = new ArrayList<String>()
@@ -47,7 +47,14 @@ class MethodEditedByBothRevs {
 		String className = tokens[tokens.length-1]
 		className = className.substring(0, className.length()-5)
 		String methodName = Util.simplifyMethodSignature(this.node.getName())
-		this.signature = this.packageName + '.' + className + '.' + Util.includeFullArgsTypes(methodName, imports)
+		String returnType;
+		if(this.node.getType().equals("ConstructorDecl"))
+		{
+			returnType = "void"
+		} else {
+			returnType = Util.getMethodReturnType(this.node.getBody(), imports, packageName, new File(filePath).getParent())
+		}
+		this.signature = returnType + " " +this.packageName + '.' + className + '.' + Util.includeFullArgsTypes(methodName, imports, packageName, new File(filePath).getParent())
 	}
 	
 	public void retrieveFilePath(FSTNode n, String path){
