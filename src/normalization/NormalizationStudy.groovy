@@ -39,8 +39,6 @@ class NormalizationStudy {
 	public static void main (String[] args){
 		NormalizationStudy normalization = new NormalizationStudy()
 		
-		normalization.normalizeData('projectsList', 'ResultData', 
-			'/media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/workspace_ca/gitminer', 
-			'/media/ines/b9d638e1-93ee-435a-af41-80d544917e00/gitClones/workspace_fse/downloads')
+		normalization.normalizeData('projectsList.txt', 'ResultData', '/home/local/CIN/gjcc/fse/gitminer', '/home/local/CIN/gjcc/fse/downloads')
 	} 
 }
