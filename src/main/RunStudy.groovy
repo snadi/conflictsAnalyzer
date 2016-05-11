@@ -1,4 +1,5 @@
 package main
+import java.text.SimpleDateFormat
 import java.util.HashMap;
 import java.util.Hashtable
 
@@ -42,31 +43,66 @@ class RunStudy {
 			setProjectNameAndRepo(it)
 
 			//set projectPeriodsList
-			List<ProjectPeriod> periods = getProjectPeriods(projectsDatesFolder)
+			//List<ProjectPeriod> periods = getProjectPeriods(projectsDatesFolder)
 
-			//run gitminer
+			
 
-			/*attention, if you have already downloaded gitminer base you can comment
-			 the line below and use the second line below*/
-
-			//String graphBase = runGitMiner()
+			/*1run gitminer*/ //String graphBase = runGitMiner()
+			/*2 use bases from gitminer*/ 
+			//String graphBase = this.gitminerLocation + File.separator + this.projectName + 'graph.db'
+			//ArrayList<MergeCommit> listMergeCommits = runGremlinQuery(graphBase)
+			/*3 read mergeCommits.csv sheets*/ 
 			String graphBase = this.gitminerLocation + File.separator + this.projectName + 'graph.db'
-
-			//get list of merge commits
-			ArrayList<MergeCommit> listMergeCommits = runGremlinQuery(graphBase)
-
+			ArrayList<MergeCommit> listMergeCommits = this.readMergeCommitsSheets(projectsDatesFolder)
+			
+			//set listMergeCommits with commits that i want to analyze separately
+			/*MergeCommit mc = new MergeCommit()
+			mc.setSha('02e79d6b153d1356bc0323084846be12980a810e')
+			mc.setParent1('1ebc8a2a72528eb6988fca749dfd256df712eb08')
+			mc.setParent2('197878ae7573da108f07abcea8771934ecc45d42')
+			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy")
+			Date d = sdf.parse("22/10/2014")
+			mc.setDate(d)
+			ArrayList<MergeCommit> listMergeCommits = new ArrayList<MergeCommit>()
+			listMergeCommits.add(mc)*/
+			
 			//create project and extractor
 			Extractor extractor = this.createExtractor(this.projectName, graphBase)
-			Project project = new Project(this.projectName, periods)
+			Project project = new Project(this.projectName, null)
 
 			//for each merge scenario, clone and run SSMerge on it
 			analyseMergeScenario(listMergeCommits, extractor, project)
 
 			//print project report and call R script
 			ConflictPrinter.printProjectData(project)
-			this.callRScript()
+			//this.callRScript()
 		}
 
+	}
+	
+	private ArrayList<MergeCommit> readMergeCommitsSheets(String resultDataFolder){
+		ArrayList<MergeCommit> result = new ArrayList<MergeCommit>()
+		String filePath = resultDataFolder + File.separator + this.projectName + File.separator + 'mergeCommits.csv'
+		File mergeCommitsFile = new File(filePath)
+		if(mergeCommitsFile.exists()){
+			mergeCommitsFile.eachLine {
+				if(!it.startsWith('Merge')){
+					MergeCommit mc = this.readMergeCommit(it.trim())
+					result.add(mc)
+				}
+			}
+		}
+
+		return result
+	}
+	
+	private MergeCommit readMergeCommit(String mc){
+		MergeCommit result = new MergeCommit()
+		String [] tokens = mc.split(',')
+		result.sha = tokens[0].trim()
+		result.parent1 = tokens[1].trim()
+		result.parent2 = tokens[2].trim()
+		return result
 	}
 
 	private ArrayList<ProjectPeriod> getProjectPeriods(String projectsDatesFolder) {
@@ -125,11 +161,11 @@ class RunStudy {
 	private void analyseMergeScenario(ArrayList listMergeCommits, Extractor extractor,
 			Project project) {
 		//if project execution breaks, update current with next merge scenario number
-		int current = 0;
+		int current = 626;
 		int end = listMergeCommits.size()
 
-		List<ProjectPeriod> periods = project.getProjectPeriods()
-		String reportsPath = new File(downloadPath).getParent() + File.separator + "reports" + File.separator + project.name
+		//List<ProjectPeriod> periods = project.getProjectPeriods()
+		//String reportsPath = new File(downloadPath).getParent() + File.separator + "reports" + File.separator + project.name
 
 		//for each merge scenario analyze it
 		while(current < end){
@@ -140,11 +176,10 @@ class RunStudy {
 
 			MergeCommit mc = listMergeCommits.get(current)
 
-			MatchingProjectPeriod p = this.getPeriodMatch(periods, mc)
+			//MatchingProjectPeriod p = this.getPeriodMatch(periods, mc)
 
 
-			if(p.periodMatch)
-			{
+			//if(p.periodMatch){
 				println 'Analyzing merge scenario...'
 
 				/*download left, right, and base revisions, performs the merge and saves in a
@@ -161,13 +196,13 @@ class RunStudy {
 
 					boolean hasConflicts = ssMergeResult.getHasConflicts()
 					println hasConflicts
-					if(!hasConflicts){
+					/*if(!hasConflicts){*/
 						//get line of the files containing methods for joana analysis
 						Map<String, ArrayList<MethodEditedByBothRevs>> filesWithMethodsToJoana =
 								ssMergeResult.getFilesWithMethodsToJoana()
-						if(filesWithMethodsToJoana.size() > 0)
-						{
-							println index + ", " + filesWithMethodsToJoana.keySet()
+						/*if(filesWithMethodsToJoana.size() > 0)
+						{*/
+							/*println index + ", " + filesWithMethodsToJoana.keySet()
 							String revPath = revisionFile.replace(".revisions", "")
 							String reportsFilePath = reportsPath + File.separator + (new File(revPath).getName())
 							File reportsRevDir = new File(reportsFilePath)
@@ -180,11 +215,11 @@ class RunStudy {
 							if(emptyContribs.length() == 0)
 							{
 								emptyContribs.delete()
-							}
-							if(methods.size() > 0)
-							{
+							}*/
+							/*if(methods.size() > 0)
+							{*/
 
-								String revGitPath = revPath + File.separator + "git"
+								/*String revGitPath = revPath + File.separator + "git"
 								File revGitFile = new File(revGitPath)
 
 								def repoDir = new File(downloadPath +File.separator+ projectName + File.separator + "git")
@@ -193,19 +228,23 @@ class RunStudy {
 
 								File buildResultFile = new File(reportsFilePath + File.separator + "build_report.txt")
 								buildResultFile.createNewFile()
-								if(build(p.period.getBuildSystem(),revGitPath, buildResultFile))
-								{
+								boolean[] buildResult = build(p.period.getBuildSystem(),revGitPath, buildResultFile)
+								ConflictPrinter.printMergeScenariosBuildResult(ssMergeResult.mergeScenarioName, buildResult)*/
+								/*if(build(p.period.getBuildSystem(),revGitPath, buildResultFile))
+								{	
+									//run system tests
+									
 									//call joana analysis
-									println "Calling Joana"
+									/*println "Calling Joana"
 									JoanaInvocation joana = new JoanaInvocation(revGitPath, methods, p.period.getBinPath(),
 											p.period.getSrcPath(), p.period.getLibPaths(), reportsFilePath)
 									joana.run()
-								}
-							}
-						}
-					}
+								}*/
+							/*}*/
+						/*}*/
+					/*}*/
 				}
-			}
+			//}
 			//increment current
 			current++
 
@@ -285,8 +324,9 @@ class RunStudy {
 		}
 	}
 
-	private boolean build(String fullBuildSystem, String revGitPath, File buildResultFile) {
+	private boolean[]  build(String fullBuildSystem, String revGitPath, File buildResultFile) {
 		println "Building..."
+		boolean[] result = [false,false]
 		int lastSeparator = fullBuildSystem.lastIndexOf(File.separator) + 1
 		String buildSystem = fullBuildSystem.substring(lastSeparator)
 		String buildSystemLocation = fullBuildSystem.substring(0, lastSeparator)
@@ -317,13 +357,23 @@ class RunStudy {
 			println currentLine
 		}
 		int i = buildLines.size() - 1
-		while(i >= 0 && !buildLines.get(i).equals("BUILD SUCCESSFUL") && !buildLines.get(i).equals("BUILD FAILED"))
+		while(i >= 0 )
 		{
+			if(buildLines.get(i).equals("BUILD SUCCESSFUL")){
+				result[0] = true
+			}
+			
+			if(buildLines.get(i).contains("There were failing tests")){
+				result[1] = true
+			}
+			
 			i--;
 		}
-		return i >= 0 && buildLines.get(i).equals("BUILD SUCCESSFUL")
+		return result
 	}
-
+	
+	
+	
 	private Extractor createExtractor(String projectName, String graphBase){
 		GremlinProject gProject = new GremlinProject(this.projectName,
 				this.projectRepo, graphBase)
@@ -451,7 +501,10 @@ class RunStudy {
 
 	public static void main (String[] args){
 		RunStudy study = new RunStudy()
-		String[] files= ['projectsList', 'configuration.properties', 'ProjectsDatesInfo']
+		/*String[] files= ['projectsList', 'configuration.properties', 
+			'/home/ines/Dropbox/experiment/ResultData']*/
+		String[] files= ['projectsList', 'configuration.properties',
+			'/Users/paolaaccioly/Documents/testeConflictsAnalyzer/conflictsAnalyzer/ResultData']
 		study.run(files)
 		//println study.build("/usr/local/bin/ant", "/Users/Roberto/Documents/UFPE/Msc/Projeto/projects/temp/voldemort", new File("/Users/Roberto/Documents/UFPE/Msc/Projeto/projects/temp/report.txt"))
 	}

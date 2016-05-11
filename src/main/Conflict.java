@@ -281,11 +281,12 @@ public  class Conflict {
 	private void removeSpacingConflict(FSTTerminal node, String originalConflict){
 		String newBody = "";
 		String bodyTemp = node.getBody();
-		
+
 		
 		if(this.type.equals(SSMergeConflicts.EditSameMC.toString()) || this.type.equals(SSMergeConflicts.SameSignatureCM.toString())){
 			String conflictWithMarkers = "<<<<<<<" + originalConflict + ">>>>>>> ";
 			newBody = bodyTemp.replace(conflictWithMarkers, this.replacement);
+
 			String[] a = newBody.split(Pattern.quote(this.replacement));
 			String[] b = a[1].split("\n");
 			newBody = a[0] + this.replacement + "\n";

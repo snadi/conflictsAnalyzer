@@ -1,12 +1,16 @@
 package main
 
-import java.util.List;
+import java.util.List
+
+import com.ibm.wala.shrikeBT.info.ThisAssignmentChecker;
+
 import java.io.File
 
 
 import de.ovgu.cide.fstgen.ast.FSTNode
 import de.ovgu.cide.fstgen.ast.FSTNonTerminal;
-import de.ovgu.cide.fstgen.ast.FSTTerminal;
+import de.ovgu.cide.fstgen.ast.FSTTerminal
+import merger.FSTGenMerger;
 import util.Util
 class MethodEditedByBothRevs {
 
@@ -30,16 +34,80 @@ class MethodEditedByBothRevs {
 	
 	private List<String> imports
 	
+	private boolean diffSpacing
+	
 	public MethodEditedByBothRevs(FSTTerminal n, String path){
+		this.node = n
+		this.setDiffSpacing()
+		this.callBlame()
 		this.packageName = ''
 		this.imports = new ArrayList<String>()
-		this.node = n
 		this.setSeparatorStrings()
 		this.retrieveFilePath(this.node, path)
 		this.setSignature()
 		this.annotateMethod()
 		this.leftLines  = new ArrayList<Integer>()
 		this.rightLines = new ArrayList<Integer>()
+	}
+	
+	private void callBlame(){
+		if(!this.diffSpacing){
+			File[] files = this.createTempFiles()
+			Blame blame = new Blame()
+			String result = blame.annotateBlame(files[0], files[1], files[2])
+			this.node.setBody(result)
+			this.deleteTempFiles(files)
+		}
+	}
+	
+	private void deleteTempFiles(File[] files){
+		File tmpDir = new File(files[0].getParent())
+		files[0].delete();
+		files[1].delete();
+		files[2].delete();
+		tmpDir.delete();
+		
+	}
+	private File[] createTempFiles(){
+		String [] splitNodeBody = this.splitNodeBody()
+		long time = System.currentTimeMillis()
+		File tmpDir = new File(System.getProperty("user.dir") + File.separator + "fstmerge_tmp"+time);
+		tmpDir.mkdir()
+		File fileVar1 = File.createTempFile("fstmerge_var1_", "", tmpDir)
+		File fileBase = File.createTempFile("fstmerge_base_", "", tmpDir)
+		File fileVar2 = File.createTempFile("fstmerge_var2_", "", tmpDir)
+		fileVar1.append(splitNodeBody[0])
+		fileBase.append(splitNodeBody[1])
+		fileVar2.append(splitNodeBody[2])
+		File[] result = [fileVar1, fileBase, fileVar2]
+		return result
+	}
+	private void setDiffSpacing(){
+		String [] splitNodeBody = this.splitNodeBody().clone()
+		String [] nodeBodyWithoutSpacing = this.removeInvisibleChars(splitNodeBody)
+		if(nodeBodyWithoutSpacing[0].equals(nodeBodyWithoutSpacing[1]) || 
+			nodeBodyWithoutSpacing[2].equals(nodeBodyWithoutSpacing[1])){
+			this.diffSpacing = true
+		}else{
+			this.diffSpacing = false
+		}
+	}
+	
+	private String[] splitNodeBody(){
+		String [] splitBody = ['', '', '']
+		String[] tokens = this.node.getBody().split(FSTGenMerger.MERGE_SEPARATOR)
+		splitBody[0] = tokens[0].replace(FSTGenMerger.SEMANTIC_MERGE_MARKER, "").trim()
+		splitBody[1] = tokens[1].trim()
+		splitBody[2] = tokens[2].trim()
+		
+		return splitBody
+	}
+	
+	public String[] removeInvisibleChars(String[] input){
+		input[0] = input[0].replaceAll("\\s+","")
+		input[1] = input[1].replaceAll("\\s+","")
+		input[2] = input[2].replaceAll("\\s+","")
+		return input;
 	}
 	
 	public void setSignature(){
@@ -266,7 +334,23 @@ class MethodEditedByBothRevs {
 		}
 		return result
 	}
-
+	
+	private String[] linesToString(){
+		String left = '['
+		String right = '['
+		for(Integer i : this.leftLines){
+			left = left + i + ','
+		}
+		for(Integer x : this.rightLines){
+			right = right + x + ','
+		}
+		left = left + ']'
+		right = right + ']'
+		String[] result = [left,right]
+		
+		return result
+	}
+	
 	public void setSeparatorStrings(){
 		this.START_SEPARATOR = '// START ' + this.node.getName() + '//'
 		this.END_SEPARATOR = '// END ' + this.node.getName() + '//'

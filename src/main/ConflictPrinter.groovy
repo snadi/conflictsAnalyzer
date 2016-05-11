@@ -7,7 +7,7 @@ public class ConflictPrinter {
 
 	static String conflictReportHeader 
 	
-	public static setconflictReportHeader(){
+	public static void setconflictReportHeader(){
 		this.conflictReportHeader = ''
 		String noPattern = SSMergeConflicts.NOPATTERN.toString()
 		for(SSMergeConflicts c : SSMergeConflicts.values()){
@@ -26,13 +26,38 @@ public class ConflictPrinter {
 			String diffSpacing = cause + 'DS'
 			this.conflictReportHeader = this.conflictReportHeader + cause + ', ' + diffSpacing + ', '
 		}
-		this.conflictReportHeader = this.conflictReportHeader + 'PossibleRenamings'
+		this.conflictReportHeader = this.conflictReportHeader + 'PossibleRenamings, EditSameMCWithoutConflicts, EditSameMCWithoutConflictsDS'
 	}
 	
 	public static String getConflictReportHeader(){
 		return this.conflictReportHeader
 	}
-
+	
+	public static void printMergeScenariosBuildResult(String mergeScenario, boolean[] buildResults){
+		String fileName = 'mergeScenariosBuild.csv'
+		def out = new File(fileName)
+		String row = ''
+		if(!out.exists()){
+			row = 'Merge_Scenario,BuildWasSuccessful,TestsFailed\n'
+			out.append(row)
+		}
+		
+		row = mergeScenario + ','
+		
+		if(buildResults[0]){
+			row = row + '1,'
+		}else{
+			row = row + '0,'
+		}
+		
+		if(buildResults[1]){
+			row = row + '1\n'
+		}else{
+			row = row + '0\n'
+		}
+		out.append(row)
+	}
+	
 	public static void printProjectData(Project p){
 		String fileName = 'projectsPatternData.csv'
 		def out = new File(fileName)
@@ -79,6 +104,9 @@ public class ConflictPrinter {
 
 		printMergeScenarioMetrics(mergeScenario, projectName)
 		printConflictsReport(mergeScenario, projectName)
+		if(!mergeScenario.filesWithMethodsToJoana.isEmpty()){
+			printEditSameMCWithoutConflicts(mergeScenario, projectName)
+		}
 	}
 
 	public static void printMergeScenarioMetrics(MergeScenario mergeScenario, String projectName){
@@ -96,7 +124,29 @@ public class ConflictPrinter {
 
 
 	}
-
+	
+	public static void printEditSameMCWithoutConflicts(MergeScenario mergeScenario, String projectName){
+		File out = new File("ResultData" + File.separator + projectName + File.separator + 'EditSameMCWithoutConflicts.csv')
+		
+		def delimiter = '========================================================='
+		out.append(delimiter + '\n')
+		out.append('Revision: ' + mergeScenario.path + '\n')
+		for(Map.Entry <String, ArrayList<MethodEditedByBothRevs>> entry : mergeScenario.filesWithMethodsToJoana.entrySet()){
+			out.append('File: ' + entry.key + '\n')
+			for(MethodEditedByBothRevs m : entry.value){
+				String[] lines = m.linesToString()
+				out.append('Method signature: ' + m.node.getName() + '\n')
+				out.append('Left editions: ' + lines[0] + '\n')
+				out.append('Right editions: ' + lines[1] + '\n')
+				out.append('Different Spacing: ' + m.diffSpacing + '\n')
+				out.append('Merged body:\n' + m.node.getBody() + '\n')
+			}
+		}
+		out.append(delimiter)
+	}
+	
+	
+	
 	public static void printConflictsReport(MergeScenario mergeScenario, String projectName){
 
 		def out = new File("ResultData" + File.separator + projectName + File.separator + 'ConflictsReport.csv')
@@ -131,7 +181,11 @@ public class ConflictPrinter {
 		out.append '\n'
 		out.append(delimiter)
 	}
-
+	
+	public static String auxPrintEditSameMCWithoutConflicts(int leftOrRight){
+		
+	}
+	
 	public static void main (String[] args){
 		ConflictPrinter.setconflictReportHeader()
 		println ConflictPrinter.getConflictReportHeader()

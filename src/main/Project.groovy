@@ -26,7 +26,11 @@ class Project {
 	
 	private int possibleRenamings;
 	
-	private List<ProjectPeriod> periods;
+	private List<ProjectPeriod> periods
+	
+	private int editSameMCWithoutConflicts
+	
+	private int editSameMCWithoutConflictsDS
 	
 	public Project(String projectName, List<ProjectPeriod> periods = null){
 		this.mergeScenarios = new ArrayList<MergeScenario>()
@@ -36,6 +40,8 @@ class Project {
 		this.createSameSignatureCMSummary()
 		this.createProjectDir()
 		this.periods = periods
+		this.editSameMCWithoutConflicts = 0
+		this.editSameMCWithoutConflictsDS = 0
 	}
 	
 	
@@ -94,9 +100,9 @@ class Project {
 			MergeScenario ms = new MergeScenario(revisionFile, resultGitMerge)
 			this.mergeScenarios.add(ms)
 			ms.analyzeConflicts()
-			SSMergeResult result = new SSMergeResult(ms.hasConflictsThatWereNotSolved(), ms.getFilesWithMethodsToJoana())
+			SSMergeResult result = new SSMergeResult(ms.name, ms.hasConflictsThatWereNotSolved(), ms.getFilesWithMethodsToJoana())
 			updateAndPrintSummary(ms)
-			//ms.deleteMSDir()
+			ms.deleteMSDir()
 			
 			return result
 	}
@@ -108,14 +114,22 @@ class Project {
 
 	private void updateAndPrintSummary(MergeScenario ms){
 		updateConflictingRate(ms)
+		this.updateEditSameMCWithoutConflicts(ms)
 		if(ms.hasConflicts){
 			updateProjectSummary(ms)
 			updateSameSignatureCMSummary(ms)
 		}
 		printResults(ms)
 	}
-
-	private updateConflictingRate(MergeScenario ms) {
+	
+	private void updateEditSameMCWithoutConflicts(MergeScenario ms){
+		
+		this.editSameMCWithoutConflicts = this.editSameMCWithoutConflicts + ms.editSameMCWithoutConflicts
+		this.editSameMCWithoutConflictsDS = this.editSameMCWithoutConflictsDS + ms.editSameMCWithoutConflictsDS
+		
+	}
+	
+	private void updateConflictingRate(MergeScenario ms) {
 		this.analyzedMergeScenarios++
 		if(ms.hasConflicts){
 			this.conflictingMergeScenarios++
@@ -172,7 +186,8 @@ class Project {
 		this.conflictingMergeScenarios + ', ' + 
 		ConflictSummary.printConflictsSummary(this.projectSummary) + ', ' +
 		ConflictSummary.printSameSignatureCMSummary(this.sameSignatureCMSummary) + ', ' +
-		this.possibleRenamings
+		this.possibleRenamings + ', ' + this.editSameMCWithoutConflicts + ', ' +
+		this.editSameMCWithoutConflictsDS
 
 		return result
 	}	

@@ -49,7 +49,7 @@ class CompareFiles {
 		//delete non java files
 		this.removeNonJavaFiles();
 
-		//move files that remained the same or only one version differs
+		
 		String baseFolder = this.revDir + File.separator + this.baseRevName
 		moveFilesOnSingleVersion(baseFolder.replaceFirst(baseRevName, leftRevName),this.leftRevName, this.rightRevName, this.baseRevName)
 		moveFilesOnSingleVersion(baseFolder.replaceFirst(baseRevName, rightRevName),this.rightRevName, this.leftRevName, this.baseRevName)
@@ -110,6 +110,7 @@ class CompareFiles {
 		File right = new File(rightFile)
 
 		if(left.exists() && base.exists() && right.exists()){
+			
 			this.compareFiles(left, base, right)
 		}
 
@@ -119,7 +120,13 @@ class CompareFiles {
 
 		boolean leftEqualsBase = FileUtils.contentEquals(left, base)
 		boolean rightEqualsBase = FileUtils.contentEquals(right, base)
-
+		
+		//use the code bellow to remove only equal files
+		/*if(leftEqualsBase && rightEqualsBase){
+			this.moveAndDeleteFiles(this.baseRevName, base, left, right)
+		}*/
+		
+		//use the code below to merge only files that differ in the three revisions
 		if(leftEqualsBase && rightEqualsBase){
 			this.filesThatRemainedTheSame = this.filesThatRemainedTheSame + 1
 			this.moveAndDeleteFiles(this.baseRevName, base, left, right)
