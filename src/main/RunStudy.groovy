@@ -26,17 +26,32 @@ class RunStudy {
 		def projectsList = new File(args[0])
 		this.createResultDir()
 		updateGitMinerConfig(args[1])
+		def projectsDatesFolder = args[2]
 		
 		//for each project
 		projectsList.eachLine {
-			//run gitminer
+			//set project name
 			setProjectNameAndRepo(it)
-			//attention, if you have already download gitminer base you can comment the line below and use the second line below
-			String graphBase = runGitMiner()
-			//String graphBase = this.gitminerLocation + File.separator + this.projectName + 'graph.db'
 			
-			//get list of merge commits
-			ArrayList<MergeCommit> listMergeCommits = runGremlinQuery(graphBase)
+			/*1run gitminer*/ //String graphBase = runGitMiner()
+			/*2 use bases from gitminer*/ 
+			//String graphBase = this.gitminerLocation + File.separator + this.projectName + 'graph.db'
+			//ArrayList<MergeCommit> listMergeCommits = runGremlinQuery(graphBase)
+			/*3 read mergeCommits.csv sheets*/ 
+			String graphBase = this.gitminerLocation + File.separator + this.projectName + 'graph.db'
+			ArrayList<MergeCommit> listMergeCommits = this.readMergeCommitsSheets(projectsDatesFolder)
+			
+			//set listMergeCommits with commits that i want to analyze separately
+			/*MergeCommit mc = new MergeCommit()
+			mc.setSha('02e79d6b153d1356bc0323084846be12980a810e')
+			mc.setParent1('1ebc8a2a72528eb6988fca749dfd256df712eb08')
+			mc.setParent2('197878ae7573da108f07abcea8771934ecc45d42')
+			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy")
+			Date d = sdf.parse("22/10/2014")
+			mc.setDate(d)
+			ArrayList<MergeCommit> listMergeCommits = new ArrayList<MergeCommit>()
+			listMergeCommits.add(mc)*/
+
 			
 			//create project and extractor
 			Extractor extractor = this.createExtractor(this.projectName, graphBase)
@@ -51,7 +66,32 @@ class RunStudy {
 		}
 
 	}
+	
+	private ArrayList<MergeCommit> readMergeCommitsSheets(String resultDataFolder){
+		ArrayList<MergeCommit> result = new ArrayList<MergeCommit>()
+		String filePath = resultDataFolder + File.separator + this.projectName + File.separator + 'mergeCommits.csv'
+		File mergeCommitsFile = new File(filePath)
+		if(mergeCommitsFile.exists()){
+			mergeCommitsFile.eachLine {
+				if(!it.startsWith('Merge')){
+					MergeCommit mc = this.readMergeCommit(it.trim())
+					result.add(mc)
+				}
+			}
+		}
 
+		return result
+	}
+	
+	private MergeCommit readMergeCommit(String mc){
+		MergeCommit result = new MergeCommit()
+		String [] tokens = mc.split(',')
+		result.sha = tokens[0].trim()
+		result.parent1 = tokens[1].trim()
+		result.parent2 = tokens[2].trim()
+		return result
+	}
+	
 	private void analyseMergeScenarios(ArrayList listMergeCommits, Extractor extractor, 
 		Project project) {
 		
@@ -209,7 +249,7 @@ class RunStudy {
 	
 	public static void main (String[] args){
 		RunStudy study = new RunStudy()
-		String[] files= ['projectsList', 'configuration.properties']
+		String[] files= ['projectsList', 'configuration.properties', 'mergeCommits']
 		study.run(files)
 		
 		

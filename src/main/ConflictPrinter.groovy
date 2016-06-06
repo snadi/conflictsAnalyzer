@@ -2,6 +2,7 @@ package main
 
 
 import java.util.ArrayList;
+import modification.traversalLanguageParser.addressManagement.DuplicateFreeLinkedList
 
 public class ConflictPrinter {
 
@@ -76,11 +77,19 @@ public class ConflictPrinter {
 			out.append(fileHeader)
 		}
 		out.append(mergeScenario.toString() + '\n')
-
+		printBadParsedNodes(mergeScenario, projectName)
 		printMergeScenarioMetrics(mergeScenario, projectName)
 		printConflictsReport(mergeScenario, projectName)
 	}
-
+	
+	public static void printBadParsedNodes(MergeScenario mergeScenario, String projectName){
+		File out = new File("ResultData" + File.separator + projectName + File.separator + 
+			'Merge_Scenarios' + File.separator + mergeScenario.name + '_BadParsedFiles.csv')
+		DuplicateFreeLinkedList<File> parsedErrors = mergeScenario.fstGenMerge.parsedErrors
+		for(File f : parsedErrors){
+			out.append(f.getAbsolutePath() + '\n')
+		}
+	}
 	public static void printMergeScenarioMetrics(MergeScenario mergeScenario, String projectName){
 		File out = new File('ResultData' + File.separator + projectName + File.separator +
 				'Merge_Scenarios' + File.separator + mergeScenario.name + '.csv')
