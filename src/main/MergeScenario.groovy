@@ -159,7 +159,7 @@ class MergeScenario implements Observer {
 		for(File f : parsedErrors){
 			String classname = this.getClassName(node)
 			String fileName = f.name
-			if(fileName.contains(classname)){
+			if(fileName.contains(classname) || classname.equals('')){
 				isABadParsedNode = true
 			}
 		}
@@ -168,11 +168,17 @@ class MergeScenario implements Observer {
 	}
 	
 	private String getClassName(FSTNode node){
-		String type = node.getType()
-		if(type.equals('ClassDeclaration')){
-			return node.getName()
+		String name = ''
+		if(node!=null){
+			String type = node.getType()
+			if(type.equals('ClassDeclaration')){
+				name = node.getName()
+				return name
+			}else{
+				this.getClassName(node.getParent())
+			}
 		}else{
-			this.getClassName(node.getParent())
+			return name
 		}
 	}
 	

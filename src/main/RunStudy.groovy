@@ -249,7 +249,7 @@ class RunStudy {
 	
 	public static void main (String[] args){
 		RunStudy study = new RunStudy()
-		String[] files= ['projectsList', 'configuration.properties', 'mergeCommits']
+		String[] files= ['projectsList', 'configuration.properties', '/Users/paolaaccioly/Dropbox/experiment/ResultData']
 		study.run(files)
 		
 		
