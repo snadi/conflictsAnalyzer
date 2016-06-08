@@ -38,7 +38,13 @@ class NormalizationStudy {
 	
 	public static void main (String[] args){
 		NormalizationStudy normalization = new NormalizationStudy()
-		
-		normalization.normalizeData('projectsList.txt', 'ResultData', '/home/local/CIN/gjcc/fse/gitminer', '/home/local/CIN/gjcc/fse/downloads')
+		/*parameters:
+		 * - list of projects to analyze
+		 * - RunStudy results folder
+		 * - gitminer folder
+		 * - downloads folder*/
+		normalization.normalizeData('projectsList', 'ResultData', 
+			'/Users/paolaaccioly/Documents/Doutorado/workspace_empirical/gitminer', 
+			'/Users/paolaaccioly/Documents/Doutorado/workspace_empirical/downloads')
 	} 
 }
