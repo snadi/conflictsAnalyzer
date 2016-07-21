@@ -62,7 +62,7 @@ class ComputeNormTable {
 		row.remove(0)
 		ArrayList<Integer> values = new ArrayList<Integer>()
 		for(String value in row){
-			values.add(Integer.parseInt(value))
+			values.add(Integer.parseInt(value.trim()))
 		}
 		result.put("ModifierList", values[2])
 		result.put("ImplementList", values[10])
@@ -228,8 +228,8 @@ class ComputeNormTable {
 
 	public static void main(String[] args){
 		ComputeNormTable c = new ComputeNormTable()
-		c.computeTable("/Users/paolaaccioly/Documents/Doutorado/workspace_fse/conflictsAnalyzer/projectsChanges.csv",
-				"/Users/paolaaccioly/Documents/Doutorado/workspace_fse/conflictsAnalyzer/projectsPatternData.csv")
+		c.computeTable("/Users/paolaaccioly/Documents/Doutorado/workspace_empirical/conflictsAnalyzer/projectsChanges.csv",
+				"/Users/paolaaccioly/Documents/testeConflictsAnalyzer/conflictsAnalyzer/projectsPatternData.csv")
 	
 	}
 

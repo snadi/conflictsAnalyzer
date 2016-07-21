@@ -1,5 +1,6 @@
 package util
 
+import main.ConflictPrinter;
 import main.SSMergeConflicts
 
 class CSVAnalyzer {
@@ -51,10 +52,11 @@ class CSVAnalyzer {
 	}
 
 	public static int countMergeScenarioWithRealConflicts(String projectName){
-
 		int result = 0
-		String mergeScenarioFile = 'ResultData' + File.separator + projectName + File.separator +
-		'MergeScenariosReport.csv'
+		String mergeScenarioFile = '/Users/paolaaccioly/Desktop/ResultData' + File.separator + projectName + File.separator +
+				'MergeScenariosReport.csv'
+		/*'ResultData' + File.separator + projectName + File.separator +
+				'MergeScenariosReport.csv'*/
 		String msFile = new File(mergeScenarioFile).text
 		String [] lines = msFile.split('\n')
 		for(int i = 1; i< lines.length;  i++){
@@ -69,17 +71,17 @@ class CSVAnalyzer {
 
 	public static boolean hasRealConflicts(String line){
 		boolean hasRealConflicts = false
-		String[] data = line.split(', ')
+		String[] data = line.split(',')
 		int i = 7
 		for(SSMergeConflicts c : SSMergeConflicts.values()){
 			if(!c.toString().equals(SSMergeConflicts.NOPATTERN.toString())){
-				int total = Integer.parseInt(data[i])
+				int total = Integer.parseInt(data[i].trim())
 				i++
-				int ds = Integer.parseInt(data[i])
+				int ds = Integer.parseInt(data[i].trim())
 				i++
-				int cl = Integer.parseInt(data[i])
+				int cl = Integer.parseInt(data[i].trim())
 				i++
-				int ifp = Integer.parseInt(data[i])
+				int ifp = Integer.parseInt(data[i].trim())
 				int realConflicts = total - ds - cl + ifp
 				if(realConflicts > 0){
 					hasRealConflicts = true
@@ -101,7 +103,7 @@ class CSVAnalyzer {
 		out = new File('filesMetrics.csv')
 		String line = 'Project,Total_files,Files_merged,Files_with_conflicts\n'
 		out.append(line)
-		
+
 		file.eachLine {
 			String[] data = it.split(",")
 			String projectName = data[0]
@@ -115,16 +117,16 @@ class CSVAnalyzer {
 
 	public static String computeFileMetrics(String projectName){
 		File out = new File('moreThan10.csv')
-		
+
 		if(!out.exists()){
 			out.append('Project,MergedFiles,FilesWithConflict\n')
 		}
-		
+
 		String result = ''
 		int totalFiles, mergedFiles, filesWithConflicts
 		int[] wasMoreThan90 = [0,0]
 		String mergeScenarioFile = 'ResultData' + File.separator + projectName + File.separator +
-		'MergeScenariosReport.csv'
+				'MergeScenariosReport.csv'
 		String msFile = new File(mergeScenarioFile).text
 		String [] lines = msFile.split('\n')
 		for(int i = 1; i< lines.length;  i++){
@@ -133,39 +135,68 @@ class CSVAnalyzer {
 			mergedFiles = mergedFiles + Integer.parseInt(data[5])
 			filesWithConflicts = filesWithConflicts + Integer.parseInt(data[6])
 			int[] r = this.checkPercentagePerMC(totalFiles, mergedFiles,filesWithConflicts)
-			 wasMoreThan90[0] =  wasMoreThan90[0] + r[0]
-			 wasMoreThan90[1] =  wasMoreThan90[1] + r[1]
-		}	
-			String a = projectName + ',' + wasMoreThan90[0] +',' + wasMoreThan90[1]
-			out.append(a + '\n')
-			result = projectName + ',' +totalFiles + ',' + mergedFiles + ',' + filesWithConflicts
-			return result
+			wasMoreThan90[0] =  wasMoreThan90[0] + r[0]
+			wasMoreThan90[1] =  wasMoreThan90[1] + r[1]
 		}
-
-		public static int[] checkPercentagePerMC(int totalFiles, int mergedFiles,int filesWithConflicts){
-			int[] result = [0,0]
-			int percentageMF = 0
-			int percentageFWC =0
-			if(totalFiles != 0){
-				 percentageMF = (mergedFiles/totalFiles)*100
-				 percentageFWC = (filesWithConflicts/totalFiles)*100
-			}
-			
-			if(percentageMF >=10){
-				result[0] = 1
-			}
-			if(percentageFWC>=10){
-				result[1] = 1
-			}
-			
-			return result
-		}
-		public static void main(String[] args){
-			CSVAnalyzer.writeRealConflictsCSV()
-			//CSVAnalyzer.writeFileMetricsCSV()
-		}
-
-
-
-
+		String a = projectName + ',' + wasMoreThan90[0] +',' + wasMoreThan90[1]
+		out.append(a + '\n')
+		result = projectName + ',' +totalFiles + ',' + mergedFiles + ',' + filesWithConflicts
+		return result
 	}
+
+	public static int[] checkPercentagePerMC(int totalFiles, int mergedFiles,int filesWithConflicts){
+		int[] result = [0,0]
+		int percentageMF = 0
+		int percentageFWC =0
+		if(totalFiles != 0){
+			percentageMF = (mergedFiles/totalFiles)*100
+			percentageFWC = (filesWithConflicts/totalFiles)*100
+		}
+
+		if(percentageMF >=10){
+			result[0] = 1
+		}
+		if(percentageFWC>=10){
+			result[1] = 1
+		}
+
+		return result
+	}
+
+	public static void writeProjectPatternsData(String analyzedprojectsList, String resultDataFolder){
+		File analyzedProjects = new File(analyzedprojectsList)
+		File finalFile = new File('projectsPatternData.csv')
+		ConflictPrinter.setconflictReportHeader()
+		String header = 'Project, Merge_Scenarios, Conflicting_Scenarios, ' +
+				ConflictPrinter.getConflictReportHeader()
+		finalFile.delete()
+		finalFile.append(header + '\n')
+		analyzedProjects.eachLine{
+			String projectRepo = it
+			String projectName = CSVAnalyzer.getProjectName(projectRepo)
+			println projectRepo
+			String projectReportPath = resultDataFolder + File.separator + projectName + File.separator +
+					'ProjectReport.csv'
+			File projectReport = new File(projectReportPath)
+			String projectResult = projectReport.readLines().get(1)
+			finalFile.append(projectResult + '\n')
+		}
+	}
+	
+	public static String getProjectName(String projectRepo){
+		String[] projectData = projectRepo.split('/')
+		String result = projectData[1].trim()
+		return result
+	} 
+	
+	public static void main(String[] args){
+		CSVAnalyzer.writeRealConflictsCSV()
+		//CSVAnalyzer.writeFileMetricsCSV()
+		/*CSVAnalyzer.writeProjectPatternsData('/Users/paolaaccioly/Documents/Doutorado/workspace_empirical/rodados',
+				'/Users/paolaaccioly/Documents/Doutorado/workspace_empirical/ResultData')*/
+	}
+
+
+
+
+}

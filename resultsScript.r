@@ -232,12 +232,25 @@ deleteAllFiles <- function(exportPath) {
 
 }
 
+updateColumn <- function(row1, row2) {
+  result <- c()
+  nrows <- length(row1)
+  
+  for(i in 1:nrows){
+    sum = row1[i] + row2[i]
+    result <- append(result, sum)
+  }
+  
+  return (result)
+}
+
 main<-function(){
 importPath = "/Users/paolaaccioly/Documents/testeConflictsAnalyzer/conflictsAnalyzer/"
-exportPath = "/Users/paolaaccioly/Documents/testeConflictsAnalyzer/testgraphs/"
+exportPath = "/Users/paolaaccioly/Dropbox/Public/conflictpattern/"
 
 conflictRateFile="projectsPatternData.csv"
 realConflictRateFile = "realConflictRate.csv"
+conflictRateNonJavaFiles = "ConflictingScenarios.csv"
 
 
 #HTML file
@@ -245,6 +258,43 @@ htmlFile = paste(exportPath, "conflictResults.html", sep="")
 
 #delete previous files
 deleteAllFiles(exportPath)
+
+#read conflictRateNonJava table
+conflictRateNonJava = read.table(file=paste(importPath, conflictRateNonJavaFiles, sep=""), header=T, sep=",")
+sumNonJavaJava <- updateColumn(conflictRateNonJava$MCNonJavaMinusMCJava, conflictRateNonJava$MCJava)
+sumNonJavaJavaWFP <- updateColumn(conflictRateNonJava$MCNonJavaMinusMCJavaWFP, conflictRateNonJava$MCJavaWFP)
+a <- data.frame(conflictRateNonJava$ProjectName, conflictRateNonJava$TotalMC, sumNonJavaJava, sumNonJavaJavaWFP)
+colnames(a) <- c("Project", "Merge_Scenarios", "Conflicting_Scenarios", "Conflicting_Scenarios_WFP")
+sumMerge <- sum(a$Merge_Scenarios)
+sumConflict <- sum(a$Conflicting_Scenarios)
+sumConflictWFP <- sum (a$Conflicting_Scenarios_WFP)
+geral <-data.frame(Project="TOTAL", Merge_Scenarios=sumMerge, 
+                   Conflicting_Scenarios=sumConflict, Conflicting_Scenarios_WFP=sumConflictWFP)
+cRNonJavaTable <- rbind(a, geral)
+cRNonJavaTable["Conflict_Rate"] <- (cRNonJavaTable$Conflicting_Scenarios/cRNonJavaTable$Merge_Scenarios)*100
+cRNonJavaTable["Conflict_Rate_WFP"] <- (cRNonJavaTable$Conflicting_Scenarios_WFP/cRNonJavaTable$Merge_Scenarios)*100
+attach(cRNonJavaTable)
+
+#tables
+tableNonJava <- head(cRNonJavaTable, -1)
+MeanNonJava <- mean(tableNonJava$Conflict_Rate)
+Standard.deviationNonJava <- sd(tableNonJava$Conflict_Rate)
+metricsNonJava <- data.frame(MeanNonJava, Standard.deviationNonJava)
+
+
+MeanNonJavaWFP <- mean(tableNonJava$Conflict_Rate_WFP)
+Standard.deviationNonJavaWFP <- sd(tableNonJava$Conflict_Rate_WFP)
+metricsNonJavaWFP <- data.frame(MeanNonJavaWFP, Standard.deviationNonJavaWFP)
+
+library(beanplot)
+
+#beanplots nonJava e nonJavaWFP
+dataConflictNonJava <-data.frame(tableNonJava$Conflict_Rate, tableNonJava$Conflict_Rate_WFP)
+colnames(dataConflictNonJava) <- c("Conflict_Rate", "Conflict_Rate_WFP")
+beanPlotCRNonJavaFileName = paste("beanPlotCRNonJava.png")
+png(paste(exportPath, beanPlotCRNonJavaFileName, sep=""))
+beanplot(dataConflictNonJava,  ylab="Conflicting Scenarios %",col="green", cex=1.5,  bw="nrd0")
+dev.off()
 
 #read and edit conflict rate table
 conflictRateTemp = read.table(file=paste(importPath, conflictRateFile, sep=""), header=T, sep=",")
@@ -286,7 +336,7 @@ Standard.deviation <- sd(realNewTable$Conflict.Rate)
 realMetrics <- data.frame(Mean, Standard.deviation)
 
 #beanplot conflicting rate
-library(beanplot)
+
 
 #boxplot conflicting rate with and without false positives
 boxplotCRFileName = paste("BoxplotCR.png")
@@ -343,7 +393,7 @@ library(ggplot2)
 fstMerge <- ggplot(dat, aes(y = Frequency)) +
   geom_bar(aes(x = Conflicts),stat = "identity",fill="green", colour="black") +
   geom_text(aes(x = Conflicts, label = sprintf("%.2f%%", Frequency/sum(Frequency) * 100)), hjust = -.1) + coord_flip() +
-  theme_grey(base_size = 10) + labs(x=NULL, y=NULL)  + ylim(c(0,26000)) + ggtitle("FSTMerge")
+  theme_grey(base_size = 10) + labs(x=NULL, y=NULL)  + ylim(c(0,22000)) + ggtitle("FSTMerge")
 
 #conflicts table
 Conflicts_Patterns <- c("DefaultValueAnnotation", "ImplementList", "ModifierList", "EditSameMC", 
@@ -448,7 +498,7 @@ dat2$Conflicts <- reorder(dat2$Conflicts, dat2$Frequency)
 fstMergeWFP <- ggplot(dat2, aes(y = Frequency)) +
   geom_bar(aes(x = Conflicts),stat = "identity", fill="green", colour="black") +
   geom_text(aes(x = Conflicts, label = sprintf("%.2f%%", Frequency/sum(Frequency) * 100)), hjust = -.1) +
-  coord_flip() + theme_grey(base_size = 10) + labs(x=NULL, y=NULL) + ylim(c(0,26000)) + 
+  coord_flip() + theme_grey(base_size = 10) + labs(x=NULL, y=NULL) + ylim(c(0,22000)) + 
   ggtitle("FSTMerge without spacing and consecutive lines conflicts")
 
 p3 <- multiplot(fstMerge,fstMergeWFP)
@@ -585,19 +635,28 @@ title = paste("<hr><h1>Results for Conflicting Scenarios Rate and Conflict Patte
 HTML("<link rel=stylesheet type=text/css href=R2HTML.css>", file=htmlFile, append=TRUE)
 HTML.title(title, file=htmlFile, append=TRUE)
 
-HTML("<hr><h2>Conflicting Scenarios Rate</h2>", file=htmlFile, append=TRUE)
+HTML("<hr><h2>Conflicting Scenarios Rate With and Without Spacing and Consecutive Lines Edition Conflicts</h2>", file=htmlFile, append=TRUE)
+HTML(cRNonJavaTable, file=htmlFile, append=TRUE)
+HTML(metricsNonJava, file=htmlFile, append=TRUE)
+HTML(metricsNonJavaWFP, file=htmlFile, append=TRUE)
+
+HTML("<hr><h2>Conflicting Scenarios Rate Beanplot and Boxplot with and without spacing and consecutive lines conflicts</h2>", file=htmlFile, 
+     append=TRUE)
+HTMLInsertGraph(file=htmlFile, GraphFileName=beanPlotCRNonJavaFileName, Align="center", append=TRUE)
+
+HTML("<hr><h2>Conflicting Scenarios Rate - Just Java Files</h2>", file=htmlFile, append=TRUE)
 HTML(conflictRate, file=htmlFile, append=TRUE)
 HTML(metrics, file=htmlFile, append=TRUE)
-HTML("<hr><h2>Conflicting Scenarios Rate Without Spacing and Consecutive Lines Conflicts</h2>", file=htmlFile, append=TRUE)
+HTML("<hr><h2>Conflicting Scenarios Rate Without Spacing and Consecutive Lines Conflicts - Just Java Files</h2>", file=htmlFile, append=TRUE)
 HTML(realconflictRate, file=htmlFile, append=TRUE)
 HTML(realMetrics, file=htmlFile, append=TRUE)
 
-HTML("<hr><h2>Conflicting Scenarios Rate Beanplot and Boxplot with and without spacing and consecutive lines conflicts</h2>", file=htmlFile, 
+HTML("<hr><h2>Conflicting Scenarios Rate Beanplot and Boxplot with and without spacing and consecutive lines conflicts - Just Java Files</h2>", file=htmlFile, 
      append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=realbeanplotCRFileName, Align="center", append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=boxplotCRFileName, Align="center", append=TRUE)
 
-HTML("<hr><h2>Difference of Conflicting Scenarios Rates with and without spacing and consecutive lines conflicts</h2>", file=htmlFile, append=TRUE)
+HTML("<hr><h2>Difference of Conflicting Scenarios Rates with and without spacing and consecutive lines conflicts - Just Java Files</h2>", file=htmlFile, append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=boxplotDiffCR, Align="center", append=TRUE)
 HTMLInsertGraph(file=htmlFile, GraphFileName=beanplotDiffCR, Align="center", append=TRUE)
 HTML(diffConflictRatesTable, file=htmlFile, append=TRUE)

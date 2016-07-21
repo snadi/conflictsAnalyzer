@@ -34,6 +34,7 @@ class RunStudy {
 			setProjectNameAndRepo(it)
 			
 			/*1run gitminer*/ //String graphBase = runGitMiner()
+			//ArrayList<MergeCommit> listMergeCommits = runGremlinQuery(graphBase)
 			/*2 use bases from gitminer*/ 
 			//String graphBase = this.gitminerLocation + File.separator + this.projectName + 'graph.db'
 			//ArrayList<MergeCommit> listMergeCommits = runGremlinQuery(graphBase)
@@ -249,7 +250,8 @@ class RunStudy {
 	
 	public static void main (String[] args){
 		RunStudy study = new RunStudy()
-		String[] files= ['projectsList', 'configuration.properties', '/Users/paolaaccioly/Dropbox/experiment/ResultData']
+		String[] files= ['projectsList', 'configuration.properties', '/Users/paolaaccioly/Dropbox/experiment/oldResultData']
+		//'/home/ines/Dropbox/experiment/oldResultData'
 		study.run(files)
 		
 		

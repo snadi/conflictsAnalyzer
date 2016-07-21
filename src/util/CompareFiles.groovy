@@ -71,7 +71,8 @@ class CompareFiles {
 		File base = new File(baseFile)
 		File right = new File(rightFile)
 
-		if(left.exists() && base.exists() && right.exists()){
+		if(left.exists() && base.exists() && right.exists() &&
+			left.isFile() && base.isFile() && right.isFile()){
 			this.compareFiles(left, base, right)
 		}
 

@@ -9,7 +9,7 @@ deleteAllFiles <- function(exportPath) {
 }
 
 main<-function(){
-    importPath = "/Users/paolaaccioly/Documents/Doutorado/workspace_fse/conflictsAnalyzer/"
+    importPath = "/Users/paolaaccioly/Documents/Doutorado/workspace_empirical/conflictsAnalyzer/"
     exportPath = "/Users/paolaaccioly/Dropbox/Public/normalization/"
     
     normalizationFile = "NormalizedData.csv"

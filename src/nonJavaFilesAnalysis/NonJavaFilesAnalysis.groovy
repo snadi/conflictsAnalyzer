@@ -1,5 +1,7 @@
 package nonJavaFilesAnalysis
 
+import java.nio.file.DirectoryIteratorException;
+
 import main.Extractor
 import main.ExtractorResult;
 import main.GremlinProject
@@ -11,12 +13,16 @@ class NonJavaFilesAnalysis {
 	String resultData
 	String downloads
 	String projectsList
+	String oldResultData
+	
 	
 
-	public NonJavaFilesAnalysis(String projectslist, String resultData, String downloads){
+	public NonJavaFilesAnalysis(String projectslist, String resultData, String downloads, 
+		String oldResultData){
 		this.projectsList = projectslist
 		this.resultData = resultData
 		this.downloads = downloads
+		this.oldResultData = oldResultData
 		
 	}
 
@@ -74,7 +80,7 @@ class NonJavaFilesAnalysis {
 
 	public ArrayList<MergeCommit> readMergeCommitsFile(String name){
 		ArrayList<MergeCommit> result = new ArrayList<MergeCommit>()
-		String filePath = this.resultData + File.separator + name + File.separator + 'mergeCommits.csv'
+		String filePath = this.oldResultData + File.separator + name + File.separator + 'mergeCommits.csv'
 		File mergeCommitsFile = new File(filePath)
 		if(mergeCommitsFile.exists()){
 			mergeCommitsFile.eachLine {
@@ -177,11 +183,37 @@ class NonJavaFilesAnalysis {
 		return result
 	}
 	
+	public void updateNonJavaFilesAnalysis(String resultNonJavaFiles){
+		File resultData = new File(this.resultData)
+		File[] fList = resultData.listFiles()
+		for(File file : fList){
+			if(file.isDirectory()){
+				String projectName = file.getName()
+				if(projectName.contains('gephi')){
+					println 'aqui'
+				}
+				File mergesWithConflicts = new File(resultNonJavaFiles + File.separator + projectName +
+					 File.separator + 'mergeWithNonJavaFilesConflicting.csv')
+				if(mergesWithConflicts.exists()){
+					ProjectSummary summary = this.loadProjectSummary(projectName)
+					mergesWithConflicts.eachLine {
+						summary.mergeCommitsConflictsNonJavaFiles.add(it)
+					}
+					this.printProjectSummaryFinal(summary)
+				}
+				
+			}
+			
+		}
+	}
+	
 	public static void main(String[] args){
-		NonJavaFilesAnalysis n = new NonJavaFilesAnalysis('projectsList', '/Users/paolaaccioly/Documents/testeConflictsAnalyzer/conflictsAnalyzer/ResultData',
-				'/Users/paolaaccioly/Desktop/Teste/downloads')
-		n.analyseNonJavaFiles()
-
+		/*NonJavaFilesAnalysis n = new NonJavaFilesAnalysis('projectsList', '/Users/paolaaccioly/Desktop/ResultData',
+				'/Users/paolaaccioly/Desktop/Teste/downloads')*/
+		NonJavaFilesAnalysis n = new NonJavaFilesAnalysis('projectsList', '/Users/paolaaccioly/Desktop/ResultData',
+			'downloads', '/Users/paolaaccioly/Dropbox/experiment/oldResultData')
+		//n.analyseNonJavaFiles()
+		n.updateNonJavaFilesAnalysis("/Users/paolaaccioly/Desktop/nonjava/ResultData")
 	}
 
 }
