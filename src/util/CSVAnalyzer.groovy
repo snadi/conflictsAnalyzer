@@ -53,7 +53,7 @@ class CSVAnalyzer {
 
 	public static int countMergeScenarioWithRealConflicts(String projectName){
 		int result = 0
-		String mergeScenarioFile = '/Users/paolaaccioly/Desktop/ResultData' + File.separator + projectName + File.separator +
+		String mergeScenarioFile = 'ResultData' + File.separator + projectName + File.separator +
 				'MergeScenariosReport.csv'
 		/*'ResultData' + File.separator + projectName + File.separator +
 				'MergeScenariosReport.csv'*/
