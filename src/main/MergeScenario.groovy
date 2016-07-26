@@ -91,8 +91,8 @@ class MergeScenario implements Observer {
 	public void analyzeConflicts(){
 
 		this.runSSMerge()
-		this.checkEditDiffMC()
 		this.assignLeftAndRight()
+		this.checkEditDiffMC()
 		//this.compareFiles.restoreFilesWeDontMerge()
 
 	}
@@ -108,19 +108,33 @@ class MergeScenario implements Observer {
 
 	public void checkEditDiffMC(){
 		
+		/*for each file with conflict predictors*/
 		for(String filePath : this.filesWithConflictPredictors.keySet()){
 			ArrayList<ConflictPredictor> predictors = this.filesWithConflictPredictors.get(filePath)
+			
+			/*this arraylist saves the list of editdiffmc without any call references on edited methods*/
 			ArrayList<ConflictPredictor> noReference = new ArrayList<ConflictPredictor>()
+			
+			/*for each conflict predictor on that file*/
 			for(ConflictPredictor predictor : predictors ){
-				if((predictor instanceof EditDiffMC) && (!predictor.diffSpacing)){
+				
+				/*if the predictor is an edited method*/
+				if(predictor instanceof EditDiffMC){
+					
+					/*searches in the conflict predictor list if any other edited method calls this method*/
 					boolean hasReference = predictor.lookForReferencesOnConflictPredictors(this.filesWithConflictPredictors)
+					
+					/*in case this method has no other reference on the other edited methods
+					 * adds this method on the noReference list*/
 					if(!hasReference){
 						//remove conflictPredictor 
 						noReference.add(predictor)
 					}
 				}
 			}
-			predictors.removeAll(noReference)
+			
+			/*Remove all edited methods without reference on any other edited method*/
+			//predictors.removeAll(noReference)
 		}
 		
 	}

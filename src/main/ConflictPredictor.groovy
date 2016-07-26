@@ -359,14 +359,6 @@ public abstract class ConflictPredictor {
 		return result
 	}
 	
-	/*this method checks for objects' reference equality*/
-	public boolean equals(ConflictPredictor b){
-		boolean equals = false
-		if(this == b){
-			equals = true;
-		}
-		return equals
-	}
 	
 	/*private boolean predictorsHaveSameType(ConflictPredictor a, ConflictPredictor b){
 		if(a instanceof EditSameMC && b instanceof)
