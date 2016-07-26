@@ -31,7 +31,14 @@ class RunStudy {
 		//read input files
 		def projectsList = new File(args[0])
 		updateGitMinerConfig(args[1])
-		def projectsDatesFolder = args[2]
+		String projectsDatesFolder = ''
+		//read project results (if available)
+		try{
+			projectsDatesFolder = args[2]
+		}catch(Exception e){
+			e.printStackTrace()
+		}
+		
 		List<String> lines = projectsList.readLines()
 		this.createResultDir()
 
@@ -47,15 +54,18 @@ class RunStudy {
 
 			
 
-			/*1run gitminer*/ //String graphBase = runGitMiner()
+			/*1run gitminer*/ 
+			//String graphBase = runGitMiner()
+			
 			/*2 use bases from gitminer*/ 
 			//String graphBase = this.gitminerLocation + File.separator + this.projectName + 'graph.db'
 			//ArrayList<MergeCommit> listMergeCommits = runGremlinQuery(graphBase)
+			
 			/*3 read mergeCommits.csv sheets*/ 
 			String graphBase = this.gitminerLocation + File.separator + this.projectName + 'graph.db'
 			ArrayList<MergeCommit> listMergeCommits = this.readMergeCommitsSheets(projectsDatesFolder)
 			
-			//set listMergeCommits with commits that i want to analyze separately
+			/*4 set listMergeCommits with commits that i want to analyze separately*/
 			/*MergeCommit mc = new MergeCommit()
 			mc.setSha('02e79d6b153d1356bc0323084846be12980a810e')
 			mc.setParent1('1ebc8a2a72528eb6988fca749dfd256df712eb08')
@@ -161,7 +171,7 @@ class RunStudy {
 	private void analyseMergeScenario(ArrayList listMergeCommits, Extractor extractor,
 			Project project) {
 		//if project execution breaks, update current with next merge scenario number
-		int current = 626;
+		int current = 0;
 		int end = listMergeCommits.size()
 
 		//List<ProjectPeriod> periods = project.getProjectPeriods()
@@ -198,7 +208,7 @@ class RunStudy {
 					println hasConflicts
 					/*if(!hasConflicts){*/
 						//get line of the files containing methods for joana analysis
-						Map<String, ArrayList<MethodEditedByBothRevs>> filesWithMethodsToJoana =
+						Map<String, ArrayList<EditSameMC>> filesWithMethodsToJoana =
 								ssMergeResult.getFilesWithMethodsToJoana()
 						/*if(filesWithMethodsToJoana.size() > 0)
 						{*/
@@ -280,7 +290,7 @@ class RunStudy {
 	private Map getJoanaMap(File emptyContributions,Map filesWithMethodsToJoana) {
 		Map<String, ModifiedMethod> methods = new HashMap<String, ModifiedMethod>()
 		for(String file : filesWithMethodsToJoana.keySet()) {
-			for(MethodEditedByBothRevs method : filesWithMethodsToJoana.get(file)){
+			for(EditSameMC method : filesWithMethodsToJoana.get(file)){
 				if(method.leftLines.size > 0 && method.rightLines.size > 0)
 				{
 					List<String> constArgs;
@@ -504,7 +514,7 @@ class RunStudy {
 		/*String[] files= ['projectsList', 'configuration.properties', 
 			'/home/ines/Dropbox/experiment/ResultData']*/
 		String[] files= ['projectsList', 'configuration.properties',
-			'/Users/paolaaccioly/Documents/testeConflictsAnalyzer/conflictsAnalyzer/ResultData']
+			'/Users/paolaaccioly/Dropbox/experiment/ResultData']
 		study.run(files)
 		//println study.build("/usr/local/bin/ant", "/Users/Roberto/Documents/UFPE/Msc/Projeto/projects/temp/voldemort", new File("/Users/Roberto/Documents/UFPE/Msc/Projeto/projects/temp/report.txt"))
 	}

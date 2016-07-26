@@ -1,16 +1,20 @@
 package main
 
 
+import java.io.File;
 import java.util.LinkedList
 import java.util.Map;
-import java.util.Observable;
+import java.util.Observable
+
 
 import merger.FSTGenMerger;
 import merger.MergeVisitor
+import modification.traversalLanguageParser.addressManagement.DuplicateFreeLinkedList;
 import sun.tools.jar.Main;
 import util.CompareFiles;
 import composer.rules.ImplementsListMerging
-import de.ovgu.cide.fstgen.ast.FSTNode;
+import de.ovgu.cide.fstgen.ast.FSTNode
+import de.ovgu.cide.fstgen.ast.FSTNonTerminal;
 import de.ovgu.cide.fstgen.ast.FSTTerminal;
 
 
@@ -37,16 +41,10 @@ class MergeScenario implements Observer {
 	private int filesAddedByOneDev
 
 	private boolean gitMergeHasNoConflicts
-	
-	private Map<String, ArrayList<MethodEditedByBothRevs>> filesWithMethodsToJoana
-	
-	private ArrayList<FSTTerminal> methodsEditedByLeft
-	
-	private ArrayList<FSTTerminal> methodsEditedByRight
-	
-	public int editSameMCWithoutConflicts
-	
-	public int editSameMCWithoutConflictsDS
+
+	private Map<String, ArrayList<ConflictPredictor>> filesWithConflictPredictors
+
+	private ConflictPredictorFactory predictorFactory
 
 	public MergeScenario(String path, boolean resultGitMerge){
 
@@ -58,9 +56,8 @@ class MergeScenario implements Observer {
 		this.createMergeScenarioSummary()
 		this.createSameSignatureCMSummary()
 		this.setMergedFiles()
-		this.filesWithMethodsToJoana = new HashMap<String, ArrayList<MethodEditedByBothRevs>>()
-		this.editSameMCWithoutConflicts = 0
-		this.editSameMCWithoutConflictsDS = 0
+		this.filesWithConflictPredictors = new HashMap<String, ArrayList<ConflictPredictor>>()
+		this.predictorFactory = new ConflictPredictorFactory()
 	}
 
 	public void createSameSignatureCMSummary(){
@@ -94,18 +91,38 @@ class MergeScenario implements Observer {
 	public void analyzeConflicts(){
 
 		this.runSSMerge()
+		this.checkEditDiffMC()
 		this.assignLeftAndRight()
 		//this.compareFiles.restoreFilesWeDontMerge()
-		
+
 	}
-	
+
 	public void assignLeftAndRight(){
-		for(String filePath : this.filesWithMethodsToJoana.keySet()){
-			ArrayList<MethodEditedByBothRevs> methods = this.filesWithMethodsToJoana.get(filePath)
-			for(MethodEditedByBothRevs method : methods ){
+		for(String filePath : this.filesWithConflictPredictors.keySet()){
+			ArrayList<ConflictPredictor> methods = this.filesWithConflictPredictors.get(filePath)
+			for(ConflictPredictor method : methods ){
 				method.assignLeftAndRight()
 			}
 		}
+	}
+
+	public void checkEditDiffMC(){
+		
+		for(String filePath : this.filesWithConflictPredictors.keySet()){
+			ArrayList<ConflictPredictor> predictors = this.filesWithConflictPredictors.get(filePath)
+			ArrayList<ConflictPredictor> noReference = new ArrayList<ConflictPredictor>()
+			for(ConflictPredictor predictor : predictors ){
+				if((predictor instanceof EditDiffMC) && (!predictor.diffSpacing)){
+					boolean hasReference = predictor.lookForReferencesOnConflictPredictors(this.filesWithConflictPredictors)
+					if(!hasReference){
+						//remove conflictPredictor 
+						noReference.add(predictor)
+					}
+				}
+			}
+			predictors.removeAll(noReference)
+		}
+		
 	}
 
 	public void deleteMSDir(){
@@ -167,50 +184,75 @@ class MergeScenario implements Observer {
 			FSTTerminal node = (FSTTerminal) arg
 
 			if(!node.getType().contains("-Content")){
-				
-				if(this.isMethodWithoutConflicts(node)){	
-					
-					this.createMethodToJoana(node)
-					
+
+				if(this.isAConflictPredictor(node)){
+
+					this.collectConflictPredictor(node)
+
 				}else{
-				
-				/*if(!this.hasConflicts){
-					this.hasConflicts = true
-					this.removeNonMCBaseNodes(fstGenMerge.baseNodes)
+
+					/*if(!this.hasConflicts){
+					 this.hasConflicts = true
+					 this.removeNonMCBaseNodes(fstGenMerge.baseNodes)
+					 }
+					 this.createConflict(node)*/
+
 				}
 
-				this.createConflict(node)*/
-				
-				}
-				
 
 			}
 		}
 	}
 
-	private void createMethodToJoana(FSTTerminal arg) {
-		MethodEditedByBothRevs method = new MethodEditedByBothRevs(arg, this.path)
-		String filePath = method.getFilePath()
-		ArrayList<MethodEditedByBothRevs> methods = this.filesWithMethodsToJoana.get(filePath)
-
-		if(methods == null){
-			methods = new ArrayList<MethodEditedByBothRevs>()
-
-		}
-
-		methods.add(method)
-		this.filesWithMethodsToJoana.put(filePath, methods)
-		this.editSameMCWithoutConflicts++
-		if(method.diffSpacing){
-			this.editSameMCWithoutConflictsDS++
+	private void collectConflictPredictor(FSTTerminal node){
+		if(!this.isABadParsedNode(node)){
+			identifyConflictPredictor(node, this.path)
 		}
 	}
 
-	public void createConflict(FSTTerminal node){
-		Conflict conflict = new Conflict(node, this.path);
-		this.matchConflictWithFile(conflict)
-		this.updateMergeScenarioSummary(conflict)
+	private boolean isABadParsedNode(FSTTerminal node){
+		boolean isABadParsedNode = false
+		DuplicateFreeLinkedList<File> parsedErrors = this.fstGenMerge.parsedErrors
+		for(File f : parsedErrors){
+			String classname = this.getClassName(node)
+			String fileName = f.name
+			if(fileName.contains(classname)){
+				isABadParsedNode = true
+			}
+		}
 
+		return isABadParsedNode
+	}
+
+	private String getClassName(FSTNode node){
+		String type = node.getType()
+		if(type.equals('ClassDeclaration')){
+			return node.getName()
+		}else{
+			this.getClassName(node.getParent())
+		}
+	}
+
+	private void identifyConflictPredictor(FSTTerminal arg, String mergeScenarioPath) {
+		ConflictPredictor predictor = this.predictorFactory.createConflictPredictor(arg, mergeScenarioPath)
+		String predictorFilePath = predictor.getFilePath()
+		ArrayList<ConflictPredictor> file = this.filesWithConflictPredictors.get(predictorFilePath)
+
+		if(file == null){
+			file = new ArrayList<ConflictPredictor>()
+
+		}
+
+		file.add(predictor)
+		this.filesWithConflictPredictors.put(predictorFilePath, file)
+	}
+
+	public void createConflict(FSTTerminal node){
+		if(!this.isABadParsedNode(node)){
+			Conflict conflict = new Conflict(node, this.path);
+			this.matchConflictWithFile(conflict)
+			this.updateMergeScenarioSummary(conflict)
+		}
 	}
 
 	private void updateSameSignatureCMSummary(String cause, int ds){
@@ -284,15 +326,14 @@ class MergeScenario implements Observer {
 				this.compareFiles.getFilesThatRemainedTheSame() + ', ' +
 				this.filesAddedByOneDev +', ' + this.mergedFiles.size() +
 				', ' + !this.gitMergeHasNoConflicts +
-				', ' + this.getNumberOfFilesWithConflicts() + ', ' + 		
+				', ' + this.getNumberOfFilesWithConflicts() + ', ' +
 				ConflictSummary.printConflictsSummary(this.mergeScenarioSummary) + ', ' +
 				ConflictSummary.printSameSignatureCMSummary(this.sameSignatureCMSummary) + ', ' +
-				this.possibleRenamings + ', ' + this.editSameMCWithoutConflicts + ', ' +
-				this.editSameMCWithoutConflictsDS
+				this.possibleRenamings
 
 		return report
 	}
-	
+
 
 	private void removeNonMCBaseNodes(LinkedList<FSTNode> bNodes){
 		LinkedList<FSTNode> baseNodes = new LinkedList<FSTNode>(bNodes)
@@ -330,38 +371,42 @@ class MergeScenario implements Observer {
 
 		while((!hasNonDSConflict) && (i < SSMergeConflicts.values().length)){
 			String type = SSMergeConflicts.values()[i].toString()
-				
-				Conflict conflict = this.mergeScenarioSummary.get(type)
-				int diff =  conflict.getNumberOfConflicts() - conflict.getDifferentSpacing()
-				
-				if(diff >0){
-					hasNonDSConflict = true
-				}
+
+			Conflict conflict = this.mergeScenarioSummary.get(type)
+			int diff =  conflict.getNumberOfConflicts() - conflict.getDifferentSpacing()
+
+			if(diff >0){
+				hasNonDSConflict = true
+			}
 			i++
 		}
 
 		return hasNonDSConflict
 	}
-	
-	public Map<String, ArrayList<MethodEditedByBothRevs>> getFilesWithMethodsToJoana() {
-		return filesWithMethodsToJoana;
+
+	public Map<String, ArrayList<EditSameMC>> getFilesWithMethodsToJoana() {
+		return filesWithConflictPredictors;
 	}
 
-	public void setFilesWithMethodsToJoana(Map<String, ArrayList<MethodEditedByBothRevs>> filesWithMethodsToJoana) {
-		this.filesWithMethodsToJoana = filesWithMethodsToJoana;
+	public void setFilesWithConflictPredictors(Map<String, ArrayList<EditSameMC>> filesWithMethodsToJoana) {
+		this.filesWithConflictPredictors = filesWithMethodsToJoana;
 	}
 
-	private boolean isMethodWithoutConflicts(FSTTerminal node){
+	private boolean isAConflictPredictor(FSTTerminal node){
 		boolean result = false
-		
+
 		if(node.getType().equals("MethodDecl") || node.getType().equals("ConstructorDecl")){
 			String nodeBody = node.getBody()
 			if(!nodeBody.contains(FSTGenMerger.DIFF3MERGE_SEPARATOR) && !nodeBody.contains(FSTGenMerger.DIFF3MERGE_END)){
 				result = true
 			}
 		}
-		
-		
+
+		if(node.getType().equals('FieldDecl') && node.getBody().contains(FSTGenMerger.MERGE_SEPARATOR)){
+			result = true
+		}
+
+
 		return result
 	}
 

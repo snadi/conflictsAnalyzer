@@ -51,8 +51,8 @@ class CompareFiles {
 
 		
 		String baseFolder = this.revDir + File.separator + this.baseRevName
-		moveFilesOnSingleVersion(baseFolder.replaceFirst(baseRevName, leftRevName),this.leftRevName, this.rightRevName, this.baseRevName)
-		moveFilesOnSingleVersion(baseFolder.replaceFirst(baseRevName, rightRevName),this.rightRevName, this.leftRevName, this.baseRevName)
+		//moveFilesOnSingleVersion(baseFolder.replaceFirst(baseRevName, leftRevName),this.leftRevName, this.rightRevName, this.baseRevName)
+		//moveFilesOnSingleVersion(baseFolder.replaceFirst(baseRevName, rightRevName),this.rightRevName, this.leftRevName, this.baseRevName)
 		this.iterateRevFolders(this.leftRevName, this.baseRevName, baseFolder, this.rightRevName)
 	}
 	
@@ -109,7 +109,8 @@ class CompareFiles {
 		File base = new File(baseFile)
 		File right = new File(rightFile)
 
-		if(left.exists() && base.exists() && right.exists()){
+		if(left.exists() && base.exists() && right.exists() && 
+			left.isFile() && base.isFile() && right.isFile()){
 			
 			this.compareFiles(left, base, right)
 		}
@@ -122,12 +123,12 @@ class CompareFiles {
 		boolean rightEqualsBase = FileUtils.contentEquals(right, base)
 		
 		//use the code bellow to remove only equal files
-		/*if(leftEqualsBase && rightEqualsBase){
+		if(leftEqualsBase && rightEqualsBase){
 			this.moveAndDeleteFiles(this.baseRevName, base, left, right)
-		}*/
+		}
 		
 		//use the code below to merge only files that differ in the three revisions
-		if(leftEqualsBase && rightEqualsBase){
+		/*if(leftEqualsBase && rightEqualsBase){
 			this.filesThatRemainedTheSame = this.filesThatRemainedTheSame + 1
 			this.moveAndDeleteFiles(this.baseRevName, base, left, right)
 
@@ -142,7 +143,7 @@ class CompareFiles {
 		}else if((!leftEqualsBase) && (!rightEqualsBase)){
 			MergedFile mf = new MergedFile(base.getAbsolutePath())
 			this.filesToBeMerged.add(mf)
-		}
+		}*/
 
 	}
 

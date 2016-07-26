@@ -1,56 +1,64 @@
 package main
 
-import java.util.List
-
-import com.ibm.wala.shrikeBT.info.ThisAssignmentChecker;
-
 import java.io.File
+import java.util.ArrayList;
+import java.util.List;
 
-
-import de.ovgu.cide.fstgen.ast.FSTNode
-import de.ovgu.cide.fstgen.ast.FSTNonTerminal;
+import de.ovgu.cide.fstgen.ast.FSTNode;
+import de.ovgu.cide.fstgen.ast.FSTNonTerminal
 import de.ovgu.cide.fstgen.ast.FSTTerminal
-import merger.FSTGenMerger;
+import merger.FSTGenMerger
 import util.Util
-class MethodEditedByBothRevs {
 
-	private String signature
+public abstract class ConflictPredictor {
 
-	private ArrayList<Integer> leftLines
+	public FSTTerminal node
 
-	private ArrayList<Integer> rightLines
+	public boolean diffSpacing
 
-	private FSTTerminal node
-
-	private String filePath
-
+	public String filePath
+	
+	public String packageName
+	
+	public FSTTerminal constructor
+	
+	public List<String> imports
+	
 	public String START_SEPARATOR
-
+	
 	public String END_SEPARATOR
 	
-	private String packageName
+	public String signature
 	
-	private FSTTerminal constructor
+	public ArrayList<Integer> leftLines
 	
-	private List<String> imports
-	
-	private boolean diffSpacing
-	
-	public MethodEditedByBothRevs(FSTTerminal n, String path){
-		this.node = n
+	public ArrayList<Integer> rightLines
+
+	public ConflictPredictor(FSTTerminal node, String mergeScenarioPath){
+		this.node = node
 		this.setDiffSpacing()
 		this.callBlame()
-		this.packageName = ''
-		this.imports = new ArrayList<String>()
 		this.setSeparatorStrings()
-		this.retrieveFilePath(this.node, path)
+		this.retrieveFilePath(mergeScenarioPath)
+		this.annotatePredictor()
 		this.setSignature()
-		this.annotateMethod()
-		this.leftLines  = new ArrayList<Integer>()
-		this.rightLines = new ArrayList<Integer>()
 	}
 	
-	private void callBlame(){
+	public void annotatePredictor(){
+		String body = this.node.getBody()
+		String [] lines = body.split('\n')
+		String firstLine = this.START_SEPARATOR + lines[0]
+		String lastLine = this.END_SEPARATOR + lines[lines.length-1]
+		String newBody = firstLine + '\n'
+		for(int i = 1; i < (lines.length-1); i++){
+			newBody = newBody + lines[i] + '\n'
+		}
+		newBody = newBody + lastLine
+
+		this.node.setBody(newBody)
+	}
+	
+	public void callBlame(){
 		if(!this.diffSpacing){
 			File[] files = this.createTempFiles()
 			Blame blame = new Blame()
@@ -60,7 +68,7 @@ class MethodEditedByBothRevs {
 		}
 	}
 	
-	private void deleteTempFiles(File[] files){
+	public void deleteTempFiles(File[] files){
 		File tmpDir = new File(files[0].getParent())
 		files[0].delete();
 		files[1].delete();
@@ -68,7 +76,7 @@ class MethodEditedByBothRevs {
 		tmpDir.delete();
 		
 	}
-	private File[] createTempFiles(){
+	public File[] createTempFiles(){
 		String [] splitNodeBody = this.splitNodeBody()
 		long time = System.currentTimeMillis()
 		File tmpDir = new File(System.getProperty("user.dir") + File.separator + "fstmerge_tmp"+time);
@@ -82,9 +90,9 @@ class MethodEditedByBothRevs {
 		File[] result = [fileVar1, fileBase, fileVar2]
 		return result
 	}
-	private void setDiffSpacing(){
-		String [] splitNodeBody = this.splitNodeBody().clone()
-		String [] nodeBodyWithoutSpacing = this.removeInvisibleChars(splitNodeBody)
+
+	public void setDiffSpacing(){
+		String [] nodeBodyWithoutSpacing = this.getNodeWithoutSpacing()
 		if(nodeBodyWithoutSpacing[0].equals(nodeBodyWithoutSpacing[1]) || 
 			nodeBodyWithoutSpacing[2].equals(nodeBodyWithoutSpacing[1])){
 			this.diffSpacing = true
@@ -92,61 +100,38 @@ class MethodEditedByBothRevs {
 			this.diffSpacing = false
 		}
 	}
-	
-	private String[] splitNodeBody(){
+
+	public String[] getNodeWithoutSpacing() {
+		String [] splitNodeBody = this.splitNodeBody().clone()
+		String [] nodeBodyWithoutSpacing = this.removeInvisibleChars(splitNodeBody)
+		return nodeBodyWithoutSpacing
+	}
+
+	public String[] splitNodeBody(){
 		String [] splitBody = ['', '', '']
 		String[] tokens = this.node.getBody().split(FSTGenMerger.MERGE_SEPARATOR)
 		splitBody[0] = tokens[0].replace(FSTGenMerger.SEMANTIC_MERGE_MARKER, "").trim()
 		splitBody[1] = tokens[1].trim()
 		splitBody[2] = tokens[2].trim()
-		
+
 		return splitBody
 	}
-	
+
 	public String[] removeInvisibleChars(String[] input){
 		input[0] = input[0].replaceAll("\\s+","")
 		input[1] = input[1].replaceAll("\\s+","")
 		input[2] = input[2].replaceAll("\\s+","")
 		return input;
 	}
-	
-	public void setSignature(){
-		String [] tokens = this.filePath.split(File.separator)
-		String className = tokens[tokens.length-1]
-		className = className.substring(0, className.length()-5)
-		String methodName = Util.simplifyMethodSignature(this.node.getName())
-		String returnType;
-		if(this.node.getType().equals("ConstructorDecl"))
-		{
-			returnType = "void"
-		} else {
-			returnType = Util.getMethodReturnType(this.node.getBody(), imports, packageName, new File(filePath).getParent())
-		}
-		this.signature = returnType + " " +this.packageName + '.' + className + '.' + Util.includeFullArgsTypes(methodName, imports, packageName, new File(filePath).getParent())
-	}
-	
-	public void retrieveFilePath(FSTNode n, String path){
+
+	public void retrieveFilePath(String path){
 
 		int endIndex = path.length() - 10;
 		String systemDir = path.substring(0, endIndex);
 
-		this.filePath = systemDir + this.retrieveFolderPath(n);
+		this.filePath = systemDir + this.retrieveFolderPath(this.node);
 	}
-
-	private void annotateMethod(){
-		String body = this.node.getBody()
-		String [] lines = body.split('\n')
-		String firstLine = this.START_SEPARATOR + lines[0]
-		String lastLine = this.END_SEPARATOR + lines[lines.length-1]
-		String newBody = firstLine + '\n'
-		for(int i = 1; i < (lines.length-1); i++){
-			newBody = newBody + lines[i] + '\n'
-		}
-		newBody = newBody + lastLine
-
-		this.node.setBody(newBody)
-	}
-
+	
 	public String retrieveFolderPath(FSTNode n){
 		String filePath = "";
 		String nodetype = n.getType();
@@ -179,8 +164,8 @@ class MethodEditedByBothRevs {
 		}
 	}
 	
-	private setImportList(FSTNode node){
-		boolean foundPackage = false
+	public setImportList(FSTNode node){
+		this.imports = new ArrayList<String>()
 		FSTNonTerminal nonterminal = (FSTNonTerminal) node;
 		ArrayList<FSTNode> children = nonterminal.getChildren()
 		int i = 0
@@ -194,7 +179,8 @@ class MethodEditedByBothRevs {
 		}
 	}
 	
-	private setPackageName(FSTNode node){
+	public setPackageName(FSTNode node){
+		this.packageName = ''
 		boolean foundPackage = false
 		FSTNonTerminal nonterminal = (FSTNonTerminal) node;
 		ArrayList<FSTNode> children = nonterminal.getChildren()
@@ -211,43 +197,7 @@ class MethodEditedByBothRevs {
 		}
 		
 	}
-
-	public String getSignature() {
-		return signature;
-	}
-	public void setSignature(String signature) {
-		this.signature = signature;
-	}
-	public ArrayList<Integer> getLeftLines() {
-		return leftLines;
-	}
-	public void setLeftLines(ArrayList<Integer> leftLines) {
-		this.leftLines = leftLines;
-	}
-	public ArrayList<Integer> getRightLines() {
-		return rightLines;
-	}
-	public void setRightLines(ArrayList<Integer> rightLines) {
-		this.rightLines = rightLines;
-	}
-
-	public String getFilePath() {
-		return filePath;
-	}
-
-	public void setFilePath(String filePath) {
-		this.filePath = filePath;
-	}
 	
-	public List<String> getImportsList()
-	{
-		imports
-	}
-	
-	public FSTTerminal getConstructor() {
-		return constructor;
-	}
-
 	public void setConstructor(FSTNode node) {
 		boolean foundConstructor = false
 		FSTNonTerminal nonterminal = (FSTNonTerminal) node;
@@ -277,8 +227,66 @@ class MethodEditedByBothRevs {
 			this.constructor = privateConst
 		}
 	}
+	
+	public void setSeparatorStrings(){
+		this.START_SEPARATOR = '// START ' + this.node.getName() + '//'
+		this.END_SEPARATOR = '// END ' + this.node.getName() + '//'
+	}
+	
+	public String getFilePath() {
+		return filePath;
+	}
+	
+	public void setSignature(){
+		String [] tokens = this.filePath.split(File.separator)
+		String className = tokens[tokens.length-1]
+		className = className.substring(0, className.length()-5)
+		String methodName = Util.simplifyMethodSignature(this.node.getName())
+		String returnType;
+		if(this.node.getType().equals("ConstructorDecl"))
+		{
+			returnType = "void"
+		} else {
+			returnType = Util.getMethodReturnType(this.node.getBody(), imports, packageName, new File(filePath).getParent())
+		}
+		this.signature = returnType + " " +this.packageName + '.' + className + '.' + Util.includeFullArgsTypes(methodName, imports, packageName, new File(filePath).getParent())
+	}
+	
+	public String getSignature() {
+		return signature;
+	}
+	public void setSignature(String signature) {
+		this.signature = signature;
+	}
+	public ArrayList<Integer> getLeftLines() {
+		return leftLines;
+	}
+	public void setLeftLines(ArrayList<Integer> leftLines) {
+		this.leftLines = leftLines;
+	}
+	public ArrayList<Integer> getRightLines() {
+		return rightLines;
+	}
+	public void setRightLines(ArrayList<Integer> rightLines) {
+		this.rightLines = rightLines;
+	}
+
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
+	}
+	
+	public List<String> getImportsList()
+	{
+		imports
+	}
+	
+	public FSTTerminal getConstructor() {
+		return constructor;
+	}
 
 	public void assignLeftAndRight(){
+		this.leftLines  = new ArrayList<Integer>()
+		this.rightLines = new ArrayList<Integer>()
 		File file = new File(this.filePath)
 		int i = 1;
 		String newFile = ''
@@ -321,7 +329,7 @@ class MethodEditedByBothRevs {
 	}
 
 
-	private String processMethodLine(String line, int i){
+	public String processMethodLine(String line, int i){
 		String result = ''
 		if(line.contains(Blame.LEFT_SEPARATOR)){
 			this.leftLines.add(new Integer(i))
@@ -335,7 +343,7 @@ class MethodEditedByBothRevs {
 		return result
 	}
 	
-	private String[] linesToString(){
+	public String[] linesToString(){
 		String left = '['
 		String right = '['
 		for(Integer i : this.leftLines){
@@ -351,9 +359,16 @@ class MethodEditedByBothRevs {
 		return result
 	}
 	
-	public void setSeparatorStrings(){
-		this.START_SEPARATOR = '// START ' + this.node.getName() + '//'
-		this.END_SEPARATOR = '// END ' + this.node.getName() + '//'
+	/*this method checks for objects' reference equality*/
+	public boolean equals(ConflictPredictor b){
+		boolean equals = false
+		if(this == b){
+			equals = true;
+		}
+		return equals
 	}
-
+	
+	/*private boolean predictorsHaveSameType(ConflictPredictor a, ConflictPredictor b){
+		if(a instanceof EditSameMC && b instanceof)
+	}*/
 }

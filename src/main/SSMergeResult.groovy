@@ -9,10 +9,10 @@ class SSMergeResult {
 	
 	private boolean hasConflicts
 	
-	private Map<String, ArrayList<MethodEditedByBothRevs>> filesWithMethodsToJoana
+	private Map<String, ArrayList<EditSameMC>> filesWithMethodsToJoana
 	
 
-	public SSMergeResult(String mScenarioName, boolean hc, Map<String, ArrayList<MethodEditedByBothRevs>> fwmtj){
+	public SSMergeResult(String mScenarioName, boolean hc, Map<String, ArrayList<EditSameMC>> fwmtj){
 
 		this.mergeScenarioName = mScenarioName
 		this.hasConflicts = hc
@@ -26,10 +26,10 @@ class SSMergeResult {
 	public void setHasConflicts(boolean hasConflicts) {
 		this.hasConflicts = hasConflicts;
 	}
-	public Map<String, ArrayList<MethodEditedByBothRevs>> getFilesWithMethodsToJoana() {
+	public Map<String, ArrayList<EditSameMC>> getFilesWithMethodsToJoana() {
 		return filesWithMethodsToJoana;
 	}
-	public void setFilesWithMethodsToJoana(Map<String, ArrayList<MethodEditedByBothRevs>> filesWithMethodsToJoana) {
+	public void setFilesWithMethodsToJoana(Map<String, ArrayList<EditSameMC>> filesWithMethodsToJoana) {
 		this.filesWithMethodsToJoana = filesWithMethodsToJoana;
 	}
 

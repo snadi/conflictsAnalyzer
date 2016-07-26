@@ -104,7 +104,7 @@ public class ConflictPrinter {
 
 		printMergeScenarioMetrics(mergeScenario, projectName)
 		printConflictsReport(mergeScenario, projectName)
-		if(!mergeScenario.filesWithMethodsToJoana.isEmpty()){
+		if(!mergeScenario.filesWithConflictPredictors.isEmpty()){
 			printEditSameMCWithoutConflicts(mergeScenario, projectName)
 		}
 	}
@@ -131,9 +131,9 @@ public class ConflictPrinter {
 		def delimiter = '========================================================='
 		out.append(delimiter + '\n')
 		out.append('Revision: ' + mergeScenario.path + '\n')
-		for(Map.Entry <String, ArrayList<MethodEditedByBothRevs>> entry : mergeScenario.filesWithMethodsToJoana.entrySet()){
+		for(Map.Entry <String, ArrayList<EditSameMC>> entry : mergeScenario.filesWithConflictPredictors.entrySet()){
 			out.append('File: ' + entry.key + '\n')
-			for(MethodEditedByBothRevs m : entry.value){
+			for(EditSameMC m : entry.value){
 				String[] lines = m.linesToString()
 				out.append('Method signature: ' + m.node.getName() + '\n')
 				out.append('Left editions: ' + lines[0] + '\n')
