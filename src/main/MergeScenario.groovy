@@ -427,7 +427,7 @@ class MergeScenario implements Observer {
 	public static void main(String[] args){
 		MergeScenario ms = new MergeScenario('/Users/paolaaccioly/Desktop/Teste/jdimeTests/rev.revisions', true)
 		ms.analyzeConflicts()
-		println 'hello'
+		//println 'hello'
 		/*Map <String,Conflict> mergeScenarioSummary = new HashMap<String, Conflict>()
 		 String type = SSMergeConflicts.EditSameMC.toString()
 		 mergeScenarioSummary.put(type, new Conflict(type))

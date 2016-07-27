@@ -16,7 +16,8 @@ import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.CompilationUnit
 import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.MethodInvocation
+import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 import de.ovgu.cide.fstgen.ast.FSTTerminal
 import merger.FSTGenMerger
@@ -80,7 +81,7 @@ class EditDiffMC extends ConflictPredictor{
 		}
 		return hasReference
 	}
-	
+
 	/*check of changes on edited methods come from different merge commit parents
 	 * as it does not makes sense to analyse conflicts from changes made by same commit*/
 	public boolean changesComeFromDifferentCommits(ConflictPredictor predictor){
@@ -106,7 +107,7 @@ class EditDiffMC extends ConflictPredictor{
 		 * the method name inside the edited method */
 		String thisMethodName = this.getMethodName(this)
 		if(predictor.node.body.contains(thisMethodName)){
-			
+
 			/*Step 2: in case the edited method has
 			 *  a textual reference, remove false positives using the
 			 * reference finder*/
@@ -130,11 +131,33 @@ class EditDiffMC extends ConflictPredictor{
 	private boolean checkForClassReference(ConflictPredictor predictor) throws IOException{
 		boolean isTheSameMethod = false
 
-		/*get method names*/
-		String thisMethod = this.getMethodName(this)
-		String methodCallingThisMethod = this.getMethodName(predictor)
+		/*get methods names*/
+		String [] temp = this.getSignature().split("\\.")
+		String thisMethod = temp[temp.length - 1]
+		String thisMethodClassName = temp[temp.length - 2]
+		temp = predictor.getSignature().split("\\.")
+		String methodCallingThisMethod = temp[temp.length - 1]
+		String methodCallingThisMethodClassName = temp[temp.length - 2]
+
 		//get file contents
 		String contents = getFileContents(this.filePath)
+
+		/*setting compiler environment variables*/
+		/*FIXME change classPath, source, and encoding if needed
+		 * make auxiliary methods*/
+
+		//set classPath
+		String[] classPaths = null
+
+		/*set source folder*/
+		File file = new File(predictor.filePath)
+		String[] source = [file.getParent()]
+
+		/*set encodings*/
+		String[] encoding = ["UFT_8"]
+
+		/*set className*/
+		String classname = file.getName()
 
 		if(contents!=null){
 
@@ -142,22 +165,6 @@ class EditDiffMC extends ConflictPredictor{
 			ASTParser parser = ASTParser.newParser(AST.JLS8)
 			parser.setKind(ASTParser.K_COMPILATION_UNIT)
 			parser.setSource(contents.toCharArray())
-
-			//FIXME change classPath, source, and encoding if needed
-
-			//set classPath
-			String[] classPaths = null
-
-			/*set source (file containing this edited method*/
-			String[] source = [predictor.filePath]
-
-			/*set encodings*/
-			String[] encoding = ["UFT_8"]
-
-			/*set className*/
-			String[] split = this.filePath.split('/')
-			String temp = split[split.length-1]
-			String classname = temp.split('\\.')[0]
 
 			//Parsing
 			parser.setEnvironment(classPaths, source, encoding, true);
@@ -169,49 +176,46 @@ class EditDiffMC extends ConflictPredictor{
 			parser.setCompilerOptions(options);
 			CompilationUnit parse = (CompilationUnit) parser.createAST(null);
 
-			/*create a table listing all methods invocations regarding one method declaration*/
-			HashMap<MethodDeclaration, ArrayList<MethodInvocation>> invocationsForMethods =
-					new HashMap<MethodDeclaration, ArrayList<MethodInvocation>>()
-			ArrayList<String> listOfInvocations = new ArrayList<String>();
-			//look for references of this method
 			parse.accept(new ASTVisitor() {
-						private MethodDeclaration activeMethod
+						private MethodDeclaration activeMethod;
 
 						@Override
 						public boolean visit(MethodDeclaration node) {
-							activeMethod = node
-							return super.visit(node)
+							activeMethod = node;
+							return super.visit(node);
 						}
 
 						@Override
 						public boolean visit(MethodInvocation node) {
-							if (invocationsForMethods.get(activeMethod) == null) {
-								invocationsForMethods.put(activeMethod, new ArrayList<MethodInvocation>());
-							}
-							invocationsForMethods.get(activeMethod).add(node)
-
+							IMethodBinding activeMethodBinding = activeMethod.resolveBinding()
+							String signatureActiveMethod = simplifyMethodSignature(activeMethodBinding)
+							TypeDeclaration activeMethodClass = (TypeDeclaration) activeMethod.getParent()
+							String activeMethodClassName = activeMethodClass.getName()
 							IMethodBinding mb = node.resolveMethodBinding()
-							if(mb!=null){
-								if(mb.getKey()!=null){
-									if(!listOfInvocations.contains(mb.getKey())){
-										listOfInvocations.add(mb.getKey())
+
+							if(mb!=null && activeMethodBinding!=null){
+								if(mb.getKey()!=null && activeMethodBinding.getKey()!=null){
+
+									/*if active method is indeed the method calling this method*/
+									if(activeMethodClassName.contains(methodCallingThisMethodClassName) &&
+									signatureActiveMethod.contains(methodCallingThisMethod)){
+										String thisMethodNameSpace = (mb.getKey().split("\\."))[0]
+										String simplifiedMethodSignature = simplifyMethodSignature(mb)
+										/*if method invocation is indeed this method*/
+										if(thisMethodNameSpace.contains(thisMethodClassName) &&
+										simplifiedMethodSignature.contains(thisMethod)){
+											isTheSameMethod = true
+											return isTheSameMethod
+										}
 									}
 
-									//SE CONTIVER UMA REFERÊNCIA, INFORME O MÉTODO QUE REFERENCIOU.
-									String namespace = (mb.getKey().split("\\."))[0]
-									//if(namespace.contains(className)){
-									if(simplifyMethodSignature(mb).contains(renamedMethod)){
-										//TODO
-									}
-									//}
-
-									System.out.println(mb.toString())
 								}
 							}
 							return super.visit(node)
 						}
 
-					});
+
+					})
 
 		}
 
@@ -248,6 +252,7 @@ class EditDiffMC extends ConflictPredictor{
 	}
 
 	public static void main(String[] args){
-
+		File file = new File('/Users/paolaaccioly/Desktop/Teste/jdimeTests/rev/Example.java')
+		println file.getName()
 	}
 }
