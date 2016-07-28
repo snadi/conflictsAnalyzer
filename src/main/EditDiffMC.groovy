@@ -105,12 +105,12 @@ class EditDiffMC extends ConflictPredictor{
 		boolean hasReference = false
 		/*Step 1: check for potential EditDiffMC when grepping
 		 * the method name inside the edited method */
-		String thisMethodName = this.getMethodName(this)
-		if(predictor.node.body.contains(thisMethodName)){
+		
+		if(this.containsTextualReference(predictor)){
 
 			/*Step 2: in case the edited method has
 			 *  a textual reference, remove false positives using the
-			 * reference finder*/
+			 * method reference finder*/
 			hasReference = this.checkForClassReference(predictor)
 			if(hasReference){
 				this.saveReference(predictor)
@@ -119,7 +119,63 @@ class EditDiffMC extends ConflictPredictor{
 		return hasReference
 
 	}
-
+	
+	/*Checks if the string representing the method body declaration
+	 * contains a textual reference to this method.
+	 * Might report false positives. */
+	private boolean containsTextualReference(ConflictPredictor predictor){
+		boolean containsTextualReference = false
+		String methodBody = this.extractMethodBody(predictor.node.body)
+		String thisMethodName = this.getMethodName(this)
+		if(methodBody.contains(thisMethodName)){
+			containsTextualReference = true
+		}
+		return containsTextualReference
+	}
+	
+	/*Receives as input the string of the method and returns just
+	 *  the lines inside the method body declaration.
+	 *  It helps to remove false positives before running
+	 *  the compiler analysis*/
+	private String extractMethodBody(String method){
+		String methodBody = ''
+		
+		ArrayList<String> temp = method.split('\n')
+		int firstBracket = 0
+		int lastBracket = temp.size() -1
+		boolean foundFirstBracket, foundLastBracket = false
+		String a = ''
+		
+		/*get the first bracket index*/
+		while(!foundFirstBracket){
+			a = temp.elementData(firstBracket)
+			if(a.contains('{')){
+				foundFirstBracket = true
+			}else{
+				firstBracket++
+			}
+		}
+		
+		/*gets the last bracket index*/
+		while(!foundLastBracket){
+			a = temp.elementData(lastBracket)
+			if(a.contains('}')){
+				foundLastBracket = true
+			}else{
+				lastBracket--
+			}
+		}
+		
+		/*gets the string representing the method body declaration*/
+		String [] temp2 = temp.subList(firstBracket + 1, lastBracket)
+		
+		for(String s: temp2){
+			methodBody = methodBody + s + '\n'
+		}
+		
+		return methodBody
+	}
+	
 	private String getMethodName(ConflictPredictor predictor){
 		String methodName = ''
 		String predictorName = predictor.node.name
@@ -252,7 +308,36 @@ class EditDiffMC extends ConflictPredictor{
 	}
 
 	public static void main(String[] args){
-		File file = new File('/Users/paolaaccioly/Desktop/Teste/jdimeTests/rev/Example.java')
-		println file.getName()
+		String method ='public\n int\n sub\n (int a, int b) {\n int result = 0;\n int sub = a-b;\n if(sub>0){\n result = sub;\n }\n return result;\n}\n//comment1\n//comment2'
+		ArrayList<String> temp = method.split('\n')
+		int firstBracket = 0
+		int lastBracket = temp.size() -1
+		boolean foundFirstBracket, foundLastBracket = false;
+		String a = ''
+		while(!foundFirstBracket){
+			a = temp.elementData(firstBracket)
+			if(a.contains('{')){
+				foundFirstBracket = true
+			}else{
+				firstBracket++
+			}
+		}
+		
+		while(!foundLastBracket){
+			a = temp.elementData(lastBracket)
+			if(a.contains('}')){
+				foundLastBracket = true
+			}else{
+				lastBracket--
+			}
+		}
+		String [] temp2 = temp.subList(firstBracket + 1, lastBracket)
+		String methodBody = ''
+		for(String s: temp2){
+			methodBody = methodBody + s + '\n'
+		}
+		println method
+		println '=====X====='
+		println methodBody
 	}
 }
