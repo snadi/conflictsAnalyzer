@@ -29,10 +29,13 @@ class EditDiffMC extends ConflictPredictor{
 	private ConflictPredictor predictor
 
 	private boolean editionAddedMethodCall
+	
+	private String rootDir
 
 	public EditDiffMC(FSTTerminal n, String msp){
 
 		super(n, msp)
+		this.setRootDir()
 		this.editionAddedMethodCall = false
 	}
 
@@ -74,8 +77,9 @@ class EditDiffMC extends ConflictPredictor{
 				if((!this.referenceEquals(predictor)) &&
 				(predictor instanceof EditSameMC || predictor instanceof EditDiffMC)  &&
 				(this.changesComeFromDifferentCommits(predictor))){
-
+					println 'vai buscar'
 					hasReference = this.lookForReferenceOnConflictPredictor(predictor)
+					println hasReference
 				}
 			}
 		}
@@ -105,7 +109,7 @@ class EditDiffMC extends ConflictPredictor{
 		boolean hasReference = false
 		/*Step 1: check for potential EditDiffMC when grepping
 		 * the method name inside the edited method */
-		
+
 		if(this.containsTextualReference(predictor)){
 
 			/*Step 2: in case the edited method has
@@ -119,7 +123,7 @@ class EditDiffMC extends ConflictPredictor{
 		return hasReference
 
 	}
-	
+
 	/*Checks if the string representing the method body declaration
 	 * contains a textual reference to this method.
 	 * Might report false positives. */
@@ -132,20 +136,20 @@ class EditDiffMC extends ConflictPredictor{
 		}
 		return containsTextualReference
 	}
-	
+
 	/*Receives as input the string of the method and returns just
 	 *  the lines inside the method body declaration.
 	 *  It helps to remove false positives before running
 	 *  the compiler analysis*/
 	private String extractMethodBody(String method){
 		String methodBody = ''
-		
+
 		ArrayList<String> temp = method.split('\n')
 		int firstBracket = 0
 		int lastBracket = temp.size() -1
 		boolean foundFirstBracket, foundLastBracket = false
 		String a = ''
-		
+
 		/*get the first bracket index*/
 		while(!foundFirstBracket){
 			a = temp.elementData(firstBracket)
@@ -155,7 +159,7 @@ class EditDiffMC extends ConflictPredictor{
 				firstBracket++
 			}
 		}
-		
+
 		/*gets the last bracket index*/
 		while(!foundLastBracket){
 			a = temp.elementData(lastBracket)
@@ -165,17 +169,17 @@ class EditDiffMC extends ConflictPredictor{
 				lastBracket--
 			}
 		}
-		
+
 		/*gets the string representing the method body declaration*/
 		String [] temp2 = temp.subList(firstBracket + 1, lastBracket)
-		
+
 		for(String s: temp2){
 			methodBody = methodBody + s + '\n'
 		}
-		
+
 		return methodBody
 	}
-	
+
 	private String getMethodName(ConflictPredictor predictor){
 		String methodName = ''
 		String predictorName = predictor.node.name
@@ -187,33 +191,27 @@ class EditDiffMC extends ConflictPredictor{
 	private boolean checkForClassReference(ConflictPredictor predictor) throws IOException{
 		boolean isTheSameMethod = false
 
-		/*get methods names*/
-		String [] temp = this.getSignature().split("\\.")
-		String thisMethod = temp[temp.length - 1]
-		String thisMethodClassName = temp[temp.length - 2]
-		temp = predictor.getSignature().split("\\.")
-		String methodCallingThisMethod = temp[temp.length - 1]
-		String methodCallingThisMethodClassName = temp[temp.length - 2]
-
 		//get file contents
-		String contents = getFileContents(this.filePath)
+		String contents = getFileContents(predictor.filePath)
 
 		/*setting compiler environment variables*/
 		/*FIXME change classPath, source, and encoding if needed
 		 * make auxiliary methods*/
-
+		
 		//set classPath
 		String[] classPaths = null
-
+		
 		/*set source folder*/
-		File file = new File(predictor.filePath)
-		String[] source = [file.getParent()]
+		File filePredictor = new File(predictor.filePath)
+		File thisFileMethod = new File(this.filePath)
+		String[] source = [this.getRootDir(), filePredictor.getParent(), thisFileMethod.getParent()]
 
 		/*set encodings*/
-		String[] encoding = ["UFT_8"]
+		String[] encoding = ["UFT_8", "UFT_8", "UFT_8"]
 
 		/*set className*/
-		String classname = file.getName()
+
+		String classname = filePredictor.getName()
 
 		if(contents!=null){
 
@@ -244,29 +242,13 @@ class EditDiffMC extends ConflictPredictor{
 						@Override
 						public boolean visit(MethodInvocation node) {
 							IMethodBinding activeMethodBinding = activeMethod.resolveBinding()
-							String signatureActiveMethod = simplifyMethodSignature(activeMethodBinding)
-							TypeDeclaration activeMethodClass = (TypeDeclaration) activeMethod.getParent()
-							String activeMethodClassName = activeMethodClass.getName()
-							IMethodBinding mb = node.resolveMethodBinding()
-
-							if(mb!=null && activeMethodBinding!=null){
-								if(mb.getKey()!=null && activeMethodBinding.getKey()!=null){
-
-									/*if active method is indeed the method calling this method*/
-									if(activeMethodClassName.contains(methodCallingThisMethodClassName) &&
-									signatureActiveMethod.contains(methodCallingThisMethod)){
-										String thisMethodNameSpace = (mb.getKey().split("\\."))[0]
-										String simplifiedMethodSignature = simplifyMethodSignature(mb)
-										/*if method invocation is indeed this method*/
-										if(thisMethodNameSpace.contains(thisMethodClassName) &&
-										simplifiedMethodSignature.contains(thisMethod)){
-											isTheSameMethod = true
-											return isTheSameMethod
-										}
-									}
-
-								}
+							IMethodBinding thisMethodBinding = node.resolveMethodBinding()
+							
+							boolean isThisMethod = methodInvocationMatchesThisMethod(activeMethodBinding,thisMethodBinding )
+							if(isThisMethod){
+								return true
 							}
+							
 							return super.visit(node)
 						}
 
@@ -277,7 +259,39 @@ class EditDiffMC extends ConflictPredictor{
 
 		return isTheSameMethod
 	}
+	
+	public boolean methodInvocationMatchesThisMethod(IMethodBinding activeMethod, IMethodBinding methodInvocation){
+		//TODO
+		boolean isTheSameMethod = false
+		if(activeMethod!=null && methodInvocation!=null){
+			if(activeMethod.getKey()!=null && methodInvocation.getKey()!=null){
+				
+				String activeMethodSignature= this.simplifyMethodSignature(activeMethod)
+				String methodCallingThisMethod = ''
 
+				/*if active method is indeed the method calling this method*/
+				if(activeMethodSignature.contains(methodCallingThisMethod)){
+
+					String methodInvocationClass = (methodInvocation.getKey().split("\\."))[0]
+					String methodInvocationSignature = this.simplifyMethodSignature(methodInvocation)
+					String thisMethodClass = ''
+					String thisMethodSignature = ''
+					
+					/*if method invocation is indeed this method*/
+					if(methodInvocationClass.contains(thisMethodClass) &&
+					methodInvocationSignature.contains(thisMethodSignature)){
+						isTheSameMethod = true
+
+					}
+				}
+
+			}
+		}
+
+		return isTheSameMethod
+	}
+	
+	
 	private String simplifyMethodSignature(IMethodBinding mb) {
 		String simplifiedMethodSignature = ((mb.toString()).replaceAll("(\\w)+\\.", "")).replaceAll("\\s+","");
 		return simplifiedMethodSignature;
@@ -307,37 +321,38 @@ class EditDiffMC extends ConflictPredictor{
 		return result
 	}
 
+	public void setRootDir(){
+		this.rootDir = ''
+		String [] temp = this.filePath.split('/')
+		String firstPackageName = this.packageName.split('\\.')[0]
+		String path = ''
+		int i = 1
+		boolean foundFirstPackageName = false
+		while(!foundFirstPackageName){
+			path = temp[i]
+			if(path.equals(firstPackageName)){
+				foundFirstPackageName = true
+			}else{
+				this.rootDir = this.rootDir + File.separator + path
+				i++
+			}
+
+		}
+
+	}
+	
+	public String getRootDir(){
+		return this.rootDir
+	}
+
 	public static void main(String[] args){
-		String method ='public\n int\n sub\n (int a, int b) {\n int result = 0;\n int sub = a-b;\n if(sub>0){\n result = sub;\n }\n return result;\n}\n//comment1\n//comment2'
-		ArrayList<String> temp = method.split('\n')
-		int firstBracket = 0
-		int lastBracket = temp.size() -1
-		boolean foundFirstBracket, foundLastBracket = false;
-		String a = ''
-		while(!foundFirstBracket){
-			a = temp.elementData(firstBracket)
-			if(a.contains('{')){
-				foundFirstBracket = true
-			}else{
-				firstBracket++
-			}
-		}
-		
-		while(!foundLastBracket){
-			a = temp.elementData(lastBracket)
-			if(a.contains('}')){
-				foundLastBracket = true
-			}else{
-				lastBracket--
-			}
-		}
-		String [] temp2 = temp.subList(firstBracket + 1, lastBracket)
-		String methodBody = ''
-		for(String s: temp2){
-			methodBody = methodBody + s + '\n'
-		}
-		println method
-		println '=====X====='
-		println methodBody
+		//String method ='public\n int\n sub\n (int a, int b) {\n int result = 0;\n int sub = a-b;\n if(sub>0){\n result = sub;\n }\n return result;\n}\n//comment1\n//comment2'
+		//println method
+		EditDiffMC e = new EditDiffMC()
+		e.setFilePath('/Users/paolaaccioly/Desktop/Teste/Example/rev/src/org/edu/Example.java')
+		e.setPackageName('org.edu')
+		String rootDir = e.getRootDir()
+		println rootDir
+
 	}
 }

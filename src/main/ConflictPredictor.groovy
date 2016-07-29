@@ -198,6 +198,10 @@ public abstract class ConflictPredictor {
 		
 	}
 	
+	public setPackageName(String packageN){
+		this.packageName = packageN
+	}
+	
 	public void setConstructor(FSTNode node) {
 		boolean foundConstructor = false
 		FSTNonTerminal nonterminal = (FSTNonTerminal) node;
