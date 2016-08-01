@@ -33,13 +33,16 @@ public abstract class ConflictPredictor {
 	public ArrayList<Integer> leftLines
 	
 	public ArrayList<Integer> rightLines
+	
+	public String mergeScenarioPath
 
 	public ConflictPredictor(FSTTerminal node, String mergeScenarioPath){
 		this.node = node
 		this.setDiffSpacing()
 		this.callBlame()
 		this.setSeparatorStrings()
-		this.retrieveFilePath(mergeScenarioPath)
+		this.mergeScenarioPath = mergeScenarioPath
+		this.retrieveFilePath()
 		this.annotatePredictor()
 		this.setSignature()
 	}
@@ -124,10 +127,10 @@ public abstract class ConflictPredictor {
 		return input;
 	}
 
-	public void retrieveFilePath(String path){
+	public void retrieveFilePath(){
 
-		int endIndex = path.length() - 10;
-		String systemDir = path.substring(0, endIndex);
+		int endIndex = this.mergeScenarioPath.length() - 10;
+		String systemDir = this.mergeScenarioPath.substring(0, endIndex);
 
 		this.filePath = systemDir + this.retrieveFolderPath(this.node);
 	}

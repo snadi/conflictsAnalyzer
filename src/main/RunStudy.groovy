@@ -58,12 +58,12 @@ class RunStudy {
 			//String graphBase = runGitMiner()
 			
 			/*2 use bases from gitminer*/ 
-			//String graphBase = this.gitminerLocation + File.separator + this.projectName + 'graph.db'
-			//ArrayList<MergeCommit> listMergeCommits = runGremlinQuery(graphBase)
+			String graphBase = this.gitminerLocation + File.separator + this.projectName + 'graph.db'
+			ArrayList<MergeCommit> listMergeCommits = runGremlinQuery(graphBase)
 			
 			/*3 read mergeCommits.csv sheets*/ 
-			String graphBase = this.gitminerLocation + File.separator + this.projectName + 'graph.db'
-			ArrayList<MergeCommit> listMergeCommits = this.readMergeCommitsSheets(projectsDatesFolder)
+			/*String graphBase = this.gitminerLocation + File.separator + this.projectName + 'graph.db'
+			ArrayList<MergeCommit> listMergeCommits = this.readMergeCommitsSheets(projectsDatesFolder)*/
 			
 			/*4 set listMergeCommits with commits that i want to analyze separately*/
 			/*MergeCommit mc = new MergeCommit()

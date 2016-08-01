@@ -1,3 +1,7 @@
+/**
+ * @author paolaaccioly
+ *
+ */
 package main
 
 import java.util.ArrayList;
@@ -29,7 +33,7 @@ class EditDiffMC extends ConflictPredictor{
 	private ConflictPredictor predictor
 
 	private boolean editionAddedMethodCall
-	
+
 	private String rootDir
 
 	public EditDiffMC(FSTTerminal n, String msp){
@@ -191,20 +195,25 @@ class EditDiffMC extends ConflictPredictor{
 	private boolean checkForClassReference(ConflictPredictor predictor) throws IOException{
 		boolean isTheSameMethod = false
 
+		/*sets the predictor signature*/
+		String []  temp = predictor.signature.split('\\.')
+		String predictorSignature = temp[temp.length-1]
+
 		//get file contents
 		String contents = getFileContents(predictor.filePath)
 
 		/*setting compiler environment variables*/
 		/*FIXME change classPath, source, and encoding if needed
 		 * make auxiliary methods*/
-		
+
 		//set classPath
 		String[] classPaths = null
-		
+
 		/*set source folder*/
 		File filePredictor = new File(predictor.filePath)
 		File thisFileMethod = new File(this.filePath)
-		String[] source = [this.getRootDir(), filePredictor.getParent(), thisFileMethod.getParent()]
+		String[] source = [this.getRootDir(), filePredictor.getParent(),
+			thisFileMethod.getParent()]
 
 		/*set encodings*/
 		String[] encoding = ["UFT_8", "UFT_8", "UFT_8"]
@@ -233,22 +242,39 @@ class EditDiffMC extends ConflictPredictor{
 			parse.accept(new ASTVisitor() {
 						private MethodDeclaration activeMethod;
 
+						/**
+				 * @param MethodDeclaration node
+				 * @return true if and only if this node is the method containing this 
+				 * method invocation. Returns false otherwise
+				 */
 						@Override
 						public boolean visit(MethodDeclaration node) {
+
 							activeMethod = node;
-							return super.visit(node);
+							IMethodBinding activeMethodBinding = activeMethod.resolveBinding()
+							if(isTheMethodCallingThisMethod(predictorSignature, activeMethodBinding)){
+								return super.visit(node)
+							}else{
+								return false
+							}
+
 						}
 
+						/**
+						 * @param MethodInvocation node
+						 * @return true if and only if it is a method invocation to this method.
+						 * Returns false otherwise
+						 */
 						@Override
 						public boolean visit(MethodInvocation node) {
-							IMethodBinding activeMethodBinding = activeMethod.resolveBinding()
+
 							IMethodBinding thisMethodBinding = node.resolveMethodBinding()
-							
-							boolean isThisMethod = methodInvocationMatchesThisMethod(activeMethodBinding,thisMethodBinding )
+
+							boolean isThisMethod = methodInvocationMatchesThisMethod(thisMethodBinding)
 							if(isThisMethod){
 								return true
 							}
-							
+
 							return super.visit(node)
 						}
 
@@ -259,39 +285,52 @@ class EditDiffMC extends ConflictPredictor{
 
 		return isTheSameMethod
 	}
-	
-	public boolean methodInvocationMatchesThisMethod(IMethodBinding activeMethod, IMethodBinding methodInvocation){
-		//TODO
+
+	public boolean isTheMethodCallingThisMethod(String predictorSignature, IMethodBinding activeMethod){
+		boolean callsThisMethod = false	
+		String activeMethodSignature= this.simplifyMethodSignature(activeMethod)
+
+		/*if active method is indeed the method calling this method*/
+		if(activeMethodSignature.contains(predictorSignature)){
+			callsThisMethod = true
+		}
+		return callsThisMethod
+	}
+
+	/**
+	 * @param methodInvocation
+	 * @return true if and only if the method invocation belongs to the same 
+	 * class and same method of this method. Returns false otherwise
+	 */
+	public boolean methodInvocationMatchesThisMethod(IMethodBinding methodInvocation){
 		boolean isTheSameMethod = false
-		if(activeMethod!=null && methodInvocation!=null){
-			if(activeMethod.getKey()!=null && methodInvocation.getKey()!=null){
-				
-				String activeMethodSignature= this.simplifyMethodSignature(activeMethod)
-				String methodCallingThisMethod = ''
+		
+		if( methodInvocation!=null && methodInvocation.getKey()!=null){
+				String methodInvocationClass = this.simplifyClassName(methodInvocation)
+				String methodInvocationSignature = this.simplifyMethodSignature(methodInvocation)
+				String [] temp = this.filePath.split('/')
+				String thisMethodClass = this.packageName + '.' + temp[temp.length-1].split('\\.')[0]
+				temp = this.signature.split('\\.')
+				String thisMethodSignature = temp[temp.length-1]
 
-				/*if active method is indeed the method calling this method*/
-				if(activeMethodSignature.contains(methodCallingThisMethod)){
-
-					String methodInvocationClass = (methodInvocation.getKey().split("\\."))[0]
-					String methodInvocationSignature = this.simplifyMethodSignature(methodInvocation)
-					String thisMethodClass = ''
-					String thisMethodSignature = ''
-					
-					/*if method invocation is indeed this method*/
-					if(methodInvocationClass.contains(thisMethodClass) &&
-					methodInvocationSignature.contains(thisMethodSignature)){
-						isTheSameMethod = true
-
-					}
+				/*if method invocation is indeed this method*/
+				if(methodInvocationClass.contains(thisMethodClass) &&
+				methodInvocationSignature.contains(thisMethodSignature)){
+					isTheSameMethod = true
 				}
-
-			}
 		}
 
 		return isTheSameMethod
 	}
-	
-	
+
+	private String simplifyClassName(IMethodBinding methodInvocation){
+		String className = '' 
+		String temp = (methodInvocation.getKey().split("\\."))[0]
+		className = temp.replaceAll(";", "")
+		className = className.replace("/", ".")
+		if(className.startsWith("L"))className = className.replaceFirst("L","")
+		return className
+	}
 	private String simplifyMethodSignature(IMethodBinding mb) {
 		String simplifiedMethodSignature = ((mb.toString()).replaceAll("(\\w)+\\.", "")).replaceAll("\\s+","");
 		return simplifiedMethodSignature;
@@ -340,7 +379,7 @@ class EditDiffMC extends ConflictPredictor{
 		}
 
 	}
-	
+
 	public String getRootDir(){
 		return this.rootDir
 	}
