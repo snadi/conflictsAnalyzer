@@ -107,36 +107,40 @@ class MergeScenario implements Observer {
 	}
 
 	public void checkForMethodsReferences(){
-		
+
 		/*for each file containing conflict predictors*/
 		for(String filePath : this.filesWithConflictPredictors.keySet()){
 			ArrayList<ConflictPredictor> predictors = this.filesWithConflictPredictors.get(filePath)
-			
+
 			/*this arraylist saves the list of editdiffmc without any call references on edited methods*/
 			ArrayList<ConflictPredictor> noReference = new ArrayList<ConflictPredictor>()
-			
+
 			/*for each conflict predictor on that file*/
 			for(ConflictPredictor predictor : predictors ){
-				
-				/*if the predictor is an edited method*/
-				if(predictor instanceof EditDiffMC || predictor instanceof EditSameMC){
-					
+
+				/*if the predictor is an edited method
+				 * (not considering the different spacing predictors*/
+				if((predictor instanceof EditDiffMC || predictor instanceof EditSameMC) &&
+				!(predictor.diffSpacing)){
+
 					/*searches in the conflict predictor list if any other edited method calls this method*/
-					boolean hasReference = predictor.lookForReferencesOnConflictPredictors(this.filesWithConflictPredictors)
+					predictor.lookForReferencesOnConflictPredictors(this.filesWithConflictPredictors)
+
+				}
+
+				/*in case this method is an EditDiffMC predictor and
+				 * has no other reference on the other edited methods,
+				 * add this predictor to the noReference list*/
+				if((predictor instanceof EditDiffMC) && (predictor.predictors==null)){
 					
-					/*in case this method has no other reference on the other edited methods
-					 * adds this method on the noReference list*/
-					if(!hasReference){
-						//remove conflictPredictor 
-						noReference.add(predictor)
-					}
+					noReference.add(predictor)
 				}
 			}
-			
+
 			/*Remove all edited methods without reference on any other edited method*/
 			predictors.removeAll(noReference)
 		}
-		
+
 	}
 
 	public void deleteMSDir(){
@@ -249,23 +253,23 @@ class MergeScenario implements Observer {
 
 	private void identifyConflictPredictor(FSTTerminal arg, String mergeScenarioPath) {
 		ConflictPredictor predictor = this.predictorFactory.createConflictPredictor(arg, mergeScenarioPath)
-		
+
 		/*if this predictor belongs to type EditDiffMC and it is a
 		 * different spacing conflict predictor do not add it to the list
 		 * of conflict predictors*/	
 		if(!(predictor instanceof EditDiffMC && predictor.diffSpacing)){
 			String predictorFilePath = predictor.getFilePath()
 			ArrayList<ConflictPredictor> file = this.filesWithConflictPredictors.get(predictorFilePath)
-	
+
 			if(file == null){
 				file = new ArrayList<ConflictPredictor>()
-	
+
 			}
-	
+
 			file.add(predictor)
 			this.filesWithConflictPredictors.put(predictorFilePath, file)
 		}
-		
+
 	}
 
 	public void createConflict(FSTTerminal node){
