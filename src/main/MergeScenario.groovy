@@ -92,7 +92,7 @@ class MergeScenario implements Observer {
 
 		this.runSSMerge()
 		this.assignLeftAndRight()
-		this.checkEditDiffMC()
+		this.checkForMethodsReferences()
 		//this.compareFiles.restoreFilesWeDontMerge()
 
 	}
@@ -106,9 +106,9 @@ class MergeScenario implements Observer {
 		}
 	}
 
-	public void checkEditDiffMC(){
+	public void checkForMethodsReferences(){
 		
-		/*for each file with conflict predictors*/
+		/*for each file containing conflict predictors*/
 		for(String filePath : this.filesWithConflictPredictors.keySet()){
 			ArrayList<ConflictPredictor> predictors = this.filesWithConflictPredictors.get(filePath)
 			
@@ -119,7 +119,7 @@ class MergeScenario implements Observer {
 			for(ConflictPredictor predictor : predictors ){
 				
 				/*if the predictor is an edited method*/
-				if(predictor instanceof EditDiffMC){
+				if(predictor instanceof EditDiffMC || predictor instanceof EditSameMC){
 					
 					/*searches in the conflict predictor list if any other edited method calls this method*/
 					boolean hasReference = predictor.lookForReferencesOnConflictPredictors(this.filesWithConflictPredictors)
@@ -250,7 +250,7 @@ class MergeScenario implements Observer {
 	private void identifyConflictPredictor(FSTTerminal arg, String mergeScenarioPath) {
 		ConflictPredictor predictor = this.predictorFactory.createConflictPredictor(arg, mergeScenarioPath)
 		
-		/*if this predictor belongs to type EditDiffMC and is a
+		/*if this predictor belongs to type EditDiffMC and it is a
 		 * different spacing conflict predictor do not add it to the list
 		 * of conflict predictors*/	
 		if(!(predictor instanceof EditDiffMC && predictor.diffSpacing)){

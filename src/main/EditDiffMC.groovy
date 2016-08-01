@@ -28,22 +28,14 @@ import merger.FSTGenMerger
 
 class EditDiffMC extends ConflictPredictor{
 
-	private String leftOrRight
-
-	private ConflictPredictor predictor
-
-	private boolean editionAddedMethodCall
-
 	public EditDiffMC(FSTTerminal n, String msp){
 
 		super(n, msp)
-		this.editionAddedMethodCall = false
 	}
 
 	@Override
 	public void setDiffSpacing(){
 		this.diffSpacing = false
-		this.setLeftOrRight()
 		String [] nodeBodyWithoutSpacing = this.getNodeWithoutSpacing()
 		if(this.leftOrRight.equals('left') && nodeBodyWithoutSpacing[0].equals(nodeBodyWithoutSpacing[1])){
 			this.diffSpacing = true
@@ -53,7 +45,8 @@ class EditDiffMC extends ConflictPredictor{
 
 	}
 
-	private void setLeftOrRight(){
+	@Override
+	public void setLeftOrRight(){
 		String [] splitNodeBody = this.splitNodeBody().clone()
 		if(splitNodeBody[0].equals(splitNodeBody[1])){
 			this.leftOrRight = 'right'
@@ -365,21 +358,6 @@ class EditDiffMC extends ConflictPredictor{
 			contents = contents + it + '\n'
 		}
 		return contents
-	}
-
-	private void saveReference(ConflictPredictor predictor){
-		this.predictor = predictor
-		this.setEditionAddedMethodCall()
-	}
-
-	private void setEditionAddedMethodCall(){
-		//TODO
-	}
-
-	/*this method checks for objects' reference equality*/
-	public boolean referenceEquals(ConflictPredictor b){
-		boolean result = (this == b)
-		return result
 	}
 
 	public static void main(String[] args){

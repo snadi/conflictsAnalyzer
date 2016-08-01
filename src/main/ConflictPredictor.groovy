@@ -13,6 +13,10 @@ import util.Util
 public abstract class ConflictPredictor {
 
 	public FSTTerminal node
+	
+	private Map<ConflictPredictor, Boolean> predictors
+	
+	public String leftOrRight
 
 	public boolean diffSpacing
 
@@ -38,6 +42,7 @@ public abstract class ConflictPredictor {
 
 	public ConflictPredictor(FSTTerminal node, String mergeScenarioPath){
 		this.node = node
+		this.setLeftOrRight()
 		this.setDiffSpacing()
 		this.callBlame()
 		this.setSeparatorStrings()
@@ -45,6 +50,10 @@ public abstract class ConflictPredictor {
 		this.retrieveFilePath()
 		this.annotatePredictor()
 		this.setSignature()
+	}
+	
+	public void setLeftOrRight(){
+		this.leftOrRight = 'both'
 	}
 	
 	public void annotatePredictor(){
@@ -366,6 +375,26 @@ public abstract class ConflictPredictor {
 		return result
 	}
 	
+	/*this method checks for objects' reference equality*/
+	public boolean referenceEquals(ConflictPredictor b){
+		boolean result = (this == b)
+		return result
+	}
+	
+	private void saveReference(ConflictPredictor predictor){
+		if(this.predictors==null){
+			this.predictors = new HashMap<ConflictPredictor, Boolean>()
+		}
+		Boolean editionsAddedMethodCall = this.editionsAddedMethodCall(predictor)
+		this.predictors.put(predictor,editionsAddedMethodCall)
+		
+	}
+
+	private boolean editionsAddedMethodCall(ConflictPredictor predictor){
+		boolean editionsAddedMethodCall = false
+		//TODO
+		return editionsAddedMethodCall
+	}
 	
 	/*private boolean predictorsHaveSameType(ConflictPredictor a, ConflictPredictor b){
 		if(a instanceof EditSameMC && b instanceof)
