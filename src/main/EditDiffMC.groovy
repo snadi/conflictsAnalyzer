@@ -34,12 +34,9 @@ class EditDiffMC extends ConflictPredictor{
 
 	private boolean editionAddedMethodCall
 
-	private String rootDir
-
 	public EditDiffMC(FSTTerminal n, String msp){
 
 		super(n, msp)
-		this.setRootDir()
 		this.editionAddedMethodCall = false
 	}
 
@@ -203,23 +200,19 @@ class EditDiffMC extends ConflictPredictor{
 		String contents = getFileContents(predictor.filePath)
 
 		/*setting compiler environment variables*/
-		/*FIXME change classPath, source, and encoding if needed
-		 * make auxiliary methods*/
+		/*FIXME change classPath if needed*/
 
 		//set classPath
 		String[] classPaths = null
 
-		/*set source folder*/
-		File filePredictor = new File(predictor.filePath)
-		File thisFileMethod = new File(this.filePath)
-		String[] source = [this.getRootDir(), filePredictor.getParent(),
-			thisFileMethod.getParent()]
+		/*set source folders*/
+		String[] source = this.fillSources(predictor)
 
 		/*set encodings*/
-		String[] encoding = ["UFT_8", "UFT_8", "UFT_8"]
+		String[] encoding = this.fillEncodings(source.length)
 
 		/*set className*/
-
+		File filePredictor = new File(predictor.filePath)
 		String classname = filePredictor.getName()
 
 		if(contents!=null){
@@ -251,30 +244,29 @@ class EditDiffMC extends ConflictPredictor{
 						public boolean visit(MethodDeclaration node) {
 
 							activeMethod = node;
-							IMethodBinding activeMethodBinding = activeMethod.resolveBinding()
-							if(isTheMethodCallingThisMethod(predictorSignature, activeMethodBinding)){
-								return super.visit(node)
-							}else{
-								return false
-							}
+
+							return super.visit(node)
+
 
 						}
 
 						/**
-						 * @param MethodInvocation node
-						 * @return true if and only if it is a method invocation to this method.
-						 * Returns false otherwise
-						 */
+				 * @param MethodInvocation node
+				 * @return true if and only if it is a method invocation to this method.
+				 * Returns false otherwise
+				 */
 						@Override
 						public boolean visit(MethodInvocation node) {
 
-							IMethodBinding thisMethodBinding = node.resolveMethodBinding()
-
-							boolean isThisMethod = methodInvocationMatchesThisMethod(thisMethodBinding)
-							if(isThisMethod){
-								return true
+							IMethodBinding activeMethodBinding = activeMethod.resolveBinding()
+							if(isTheMethodCallingThisMethod(predictorSignature, activeMethodBinding)){
+								IMethodBinding thisMethodBinding = node.resolveMethodBinding()
+								boolean isThisMethod = methodInvocationMatchesThisMethod(thisMethodBinding)
+								if(isThisMethod){
+									isTheSameMethod = true
+									return true
+								}
 							}
-
 							return super.visit(node)
 						}
 
@@ -286,8 +278,42 @@ class EditDiffMC extends ConflictPredictor{
 		return isTheSameMethod
 	}
 
+	private String[] fillSources(ConflictPredictor predictor){
+		String[] sources = []
+		ArrayList<String>folders = new ArrayList<String>()
+		String rootPath = this.mergeScenarioPath.substring(0, this.mergeScenarioPath.length()-10)
+		File rootDir = new File(rootPath)
+		File [] fileList = rootDir.listFiles()
+		for(File file : fileList){
+			if(file.isDirectory()){
+				folders.add(file.getAbsolutePath())
+			}
+		}
+
+		File filePredictor = new File(predictor.filePath)
+		File thisFileMethod = new File(this.filePath)
+
+		folders.add(filePredictor.getParent())
+		folders.add(thisFileMethod.getParent())
+		folders.add(rootPath)
+		sources = new String[folders.size()]
+		for(int i = 0; i < folders.size(); i++){
+			sources[i] = folders.get(i)
+		}
+
+		return sources
+	}
+
+	private String[] fillEncodings(int amount){
+		String[] encodings = new String[amount]
+		for(int i = 0; i<amount; i++){
+			encodings[i] = 'UFT_8'
+		}
+		return encodings
+	}
+
 	public boolean isTheMethodCallingThisMethod(String predictorSignature, IMethodBinding activeMethod){
-		boolean callsThisMethod = false	
+		boolean callsThisMethod = false
 		String activeMethodSignature= this.simplifyMethodSignature(activeMethod)
 
 		/*if active method is indeed the method calling this method*/
@@ -304,27 +330,27 @@ class EditDiffMC extends ConflictPredictor{
 	 */
 	public boolean methodInvocationMatchesThisMethod(IMethodBinding methodInvocation){
 		boolean isTheSameMethod = false
-		
-		if( methodInvocation!=null && methodInvocation.getKey()!=null){
-				String methodInvocationClass = this.simplifyClassName(methodInvocation)
-				String methodInvocationSignature = this.simplifyMethodSignature(methodInvocation)
-				String [] temp = this.filePath.split('/')
-				String thisMethodClass = this.packageName + '.' + temp[temp.length-1].split('\\.')[0]
-				temp = this.signature.split('\\.')
-				String thisMethodSignature = temp[temp.length-1]
 
-				/*if method invocation is indeed this method*/
-				if(methodInvocationClass.contains(thisMethodClass) &&
-				methodInvocationSignature.contains(thisMethodSignature)){
-					isTheSameMethod = true
-				}
+		if( methodInvocation!=null && methodInvocation.getKey()!=null){
+			String methodInvocationClass = this.simplifyClassName(methodInvocation)
+			String methodInvocationSignature = this.simplifyMethodSignature(methodInvocation)
+			String [] temp = this.filePath.split('/')
+			String thisMethodClass = this.packageName + '.' + temp[temp.length-1].split('\\.')[0]
+			temp = this.signature.split('\\.')
+			String thisMethodSignature = temp[temp.length-1]
+
+			/*if method invocation is indeed this method*/
+			if(methodInvocationClass.contains(thisMethodClass) &&
+			methodInvocationSignature.contains(thisMethodSignature)){
+				isTheSameMethod = true
+			}
 		}
 
 		return isTheSameMethod
 	}
 
 	private String simplifyClassName(IMethodBinding methodInvocation){
-		String className = '' 
+		String className = ''
 		String temp = (methodInvocation.getKey().split("\\."))[0]
 		className = temp.replaceAll(";", "")
 		className = className.replace("/", ".")
@@ -360,38 +386,9 @@ class EditDiffMC extends ConflictPredictor{
 		return result
 	}
 
-	public void setRootDir(){
-		this.rootDir = ''
-		String [] temp = this.filePath.split('/')
-		String firstPackageName = this.packageName.split('\\.')[0]
-		String path = ''
-		int i = 1
-		boolean foundFirstPackageName = false
-		while(!foundFirstPackageName){
-			path = temp[i]
-			if(path.equals(firstPackageName)){
-				foundFirstPackageName = true
-			}else{
-				this.rootDir = this.rootDir + File.separator + path
-				i++
-			}
-
-		}
-
-	}
-
-	public String getRootDir(){
-		return this.rootDir
-	}
-
 	public static void main(String[] args){
 		//String method ='public\n int\n sub\n (int a, int b) {\n int result = 0;\n int sub = a-b;\n if(sub>0){\n result = sub;\n }\n return result;\n}\n//comment1\n//comment2'
 		//println method
-		EditDiffMC e = new EditDiffMC()
-		e.setFilePath('/Users/paolaaccioly/Desktop/Teste/Example/rev/src/org/edu/Example.java')
-		e.setPackageName('org.edu')
-		String rootDir = e.getRootDir()
-		println rootDir
 
 	}
 }
