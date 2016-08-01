@@ -242,12 +242,13 @@ class EditDiffMC extends ConflictPredictor{
 				 */
 						@Override
 						public boolean visit(MethodDeclaration node) {
-
 							activeMethod = node;
-
-							return super.visit(node)
-
-
+							IMethodBinding activeMethodBinding = activeMethod.resolveBinding()
+							if(isTheMethodCallingThisMethod(predictorSignature, activeMethodBinding)){
+								return super.visit(node)
+							}else{
+								return false
+							}
 						}
 
 						/**
@@ -257,20 +258,15 @@ class EditDiffMC extends ConflictPredictor{
 				 */
 						@Override
 						public boolean visit(MethodInvocation node) {
+							IMethodBinding thisMethodBinding = node.resolveMethodBinding()
+							boolean isThisMethod = methodInvocationMatchesThisMethod(thisMethodBinding)
+							if(isThisMethod){
+								isTheSameMethod = true
+								return true
 
-							IMethodBinding activeMethodBinding = activeMethod.resolveBinding()
-							if(isTheMethodCallingThisMethod(predictorSignature, activeMethodBinding)){
-								IMethodBinding thisMethodBinding = node.resolveMethodBinding()
-								boolean isThisMethod = methodInvocationMatchesThisMethod(thisMethodBinding)
-								if(isThisMethod){
-									isTheSameMethod = true
-									return true
-								}
 							}
 							return super.visit(node)
 						}
-
-
 					})
 
 		}
