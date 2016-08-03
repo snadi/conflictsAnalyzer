@@ -26,7 +26,7 @@ public abstract class ConflictPredictor {
 
 	public FSTTerminal node
 
-	private Map<ConflictPredictor, Boolean> predictors
+	public Map<ConflictPredictor, Boolean> predictors
 
 	public String leftOrRight
 
