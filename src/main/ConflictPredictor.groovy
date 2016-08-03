@@ -15,7 +15,6 @@ import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.MethodDeclaration
 import org.eclipse.jdt.core.dom.MethodInvocation
 
-import com.ibm.wala.shrikeBT.info.ThisAssignmentChecker;
 
 import de.ovgu.cide.fstgen.ast.FSTNode;
 import de.ovgu.cide.fstgen.ast.FSTNonTerminal
@@ -394,27 +393,35 @@ public abstract class ConflictPredictor {
 		return result
 	}
 
-	private void saveReference(ConflictPredictor predictor){
+	private void saveReference(ConflictPredictor predictor, ArrayList<Integer> methodInvocationLines){
+
 		/*instantiates the new hashmap if necessary*/
 		if(this.predictors==null){
 			this.predictors = new HashMap<ConflictPredictor, Boolean>()
 		}
 		/*checks whether the editions made added the method call*/
-		Boolean editionsAddedMethodCall = this.editionsAddedMethodCall(predictor)
-		
+		Boolean editionsAddedMethodCall = this.editionsAddedMethodCall(predictor, methodInvocationLines)
+
 		/*saves the reference in the hashmap*/
 		this.predictors.put(predictor,editionsAddedMethodCall)
 
 	}
 
-	private boolean editionsAddedMethodCall(ConflictPredictor predictor){
+	private boolean editionsAddedMethodCall(ConflictPredictor predictor, ArrayList<Integer> methodInvocationLines){
 		boolean editionsAddedMethodCall = false
-		//TODO
+		if(this.leftOrRight.equals('left')){
+			editionsAddedMethodCall = !Collections.disjoint(predictor.rightLines, methodInvocationLines)
+		}else if(this.leftOrRight.equals('right')){
+			editionsAddedMethodCall = !Collections.disjoint(predictor.leftLines, methodInvocationLines)
+		}else if (this.leftOrRight.equals('both')){
+			editionsAddedMethodCall = (!Collections.disjoint(predictor.leftLines, methodInvocationLines)) ||
+					(!Collections.disjoint(predictor.rightLines, methodInvocationLines))
+		}
+
 		return editionsAddedMethodCall
 	}
 
 	public void lookForReferencesOnConflictPredictors(Map<String, Integer> filesWithConflictPredictors){
-
 
 		/*for each file containing conflict predictors*/
 		for(String filePath : filesWithConflictPredictors.keySet()){
@@ -472,7 +479,7 @@ public abstract class ConflictPredictor {
 	}
 
 	private void lookForReferenceOnConflictPredictor(ConflictPredictor predictor){
-				
+
 		/*Step 1: check for potential EditDiffMC when grepping
 		 * the method name inside the edited method */
 		if(this.containsTextualReference(predictor)){
@@ -482,10 +489,10 @@ public abstract class ConflictPredictor {
 			 * method reference finder*/
 			ArrayList<Integer> result = this.checkForClassReference(predictor)
 			if(!result.empty){
-				this.saveReference(predictor)
+				this.saveReference(predictor, result)
 			}
 		}
-		
+
 
 	}
 
@@ -611,7 +618,7 @@ public abstract class ConflictPredictor {
 							activeMethod = node;
 							IMethodBinding activeMethodBinding = activeMethod.resolveBinding()
 							/*only visits the active method containing a textual reference 
-							 * to this method*/
+					 * to this method*/
 							if(isTheMethodCallingThisMethod(predictorSignature, activeMethodBinding)){
 								return super.visit(node)
 							}else{
@@ -630,7 +637,7 @@ public abstract class ConflictPredictor {
 							IMethodBinding thisMethodBinding = node.resolveMethodBinding()
 							boolean isThisMethod = methodInvocationMatchesThisMethod(thisMethodBinding)
 							if(isThisMethod){
-								int lineNumber = parse.getLineNumber(parse.getExtendedStartPosition(node)) 
+								int lineNumber = parse.getLineNumber(parse.getExtendedStartPosition(node))
 								invocationLines.add(lineNumber)
 							}
 							return super.visit(node)
