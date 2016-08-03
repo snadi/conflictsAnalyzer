@@ -258,6 +258,7 @@ class MergeScenario implements Observer {
 		 * different spacing conflict predictor do not add it to the list
 		 * of conflict predictors*/	
 		if(!(predictor instanceof EditDiffMC && predictor.diffSpacing)){
+			
 			String predictorFilePath = predictor.getFilePath()
 			ArrayList<ConflictPredictor> file = this.filesWithConflictPredictors.get(predictorFilePath)
 

@@ -395,10 +395,14 @@ public abstract class ConflictPredictor {
 	}
 
 	private void saveReference(ConflictPredictor predictor){
+		/*instantiates the new hashmap if necessary*/
 		if(this.predictors==null){
 			this.predictors = new HashMap<ConflictPredictor, Boolean>()
 		}
+		/*checks whether the editions made added the method call*/
 		Boolean editionsAddedMethodCall = this.editionsAddedMethodCall(predictor)
+		
+		/*saves the reference in the hashmap*/
 		this.predictors.put(predictor,editionsAddedMethodCall)
 
 	}
@@ -476,8 +480,8 @@ public abstract class ConflictPredictor {
 			/*Step 2: in case the edited method has
 			 *  a textual reference, remove false positives using the
 			 * method reference finder*/
-			boolean hasReference = this.checkForClassReference(predictor)
-			if(hasReference){
+			ArrayList<Integer> result = this.checkForClassReference(predictor)
+			if(!result.empty){
 				this.saveReference(predictor)
 			}
 		}
@@ -550,8 +554,8 @@ public abstract class ConflictPredictor {
 	}
 
 
-	private boolean checkForClassReference(ConflictPredictor predictor) throws IOException{
-		boolean isTheSameMethod = false
+	private ArrayList<Integer> checkForClassReference(ConflictPredictor predictor) throws IOException{
+		ArrayList<Integer> invocationLines = new ArrayList<Integer>()
 
 		/*sets the predictor signature*/
 		String []  temp = predictor.signature.split('\\.')
@@ -598,6 +602,7 @@ public abstract class ConflictPredictor {
 
 						/**
 				 * @param MethodDeclaration node
+				 * This method visits every method declaration in the compiled class
 				 * @return true if and only if this node is the method containing this
 				 * method invocation. Returns false otherwise
 				 */
@@ -605,6 +610,8 @@ public abstract class ConflictPredictor {
 						public boolean visit(MethodDeclaration node) {
 							activeMethod = node;
 							IMethodBinding activeMethodBinding = activeMethod.resolveBinding()
+							/*only visits the active method containing a textual reference 
+							 * to this method*/
 							if(isTheMethodCallingThisMethod(predictorSignature, activeMethodBinding)){
 								return super.visit(node)
 							}else{
@@ -614,6 +621,7 @@ public abstract class ConflictPredictor {
 
 						/**
 				 * @param MethodInvocation node
+				 * This method visits every method invocation inside the method of interest
 				 * @return true if and only if it is a method invocation to this method.
 				 * Returns false otherwise
 				 */
@@ -622,9 +630,8 @@ public abstract class ConflictPredictor {
 							IMethodBinding thisMethodBinding = node.resolveMethodBinding()
 							boolean isThisMethod = methodInvocationMatchesThisMethod(thisMethodBinding)
 							if(isThisMethod){
-								isTheSameMethod = true
-								return true
-
+								int lineNumber = parse.getLineNumber(parse.getExtendedStartPosition(node)) 
+								invocationLines.add(lineNumber)
 							}
 							return super.visit(node)
 						}
@@ -632,7 +639,7 @@ public abstract class ConflictPredictor {
 
 		}
 
-		return isTheSameMethod
+		return invocationLines
 	}
 
 	private String[] fillSources(ConflictPredictor predictor){
