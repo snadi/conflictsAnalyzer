@@ -2,7 +2,9 @@ package main
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.Map
+
+import util.ConflictPredictorPrinter;;
 
 class Project {
 
@@ -108,8 +110,13 @@ class Project {
 	}
 
 	private printResults(MergeScenario ms) {
+		/*print conflicts report*/
 		ConflictPrinter.printMergeScenarioReport(ms, this.name)
 		ConflictPrinter.updateProjectData(this)
+		
+		/*print conflict predictors report*/
+		ConflictPredictorPrinter.printMergeScenarioReport(this.name, ms)
+
 	}
 
 	private void updateAndPrintSummary(MergeScenario ms){
@@ -178,6 +185,12 @@ class Project {
 			quantity2 = quantity2 + this.sameSignatureCMSummary.get(diffSpacing)
 			this.sameSignatureCMSummary.put(diffSpacing, quantity2)
 		}
+	}
+	
+	public String getProjectCSSummary(){
+		String result = ''
+		
+		return result
 	}
 	
 	public String toString(){

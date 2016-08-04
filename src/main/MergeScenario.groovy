@@ -132,7 +132,7 @@ class MergeScenario implements Observer {
 				 * has no other reference on the other edited methods,
 				 * add this predictor to the noReference list*/
 				if((predictor instanceof EditDiffMC) && (predictor.predictors==null)){
-					
+
 					noReference.add(predictor)
 				}
 			}
@@ -140,6 +140,7 @@ class MergeScenario implements Observer {
 			/*Remove all edited methods without reference on any other edited method*/
 			predictors.removeAll(noReference)
 		}
+			
 
 	}
 
@@ -209,11 +210,11 @@ class MergeScenario implements Observer {
 
 				}else{
 
-					/*if(!this.hasConflicts){
-					 this.hasConflicts = true
-					 this.removeNonMCBaseNodes(fstGenMerge.baseNodes)
-					 }
-					 this.createConflict(node)*/
+					if(!this.hasConflicts){
+						this.hasConflicts = true
+						//this.removeNonMCBaseNodes(fstGenMerge.baseNodes)
+					}
+					this.createConflict(node)
 
 				}
 
@@ -258,7 +259,7 @@ class MergeScenario implements Observer {
 		 * different spacing conflict predictor do not add it to the list
 		 * of conflict predictors*/	
 		if(!(predictor instanceof EditDiffMC && predictor.diffSpacing)){
-			
+
 			String predictorFilePath = predictor.getFilePath()
 			ArrayList<ConflictPredictor> file = this.filesWithConflictPredictors.get(predictorFilePath)
 
@@ -316,9 +317,14 @@ class MergeScenario implements Observer {
 
 		if(conflict.getType().equals(SSMergeConflicts.SameSignatureCM.toString())){
 
-			conflict.setCauseSameSignatureCM(fstGenMerge.baseNodes, matched)
+			/*conflict.setCauseSameSignatureCM(fstGenMerge.baseNodes, matched)
 			String cause = conflict.getCauseSameSignatureCM()
-			this.updateSameSignatureCMSummary(cause, conflict.getDifferentSpacing())
+			this.updateSameSignatureCMSummary(cause, conflict.getDifferentSpacing())*/
+			
+			//use the code below to skip the samesignaturemc analysis
+			this.updateSameSignatureCMSummary(PatternSameSignatureCM.noPattern.toString(),
+					conflict.getDifferentSpacing())
+
 		}
 
 		this.mergedFiles.elementData(index).conflicts.add(conflict)
@@ -359,7 +365,13 @@ class MergeScenario implements Observer {
 
 		return report
 	}
-
+	
+	public String computeMSSummary(){
+		//TODO
+		String summary = ','
+		
+		return summary
+	}
 
 	private void removeNonMCBaseNodes(LinkedList<FSTNode> bNodes){
 		LinkedList<FSTNode> baseNodes = new LinkedList<FSTNode>(bNodes)

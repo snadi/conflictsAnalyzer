@@ -588,7 +588,7 @@ public abstract class ConflictPredictor {
 		String classname = filePredictor.getName()
 
 		if(contents!=null){
-
+			println 'Starting to parse and analyse class ' + predictor.filePath
 			// Create the ASTParser which will be a CompilationUnit
 			ASTParser parser = ASTParser.newParser(AST.JLS8)
 			parser.setKind(ASTParser.K_COMPILATION_UNIT)
@@ -645,7 +645,7 @@ public abstract class ConflictPredictor {
 					})
 
 		}
-
+		println 'Finished to parse and analyse class ' + predictor.filePath
 		return invocationLines
 	}
 
@@ -740,6 +740,12 @@ public abstract class ConflictPredictor {
 			contents = contents + it + '\n'
 		}
 		return contents
+	}
+	
+	public String toString(){
+		String result = ''
+		
+		return result
 	}
 
 }
