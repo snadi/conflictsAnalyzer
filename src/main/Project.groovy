@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map
 
+import com.sun.org.apache.bcel.internal.generic.RETURN;
+
 import util.ConflictPredictorPrinter;;
 
 class Project {
@@ -15,25 +17,23 @@ class Project {
 	private int analyzedMergeScenarios
 
 	private int conflictingMergeScenarios
-	
+
 	private int conflictingScenariosOnlyNonJava
 
 	private double conflictRate
 
 	private Map<String, Conflict> projectSummary
-	
+
 	private File mergeScenarioFile
-	
+
 	private Map<String, Integer> sameSignatureCMSummary
-	
-	private int possibleRenamings;
-	
+
+	private ArrayList<Integer> conflictPredictorSummary
+
+	private int possibleRenamings
+
 	private List<ProjectPeriod> periods
-	
-	private int editSameMCWithoutConflicts
-	
-	private int editSameMCWithoutConflictsDS
-	
+
 	public Project(String projectName, List<ProjectPeriod> periods = null){
 		this.mergeScenarios = new ArrayList<MergeScenario>()
 		this.name = projectName
@@ -42,11 +42,10 @@ class Project {
 		this.createSameSignatureCMSummary()
 		this.createProjectDir()
 		this.periods = periods
-		this.editSameMCWithoutConflicts = 0
-		this.editSameMCWithoutConflictsDS = 0
+
 	}
-	
-	
+
+
 	public void createSameSignatureCMSummary(){
 		this.sameSignatureCMSummary = ConflictSummary.initializeSameSignatureCMSummary()
 	}
@@ -98,44 +97,65 @@ class Project {
 	}
 
 	public SSMergeResult analyzeConflicts(String revisionFile, boolean resultGitMerge){
-			
-			MergeScenario ms = new MergeScenario(revisionFile, resultGitMerge)
-			this.mergeScenarios.add(ms)
-			ms.analyzeConflicts()
-			SSMergeResult result = new SSMergeResult(ms.name, ms.hasConflictsThatWereNotSolved(), ms.getFilesWithMethodsToJoana())
-			updateAndPrintSummary(ms)
-			ms.deleteMSDir()
-			
-			return result
+
+		MergeScenario ms = new MergeScenario(revisionFile, resultGitMerge)
+		this.mergeScenarios.add(ms)
+		ms.analyzeConflicts()
+		SSMergeResult result = new SSMergeResult(ms.name, ms.hasConflictsThatWereNotSolved(), ms.getFilesWithMethodsToJoana())
+		updateAndPrintSummary(ms)
+		ms.deleteMSDir()
+
+		return result
 	}
 
-	private printResults(MergeScenario ms) {
+	private printResults(MergeScenario ms, String ms_CPsummary) {
 		/*print conflicts report*/
 		ConflictPrinter.printMergeScenarioReport(ms, this.name)
 		ConflictPrinter.updateProjectData(this)
-		
+
 		/*print conflict predictors report*/
-		ConflictPredictorPrinter.printMergeScenarioReport(this.name, ms)
+		ConflictPredictorPrinter.printMergeScenarioReport(this.name, ms,ms_CPsummary)
 
 	}
 
 	private void updateAndPrintSummary(MergeScenario ms){
 		updateConflictingRate(ms)
-		this.updateEditSameMCWithoutConflicts(ms)
+		String ms_summary = updateConflictPredictorSummary(ms)
 		if(ms.hasConflicts){
 			updateProjectSummary(ms)
 			updateSameSignatureCMSummary(ms)
 		}
-		printResults(ms)
+		printResults(ms, ms_summary)
 	}
-	
-	private void updateEditSameMCWithoutConflicts(MergeScenario ms){
+
+	private String updateConflictPredictorSummary(MergeScenario ms){
+		String result = ms.computeMSSummary()
+		ArrayList<String> temp = new ArrayList<String>(Arrays.asList(result.split(',')))
+		temp.remove(0)
 		
-		this.editSameMCWithoutConflicts = this.editSameMCWithoutConflicts + ms.editSameMCWithoutConflicts
-		this.editSameMCWithoutConflictsDS = this.editSameMCWithoutConflictsDS + ms.editSameMCWithoutConflictsDS
+		/*initializes conflict predictor summary with zero values*/
+		if(this.conflictPredictorSummary==null){
+			this.conflictPredictorSummary = new ArrayList<Integer>()
+			for(String s: temp){
+				this.conflictPredictorSummary.add(0)
+			}
+
+		}
+
+		/*updates the array list with new values*/
+		ArrayList<String> newConflictPredictorSummary = new ArrayList<Integer>()
+		for(int i = 0; i < temp.size(); i++){
+			int quantity = Integer.parseInt(temp.get(i))
+			quantity = quantity + this.conflictPredictorSummary.get(i)
+			newConflictPredictorSummary.add(quantity)
+		}
 		
+		/*updates the reference*/
+		this.conflictPredictorSummary = newConflictPredictorSummary
+
+		return result
 	}
-	
+
 	private void updateConflictingRate(MergeScenario ms) {
 		this.analyzedMergeScenarios++
 		if(ms.hasConflicts){
@@ -162,15 +182,15 @@ class Project {
 	}
 
 	private void updateProjectSummary(MergeScenario ms){
-		
+
 		for(SSMergeConflicts c : SSMergeConflicts.values()){
 			Conflict conflict = ms.getMergeScenarioSummary().get(c.toString())
 			this.projectSummary = ConflictSummary.updateConflictsSummary(this.projectSummary, conflict)
-			
+
 		}
 		this.possibleRenamings = this.possibleRenamings + ms.getPossibleRenamings()
 	}
-	
+
 	private void updateSameSignatureCMSummary(MergeScenario ms){
 		for(PatternSameSignatureCM p : PatternSameSignatureCM.values()){
 			//update cause
@@ -178,7 +198,7 @@ class Project {
 			int quantity = ms.sameSignatureCMSummary.get(cause)
 			quantity = quantity + this.sameSignatureCMSummary.get(cause)
 			this.sameSignatureCMSummary.put(cause, quantity)
-			
+
 			//update false positives
 			String diffSpacing = cause + 'DS'
 			int quantity2 = ms.sameSignatureCMSummary.get(diffSpacing)
@@ -186,25 +206,26 @@ class Project {
 			this.sameSignatureCMSummary.put(diffSpacing, quantity2)
 		}
 	}
-	
+
 	public String getProjectCSSummary(){
-		String result = ''
-		
+		String result = this.name 
+		for(Integer i : this.conflictPredictorSummary){
+			result = result + ',' + i
+		}
 		return result
 	}
-	
+
 	public String toString(){
 		String result = this.name + ', ' + this.analyzedMergeScenarios + ', ' +
-		this.conflictingScenariosOnlyNonJava + ', ' +
-		this.conflictingMergeScenarios + ', ' + 
-		ConflictSummary.printConflictsSummary(this.projectSummary) + ', ' +
-		ConflictSummary.printSameSignatureCMSummary(this.sameSignatureCMSummary) + ', ' +
-		this.possibleRenamings + ', ' + this.editSameMCWithoutConflicts + ', ' +
-		this.editSameMCWithoutConflictsDS
+				this.conflictingScenariosOnlyNonJava + ', ' +
+				this.conflictingMergeScenarios + ', ' +
+				ConflictSummary.printConflictsSummary(this.projectSummary) + ', ' +
+				ConflictSummary.printSameSignatureCMSummary(this.sameSignatureCMSummary) + ', ' +
+				this.possibleRenamings
 
 		return result
-	}	
-	
+	}
+
 	public List<ProjectPeriod> getProjectPeriods()
 	{
 		periods

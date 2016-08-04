@@ -140,7 +140,7 @@ class MergeScenario implements Observer {
 			/*Remove all edited methods without reference on any other edited method*/
 			predictors.removeAll(noReference)
 		}
-			
+
 
 	}
 
@@ -318,9 +318,9 @@ class MergeScenario implements Observer {
 		if(conflict.getType().equals(SSMergeConflicts.SameSignatureCM.toString())){
 
 			/*conflict.setCauseSameSignatureCM(fstGenMerge.baseNodes, matched)
-			String cause = conflict.getCauseSameSignatureCM()
-			this.updateSameSignatureCMSummary(cause, conflict.getDifferentSpacing())*/
-			
+			 String cause = conflict.getCauseSameSignatureCM()
+			 this.updateSameSignatureCMSummary(cause, conflict.getDifferentSpacing())*/
+
 			//use the code below to skip the samesignaturemc analysis
 			this.updateSameSignatureCMSummary(PatternSameSignatureCM.noPattern.toString(),
 					conflict.getDifferentSpacing())
@@ -365,11 +365,22 @@ class MergeScenario implements Observer {
 
 		return report
 	}
-	
+
 	public String computeMSSummary(){
 		//TODO
-		String summary = ','
+		/*Merge_Scenario,has_merge_Conflicts,Conflicting_EditSameMC,Conflicting_EditSameMC_DS,
+		 * NonConflicting_EditSameMC,NonConflicting_EditSameMC_DS,Conflicting_EditSameFD,
+		 * Conflicting_EditSameFD_DS,NonConflicting_EditSameFD,
+		 * NonConflicting_EditSameFD_DS,EditDiffMC,EditDifffMC_EditSameMC,
+		 * EditDiffMC_EditionAddsMethodInvocation,EditDiffMC_EditionAddsMethodInvocation_EditSameMC*/
+		String summary = this.name
+		if(this.hasConflicts){
+			summary = summary + ',' + 1
+		}else{
+			summary = summary + ',' + 1
+		}
 		
+
 		return summary
 	}
 

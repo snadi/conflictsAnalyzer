@@ -3,7 +3,9 @@ import java.text.SimpleDateFormat
 import java.util.HashMap;
 import java.util.Hashtable
 
-import util.CSVAnalyzer;
+import util.CSVAnalyzer
+import util.ConflictPredictorPrinter;
+
 import org.apache.commons.io.FileUtils
 import util.Util
 
@@ -85,6 +87,7 @@ class RunStudy {
 
 			//print project report and call R script
 			ConflictPrinter.printProjectData(project)
+			ConflictPredictorPrinter.printProjectReport(project)
 			//this.callRScript()
 		}
 
