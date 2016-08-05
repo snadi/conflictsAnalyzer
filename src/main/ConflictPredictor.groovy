@@ -26,7 +26,7 @@ public abstract class ConflictPredictor {
 
 	public FSTTerminal node
 
-	public Map<ConflictPredictor, Boolean> predictors
+	public Map<ConflictPredictor, Integer> predictors
 
 	public String leftOrRight
 
@@ -397,17 +397,18 @@ public abstract class ConflictPredictor {
 
 		/*instantiates the new hashmap if necessary*/
 		if(this.predictors==null){
-			this.predictors = new HashMap<ConflictPredictor, Boolean>()
+			this.predictors = new HashMap<ConflictPredictor, Integer>()
 		}
 		/*checks whether the editions made added the method call*/
-		Boolean editionsAddedMethodCall = this.editionsAddedMethodCall(predictor, methodInvocationLines)
+		Integer editionsAddedMethodCall = this.editionsAddedMethodCall(predictor, methodInvocationLines)
 
 		/*saves the reference in the hashmap*/
 		this.predictors.put(predictor,editionsAddedMethodCall)
 
 	}
 
-	private boolean editionsAddedMethodCall(ConflictPredictor predictor, ArrayList<Integer> methodInvocationLines){
+	private int editionsAddedMethodCall(ConflictPredictor predictor, ArrayList<Integer> methodInvocationLines){
+		int result = 0
 		boolean editionsAddedMethodCall = false
 		if(this.leftOrRight.equals('left')){
 			editionsAddedMethodCall = !Collections.disjoint(predictor.rightLines, methodInvocationLines)
@@ -417,8 +418,10 @@ public abstract class ConflictPredictor {
 			editionsAddedMethodCall = (!Collections.disjoint(predictor.leftLines, methodInvocationLines)) ||
 					(!Collections.disjoint(predictor.rightLines, methodInvocationLines))
 		}
-
-		return editionsAddedMethodCall
+		if(editionsAddedMethodCall){
+			result = 1
+		}
+		return result
 	}
 
 	public void lookForReferencesOnConflictPredictors(Map<String, Integer> filesWithConflictPredictors){
@@ -741,10 +744,38 @@ public abstract class ConflictPredictor {
 		}
 		return contents
 	}
-	
+
 	public String toString(){
 		String result = ''
 		//TODO
+		return result
+	}
+
+	public int[] computePredictorSummary(){
+		/*instantiate resulting array*/
+		int editDiffMC,editDifffMC_EditSameMC,
+		editDiffMC_EditionAddsMethodInvocation,
+		editDiffMC_EditionAddsMethodInvocation_EditSameMC = 0
+		int [] result = [editDiffMC,editDifffMC_EditSameMC,editDiffMC_EditionAddsMethodInvocation,
+			editDiffMC_EditionAddsMethodInvocation_EditSameMC]
+		
+		/*for each predictor in this.predictors*/
+		for(ConflictPredictor predictor : this.predictors.keySet()){
+			int editionAddsMethodInvocation = this.predictors.get(predictor)
+			
+			if(this instanceof EditSameMC || predictor instanceof EditSameMC){
+				editDifffMC_EditSameMC++
+				editDiffMC_EditionAddsMethodInvocation_EditSameMC =
+						editDiffMC_EditionAddsMethodInvocation_EditSameMC +
+						editionAddsMethodInvocation
+			}else{
+				editDiffMC++
+				editDiffMC_EditionAddsMethodInvocation = editDiffMC_EditionAddsMethodInvocation +
+				editionAddsMethodInvocation
+			}
+			
+		}
+
 		return result
 	}
 

@@ -12,8 +12,8 @@ class ConflictPredictorPrinter {
 
 	public static void printProjectReport(Project project){
 		String header = 'Project,has_merge_Conflicts,Conflicting_EditSameMC,Conflicting_EditSameMC_DS,' +
-				'NonConflicting_EditSameMC,NonConflicting_EditSameMC_DS,Conflicting_EditSameFD,' +
-				'Conflicting_EditSameFD_DS,NonConflicting_EditSameFD,NonConflicting_EditSameFD_DS,' +
+				'Conflicting_EditSameFD,Conflicting_EditSameFD_DS,NonConflicting_EditSameMC,' +
+				'NonConflicting_EditSameMC_DS,NonConflicting_EditSameFD,NonConflicting_EditSameFD_DS,' +
 				'EditDiffMC,EditDifffMC_EditSameMC,EditDiffMC_EditionAddsMethodInvocation,' +
 				'EditDiffMC_EditionAddsMethodInvocation_EditSameMC\n'
 
@@ -29,8 +29,8 @@ class ConflictPredictorPrinter {
 
 	public static void updateProjectData(Project project){
 		String header = 'Project,has_merge_Conflicts,Conflicting_EditSameMC,Conflicting_EditSameMC_DS,' +
-				'NonConflicting_EditSameMC,NonConflicting_EditSameMC_DS,Conflicting_EditSameFD,' +
-				'Conflicting_EditSameFD_DS,NonConflicting_EditSameFD,NonConflicting_EditSameFD_DS,' +
+				'Conflicting_EditSameFD,Conflicting_EditSameFD_DS,NonConflicting_EditSameMC,' +
+				'NonConflicting_EditSameMC_DS,NonConflicting_EditSameFD,NonConflicting_EditSameFD_DS,' +
 				'EditDiffMC,EditDifffMC_EditSameMC,EditDiffMC_EditionAddsMethodInvocation,' +
 				'EditDiffMC_EditionAddsMethodInvocation_EditSameMC\n'
 
@@ -44,11 +44,11 @@ class ConflictPredictorPrinter {
 		file.append(project.getProjectCSSummary()+ '\n')
 
 	}
-
+	
 	public static void printMergeScenarioReport(Project project, MergeScenario ms, String ms_Summary){
 		String header = 'Merge_Scenario,has_merge_Conflicts,Conflicting_EditSameMC,Conflicting_EditSameMC_DS,' +
-				'NonConflicting_EditSameMC,NonConflicting_EditSameMC_DS,Conflicting_EditSameFD,' +
-				'Conflicting_EditSameFD_DS,NonConflicting_EditSameFD,NonConflicting_EditSameFD_DS,' +
+				'Conflicting_EditSameFD,Conflicting_EditSameFD_DS,NonConflicting_EditSameMC,' +
+				'NonConflicting_EditSameMC_DS,NonConflicting_EditSameFD,NonConflicting_EditSameFD_DS,' +
 				'EditDiffMC,EditDifffMC_EditSameMC,EditDiffMC_EditionAddsMethodInvocation,' +
 				'EditDiffMC_EditionAddsMethodInvocation_EditSameMC\n'
 

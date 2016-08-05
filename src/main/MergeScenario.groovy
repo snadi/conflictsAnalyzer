@@ -6,6 +6,9 @@ import java.util.LinkedList
 import java.util.Map;
 import java.util.Observable
 
+import javax.management.InstanceOfQueryExp;
+
+import com.ibm.wala.shrikeBT.info.ThisAssignmentChecker;
 
 import merger.FSTGenMerger;
 import merger.MergeVisitor
@@ -368,20 +371,80 @@ class MergeScenario implements Observer {
 
 	public String computeMSSummary(){
 		//TODO
-		/*Merge_Scenario,has_merge_Conflicts,Conflicting_EditSameMC,Conflicting_EditSameMC_DS,
-		 * NonConflicting_EditSameMC,NonConflicting_EditSameMC_DS,Conflicting_EditSameFD,
-		 * Conflicting_EditSameFD_DS,NonConflicting_EditSameFD,
-		 * NonConflicting_EditSameFD_DS,EditDiffMC,EditDifffMC_EditSameMC,
-		 * EditDiffMC_EditionAddsMethodInvocation,EditDiffMC_EditionAddsMethodInvocation_EditSameMC*/
+		/*'Merge_Scenario,has_merge_Conflicts,Conflicting_EditSameMC,Conflicting_EditSameMC_DS,' +
+		 'Conflicting_EditSameFD,Conflicting_EditSameFD_DS,NonConflicting_EditSameMC,' +
+		 'NonConflicting_EditSameMC_DS,NonConflicting_EditSameFD,NonConflicting_EditSameFD_DS,' +
+		 'EditDiffMC,EditDifffMC_EditSameMC,EditDiffMC_EditionAddsMethodInvocation,' +
+		 'EditDiffMC_EditionAddsMethodInvocation_EditSameMC\n'*/
+		/*set name*/
 		String summary = this.name
+
+		/*set has conflict*/
 		if(this.hasConflicts){
 			summary = summary + ',' + 1
 		}else{
-			summary = summary + ',' + 1
+			summary = summary + ',' + 0
 		}
-		
+		/*set number of conflicting editsamemc and editsamefd*/		
+		summary = summary + ',' + this.mergeScenarioSummary.get('EditSameMC') + ',' +
+				this.mergeScenarioSummary.get('EditSameMCDS') + ',' + this.mergeScenarioSummary.get('EditSameFd') +
+				',' + this.mergeScenarioSummary.get('EditSameFdDS')
+
+		/*set non conflicting conflict predictors*/
+
+		summary = summary + ',' + this.auxcomputeMSSummary()
 
 		return summary
+	}
+
+	private String auxcomputeMSSummary(){
+		String result = ''
+		/*Instantiating remaining variables*/
+		int nonConflicting_EditSameMC, nonConflicting_EditSameMC_DS,
+		nonConflicting_EditSameFD,nonConflicting_EditSameFD_DS,
+		editDiffMC,editDifffMC_EditSameMC,
+		editDiffMC_EditionAddsMethodInvocation,
+		editDiffMC_EditionAddsMethodInvocation_EditSameMC = 0
+
+		/*for each file containing conflict predictors*/
+		for(String filePath : this.filesWithConflictPredictors.keySet()){
+
+			ArrayList<ConflictPredictor> predictors = this.filesWithConflictPredictors.get(filePath)
+
+			/*for each conflict predictor in that file*/
+			for(ConflictPredictor predictor : predictors ){
+				if(predictor instanceof EditSameMC){
+					nonConflicting_EditSameMC++
+					if(predictor.diffSpacing){
+						nonConflicting_EditSameMC_DS++
+					}
+					int [] editDiffSummary = predictor.computePredictorSummary()
+					editDifffMC_EditSameMC = editDifffMC_EditSameMC + editDiffSummary[1]
+					editDiffMC_EditionAddsMethodInvocation_EditSameMC = editDiffMC_EditionAddsMethodInvocation_EditSameMC +
+							editDiffSummary[3]
+				}else if(predictor instanceof EditSameFD){
+					nonConflicting_EditSameFD++
+					if(predictor.diffSpacing){
+						nonConflicting_EditSameFD_DS++
+					}else if(predictor instanceof EditDiffMC){
+						int [] editDiffSummary = predictor.computePredictorSummary()
+						editDiffMC = editDiffMC + editDiffSummary[0]
+						editDifffMC_EditSameMC = editDifffMC_EditSameMC + editDiffSummary[1]
+						editDiffMC_EditionAddsMethodInvocation = editDiffMC_EditionAddsMethodInvocation + editDiffSummary[2]
+						editDiffMC_EditionAddsMethodInvocation_EditSameMC = editDiffMC_EditionAddsMethodInvocation_EditSameMC +
+								editDiffSummary[3]
+					}
+				}
+			}
+		}
+
+		/*set string result*/
+		result = nonConflicting_EditSameMC + ',' + nonConflicting_EditSameMC_DS + ',' +
+				nonConflicting_EditSameFD + ',' + nonConflicting_EditSameFD_DS + ',' +
+				editDiffMC + ',' + editDifffMC_EditSameMC + ',' +
+				editDiffMC_EditionAddsMethodInvocation + ',' +
+				editDiffMC_EditionAddsMethodInvocation_EditSameMC
+		return result
 	}
 
 	private void removeNonMCBaseNodes(LinkedList<FSTNode> bNodes){
