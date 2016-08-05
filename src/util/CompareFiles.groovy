@@ -31,6 +31,7 @@ class CompareFiles {
 	}
 
 	private void setDirNames(String revFile){
+		File file = new File(revFile)
 		this.revDir = new File(revFile).getParent()
 		String[] revs = new File(revFile).text.split('\n')
 		this.leftRevName = revs[0]

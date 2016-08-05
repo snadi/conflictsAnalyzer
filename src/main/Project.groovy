@@ -114,7 +114,7 @@ class Project {
 		ConflictPrinter.updateProjectData(this)
 
 		/*print conflict predictors report*/
-		ConflictPredictorPrinter.printMergeScenarioReport(this.name, ms,ms_CPsummary)
+		ConflictPredictorPrinter.printMergeScenarioReport(this, ms,ms_CPsummary)
 
 	}
 
@@ -229,5 +229,10 @@ class Project {
 	public List<ProjectPeriod> getProjectPeriods()
 	{
 		periods
+	}
+	
+	public static void main (String[] args){
+		Project project = new Project('Teste')
+		project.analyzeConflicts('/Users/paolaaccioly/Desktop/Teste/Example/RevisionsFiles.csv', true)
 	}
 }

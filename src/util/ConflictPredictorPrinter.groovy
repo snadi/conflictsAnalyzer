@@ -9,6 +9,8 @@ class ConflictPredictorPrinter {
 	public static String msSeparator = '#MS_XXX_MS#'
 
 	public static String conflictPredictorSeparator = '#CF_===_CF#'
+	
+	public static String internalPredictorSeparator = '#HAS_***REFERENCE_#'
 
 	public static void printProjectReport(Project project){
 		String header = 'Project,has_merge_Conflicts,Conflicting_EditSameMC,Conflicting_EditSameMC_DS,' +
@@ -69,17 +71,19 @@ class ConflictPredictorPrinter {
 		File file = new File('ResultData' + File.separator + projectName + File.separator +
 				'ConflictPredictor_Report.csv')
 		file.append(ConflictPredictorPrinter.msSeparator + '\n')
-		file.append(ms.name + '\n')
-		file.append(ConflictPredictorPrinter.conflictPredictorSeparator + '\n')
+		file.append('Merge scenario: ' + ms.name + '\n')
+		
 
 		for(String filePath : ms.filesWithConflictPredictors.keySet()){
 			ArrayList<ConflictPredictor> predictors = ms.filesWithConflictPredictors.get(filePath)
 			for(ConflictPredictor predictor : predictors){
+				file.append(ConflictPredictorPrinter.conflictPredictorSeparator  + '\n')
 				file.append(predictor.toString() + '\n')
+				file.append(ConflictPredictorPrinter.conflictPredictorSeparator  + '\n')
 			}
 		}
 
-		file.append(ConflictPredictorPrinter.conflictPredictorSeparator  + '\n')
+		
 		file.append(ConflictPredictorPrinter.msSeparator + '\n')
 	}
 }

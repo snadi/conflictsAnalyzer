@@ -20,6 +20,7 @@ import de.ovgu.cide.fstgen.ast.FSTNode;
 import de.ovgu.cide.fstgen.ast.FSTNonTerminal
 import de.ovgu.cide.fstgen.ast.FSTTerminal
 import merger.FSTGenMerger
+import util.ConflictPredictorPrinter;
 import util.Util
 
 public abstract class ConflictPredictor {
@@ -747,22 +748,57 @@ public abstract class ConflictPredictor {
 
 	public String toString(){
 		String result = ''
-		//TODO
+
+		result = this.auxToString(this) + '\n'
+		if(!(this instanceof EditSameFD)){
+			result = result + 'Has references on the following methods: \n'
+			for(ConflictPredictor predictor : this.predictors.keySet()){
+				result = result + ConflictPredictorPrinter.internalPredictorSeparator + '\n'
+				result = result + this.auxToString(predictor) + '\n'
+				result = result + 'Edition adds call: ' + this.predictors.get(predictor) + '\n'
+				result = result + ConflictPredictorPrinter.internalPredictorSeparator + '\n'
+			}
+
+		}
+
 		return result
 	}
 
+	public String auxToString(ConflictPredictor predictor){
+		String result = ''
+		String instance = this.getInstanceType(predictor)
+		result = 'Type: ' + instance + '\n' +
+				'File: ' + predictor.filePath + '\n' +
+				'Left editions: ' + predictor.leftLines + '\n' +
+				'Right editions: ' + predictor.rightLines + '\n' +
+				'Merged body: \n' +
+				predictor.node.body 
+		return result
+	}
+
+
+	public String getInstanceType(ConflictPredictor predictor){
+		String type =''
+		if(predictor instanceof EditSameMC){
+			type = 'EditSameMC'
+		}else if(predictor instanceof EditDiffMC){
+			type = 'EditDiffMC'
+		}else{
+			type = 'EditSameFD'
+		}
+		return type
+	}
 	public int[] computePredictorSummary(){
 		/*instantiate resulting array*/
 		int editDiffMC,editDifffMC_EditSameMC,
 		editDiffMC_EditionAddsMethodInvocation,
 		editDiffMC_EditionAddsMethodInvocation_EditSameMC = 0
-		int [] result = [editDiffMC,editDifffMC_EditSameMC,editDiffMC_EditionAddsMethodInvocation,
-			editDiffMC_EditionAddsMethodInvocation_EditSameMC]
-		
+		int [] result = [0,0,0,0]
+
 		/*for each predictor in this.predictors*/
 		for(ConflictPredictor predictor : this.predictors.keySet()){
 			int editionAddsMethodInvocation = this.predictors.get(predictor)
-			
+
 			if(this instanceof EditSameMC || predictor instanceof EditSameMC){
 				editDifffMC_EditSameMC++
 				editDiffMC_EditionAddsMethodInvocation_EditSameMC =
@@ -771,11 +807,12 @@ public abstract class ConflictPredictor {
 			}else{
 				editDiffMC++
 				editDiffMC_EditionAddsMethodInvocation = editDiffMC_EditionAddsMethodInvocation +
-				editionAddsMethodInvocation
+						editionAddsMethodInvocation
 			}
-			
-		}
 
+		}
+		result = [editDiffMC,editDifffMC_EditSameMC,editDiffMC_EditionAddsMethodInvocation,
+			editDiffMC_EditionAddsMethodInvocation_EditSameMC]
 		return result
 	}
 

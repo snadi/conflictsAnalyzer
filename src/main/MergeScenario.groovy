@@ -1,24 +1,19 @@
 package main
 
 
-import java.io.File;
-import java.util.LinkedList
-import java.util.Map;
+import java.io.File
+import java.util.Map
 import java.util.Observable
 
-import javax.management.InstanceOfQueryExp;
 
-import com.ibm.wala.shrikeBT.info.ThisAssignmentChecker;
-
-import merger.FSTGenMerger;
+import merger.FSTGenMerger
 import merger.MergeVisitor
-import modification.traversalLanguageParser.addressManagement.DuplicateFreeLinkedList;
-import sun.tools.jar.Main;
-import util.CompareFiles;
-import composer.rules.ImplementsListMerging
+import modification.traversalLanguageParser.addressManagement.DuplicateFreeLinkedList
+import util.CompareFiles
+import util.ConflictPredictorPrinter;
 import de.ovgu.cide.fstgen.ast.FSTNode
-import de.ovgu.cide.fstgen.ast.FSTNonTerminal;
-import de.ovgu.cide.fstgen.ast.FSTTerminal;
+import de.ovgu.cide.fstgen.ast.FSTNonTerminal
+import de.ovgu.cide.fstgen.ast.FSTTerminal
 
 
 class MergeScenario implements Observer {
@@ -111,6 +106,7 @@ class MergeScenario implements Observer {
 
 	public void checkForMethodsReferences(){
 
+		ArrayList<String> filesWithNoPredictors = new ArrayList<String>()
 		/*for each file containing conflict predictors*/
 		for(String filePath : this.filesWithConflictPredictors.keySet()){
 			ArrayList<ConflictPredictor> predictors = this.filesWithConflictPredictors.get(filePath)
@@ -142,8 +138,16 @@ class MergeScenario implements Observer {
 
 			/*Remove all edited methods without reference on any other edited method*/
 			predictors.removeAll(noReference)
+
+			if(this.filesWithConflictPredictors.get(filePath).empty){
+				filesWithNoPredictors.add(filePath)
+			}
 		}
 
+		/*Remove files without predictors*/
+		for(String file : filesWithNoPredictors){
+			this.filesWithConflictPredictors.remove(file)
+		}
 
 	}
 
@@ -370,7 +374,6 @@ class MergeScenario implements Observer {
 	}
 
 	public String computeMSSummary(){
-		//TODO
 		/*'Merge_Scenario,has_merge_Conflicts,Conflicting_EditSameMC,Conflicting_EditSameMC_DS,' +
 		 'Conflicting_EditSameFD,Conflicting_EditSameFD_DS,NonConflicting_EditSameMC,' +
 		 'NonConflicting_EditSameMC_DS,NonConflicting_EditSameFD,NonConflicting_EditSameFD_DS,' +
@@ -386,9 +389,10 @@ class MergeScenario implements Observer {
 			summary = summary + ',' + 0
 		}
 		/*set number of conflicting editsamemc and editsamefd*/		
-		summary = summary + ',' + this.mergeScenarioSummary.get('EditSameMC') + ',' +
-				this.mergeScenarioSummary.get('EditSameMCDS') + ',' + this.mergeScenarioSummary.get('EditSameFd') +
-				',' + this.mergeScenarioSummary.get('EditSameFdDS')
+		summary = summary + ',' + this.mergeScenarioSummary.get('EditSameMC').getNumberOfConflicts() + ',' +
+				this.mergeScenarioSummary.get('EditSameMC').getDifferentSpacing()+ ',' +
+				this.mergeScenarioSummary.get('EditSameFd').getNumberOfConflicts() +
+				',' + this.mergeScenarioSummary.get('EditSameFd').getDifferentSpacing()
 
 		/*set non conflicting conflict predictors*/
 
@@ -413,12 +417,12 @@ class MergeScenario implements Observer {
 
 			/*for each conflict predictor in that file*/
 			for(ConflictPredictor predictor : predictors ){
+				int [] editDiffSummary = predictor.computePredictorSummary()
 				if(predictor instanceof EditSameMC){
 					nonConflicting_EditSameMC++
 					if(predictor.diffSpacing){
 						nonConflicting_EditSameMC_DS++
 					}
-					int [] editDiffSummary = predictor.computePredictorSummary()
 					editDifffMC_EditSameMC = editDifffMC_EditSameMC + editDiffSummary[1]
 					editDiffMC_EditionAddsMethodInvocation_EditSameMC = editDiffMC_EditionAddsMethodInvocation_EditSameMC +
 							editDiffSummary[3]
@@ -426,14 +430,13 @@ class MergeScenario implements Observer {
 					nonConflicting_EditSameFD++
 					if(predictor.diffSpacing){
 						nonConflicting_EditSameFD_DS++
-					}else if(predictor instanceof EditDiffMC){
-						int [] editDiffSummary = predictor.computePredictorSummary()
-						editDiffMC = editDiffMC + editDiffSummary[0]
-						editDifffMC_EditSameMC = editDifffMC_EditSameMC + editDiffSummary[1]
-						editDiffMC_EditionAddsMethodInvocation = editDiffMC_EditionAddsMethodInvocation + editDiffSummary[2]
-						editDiffMC_EditionAddsMethodInvocation_EditSameMC = editDiffMC_EditionAddsMethodInvocation_EditSameMC +
-								editDiffSummary[3]
 					}
+				}else if(predictor instanceof EditDiffMC){
+					editDiffMC = editDiffMC + editDiffSummary[0]
+					editDifffMC_EditSameMC = editDifffMC_EditSameMC + editDiffSummary[1]
+					editDiffMC_EditionAddsMethodInvocation = editDiffMC_EditionAddsMethodInvocation + editDiffSummary[2]
+					editDiffMC_EditionAddsMethodInvocation_EditSameMC = editDiffMC_EditionAddsMethodInvocation_EditSameMC +
+							editDiffSummary[3]
 				}
 			}
 		}
@@ -523,9 +526,14 @@ class MergeScenario implements Observer {
 	}
 
 	public static void main(String[] args){
+		Project project = new Project('Teste')
 		MergeScenario ms = new MergeScenario('/Users/paolaaccioly/Desktop/Teste/Example/rev.revisions', true)
 		ms.analyzeConflicts()
-		//println 'hello'
+		String ms_summary = ms.computeMSSummary()
+		ConflictPredictorPrinter.printMergeScenarioReport(project, ms,ms_summary)
+
+
+		println 'hello'
 		/*Map <String,Conflict> mergeScenarioSummary = new HashMap<String, Conflict>()
 		 String type = SSMergeConflicts.EditSameMC.toString()
 		 mergeScenarioSummary.put(type, new Conflict(type))
