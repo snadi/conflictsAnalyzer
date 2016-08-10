@@ -104,9 +104,6 @@ public class ConflictPrinter {
 
 		printMergeScenarioMetrics(mergeScenario, projectName)
 		printConflictsReport(mergeScenario, projectName)
-		if(!mergeScenario.filesWithConflictPredictors.isEmpty()){
-			printEditSameMCWithoutConflicts(mergeScenario, projectName)
-		}
 	}
 
 	public static void printMergeScenarioMetrics(MergeScenario mergeScenario, String projectName){
@@ -124,28 +121,6 @@ public class ConflictPrinter {
 
 
 	}
-	
-	public static void printEditSameMCWithoutConflicts(MergeScenario mergeScenario, String projectName){
-		File out = new File("ResultData" + File.separator + projectName + File.separator + 'EditSameMCWithoutConflicts.csv')
-		
-		def delimiter = '========================================================='
-		out.append(delimiter + '\n')
-		out.append('Revision: ' + mergeScenario.path + '\n')
-		for(Map.Entry <String, ArrayList<EditSameMC>> entry : mergeScenario.filesWithConflictPredictors.entrySet()){
-			out.append('File: ' + entry.key + '\n')
-			for(EditSameMC m : entry.value){
-				String[] lines = m.linesToString()
-				out.append('Method signature: ' + m.node.getName() + '\n')
-				out.append('Left editions: ' + lines[0] + '\n')
-				out.append('Right editions: ' + lines[1] + '\n')
-				out.append('Different Spacing: ' + m.diffSpacing + '\n')
-				out.append('Merged body:\n' + m.node.getBody() + '\n')
-			}
-		}
-		out.append(delimiter)
-	}
-	
-	
 	
 	public static void printConflictsReport(MergeScenario mergeScenario, String projectName){
 

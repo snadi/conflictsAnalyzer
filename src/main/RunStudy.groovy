@@ -57,15 +57,15 @@ class RunStudy {
 			
 
 			/*1run gitminer*/ 
-			String graphBase = runGitMiner()
+			//String graphBase = runGitMiner()
 			
 			/*2 use bases from gitminer*/ 
 			//String graphBase = this.gitminerLocation + File.separator + this.projectName + 'graph.db'
-			ArrayList<MergeCommit> listMergeCommits = runGremlinQuery(graphBase)
+			//ArrayList<MergeCommit> listMergeCommits = runGremlinQuery(graphBase)
 			
 			/*3 read mergeCommits.csv sheets*/ 
-			/*String graphBase = this.gitminerLocation + File.separator + this.projectName + 'graph.db'
-			ArrayList<MergeCommit> listMergeCommits = this.readMergeCommitsSheets(projectsDatesFolder)*/
+			String graphBase = this.gitminerLocation + File.separator + this.projectName + 'graph.db'
+			ArrayList<MergeCommit> listMergeCommits = this.readMergeCommitsSheets(projectsDatesFolder)
 			
 			/*4 set listMergeCommits with commits that i want to analyze separately*/
 			/*MergeCommit mc = new MergeCommit()
@@ -290,7 +290,7 @@ class RunStudy {
 		return result
 	}
 
-	private Map getJoanaMap(File emptyContributions,Map filesWithMethodsToJoana) {
+	/*private Map getJoanaMap(File emptyContributions,Map filesWithMethodsToJoana) {
 		Map<String, ModifiedMethod> methods = new HashMap<String, ModifiedMethod>()
 		for(String file : filesWithMethodsToJoana.keySet()) {
 			for(EditSameMC method : filesWithMethodsToJoana.get(file)){
@@ -315,7 +315,7 @@ class RunStudy {
 			}
 		}
 		return methods
-	}
+	}*/
 
 	private def copyGitFiles(File baseDir, File srcDir, File destDir)
 	{
@@ -514,10 +514,10 @@ class RunStudy {
 
 	public static void main (String[] args){
 		RunStudy study = new RunStudy()
-		/*String[] files= ['projectsList', 'configuration.properties', 
-			'/home/ines/Dropbox/experiment/ResultData']*/
-		String[] files= ['projectsList', 'configuration.properties',
-			'/Users/paolaaccioly/Dropbox/experiment/ResultData']
+		String[] files= ['projectsList', 'configuration.properties', 
+			'/home/ines/Dropbox/experiment/ResultData']
+		/*String[] files= ['projectsList', 'configuration.properties',
+			'/Users/paolaaccioly/Dropbox/experiment/ResultData']*/
 		study.run(files)
 		//println study.build("/usr/local/bin/ant", "/Users/Roberto/Documents/UFPE/Msc/Projeto/projects/temp/voldemort", new File("/Users/Roberto/Documents/UFPE/Msc/Projeto/projects/temp/report.txt"))
 	}

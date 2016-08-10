@@ -2,8 +2,6 @@ package main
 
 import java.util.List
 
-import com.ibm.wala.shrikeBT.info.ThisAssignmentChecker;
-
 import java.io.File
 
 

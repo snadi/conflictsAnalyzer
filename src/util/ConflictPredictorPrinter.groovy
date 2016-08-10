@@ -8,19 +8,18 @@ class ConflictPredictorPrinter {
 
 	public static String msSeparator = '#MS_XXX_MS#'
 
-	public static String conflictPredictorSeparator = '#CF_===_CF#'
+	public static String conflictPredictorSeparator = '#CP_===_CP#'
 	
 	public static String internalPredictorSeparator = '#HAS_***REFERENCE_#'
 
 	public static void printProjectReport(Project project){
-		String header = 'Project,has_merge_Conflicts,Conflicting_EditSameMC,Conflicting_EditSameMC_DS,' +
-				'Conflicting_EditSameFD,Conflicting_EditSameFD_DS,NonConflicting_EditSameMC,' +
-				'NonConflicting_EditSameMC_DS,NonConflicting_EditSameFD,NonConflicting_EditSameFD_DS,' +
-				'EditDiffMC,EditDifffMC_EditSameMC,EditDiffMC_EditionAddsMethodInvocation,' +
-				'EditDiffMC_EditionAddsMethodInvocation_EditSameMC\n'
+		String header = 'Project,analyzed_Merge_Scenarios,Conflicting_MergeScenarios,' + 
+		'Conflicting_EditSameMC,Conflicting_EditSameMC_DS,Conflicting_EditSameFD,' + 
+		'Conflicting_EditSameFD_DS,NonConflicting_EditSameMC,NonConflicting_EditSameMC_DS,' + 
+		'NonConflicting_EditSameFD,NonConflicting_EditSameFD_DS,EditDiffMC,EditDifffMC_EditSameMC,' + 
+		'EditDiffMC_EditionAddsMethodInvocation,EditDiffMC_EditionAddsMethodInvocation_EditSameMC\n'
 
-		File file = new File('ResultData' + File.separator + project.name + File.separator +
-				'ConflictPredictor_Projects_Report.csv')
+		File file = new File('ConflictPredictor_Projects_Report.csv')
 
 		if(!file.exists()){
 			file.append(header)
@@ -30,19 +29,22 @@ class ConflictPredictorPrinter {
 	}
 
 	public static void updateProjectData(Project project){
-		String header = 'Project,has_merge_Conflicts,Conflicting_EditSameMC,Conflicting_EditSameMC_DS,' +
-				'Conflicting_EditSameFD,Conflicting_EditSameFD_DS,NonConflicting_EditSameMC,' +
-				'NonConflicting_EditSameMC_DS,NonConflicting_EditSameFD,NonConflicting_EditSameFD_DS,' +
-				'EditDiffMC,EditDifffMC_EditSameMC,EditDiffMC_EditionAddsMethodInvocation,' +
-				'EditDiffMC_EditionAddsMethodInvocation_EditSameMC\n'
+		String header = 'Project,analyzed_Merge_Scenarios,Conflicting_MergeScenarios,' + 
+		'Conflicting_EditSameMC,Conflicting_EditSameMC_DS,Conflicting_EditSameFD,' + 
+		'Conflicting_EditSameFD_DS,NonConflicting_EditSameMC,NonConflicting_EditSameMC_DS,' + 
+		'NonConflicting_EditSameFD,NonConflicting_EditSameFD_DS,EditDiffMC,EditDifffMC_EditSameMC,' + 
+		'EditDiffMC_EditionAddsMethodInvocation,EditDiffMC_EditionAddsMethodInvocation_EditSameMC\n'
 
 		File file = new File('ResultData' + File.separator + project.name + File.separator +
 				'ConflictPredictor_Project_Report.csv')
-		file.delete
-
+		
+		if(file.exists()){
+			file.delete()
+		}
+		
 		file = new File('ResultData' + File.separator + project.name + File.separator +
 				'ConflictPredictor_Project_Report.csv')
-
+		file.append(header)
 		file.append(project.getProjectCSSummary()+ '\n')
 
 	}

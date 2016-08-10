@@ -19,6 +19,7 @@ import org.eclipse.jdt.core.dom.MethodInvocation
 import de.ovgu.cide.fstgen.ast.FSTNode;
 import de.ovgu.cide.fstgen.ast.FSTNonTerminal
 import de.ovgu.cide.fstgen.ast.FSTTerminal
+import jdk.internal.instrumentation.MethodCallInliner.CatchBlock;
 import merger.FSTGenMerger
 import util.ConflictPredictorPrinter;
 import util.Util
@@ -54,6 +55,7 @@ public abstract class ConflictPredictor {
 	public String mergeScenarioPath
 
 	public ConflictPredictor(FSTTerminal node, String mergeScenarioPath){
+		this.predictors = new Hashtable<ConflictPredictor, Integer>()
 		this.node = node
 		this.setLeftOrRight()
 		this.setDiffSpacing()
@@ -505,9 +507,9 @@ public abstract class ConflictPredictor {
 	 * Might report false positives. */
 	private boolean containsTextualReference(ConflictPredictor predictor){
 		boolean containsTextualReference = false
-		String methodBody = this.extractMethodBody(predictor.node.body)
+		//String methodBody = this.extractMethodBody(predictor.node.body)
 		String thisMethodName = this.getMethodName(this)
-		if(methodBody.contains(thisMethodName)){
+		if(predictor.node.body.contains(thisMethodName)){
 			containsTextualReference = true
 		}
 		return containsTextualReference
@@ -527,39 +529,49 @@ public abstract class ConflictPredictor {
 	 *  the compiler analysis*/
 	private String extractMethodBody(String method){
 		String methodBody = ''
-
 		ArrayList<String> temp = method.split('\n')
-		int firstBracket = 0
-		int lastBracket = temp.size() -1
-		boolean foundFirstBracket, foundLastBracket = false
-		String a = ''
+		if(temp.size() > 1){
 
-		/*get the first bracket index*/
-		while(!foundFirstBracket){
-			a = temp.elementData(firstBracket)
-			if(a.contains('{')){
-				foundFirstBracket = true
-			}else{
-				firstBracket++
+			int firstBracket = 0
+			int lastBracket = temp.size() -1
+			boolean foundFirstBracket, foundLastBracket = false
+			String a = ''
+
+			/*get the first bracket index*/
+			while(!foundFirstBracket && firstBracket < temp.size()){
+				a = temp.elementData(firstBracket)
+				if(a.contains('{')){
+					foundFirstBracket = true
+				}else{
+					firstBracket++
+				}
 			}
-		}
 
-		/*gets the last bracket index*/
-		while(!foundLastBracket){
-			a = temp.elementData(lastBracket)
-			if(a.contains('}')){
-				foundLastBracket = true
-			}else{
-				lastBracket--
+			/*gets the last bracket index*/
+			while(!foundLastBracket && lastBracket >= 0){
+				a = temp.elementData(lastBracket)
+				if(a.contains('}')){
+					foundLastBracket = true
+				}else{
+					lastBracket--
+				}
 			}
+			if(foundFirstBracket && foundLastBracket){
+
+				/*gets the string representing the method body declaration*/
+				String [] temp2 = temp.subList(firstBracket + 1, lastBracket)
+
+				for(String s: temp2){
+					methodBody = methodBody + s + '\n'
+				}
+			}else{
+				methodBody = method
+			}
+
+		}else{
+			methodBody = method
 		}
 
-		/*gets the string representing the method body declaration*/
-		String [] temp2 = temp.subList(firstBracket + 1, lastBracket)
-
-		for(String s: temp2){
-			methodBody = methodBody + s + '\n'
-		}
 
 		return methodBody
 	}
@@ -592,61 +604,66 @@ public abstract class ConflictPredictor {
 		String classname = filePredictor.getName()
 
 		if(contents!=null){
-			println 'Starting to parse and analyse class ' + predictor.filePath
-			// Create the ASTParser which will be a CompilationUnit
-			ASTParser parser = ASTParser.newParser(AST.JLS8)
-			parser.setKind(ASTParser.K_COMPILATION_UNIT)
-			parser.setSource(contents.toCharArray())
+			try{
+				println 'Starting to parse and analyse class ' + predictor.filePath
+				// Create the ASTParser which will be a CompilationUnit
+				ASTParser parser = ASTParser.newParser(AST.JLS8)
+				parser.setKind(ASTParser.K_COMPILATION_UNIT)
+				parser.setSource(contents.toCharArray())
 
-			//Parsing
-			parser.setEnvironment(classPaths, source, encoding, true);
-			parser.setBindingsRecovery(true);
-			parser.setResolveBindings(true);
-			parser.setUnitName(classname);
-			Map options = JavaCore.getOptions();
-			options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
-			parser.setCompilerOptions(options);
-			CompilationUnit parse = (CompilationUnit) parser.createAST(null);
+				//Parsing
+				parser.setEnvironment(classPaths, source, encoding, true);
+				parser.setBindingsRecovery(true);
+				parser.setResolveBindings(true);
+				parser.setUnitName(classname);
+				Map options = JavaCore.getOptions();
+				options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
+				parser.setCompilerOptions(options);
+				CompilationUnit parse = (CompilationUnit) parser.createAST(null);
 
-			parse.accept(new ASTVisitor() {
-						private MethodDeclaration activeMethod;
+				parse.accept(new ASTVisitor() {
+							private MethodDeclaration activeMethod;
 
-						/**
-				 * @param MethodDeclaration node
-				 * This method visits every method declaration in the compiled class
-				 * @return true if and only if this node is the method containing this
-				 * method invocation. Returns false otherwise
-				 */
-						@Override
-						public boolean visit(MethodDeclaration node) {
-							activeMethod = node;
-							IMethodBinding activeMethodBinding = activeMethod.resolveBinding()
-							/*only visits the active method containing a textual reference 
-					 * to this method*/
-							if(isTheMethodCallingThisMethod(predictorSignature, activeMethodBinding)){
+							/**
+					 * @param MethodDeclaration node
+					 * This method visits every method declaration in the compiled class
+					 * @return true if and only if this node is the method containing this
+					 * method invocation. Returns false otherwise
+					 */
+							@Override
+							public boolean visit(MethodDeclaration node) {
+								activeMethod = node;
+								IMethodBinding activeMethodBinding = activeMethod.resolveBinding()
+								/*only visits the active method containing a textual reference
+						 * to this method*/
+								if(isTheMethodCallingThisMethod(predictorSignature, activeMethodBinding)){
+									return super.visit(node)
+								}else{
+									return false
+								}
+							}
+
+							/**
+					 * @param MethodInvocation node
+					 * This method visits every method invocation inside the method of interest
+					 * @return true if and only if it is a method invocation to this method.
+					 * Returns false otherwise
+					 */
+							@Override
+							public boolean visit(MethodInvocation node) {
+								IMethodBinding thisMethodBinding = node.resolveMethodBinding()
+								boolean isThisMethod = methodInvocationMatchesThisMethod(thisMethodBinding)
+								if(isThisMethod){
+									int lineNumber = parse.getLineNumber(parse.getExtendedStartPosition(node))
+									invocationLines.add(lineNumber)
+								}
 								return super.visit(node)
-							}else{
-								return false
 							}
-						}
+						})
+			}catch(Exception e){
+				e.printStackTrace()
+			}
 
-						/**
-				 * @param MethodInvocation node
-				 * This method visits every method invocation inside the method of interest
-				 * @return true if and only if it is a method invocation to this method.
-				 * Returns false otherwise
-				 */
-						@Override
-						public boolean visit(MethodInvocation node) {
-							IMethodBinding thisMethodBinding = node.resolveMethodBinding()
-							boolean isThisMethod = methodInvocationMatchesThisMethod(thisMethodBinding)
-							if(isThisMethod){
-								int lineNumber = parse.getLineNumber(parse.getExtendedStartPosition(node))
-								invocationLines.add(lineNumber)
-							}
-							return super.visit(node)
-						}
-					})
 
 		}
 		println 'Finished to parse and analyse class ' + predictor.filePath
@@ -710,7 +727,11 @@ public abstract class ConflictPredictor {
 			String methodInvocationClass = this.simplifyClassName(methodInvocation)
 			String methodInvocationSignature = this.simplifyMethodSignature(methodInvocation)
 			String [] temp = this.filePath.split('/')
-			String thisMethodClass = this.packageName + '.' + temp[temp.length-1].split('\\.')[0]
+			String thisMethodClass = ''
+			if(!this.packageName.empty){
+				thisMethodClass = this.packageName + '.'
+			}
+			thisMethodClass = thisMethodClass + temp[temp.length-1].split('\\.')[0]
 			temp = this.signature.split('\\.')
 			String thisMethodSignature = temp[temp.length-1]
 
@@ -750,7 +771,7 @@ public abstract class ConflictPredictor {
 		String result = ''
 
 		result = this.auxToString(this) + '\n'
-		if(!(this instanceof EditSameFD)){
+		if(!(this instanceof EditSameFD) && !(this.predictors.isEmpty())){
 			result = result + 'Has references on the following methods: \n'
 			for(ConflictPredictor predictor : this.predictors.keySet()){
 				result = result + ConflictPredictorPrinter.internalPredictorSeparator + '\n'
@@ -769,10 +790,11 @@ public abstract class ConflictPredictor {
 		String instance = this.getInstanceType(predictor)
 		result = 'Type: ' + instance + '\n' +
 				'File: ' + predictor.filePath + '\n' +
+				'Different Spacing: ' + predictor.diffSpacing + '\n' +
 				'Left editions: ' + predictor.leftLines + '\n' +
 				'Right editions: ' + predictor.rightLines + '\n' +
 				'Merged body: \n' +
-				predictor.node.body 
+				predictor.node.body
 		return result
 	}
 

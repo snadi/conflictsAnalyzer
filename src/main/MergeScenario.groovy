@@ -27,6 +27,8 @@ class MergeScenario implements Observer {
 	private Map<String,Conflict> mergeScenarioSummary
 
 	private boolean hasConflicts
+	
+	private boolean hasPredictors
 
 	private CompareFiles compareFiles
 
@@ -130,7 +132,7 @@ class MergeScenario implements Observer {
 				/*in case this method is an EditDiffMC predictor and
 				 * has no other reference on the other edited methods,
 				 * add this predictor to the noReference list*/
-				if((predictor instanceof EditDiffMC) && (predictor.predictors==null)){
+				if((predictor instanceof EditDiffMC) && predictor.predictors.isEmpty()){
 
 					noReference.add(predictor)
 				}
@@ -148,7 +150,9 @@ class MergeScenario implements Observer {
 		for(String file : filesWithNoPredictors){
 			this.filesWithConflictPredictors.remove(file)
 		}
-
+		if(this.filesWithConflictPredictors.empty){
+			this.hasPredictors = false
+		}
 	}
 
 	public void deleteMSDir(){
@@ -251,8 +255,10 @@ class MergeScenario implements Observer {
 	}
 
 	private String getClassName(FSTNode node){
+		
 		String type = node.getType()
-		if(type.equals('ClassDeclaration')){
+		if(type.equals('ClassDeclaration') || type.equals('EnumDecl') ||
+			type.equals('AnnotationTypeDeclaration')){
 			return node.getName()
 		}else{
 			this.getClassName(node.getParent())
@@ -277,6 +283,7 @@ class MergeScenario implements Observer {
 
 			file.add(predictor)
 			this.filesWithConflictPredictors.put(predictorFilePath, file)
+			this.hasPredictors = true
 		}
 
 	}
@@ -524,10 +531,10 @@ class MergeScenario implements Observer {
 
 		return result
 	}
-
+	
 	public static void main(String[] args){
 		Project project = new Project('Teste')
-		MergeScenario ms = new MergeScenario('/Users/paolaaccioly/Desktop/Teste/Example/rev.revisions', true)
+		MergeScenario ms = new MergeScenario('/Users/paolaaccioly/Desktop/Teste/jdimeTests/rev.revisions', true)
 		ms.analyzeConflicts()
 		String ms_summary = ms.computeMSSummary()
 		ConflictPredictorPrinter.printMergeScenarioReport(project, ms,ms_summary)

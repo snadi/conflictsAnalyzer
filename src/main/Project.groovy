@@ -112,18 +112,18 @@ class Project {
 		/*print conflicts report*/
 		ConflictPrinter.printMergeScenarioReport(ms, this.name)
 		ConflictPrinter.updateProjectData(this)
-
-		/*print conflict predictors report*/
 		ConflictPredictorPrinter.printMergeScenarioReport(this, ms,ms_CPsummary)
-
 	}
 
 	private void updateAndPrintSummary(MergeScenario ms){
+		String ms_summary = ''
 		updateConflictingRate(ms)
-		String ms_summary = updateConflictPredictorSummary(ms)
+		ms_summary = updateConflictPredictorSummary(ms)
+
+
 		if(ms.hasConflicts){
 			updateProjectSummary(ms)
-			updateSameSignatureCMSummary(ms)
+			//updateSameSignatureCMSummary(ms)
 		}
 		printResults(ms, ms_summary)
 	}
@@ -132,7 +132,7 @@ class Project {
 		String result = ms.computeMSSummary()
 		ArrayList<String> temp = new ArrayList<String>(Arrays.asList(result.split(',')))
 		temp.remove(0)
-		
+
 		/*initializes conflict predictor summary with zero values*/
 		if(this.conflictPredictorSummary==null){
 			this.conflictPredictorSummary = new ArrayList<Integer>()
@@ -149,7 +149,7 @@ class Project {
 			quantity = quantity + this.conflictPredictorSummary.get(i)
 			newConflictPredictorSummary.add(quantity)
 		}
-		
+
 		/*updates the reference*/
 		this.conflictPredictorSummary = newConflictPredictorSummary
 
@@ -199,7 +199,6 @@ class Project {
 			quantity = quantity + this.sameSignatureCMSummary.get(cause)
 			this.sameSignatureCMSummary.put(cause, quantity)
 
-			//update false positives
 			String diffSpacing = cause + 'DS'
 			int quantity2 = ms.sameSignatureCMSummary.get(diffSpacing)
 			quantity2 = quantity2 + this.sameSignatureCMSummary.get(diffSpacing)
@@ -208,7 +207,7 @@ class Project {
 	}
 
 	public String getProjectCSSummary(){
-		String result = this.name 
+		String result = this.name + ',' + this.mergeScenarios.size()
 		for(Integer i : this.conflictPredictorSummary){
 			result = result + ',' + i
 		}
@@ -230,7 +229,7 @@ class Project {
 	{
 		periods
 	}
-	
+
 	public static void main (String[] args){
 		Project project = new Project('Teste')
 		project.analyzeConflicts('/Users/paolaaccioly/Desktop/Teste/Example/RevisionsFiles.csv', true)

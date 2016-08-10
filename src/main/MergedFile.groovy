@@ -70,7 +70,7 @@ class MergedFile {
 
 		this.updateMergedFileSummary(c)
 		if(c.getType().equals(SSMergeConflicts.SameSignatureCM.toString())){
-			this.updateSameSignatureCMSummary(c.getCauseSameSignatureCM(), c.getDifferentSpacing())
+			//this.updateSameSignatureCMSummary(c.getCauseSameSignatureCM(), c.getDifferentSpacing())
 		}
 		
 	}

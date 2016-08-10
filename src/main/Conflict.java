@@ -360,7 +360,7 @@ public  class Conflict {
 
 	public String [] splitConflictBody(String s){
 		String [] splitBody = {"", "", ""};
-		if(this.isMethodOrConstructor()){
+		if(this.isMethodOrConstructor() || this.nodeType.equals("FieldDecl")){
 			if(s.contains("|||||||")){
 				String[] temp = s.split("\\|\\|\\|\\|\\|\\|\\|");
 
@@ -455,14 +455,16 @@ public  class Conflict {
 	public String setFieldDeclPattern(){
 
 		String type = "";
-		String [] fd = this.body.split(Conflict.SSMERGE_SEPARATOR);
 
-		if(fd[1].equals(" ")){
-
-			type = SSMergeConflicts.AddSameFd.toString();
+		String [] p1 = this.body.split("\\|\\|\\|\\|\\|\\|\\|");
+		String [] p2 = p1[1].split("=======");
+		String [] a = p2[0].split("\n");
+		if(a.length > 1){
+			type = SSMergeConflicts.EditSameFd.toString();
+			
 
 		}else{
-			type = SSMergeConflicts.EditSameFd.toString();
+			type = SSMergeConflicts.AddSameFd.toString();
 		}
 
 		return type;
