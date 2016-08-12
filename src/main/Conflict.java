@@ -200,11 +200,11 @@ public  class Conflict {
 		//remove false positives
 		if((diffSpacing && consecLines)){
 			this.falsePositivesIntersection++;
-			this.removeSpacingConflict(node, s);
+			//this.removeSpacingConflict(node, s);
 		}
 		
 		if( diffSpacing && !consecLines){
-			this.removeSpacingConflict(node, s);
+			//this.removeSpacingConflict(node, s);
 		}
 		
 		if(consecLines && !diffSpacing){

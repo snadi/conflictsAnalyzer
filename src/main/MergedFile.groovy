@@ -61,8 +61,9 @@ class MergedFile {
 			c.getType().equals(SSMergeConflicts.SameSignatureCM.toString())){
 			this.conflictsInsideMethods = this.conflictsInsideMethods +
 					c.getNumberOfConflicts()
-
-			this.methodsWithConflicts++
+			if(!c.getType().equals(SSMergeConflicts.SameSignatureCM.toString())){
+				this.methodsWithConflicts++
+			}
 			this.possibleRenamings = this.possibleRenamings + c.getPossibleRenaming()
 		}else{
 			this.conflictsOutsideMethods++

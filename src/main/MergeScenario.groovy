@@ -16,6 +16,10 @@ import de.ovgu.cide.fstgen.ast.FSTNonTerminal
 import de.ovgu.cide.fstgen.ast.FSTTerminal
 
 
+/**
+ * @author paolaaccioly
+ *
+ */
 class MergeScenario implements Observer {
 
 	private String path
@@ -45,6 +49,8 @@ class MergeScenario implements Observer {
 	private Map<String, ArrayList<ConflictPredictor>> filesWithConflictPredictors
 
 	private ConflictPredictorFactory predictorFactory
+	
+	private int methodsWithConflicts
 
 	public MergeScenario(String path, boolean resultGitMerge){
 
@@ -53,6 +59,7 @@ class MergeScenario implements Observer {
 		this.setName()
 		//this.removeVarArgs()
 		this.hasConflicts = false
+		this.hasPredictors = false
 		this.createMergeScenarioSummary()
 		this.createSameSignatureCMSummary()
 		this.setMergedFiles()
@@ -91,12 +98,28 @@ class MergeScenario implements Observer {
 	public void analyzeConflicts(){
 
 		this.runSSMerge()
+		this.computeMethodsWithConflicts()
 		this.assignLeftAndRight()
 		this.checkForMethodsReferences()
 		//this.compareFiles.restoreFilesWeDontMerge()
 
 	}
-
+	
+	
+	/**
+	 * this methods compute the number of methods 
+	 * edited by both revisions that ended up 
+	 * in conflicts
+	 */
+	public void computeMethodsWithConflicts(){
+		this.methodsWithConflicts = 0
+		for(MergedFile file : this.mergedFiles){
+			this.methodsWithConflicts = this.methodsWithConflicts +
+			file.methodsWithConflicts
+		}
+		
+	}
+	
 	public void assignLeftAndRight(){
 		for(String filePath : this.filesWithConflictPredictors.keySet()){
 			ArrayList<ConflictPredictor> methods = this.filesWithConflictPredictors.get(filePath)
@@ -141,7 +164,7 @@ class MergeScenario implements Observer {
 			/*Remove all edited methods without reference on any other edited method*/
 			predictors.removeAll(noReference)
 
-			if(this.filesWithConflictPredictors.get(filePath).empty){
+			if(this.filesWithConflictPredictors.get(filePath).isEmpty()){
 				filesWithNoPredictors.add(filePath)
 			}
 		}
@@ -150,8 +173,8 @@ class MergeScenario implements Observer {
 		for(String file : filesWithNoPredictors){
 			this.filesWithConflictPredictors.remove(file)
 		}
-		if(this.filesWithConflictPredictors.empty){
-			this.hasPredictors = false
+		if(!this.filesWithConflictPredictors.isEmpty()){
+			this.hasPredictors = true
 		}
 	}
 
@@ -221,10 +244,6 @@ class MergeScenario implements Observer {
 
 				}else{
 
-					if(!this.hasConflicts){
-						this.hasConflicts = true
-						//this.removeNonMCBaseNodes(fstGenMerge.baseNodes)
-					}
 					this.createConflict(node)
 
 				}
@@ -283,7 +302,6 @@ class MergeScenario implements Observer {
 
 			file.add(predictor)
 			this.filesWithConflictPredictors.put(predictorFilePath, file)
-			this.hasPredictors = true
 		}
 
 	}
@@ -293,6 +311,10 @@ class MergeScenario implements Observer {
 			Conflict conflict = new Conflict(node, this.path);
 			this.matchConflictWithFile(conflict)
 			this.updateMergeScenarioSummary(conflict)
+			if(!this.hasConflicts){
+				this.hasConflicts = true
+				//this.removeNonMCBaseNodes(fstGenMerge.baseNodes)
+			}
 		}
 	}
 
@@ -381,7 +403,7 @@ class MergeScenario implements Observer {
 	}
 
 	public String computeMSSummary(){
-		/*'Merge_Scenario,has_merge_Conflicts,Conflicting_EditSameMC,Conflicting_EditSameMC_DS,' +
+		/*'Merge_Scenario,has_merge_Conflicts,Methods_With_Conflicts,Conflicting_EditSameMC,Conflicting_EditSameMC_DS,' +
 		 'Conflicting_EditSameFD,Conflicting_EditSameFD_DS,NonConflicting_EditSameMC,' +
 		 'NonConflicting_EditSameMC_DS,NonConflicting_EditSameFD,NonConflicting_EditSameFD_DS,' +
 		 'EditDiffMC,EditDifffMC_EditSameMC,EditDiffMC_EditionAddsMethodInvocation,' +
@@ -395,8 +417,15 @@ class MergeScenario implements Observer {
 		}else{
 			summary = summary + ',' + 0
 		}
+		
+		/*set has predictor*/
+		if(this.hasPredictors){
+			summary = summary + ',' + 1
+		}else{
+			summary = summary + ',' + 0
+		}
 		/*set number of conflicting editsamemc and editsamefd*/		
-		summary = summary + ',' + this.mergeScenarioSummary.get('EditSameMC').getNumberOfConflicts() + ',' +
+		summary = summary + ',' + this.methodsWithConflicts + ',' + this.mergeScenarioSummary.get('EditSameMC').getNumberOfConflicts() + ',' +
 				this.mergeScenarioSummary.get('EditSameMC').getDifferentSpacing()+ ',' +
 				this.mergeScenarioSummary.get('EditSameFd').getNumberOfConflicts() +
 				',' + this.mergeScenarioSummary.get('EditSameFd').getDifferentSpacing()

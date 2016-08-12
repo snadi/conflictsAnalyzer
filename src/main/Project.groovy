@@ -127,7 +127,7 @@ class Project {
 		}
 		printResults(ms, ms_summary)
 	}
-
+	
 	private String updateConflictPredictorSummary(MergeScenario ms){
 		String result = ms.computeMSSummary()
 		ArrayList<String> temp = new ArrayList<String>(Arrays.asList(result.split(',')))

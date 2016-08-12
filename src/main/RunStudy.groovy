@@ -514,10 +514,12 @@ class RunStudy {
 
 	public static void main (String[] args){
 		RunStudy study = new RunStudy()
-		String[] files= ['projectsList', 'configuration.properties', 
-			'/home/ines/Dropbox/experiment/ResultData']
-		/*String[] files= ['projectsList', 'configuration.properties',
-			'/Users/paolaaccioly/Dropbox/experiment/ResultData']*/
+		/*String[] files= ['projectsList', 'configuration.properties', 
+			'/home/ines/Dropbox/experiment/ResultData']*/
+			
+		String[] files= ['projectsList', 'configuration.properties',
+			'/Users/paolaaccioly/Dropbox/experiment/ResultData']
+			
 		study.run(files)
 		//println study.build("/usr/local/bin/ant", "/Users/Roberto/Documents/UFPE/Msc/Projeto/projects/temp/voldemort", new File("/Users/Roberto/Documents/UFPE/Msc/Projeto/projects/temp/report.txt"))
 	}

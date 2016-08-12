@@ -33,6 +33,8 @@ public abstract class ConflictPredictor {
 	public String leftOrRight
 
 	public boolean diffSpacing
+	
+	public boolean gitBlameProblem
 
 	public String filePath
 
@@ -55,6 +57,7 @@ public abstract class ConflictPredictor {
 	public String mergeScenarioPath
 
 	public ConflictPredictor(FSTTerminal node, String mergeScenarioPath){
+		this.gitBlameProblem = false
 		this.predictors = new Hashtable<ConflictPredictor, Integer>()
 		this.node = node
 		this.setLeftOrRight()
@@ -65,6 +68,11 @@ public abstract class ConflictPredictor {
 		this.retrieveFilePath()
 		this.annotatePredictor()
 		this.setSignature()
+		if(this.gitBlameProblem){
+			ConflictPredictorPrinter.printGitBlameProblem(this)
+		}
+		
+		
 	}
 
 	public void setLeftOrRight(){
@@ -90,19 +98,21 @@ public abstract class ConflictPredictor {
 			File[] files = this.createTempFiles()
 			Blame blame = new Blame()
 			String result = blame.annotateBlame(files[0], files[1], files[2])
-			this.node.setBody(result)
+			if(!result.equals('')){
+				this.node.setBody(result)
+			}else{
+				this.gitBlameProblem = true
+			}
+			
 			this.deleteTempFiles(files)
 		}
 	}
 
 	public void deleteTempFiles(File[] files){
 		File tmpDir = new File(files[0].getParent())
-		files[0].delete();
-		files[1].delete();
-		files[2].delete();
-		tmpDir.delete();
-
+		tmpDir.deleteDir()
 	}
+	
 	public File[] createTempFiles(){
 		String [] splitNodeBody = this.splitNodeBody()
 		long time = System.currentTimeMillis()
@@ -494,7 +504,7 @@ public abstract class ConflictPredictor {
 			 *  a textual reference, remove false positives using the
 			 * method reference finder*/
 			ArrayList<Integer> result = this.checkForClassReference(predictor)
-			if(!result.empty){
+			if(!result.isEmpty()){
 				this.saveReference(predictor, result)
 			}
 		}
@@ -728,7 +738,7 @@ public abstract class ConflictPredictor {
 			String methodInvocationSignature = this.simplifyMethodSignature(methodInvocation)
 			String [] temp = this.filePath.split('/')
 			String thisMethodClass = ''
-			if(!this.packageName.empty){
+			if(!this.packageName.equals('')){
 				thisMethodClass = this.packageName + '.'
 			}
 			thisMethodClass = thisMethodClass + temp[temp.length-1].split('\\.')[0]
