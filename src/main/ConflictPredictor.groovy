@@ -33,8 +33,6 @@ public abstract class ConflictPredictor {
 	public String leftOrRight
 
 	public boolean diffSpacing
-	
-	public boolean gitBlameProblem
 
 	public String filePath
 
@@ -55,8 +53,10 @@ public abstract class ConflictPredictor {
 	public ArrayList<Integer> rightLines
 
 	public String mergeScenarioPath
-
+	public boolean gitBlameProblem
+	
 	public ConflictPredictor(FSTTerminal node, String mergeScenarioPath){
+
 		this.gitBlameProblem = false
 		this.predictors = new Hashtable<ConflictPredictor, Integer>()
 		this.node = node
@@ -71,6 +71,8 @@ public abstract class ConflictPredictor {
 		if(this.gitBlameProblem){
 			ConflictPredictorPrinter.printGitBlameProblem(this)
 		}
+
+		
 		
 		
 	}
@@ -499,7 +501,7 @@ public abstract class ConflictPredictor {
 		/*Step 1: check for potential EditDiffMC when grepping
 		 * the method name inside the edited method */
 		if(this.containsTextualReference(predictor)){
-
+			
 			/*Step 2: in case the edited method has
 			 *  a textual reference, remove false positives using the
 			 * method reference finder*/

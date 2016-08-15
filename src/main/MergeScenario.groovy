@@ -123,6 +123,7 @@ class MergeScenario implements Observer {
 	public void assignLeftAndRight(){
 		for(String filePath : this.filesWithConflictPredictors.keySet()){
 			ArrayList<ConflictPredictor> methods = this.filesWithConflictPredictors.get(filePath)
+
 			for(ConflictPredictor method : methods ){
 				method.assignLeftAndRight()
 			}
@@ -141,7 +142,7 @@ class MergeScenario implements Observer {
 
 			/*for each conflict predictor on that file*/
 			for(ConflictPredictor predictor : predictors ){
-
+				
 				/*if the predictor is an edited method
 				 * (not considering the different spacing predictors*/
 				if((predictor instanceof EditDiffMC || predictor instanceof EditSameMC) &&
