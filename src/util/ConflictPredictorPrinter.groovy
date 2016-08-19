@@ -98,4 +98,6 @@ class ConflictPredictorPrinter {
 		}
 		file.append(predictor.filePath + ',' + predictor.signature + '\n')
 	}
+	
+	
 }

@@ -376,6 +376,8 @@ public  class Conflict {
 				splitBody[1] = "";
 				splitBody[0] = extractLines(s.split("=======")[0].split("\n"));
 				splitBody[2] = extractLines(s.split("=======")[1].split("\n"));
+				
+				
 			}
 
 		}else{

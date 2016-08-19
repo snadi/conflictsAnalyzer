@@ -549,7 +549,7 @@ class MergeScenario implements Observer {
 
 		if(node.getType().equals("MethodDecl") || node.getType().equals("ConstructorDecl")){
 			String nodeBody = node.getBody()
-			if(!nodeBody.contains(FSTGenMerger.DIFF3MERGE_SEPARATOR) && !nodeBody.contains(FSTGenMerger.DIFF3MERGE_END)){
+			if(nodeBody.contains(FSTGenMerger.MERGE_SEPARATOR) && nodeBody.contains(FSTGenMerger.SEMANTIC_MERGE_MARKER)){
 				result = true
 			}
 		}
