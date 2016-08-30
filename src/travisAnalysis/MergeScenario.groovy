@@ -1,6 +1,8 @@
 package travisAnalysis
 
 class MergeScenario {
+	
+	String projectName
 	String sha
 	String parent1
 	String parent2
@@ -13,20 +15,22 @@ class MergeScenario {
 	boolean testsPassed
 	boolean discarded
 	
-	public MergeScenario (String sha, String parent1, String parent2, String metrics){
+	public MergeScenario (String pName, String sha, String parent1, String parent2, String metrics, String clonePath){
+		this.projectName = pName
 		this.sha = sha
 		this.parent1 = parent1
 		this.parent2 = parent2
 		this.loadMetrics(metrics)
-		this.checkBuildAndTest()
+		this.checkBuildAndTest(clonePath)
 		if(!discarded){
-			this.runGitMerge()
+			this.runGitMerge(clonePath)
 		}
 		
 	}
 	
-	public void checkBuildAndTest(){
-		
+	public void checkBuildAndTest(String clonePath){
+		String clone = clonePath + File.separator + this.projectName + File.separator + 'git'
+		println 'aqui'
 	}
 	
 	public void loadMetrics(String metrics){
@@ -65,7 +69,7 @@ class MergeScenario {
 		
 	}
 	
-	public void runGitMerge(){
+	public void runGitMerge(String clonePath){
 		
 	}
 }
