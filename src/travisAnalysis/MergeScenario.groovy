@@ -1,5 +1,8 @@
 package travisAnalysis
 
+import main.Extractor
+import main.ExtractorResult;
+
 class MergeScenario {
 	
 	String projectName
@@ -11,26 +14,22 @@ class MergeScenario {
 	boolean hasGitConflictsJava
 	boolean hasGitConflictsNonJava
 	Hashtable<String, Integer> predictors
-	boolean buildPassed
-	boolean testsPassed
 	boolean discarded
+	Hashtable<String, ArrayList<String>> commitBuilds
 	
-	public MergeScenario (String pName, String sha, String parent1, String parent2, String metrics, String clonePath){
+	public MergeScenario (String pName, String sha, String parent1, String parent2, String metrics, String clonePath,
+		Hashtable<String, ArrayList<String>> commitBuilds){
 		this.projectName = pName
 		this.sha = sha
 		this.parent1 = parent1
 		this.parent2 = parent2
 		this.loadMetrics(metrics)
-		this.checkBuildAndTest(clonePath)
-		if(!discarded){
-			this.runGitMerge(clonePath)
+		if(commitBuilds!=null){
+			this.commitBuilds = commitBuilds
+		}else{
+			discarded = true
 		}
 		
-	}
-	
-	public void checkBuildAndTest(String clonePath){
-		String clone = clonePath + File.separator + this.projectName + File.separator + 'git'
-		println 'aqui'
 	}
 	
 	public void loadMetrics(String metrics){
@@ -69,7 +68,14 @@ class MergeScenario {
 		
 	}
 	
-	public void runGitMerge(String clonePath){
-		
+	public void runGitMerge(Extractor extractor){
+		ExtractorResult er = extractor.getConflictingfiles(this.parent1, this.parent2)
+		if(er.javaFilesWithConflict.size()>0){
+			this.hasGitConflictsJava = true
+		}
+		if(er.nonJavaFilesWithConflict.size()>0){
+			this.hasGitConflictsNonJava = true
+		}
 	}
+	
 }

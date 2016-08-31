@@ -56,7 +56,7 @@ while (pathProjects.size > indexProject)
 	buildProjeto = Travis::Repository.find(projectName)
 	Dir.chdir pathResultByProject
 	CSV.open(projectName.partition('/').last+"BUILDS.csv", "wb") do |csv|
-	 	csv << ["Status", "Commit", "Build_ID"]
+	 	csv << ["Status", "Commit", "Build_ID", "Finished_at"]
 	end
 
 	CSV.foreach(csvFilesProjetcs[indexProject], :headers => true) do |row|	
@@ -96,7 +96,7 @@ while (pathProjects.size > indexProject)
 						if (parentsMergeOne == true and parentsMergeTwo == true)
 							Dir.chdir pathResultByProject
 							CSV.open(projectName.partition('/').last+"BUILDS.csv", "a+") do |csv|
-								csv << [build.state, build.commit.sha, build.id]
+								csv << [build.state, build.commit.sha, build.id, build.finished_at]
 							end
 							break
 						end

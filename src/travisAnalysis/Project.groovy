@@ -1,7 +1,7 @@
 package travisAnalysis
 
-import main.Extractor;
-import main.GremlinProject;
+import main.Extractor
+import main.GremlinProject
 
 class Project {
 	
@@ -12,9 +12,11 @@ class Project {
 	String mergeCommits
 	String downloadPath
 	String commitsPath
+	Extractor extractor
 	
-	/*maps build id to its commit sha, and state*/
-	Hashtable<String, ArrayList<String>> travisAnalysis
+	/*this structure maps each commit to its associated builds, and
+	 *  each build to its associated state and finished time*/
+	Hashtable<String, Hashtable<String,ArrayList<String>>> travisAnalysis
 	
 	public Project(String repo, String mergeCommits, String mergeReport, String downloadPath){
 		this.repo = repo
@@ -52,8 +54,11 @@ class Project {
 				String parent1 = value.get(0)
 				String parent2 = value.get(1)
 				String sha = value.get(2)
-				MergeScenario merge = new MergeScenario(this.name, sha, parent1, parent2, metrics, this.downloadPath)
+				
+				Hashtable<String, ArrayList<String>> commitBuilds = this.travisAnalysis.get(sha)
+				MergeScenario merge = new MergeScenario(this.name, sha, parent1, parent2, metrics, this.downloadPath)	
 				this.merges.add(merge)
+				
 				/*if there are more than one merge commit with the same parents,
 				 * remove the one collected on this iteration*/
 				if(value.size > 3){
@@ -100,7 +105,8 @@ class Project {
 	}
 	
 	public void runTravisAnalysis(){
-		this.travisAnalysis = new Hashtable<String, ArrayList<String>>()
+		/*instantiate result variable*/
+		this.travisAnalysis = new Hashtable<String, Hashtable<String,ArrayList<String>>>()
 		
 		/*run travis script*/
 		boolean scriptExecuted = this.executeScript()
@@ -147,11 +153,24 @@ class Project {
 		File resultFile = new File('TravisResults' + File.separator + this.name + 'BUILDS.csv')
 		String text = resultFile.getText()
 		String[] lines = text.split('\n')
+		/*for each lines of the resulting csv*/
 		for(int i = 1; i < lines.length; i++){
 			String[] line = lines[i].split(',')
-			String status = line[0]
+			String state = line[0]
 			String commit = line[1]
 			String buildId = line[2]
+			String finished_at = line[3]
+			Hashtable<String, ArrayList<String>> commitBuilds = this.travisAnalysis.get(commit)
+			if(commitBuilds == null){
+				commitBuilds = new Hashtable<String, ArrayList<String>>()
+
+			}
+			ArrayList<String> buildData = new ArrayList<String>()
+			buildData.add(state)
+			buildData.add(finished_at)
+			commitBuilds.put(buildId, buildData)
+			this.travisAnalysis.put(commit, commitBuilds)
+			
 		}
 	}
 	
@@ -178,7 +197,7 @@ class Project {
 	
 	public void cloneProject(){
 		GremlinProject project = new GremlinProject(this.name, this.repo, 'graphbase')
-		Extractor extractor = new Extractor(project, this.downloadPath)
+		extractor = new Extractor(project, this.downloadPath)
 	}
 	
 	public static void main (String[] args){
