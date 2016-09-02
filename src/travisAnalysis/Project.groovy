@@ -11,7 +11,7 @@ class Project {
 	String mergeReport
 	String mergeCommits
 	String downloadPath
-	String commitsPath
+	String resultPath
 	Extractor extractor
 	
 	/*this structure maps each commit to its associated builds, and
@@ -35,8 +35,10 @@ class Project {
 	}
 	
 	public analyzeMerges(){
+		println 'loading conflict predictor analysis from project ' + this.name
 		Hashtable<String, ArrayList<String>> mergeCommits = this.loadMergeCommitsFile()
 		/*run travis analysis*/
+		println 'executing build and tests analysis from project ' + this.name
 		this.runTravisAnalysis()
 		
 		File mergeReport = new File(this.mergeReport)
@@ -44,7 +46,10 @@ class Project {
 		String[] lines = text.split('\n')
 		
 		/*for each merge commit*/
+		
 		for(int i = 1; i < lines.length; i++){
+			int totalMerges = lines.length - 1
+			println 'analysing merge scenario [' + i + '] from [' + totalMerges + ']'
 			String metrics = lines[i]
 			String revName = metrics.split(',')[0]
 			ArrayList<String> value = mergeCommits.get(revName)
@@ -56,8 +61,9 @@ class Project {
 				String sha = value.get(2)
 				
 				Hashtable<String, ArrayList<String>> commitBuilds = this.travisAnalysis.get(sha)
-				MergeScenario merge = new MergeScenario(this.name, sha, parent1, parent2, metrics, this.downloadPath)	
-				this.merges.add(merge)
+				MergeScenario merge = new MergeScenario(this.name, sha, parent1, parent2, metrics, 
+					this.downloadPath, commitBuilds, this.extractor)	
+				PrintBuildAndTestAnalysis.printMergeScenario(this.resultPath, merge.toString())
 				
 				/*if there are more than one merge commit with the same parents,
 				 * remove the one collected on this iteration*/
@@ -67,6 +73,8 @@ class Project {
 				}
 			}
 		}
+		
+		println 'finished the analysis for project ' + this.name
 	}
 	
 	public Hashtable<String, ArrayList<String>> loadMergeCommitsFile(){
@@ -126,7 +134,7 @@ class Project {
 		try{
 			/*set command*/
 			String projectClone = this.downloadPath + File.separator + this.name + File.separator +'git'
-			String commitsPath = System.getProperty("user.dir") + File.separator + this.commitsPath
+			String commitsPath = System.getProperty("user.dir") + File.separator + this.resultPath
 			String command = "ruby travisBuildAnalysis.rb " + projectClone + " " + commitsPath
 			
 			/*run command line*/
@@ -177,7 +185,7 @@ class Project {
 	public void printShas(ArrayList<String> shas){
 		/*make dir*/
 		String dirPath = 'ResultData' + File.separator + this.name + 
-		File.separator + 'commits'
+		File.separator + 'buildAndTest'
 		File dir = new File(dirPath)
 		dir.mkdir()
 		
@@ -192,13 +200,14 @@ class Project {
 			commits = commits + sha + '\n'
 		}
 		file.append(commits)
-		this.commitsPath = file.getParent()
+		this.resultPath = file.getParent()
 	}
 	
 	public void cloneProject(){
 		GremlinProject project = new GremlinProject(this.name, this.repo, 'graphbase')
 		extractor = new Extractor(project, this.downloadPath)
 	}
+	
 	
 	public static void main (String[] args){
 		Project project = new Project ('leusonmario/javaToy', 

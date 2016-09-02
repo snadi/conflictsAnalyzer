@@ -15,21 +15,48 @@ class MergeScenario {
 	boolean hasGitConflictsNonJava
 	Hashtable<String, Integer> predictors
 	boolean discarded
-	Hashtable<String, ArrayList<String>> commitBuilds
+	boolean buildCompiles
+	boolean testsPass
+	
 	
 	public MergeScenario (String pName, String sha, String parent1, String parent2, String metrics, String clonePath,
-		Hashtable<String, ArrayList<String>> commitBuilds){
+		Hashtable<String, ArrayList<String>> commitBuilds, Extractor extractor){
 		this.projectName = pName
 		this.sha = sha
 		this.parent1 = parent1
 		this.parent2 = parent2
 		this.loadMetrics(metrics)
 		if(commitBuilds!=null){
-			this.commitBuilds = commitBuilds
+			this.setBuildAndTest(commitBuilds)
 		}else{
 			discarded = true
 		}
+		this.runGitMerge(extractor)
+	}
 		
+	/*if the commit contains at least one build that passes we consider that it works.
+	 * Otherwise, we consider the last executed build status */
+	public void setBuildAndTest(Hashtable<String, ArrayList<String>> commitBuilds){
+		int size = commitBuilds.size()
+		int i = 0
+		boolean foundPassed = false
+		for(String buildId : commitBuilds.keySet()){
+			String state = commitBuilds.get(buildId)
+			/*passed means that both build and tests were executed correctly*/
+			if(state.contains('passed')){
+				this.buildCompiles = true
+				this.testsPass = true
+				break
+			/*errored means that the build does not compile correctly*/	
+			}else if(state.contains('errored')){
+				this.buildCompiles = false
+				this.testsPass = false
+			/*failed means that the build compiles, but the tests are not executed correctly*/
+			}else if(state.contains('failed')){
+				this.buildCompiles = true
+				this.testsPass = false
+			}
+		}
 	}
 	
 	public void loadMetrics(String metrics){
@@ -78,4 +105,20 @@ class MergeScenario {
 		}
 	}
 	
+	/*String header = 'rev_name,sha,hasFSTMergeConflicts,hasGitConflictsJava,' +
+				'hasGitConflictsNonJava,discarded,buildCompiles,testsPass,' +
+				'editSameMC,editSameFd,editDiffMC,editDiffEditSame,' +
+				'editDiffAddsCall,editDiffEditSameAddsCall\n'*/
+	public String toString(){
+		String result = this.revName + ',' + this.sha + ',' + this.hasFSTMergeConflicts +
+		',' + this.hasGitConflictsJava + ',' + this.hasGitConflictsNonJava + ',' +
+		this.discarded + ',' + this.buildCompiles + ',' + this.testsPass + ',' +
+		this.predictors.get('editSameMC') + ',' + this.predictors.get('editSameFd') +
+		',' + this.predictors.get('editDiffMC') + ',' + this.predictors.get('editDiffEditSame') +
+		',' + this.predictors.get('editDiffAddsCall') + ',' + this.predictors.get('editDiffEditSameAddsCall')
+		
+		return result
+	}
+
+
 }
