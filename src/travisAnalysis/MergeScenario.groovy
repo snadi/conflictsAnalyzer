@@ -80,10 +80,14 @@ class MergeScenario {
 	public void loadPredictors(String metrics){
 		this.predictors = new Hashtable<String, Integer>()
 		String[] m = metrics.split(',')
-		int editSameMC = Integer.parseInt(m[8]) - Integer.parseInt(m[9])
+		int editSameMC = Integer.parseInt(m[4]) - Integer.parseInt(m[5])
 		this.predictors.put('editSameMC',editSameMC)
-		int editSameFd = Integer.parseInt(m[10]) - Integer.parseInt(m[11])
-		this.predictors.put('editSameFd',editSameFd)
+		int editSameFD = Integer.parseInt(m[6]) - Integer.parseInt(m[7])
+		this.predictors.put('editSameFD',editSameFD)
+		int ncEditSameMC = Integer.parseInt(m[8]) - Integer.parseInt(m[9])
+		this.predictors.put('ncEditSameMC',ncEditSameMC)
+		int ncEditSameFd = Integer.parseInt(m[10]) - Integer.parseInt(m[11])
+		this.predictors.put('ncEditSameFd',ncEditSameFd)
 		int editDiffMC = Integer.parseInt(m[12])
 		this.predictors.put('editDiffMC',editDiffMC)
 		int editDiffEditSame = Integer.parseInt(m[13])
@@ -107,13 +111,14 @@ class MergeScenario {
 	
 	/*String header = 'rev_name,sha,hasFSTMergeConflicts,hasGitConflictsJava,' +
 				'hasGitConflictsNonJava,discarded,buildCompiles,testsPass,' +
-				'editSameMC,editSameFd,editDiffMC,editDiffEditSame,' +
+				'editSameMC,editSameFD,ncEditSameMC,ncEditSameFd,editDiffMC,editDiffEditSame,' +
 				'editDiffAddsCall,editDiffEditSameAddsCall\n'*/
 	public String toString(){
 		String result = this.revName + ',' + this.sha + ',' + this.hasFSTMergeConflicts +
 		',' + this.hasGitConflictsJava + ',' + this.hasGitConflictsNonJava + ',' +
 		this.discarded + ',' + this.buildCompiles + ',' + this.testsPass + ',' +
-		this.predictors.get('editSameMC') + ',' + this.predictors.get('editSameFd') +
+		this.predictors.get('editSameMC') + ',' + this.predictors.get('editSameFD') +
+		this.predictors.get('ncEditSameMC') + ',' + this.predictors.get('ncEditSameFd') +
 		',' + this.predictors.get('editDiffMC') + ',' + this.predictors.get('editDiffEditSame') +
 		',' + this.predictors.get('editDiffAddsCall') + ',' + this.predictors.get('editDiffEditSameAddsCall')
 		

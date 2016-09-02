@@ -4,7 +4,7 @@ import main.Extractor
 import main.GremlinProject
 
 class Project {
-	
+
 	ArrayList<MergeScenario> merges
 	String repo
 	String name
@@ -13,11 +13,11 @@ class Project {
 	String downloadPath
 	String resultPath
 	Extractor extractor
-	
+
 	/*this structure maps each commit to its associated builds, and
 	 *  each build to its associated state and finished time*/
 	Hashtable<String, Hashtable<String,ArrayList<String>>> travisAnalysis
-	
+
 	public Project(String repo, String mergeCommits, String mergeReport, String downloadPath){
 		this.repo = repo
 		this.setName()
@@ -26,45 +26,45 @@ class Project {
 		this.merges = new ArrayList<MergeScenario>()
 		this.downloadPath = downloadPath
 		this.cloneProject()
-		
+
 	}
-	
+
 	public void setName(){
 		String[] temp = this.repo.split('/')
 		this.name = temp[1]
 	}
-	
+
 	public analyzeMerges(){
 		println 'loading conflict predictor analysis from project ' + this.name
 		Hashtable<String, ArrayList<String>> mergeCommits = this.loadMergeCommitsFile()
 		/*run travis analysis*/
 		println 'executing build and tests analysis from project ' + this.name
 		this.runTravisAnalysis()
-		
+
 		File mergeReport = new File(this.mergeReport)
 		String text = mergeReport.getText()
 		String[] lines = text.split('\n')
-		
+
 		/*for each merge commit*/
-		
+
 		for(int i = 1; i < lines.length; i++){
 			int totalMerges = lines.length - 1
 			println 'analysing merge scenario [' + i + '] from [' + totalMerges + ']'
 			String metrics = lines[i]
 			String revName = metrics.split(',')[0]
 			ArrayList<String> value = mergeCommits.get(revName)
-			
+
 			/*in case the merge commit was discarded due to jgit API internal problems*/
 			if(value!=null){
 				String parent1 = value.get(0)
 				String parent2 = value.get(1)
 				String sha = value.get(2)
-				
+
 				Hashtable<String, ArrayList<String>> commitBuilds = this.travisAnalysis.get(sha)
-				MergeScenario merge = new MergeScenario(this.name, sha, parent1, parent2, metrics, 
-					this.downloadPath, commitBuilds, this.extractor)	
+				MergeScenario merge = new MergeScenario(this.name, sha, parent1, parent2, metrics,
+						this.downloadPath, commitBuilds, this.extractor)
 				PrintBuildAndTestAnalysis.printMergeScenario(this.resultPath, merge.toString())
-				
+
 				/*if there are more than one merge commit with the same parents,
 				 * remove the one collected on this iteration*/
 				if(value.size > 3){
@@ -73,25 +73,25 @@ class Project {
 				}
 			}
 		}
-		
+
 		println 'finished the analysis for project ' + this.name
 	}
-	
+
 	public Hashtable<String, ArrayList<String>> loadMergeCommitsFile(){
 		ArrayList<String> shas = new ArrayList<String>()
 		Hashtable<String, ArrayList<String>> result = new Hashtable<String, ArrayList<String>>()
 		File mergeCommits = new File(this.mergeCommits)
 		String text = mergeCommits.getText()
 		String[] lines = text.split('\n')
-		
+
 		/*for each merge commit*/
 		for(int i = 1; i < lines.length; i++){
 			String[] line = lines[i].split(',')
 			String sha = line[0]
-			
+
 			/*stores all merge commits shas to use as input for travis analysis*/
 			shas.add(sha)
-			
+
 			String parent1 = line[1]
 			String parent2 = line[2]
 			String revName = 'rev_' + parent1.substring(0,5) + '-' + parent2.substring(0,5)
@@ -107,28 +107,28 @@ class Project {
 			}
 			result.put(revName, value)
 		}
-		
+
 		this.printShas(shas)
 		return result
 	}
-	
+
 	public void runTravisAnalysis(){
 		/*instantiate result variable*/
 		this.travisAnalysis = new Hashtable<String, Hashtable<String,ArrayList<String>>>()
-		
+
 		/*run travis script*/
 		boolean scriptExecuted = this.executeScript()
-		
+
 		if(scriptExecuted){
 			/*read resulting csv*/
 			this.readCSV()
 		}else{
 			println 'error while executing travis script'
 		}
-		
-		
+
+
 	}
-	
+
 	public boolean executeScript(){
 		boolean result = false
 		try{
@@ -136,7 +136,7 @@ class Project {
 			String projectClone = this.downloadPath + File.separator + this.name + File.separator +'git'
 			String commitsPath = System.getProperty("user.dir") + File.separator + this.resultPath
 			String command = "ruby travisBuildAnalysis.rb " + projectClone + " " + commitsPath
-			
+
 			/*run command line*/
 			Process process = Runtime.getRuntime().exec(command)
 			process.waitFor()
@@ -156,7 +156,7 @@ class Project {
 
 		return result
 	}
-	
+
 	public void readCSV(){
 		File resultFile = new File('TravisResults' + File.separator + this.name + 'BUILDS.csv')
 		String text = resultFile.getText()
@@ -178,17 +178,17 @@ class Project {
 			buildData.add(finished_at)
 			commitBuilds.put(buildId, buildData)
 			this.travisAnalysis.put(commit, commitBuilds)
-			
+
 		}
 	}
-	
+
 	public void printShas(ArrayList<String> shas){
 		/*make dir*/
-		String dirPath = 'ResultData' + File.separator + this.name + 
-		File.separator + 'buildAndTest'
+		String dirPath = 'ResultData' + File.separator + this.name +
+				File.separator + 'buildAndTest'
 		File dir = new File(dirPath)
 		dir.mkdir()
-		
+
 		/*create and print file*/
 		String filePath = dirPath + File.separator + 'commits.csv'
 		File file = new File(filePath)
@@ -202,18 +202,53 @@ class Project {
 		file.append(commits)
 		this.resultPath = file.getParent()
 	}
-	
+
 	public void cloneProject(){
 		GremlinProject project = new GremlinProject(this.name, this.repo, 'graphbase')
 		extractor = new Extractor(project, this.downloadPath)
 	}
-	
-	
+
+	public Hashtable<String, String> computeProjectSummary(){
+		Hashtable<String, String> predictors = this.fillPredictors()
+		File merge_result = new File (this.resultPath + File.separator + 'Merge_Scenario_Report.csv')
+		int numberOfMergeScenarios = this.getNumberOfMergeScenarios(merge_result)
+		String summary = this.name + ',' + numberOfMergeScenarios
+		for(String predictor : predictors){
+			summary = summary + ',' + this.computePredictorSummary(predictor, merge_result) 
+			predictors.put(predictor,summary)
+		}
+		return predictors
+	}
+
+	public int getNumberOfMergeScenarios(File mergeScenariosReport){
+		String text = mergeScenariosReport.getText()
+		String[] lines = text.split('\n')
+		int result = lines.length -1
+		return result
+	}
+
+	public String computePredictorSummary(String predictor, File mergeScenariosReport){
+		//TODO
+	}
+
+	private ArrayList<String> fillPredictors(){
+		Hashtable<String, String> predictors = new ArrayList<String>()
+		predictors.put('ncEditSameMC', '')
+		predictors.put('ncEditSameFd', '')
+		predictors.put('editDiffMC', '')
+		predictors.put('editDiffEditSame', '')
+		predictors.put('editDiffAddsCall', '')
+		predictors.put('editDiffEditSameAddsCall', '')
+		return predictors
+	}
+
+
+
 	public static void main (String[] args){
-		Project project = new Project ('leusonmario/javaToy', 
-			'/Users/paolaaccioly/Documents/Doutorado/workspace_CASM/conflictsAnalyzer/ResultData/javatoy/mergeCommits.csv',
-			 '/Users/paolaaccioly/Documents/Doutorado/workspace_CASM/conflictsAnalyzer/ResultData/javatoy/ConflictPredictor_MS_Report.csv', 
-			 '/Users/paolaaccioly/Documents/Doutorado/workspace_CASM/downloads')
+		Project project = new Project ('leusonmario/javaToy',
+				'/Users/paolaaccioly/Documents/Doutorado/workspace_CASM/conflictsAnalyzer/ResultData/javatoy/mergeCommits.csv',
+				'/Users/paolaaccioly/Documents/Doutorado/workspace_CASM/conflictsAnalyzer/ResultData/javatoy/ConflictPredictor_MS_Report.csv',
+				'/Users/paolaaccioly/Documents/Doutorado/workspace_CASM/downloads')
 		project.analyzeMerges()
 	}
 }
