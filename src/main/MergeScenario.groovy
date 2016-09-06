@@ -143,10 +143,7 @@ class MergeScenario implements Observer {
 			FSTTerminal node = (FSTTerminal) arg
 
 			if(!node.getType().contains("-Content")){
-				if(!this.hasConflicts){
-					this.hasConflicts = true
-					this.removeNonMCBaseNodes(fstGenMerge.baseNodes)
-				}
+				
 				
 				this.createConflict(node)
 			}
@@ -184,6 +181,10 @@ class MergeScenario implements Observer {
 	
 	public void createConflict(FSTTerminal node){
 		if(!this.isABadParsedNode(node)){
+			if(!this.hasConflicts){
+				this.hasConflicts = true
+				this.removeNonMCBaseNodes(fstGenMerge.baseNodes)
+			}
 			Conflict conflict = new Conflict(node, extractResult.revisionFile);
 			this.matchConflictWithFile(conflict)
 			this.updateMergeScenarioSummary(conflict)
@@ -290,7 +291,7 @@ class MergeScenario implements Observer {
 		er.revisionFile = '/Users/paolaaccioly/Desktop/Teste/jdimeTests/rev.revisions'
 		MergeScenario ms = new MergeScenario(er)
 		ms.analyzeConflicts()
-		ConflictPrinter.printBadParsedNodes(ms, 'TGM')
+		//ConflictPrinter.printBadParsedNodes(ms, 'TGM')
 		println 'hello'
 		/*Map <String,Conflict> mergeScenarioSummary = new HashMap<String, Conflict>()
 		 String type = SSMergeConflicts.EditSameMC.toString()
