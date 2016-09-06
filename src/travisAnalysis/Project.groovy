@@ -2,10 +2,14 @@ package travisAnalysis
 
 import main.Extractor
 import main.GremlinProject
+import main.SSMergeConflicts
 
+/**
+ * @author paolaaccioly
+ *
+ */
 class Project {
 
-	ArrayList<MergeScenario> merges
 	String repo
 	String name
 	String mergeReport
@@ -23,7 +27,6 @@ class Project {
 		this.setName()
 		this.mergeCommits = mergeCommits
 		this.mergeReport = mergeReport
-		this.merges = new ArrayList<MergeScenario>()
 		this.downloadPath = downloadPath
 		this.cloneProject()
 
@@ -37,6 +40,7 @@ class Project {
 	public analyzeMerges(){
 		println 'loading conflict predictor analysis from project ' + this.name
 		Hashtable<String, ArrayList<String>> mergeCommits = this.loadMergeCommitsFile()
+		Hashtable<String, Boolean> merges = this.loadHasRealFSTMergeConflicts()
 		/*run travis analysis*/
 		println 'executing build and tests analysis from project ' + this.name
 		this.runTravisAnalysis()
@@ -59,10 +63,10 @@ class Project {
 				String parent1 = value.get(0)
 				String parent2 = value.get(1)
 				String sha = value.get(2)
-
+				Boolean hasRealFSTMergeConflict = merges.get(revName)
 				Hashtable<String, ArrayList<String>> commitBuilds = this.travisAnalysis.get(sha)
 				MergeScenario merge = new MergeScenario(this.name, sha, parent1, parent2, metrics,
-						this.downloadPath, commitBuilds, this.extractor)
+						this.downloadPath, commitBuilds, this.extractor, hasRealFSTMergeConflict)
 				PrintBuildAndTestAnalysis.printMergeScenario(this.resultPath, merge.toString())
 
 				/*if there are more than one merge commit with the same parents,
@@ -208,42 +212,43 @@ class Project {
 		extractor = new Extractor(project, this.downloadPath)
 	}
 
-	public Hashtable<String, String> computeProjectSummary(){
-		Hashtable<String, String> predictors = this.fillPredictors()
-		File merge_result = new File (this.resultPath + File.separator + 'Merge_Scenario_Report.csv')
-		int numberOfMergeScenarios = this.getNumberOfMergeScenarios(merge_result)
-		String summary = this.name + ',' + numberOfMergeScenarios
-		for(String predictor : predictors){
-			summary = summary + ',' + this.computePredictorSummary(predictor, merge_result) 
-			predictors.put(predictor,summary)
-		}
-		return predictors
-	}
-
-	public int getNumberOfMergeScenarios(File mergeScenariosReport){
-		String text = mergeScenariosReport.getText()
+	public Hashtable<String, Boolean> loadHasRealFSTMergeConflicts(){
+		Hashtable<String, Boolean> result = new Hashtable<String, Boolean>()
+		File conflictPredictor = new File(this.mergeReport)
+		String path = conflictPredictor.getParent() + File.separator + 'MergeScenariosReport.csv'
+		File file = new File(path)
+		String text = file.getText()
 		String[] lines = text.split('\n')
-		int result = lines.length -1
+		for(int i = 1; i < lines.length; i++){
+			String data = lines[i]
+			String revName = data.split(', ')
+			Boolean hasRealFSTMergeConflicts = this.hasRealConflicts(data)
+			result.put(revName, hasRealFSTMergeConflicts)
+		}
 		return result
 	}
+	
+	private boolean hasRealConflicts(String line){
+		boolean hasRealConflicts = false
+		String[] data = line.split(', ')
+		int i = 8
+		for(SSMergeConflicts c : SSMergeConflicts.values()){
+			if(!c.toString().equals(SSMergeConflicts.NOPATTERN.toString())){
+				int total = Integer.parseInt(data[i])
+				i++
+				int ds = Integer.parseInt(data[i])
+				int realConflicts = total - ds
+				if(realConflicts > 0){
+					hasRealConflicts = true
+				}
+				i++
+			}
 
-	public String computePredictorSummary(String predictor, File mergeScenariosReport){
-		//TODO
-	}
+		}
 
-	private ArrayList<String> fillPredictors(){
-		Hashtable<String, String> predictors = new ArrayList<String>()
-		predictors.put('ncEditSameMC', '')
-		predictors.put('ncEditSameFd', '')
-		predictors.put('editDiffMC', '')
-		predictors.put('editDiffEditSame', '')
-		predictors.put('editDiffAddsCall', '')
-		predictors.put('editDiffEditSameAddsCall', '')
-		return predictors
-	}
-
-
-
+		return hasRealConflicts
+	} 
+	
 	public static void main (String[] args){
 		Project project = new Project ('leusonmario/javaToy',
 				'/Users/paolaaccioly/Documents/Doutorado/workspace_CASM/conflictsAnalyzer/ResultData/javatoy/mergeCommits.csv',
@@ -251,4 +256,59 @@ class Project {
 				'/Users/paolaaccioly/Documents/Doutorado/workspace_CASM/downloads')
 		project.analyzeMerges()
 	}
+	
+	
+	/*	public Hashtable<String, String> computeProjectSummary(){
+	 Hashtable<String, String> predictors = this.fillPredictors()
+	 File merge_result = new File (this.resultPath + File.separator + 'Merge_Scenario_Report.csv')
+	 String summary = this.name
+	 for(String predictor : predictors.keySet()){
+		 int column = Integer.parseInt(predictors.get(predictor))
+		 summary = summary + ',' + this.computePredictorSummary(predictor, column, merge_result)
+		 predictors.put(predictor,summary)
+	 }
+	 return predictors
+ }
+
+ public String computePredictorSummary(String predictor, int column, File mergeScenariosReport){
+	 String header = 'project,merge_scenarios,conflict_predictor,' +
+	 'parents_build_passed,build_passed,build_failed,parents_build_failed\n'
+	 int merge_scenarios, conflict_predictor,
+	 parents_build_passed,build_passed,build_failed,
+	 parents_build_failed = 0
+	 String text = mergeScenariosReport.getText()
+	 String[] lines = text.split('\n')
+	 for each analyzed merge scenario
+	 for(int i = 1; i < lines.length; i++){
+		 get string containing the merge scenario results
+		 String[] data = lines[i].split(',')
+		 String revName = data[0]
+		 
+		 if there is no fstMerge conflicts - excluding
+		  * different spacing conflicts
+		 boolean hasRealFSTMergeConflicts = this.merges.get(revName).value
+		 
+		 if(!hasRealFSTMergeConflicts){
+			 
+		 }
+	 }
+ }
+ 
+ 
+ *//**
+  * @return a hashtable mapping the predictor's name to the
+  * column number in the merge scenario report
+  *//*
+ 
+ private Hashtable<String, String> fillPredictors(){
+	 Hashtable<String, String> predictors = new ArrayList<String>()
+	 predictors.put('ncEditSameMC', '10')
+	 predictors.put('ncEditSameFd', '11')
+	 predictors.put('editDiffMC', '12')
+	 predictors.put('editDiffEditSame', '13')
+	 predictors.put('editDiffAddsCall', '14')
+	 predictors.put('editDiffEditSameAddsCall', '15')
+	 
+	 return predictors
+ }*/
 }

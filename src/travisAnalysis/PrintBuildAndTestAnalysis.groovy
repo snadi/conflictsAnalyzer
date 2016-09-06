@@ -3,7 +3,7 @@ package travisAnalysis
 class PrintBuildAndTestAnalysis {
 
 	public static void printMergeScenario(String resultPath, String mergeSummary){
-		String header = 'rev_name,sha,hasFSTMergeConflicts,hasGitConflictsJava,' +
+		String header = 'rev_name,sha,hasFSTMergeConflicts,hasRealFSTMergeConflicts,hasGitConflictsJava,' +
 				'hasGitConflictsNonJava,discarded,buildCompiles,testsPass,' +
 				'editSameMC,editSameFD,ncEditSameMC,ncEditSameFd,editDiffMC,editDiffEditSame,' +
 				'editDiffAddsCall,editDiffEditSameAddsCall\n'
@@ -18,8 +18,13 @@ class PrintBuildAndTestAnalysis {
 		file.append(mergeSummary + '\n')
 	}
 	
+	public static void printAnalyzedProjects(String projectName){
+		File file = new File('analyzedProjects.csv')
+		file.append(projectName + '\n')
+	}
+	
 	/*print one report for each predictor*/
-	public static void printProjectSummary(Hashtable<String, String> projectSummary){
+	/*public static void printProjectSummary(Hashtable<String, String> projectSummary){
 				
 		for(String predictor : projectSummary.keySet()){
 			this.auxPrintProjectSummary(predictor,projectSummary)
@@ -34,5 +39,5 @@ class PrintBuildAndTestAnalysis {
 		File file = new File(predictor + '_projectReport.csv')
 		file.append(header)
 		file.append(projectSummary.get(predictor) + '\n')
-	}
+	}*/
 }

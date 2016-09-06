@@ -11,6 +11,7 @@ class MergeScenario {
 	String parent2
 	String revName
 	boolean hasFSTMergeConflicts
+	boolean hasRealFSTMergeConflicts
 	boolean hasGitConflictsJava
 	boolean hasGitConflictsNonJava
 	Hashtable<String, Integer> predictors
@@ -20,11 +21,12 @@ class MergeScenario {
 	
 	
 	public MergeScenario (String pName, String sha, String parent1, String parent2, String metrics, String clonePath,
-		Hashtable<String, ArrayList<String>> commitBuilds, Extractor extractor){
+		Hashtable<String, ArrayList<String>> commitBuilds, Extractor extractor, Boolean hasRealFSTMergeConflicts){
 		this.projectName = pName
 		this.sha = sha
 		this.parent1 = parent1
 		this.parent2 = parent2
+		this.hasRealFSTMergeConflicts = hasRealFSTMergeConflicts.value
 		this.loadMetrics(metrics)
 		if(commitBuilds!=null){
 			this.setBuildAndTest(commitBuilds)
@@ -63,7 +65,7 @@ class MergeScenario {
 		String[] m = metrics.split(',')
 		//set name
 		this.revName = m[0]
-
+		
 		//set hasFSTMergeConflicts
 		int fstConf = Integer.parseInt(m[1])
 		if(fstConf==1){
@@ -71,7 +73,7 @@ class MergeScenario {
 		}else{
 			this.hasFSTMergeConflicts = false
 		}
-
+		
 		//set predictors
 		this.loadPredictors(metrics)
 
@@ -109,12 +111,12 @@ class MergeScenario {
 		}
 	}
 	
-	/*String header = 'rev_name,sha,hasFSTMergeConflicts,hasGitConflictsJava,' +
+	/*String header = 'rev_name,sha,hasFSTMergeConflicts,hasRealFSTMergeConflicts,hasGitConflictsJava,' +
 				'hasGitConflictsNonJava,discarded,buildCompiles,testsPass,' +
 				'editSameMC,editSameFD,ncEditSameMC,ncEditSameFd,editDiffMC,editDiffEditSame,' +
 				'editDiffAddsCall,editDiffEditSameAddsCall\n'*/
 	public String toString(){
-		String result = this.revName + ',' + this.sha + ',' + this.hasFSTMergeConflicts +
+		String result = this.revName + ',' + this.sha + ',' + this.hasFSTMergeConflicts + ',' + this.hasRealFSTMergeConflicts +
 		',' + this.hasGitConflictsJava + ',' + this.hasGitConflictsNonJava + ',' +
 		this.discarded + ',' + this.buildCompiles + ',' + this.testsPass + ',' +
 		this.predictors.get('editSameMC') + ',' + this.predictors.get('editSameFD') +
@@ -124,6 +126,7 @@ class MergeScenario {
 		
 		return result
 	}
-
+	
+	
 
 }

@@ -54,7 +54,7 @@ class CSVAnalyzer {
 
 		int result = 0
 		String mergeScenarioFile = 'ResultData' + File.separator + projectName + File.separator +
-		'MergeScenariosReport.csv'
+				'MergeScenariosReport.csv'
 		String msFile = new File(mergeScenarioFile).text
 		String [] lines = msFile.split('\n')
 		for(int i = 1; i< lines.length;  i++){
@@ -101,7 +101,7 @@ class CSVAnalyzer {
 		out = new File('filesMetrics.csv')
 		String line = 'Project,Total_files,Files_merged,Files_with_conflicts\n'
 		out.append(line)
-		
+
 		file.eachLine {
 			String[] data = it.split(",")
 			String projectName = data[0]
@@ -115,16 +115,16 @@ class CSVAnalyzer {
 
 	public static String computeFileMetrics(String projectName){
 		File out = new File('moreThan10.csv')
-		
+
 		if(!out.exists()){
 			out.append('Project,MergedFiles,FilesWithConflict\n')
 		}
-		
+
 		String result = ''
 		int totalFiles, mergedFiles, filesWithConflicts
 		int[] wasMoreThan90 = [0,0]
 		String mergeScenarioFile = 'ResultData' + File.separator + projectName + File.separator +
-		'MergeScenariosReport.csv'
+				'MergeScenariosReport.csv'
 		String msFile = new File(mergeScenarioFile).text
 		String [] lines = msFile.split('\n')
 		for(int i = 1; i< lines.length;  i++){
@@ -133,137 +133,137 @@ class CSVAnalyzer {
 			mergedFiles = mergedFiles + Integer.parseInt(data[5])
 			filesWithConflicts = filesWithConflicts + Integer.parseInt(data[6])
 			int[] r = this.checkPercentagePerMC(totalFiles, mergedFiles,filesWithConflicts)
-			 wasMoreThan90[0] =  wasMoreThan90[0] + r[0]
-			 wasMoreThan90[1] =  wasMoreThan90[1] + r[1]
-		}	
-			String a = projectName + ',' + wasMoreThan90[0] +',' + wasMoreThan90[1]
-			out.append(a + '\n')
-			result = projectName + ',' +totalFiles + ',' + mergedFiles + ',' + filesWithConflicts
-			return result
+			wasMoreThan90[0] =  wasMoreThan90[0] + r[0]
+			wasMoreThan90[1] =  wasMoreThan90[1] + r[1]
+		}
+		String a = projectName + ',' + wasMoreThan90[0] +',' + wasMoreThan90[1]
+		out.append(a + '\n')
+		result = projectName + ',' +totalFiles + ',' + mergedFiles + ',' + filesWithConflicts
+		return result
+	}
+
+	public static int[] checkPercentagePerMC(int totalFiles, int mergedFiles,int filesWithConflicts){
+		int[] result = [0,0]
+		int percentageMF = 0
+		int percentageFWC =0
+		if(totalFiles != 0){
+			percentageMF = (mergedFiles/totalFiles)*100
+			percentageFWC = (filesWithConflicts/totalFiles)*100
 		}
 
-		public static int[] checkPercentagePerMC(int totalFiles, int mergedFiles,int filesWithConflicts){
-			int[] result = [0,0]
-			int percentageMF = 0
-			int percentageFWC =0
-			if(totalFiles != 0){
-				 percentageMF = (mergedFiles/totalFiles)*100
-				 percentageFWC = (filesWithConflicts/totalFiles)*100
-			}
-			
-			if(percentageMF >=10){
-				result[0] = 1
-			}
-			if(percentageFWC>=10){
-				result[1] = 1
-			}
-			
-			return result
+		if(percentageMF >=10){
+			result[0] = 1
 		}
-		
-		public static void printMetricsByMerges(){
-			File file = new File('mergesSummary.csv')
-			if(file.exists()){
-				file.delete()
-			}
-			file = new File('mergesSummary.csv')
-			file.append('Project,Merges,Merges_With_EditSameMC,Merges_With_NC_EditSameMC,' + 
+		if(percentageFWC>=10){
+			result[1] = 1
+		}
+
+		return result
+	}
+
+	public static void printMetricsByMerges(){
+		File file = new File('mergesSummary.csv')
+		if(file.exists()){
+			file.delete()
+		}
+		file = new File('mergesSummary.csv')
+		file.append('Project,Merges,Merges_With_EditSameMC,Merges_With_NC_EditSameMC,' +
 				'Merges_With_EditSameFd,Merges_With_NC_EditSameFd,Merges_With_EditDiff,'+
-				 'Merges_With_EditDiffAddsCall,Merges_With_EditDiff_Same,Merges_With_EditDiff_SameAddsCall\n')
-			
-			File result = new File('ConflictPredictor_Projects_Report.csv')
-			result.eachLine {
-				if(!it.contains('Project') && !it.equals('')){
-					String[] projectMetrics = it.split(',')
-					String projectName = projectMetrics[0]
-					println projectName
-					String numberOfMerges = projectMetrics[1]
-					String summary = projectName + ',' + numberOfMerges + ',' +
-					this.auxPrintMetricsByMerges(projectName)
-					file.append(summary)
-				}
+				'Merges_With_EditDiffAddsCall,Merges_With_EditDiff_Same,Merges_With_EditDiff_SameAddsCall\n')
+
+		File result = new File('ConflictPredictor_Projects_Report.csv')
+		result.eachLine {
+			if(!it.contains('Project') && !it.equals('')){
+				String[] projectMetrics = it.split(',')
+				String projectName = projectMetrics[0]
+				println projectName
+				String numberOfMerges = projectMetrics[1]
+				String summary = projectName + ',' + numberOfMerges + ',' +
+						this.auxPrintMetricsByMerges(projectName)
+				file.append(summary)
 			}
-			
 		}
-		
-		public static String auxPrintMetricsByMerges(String project){
-			File file = new File('ResultData' + File.separator + project + File.separator + 'ConflictPredictor_MS_Report.csv')
-			String text = file.getText()
-			String[] lines = text.split('\n')
-			int mergesWithEditSameMC = 0
-			int mergesWithNCEditSameMC = 0
-			int mergesWithEditSameFd = 0
-			int mergesWithNCEditSameFd = 0
-			
-			int mergesEditDiffMC = 0
-			int mergesEditDiffMCAdds = 0
-			int mergesEditDiff_Same = 0
-			int mergesEditDiff_SameAdds = 0
-			
-			/*for each analyzed merge scenario*/
-			for(int i = 1; i < lines.length; i++){
-				
-				String[] mergeMetrics = lines[i].split(',')
-				/*set editsamemc*/
-				int editSameMC = Integer.parseInt(mergeMetrics[4]) - Integer.parseInt(mergeMetrics[5])
-				if(editSameMC > 0){
-					mergesWithEditSameMC++
-				}else{
-					int NCEditSameMC = Integer.parseInt(mergeMetrics[8]) - Integer.parseInt(mergeMetrics[9])
-					if(NCEditSameMC > 0){
-						mergesWithNCEditSameMC++
-					}
-				}
-				
-				/*set editsamefd*/
-				int editSameFd = Integer.parseInt(mergeMetrics[6]) - Integer.parseInt(mergeMetrics[7])
-				if(editSameFd > 0){
-					mergesWithEditSameFd++
-				}else{
-					int NCEditSameFd = Integer.parseInt(mergeMetrics[10]) - Integer.parseInt(mergeMetrics[11])
-					if(NCEditSameFd > 0){
-						mergesWithNCEditSameFd++
-					}
-				}
-				
-				/*set editdiff*/
-				int editDiff = Integer.parseInt(mergeMetrics[12])
-				int editDiff_Same = Integer.parseInt(mergeMetrics[13])
-				int editDiffAdds = Integer.parseInt(mergeMetrics[14])
-				int editDiff_SameAdds = Integer.parseInt(mergeMetrics[15])
-				
-				if(editDiff > 0){
-					mergesEditDiffMC++
-					
-					if(editDiffAdds >0){
-						mergesEditDiffMCAdds++
-					}
-				}
-				
-				if(editDiff_Same > 0){
-					mergesEditDiff_Same++
-					
-					if(editDiff_SameAdds > 0){
-						mergesEditDiff_SameAdds++
-					}
-				}
-				
-			}
-			String result = mergesWithEditSameMC + ',' + mergesWithNCEditSameMC + ',' +
-			mergesWithEditSameFd + ',' + mergesWithNCEditSameFd + ',' + mergesEditDiffMC + 
-			',' + mergesEditDiffMCAdds + ',' + mergesEditDiff_Same + ',' + mergesEditDiff_SameAdds +
-			'\n'
-			
-			return result
-		}
-		
-		public static void main(String[] args){
-			//CSVAnalyzer.writeRealConflictsCSV()
-			//CSVAnalyzer.writeFileMetricsCSV()
-			CSVAnalyzer.printMetricsByMerges()
-		}
-
-
-
 
 	}
+
+	public static String auxPrintMetricsByMerges(String project){
+		File file = new File('ResultData' + File.separator + project + File.separator + 'ConflictPredictor_MS_Report.csv')
+		String text = file.getText()
+		String[] lines = text.split('\n')
+		int mergesWithEditSameMC = 0
+		int mergesWithNCEditSameMC = 0
+		int mergesWithEditSameFd = 0
+		int mergesWithNCEditSameFd = 0
+
+		int mergesEditDiffMC = 0
+		int mergesEditDiffMCAdds = 0
+		int mergesEditDiff_Same = 0
+		int mergesEditDiff_SameAdds = 0
+
+		/*for each analyzed merge scenario*/
+		for(int i = 1; i < lines.length; i++){
+
+			String[] mergeMetrics = lines[i].split(',')
+			/*set editsamemc*/
+			int editSameMC = Integer.parseInt(mergeMetrics[4]) - Integer.parseInt(mergeMetrics[5])
+			if(editSameMC > 0){
+				mergesWithEditSameMC++
+			}else{
+				int NCEditSameMC = Integer.parseInt(mergeMetrics[8]) - Integer.parseInt(mergeMetrics[9])
+				if(NCEditSameMC > 0){
+					mergesWithNCEditSameMC++
+				}
+			}
+
+			/*set editsamefd*/
+			int editSameFd = Integer.parseInt(mergeMetrics[6]) - Integer.parseInt(mergeMetrics[7])
+			if(editSameFd > 0){
+				mergesWithEditSameFd++
+			}else{
+				int NCEditSameFd = Integer.parseInt(mergeMetrics[10]) - Integer.parseInt(mergeMetrics[11])
+				if(NCEditSameFd > 0){
+					mergesWithNCEditSameFd++
+				}
+			}
+
+			/*set editdiff*/
+			int editDiff = Integer.parseInt(mergeMetrics[12])
+			int editDiff_Same = Integer.parseInt(mergeMetrics[13])
+			int editDiffAdds = Integer.parseInt(mergeMetrics[14])
+			int editDiff_SameAdds = Integer.parseInt(mergeMetrics[15])
+
+			if(editDiff > 0){
+				mergesEditDiffMC++
+
+				if(editDiffAdds >0){
+					mergesEditDiffMCAdds++
+				}
+			}
+
+			if(editDiff_Same > 0){
+				mergesEditDiff_Same++
+
+				if(editDiff_SameAdds > 0){
+					mergesEditDiff_SameAdds++
+				}
+			}
+
+		}
+		String result = mergesWithEditSameMC + ',' + mergesWithNCEditSameMC + ',' +
+				mergesWithEditSameFd + ',' + mergesWithNCEditSameFd + ',' + mergesEditDiffMC +
+				',' + mergesEditDiffMCAdds + ',' + mergesEditDiff_Same + ',' + mergesEditDiff_SameAdds +
+				'\n'
+
+		return result
+	}
+
+	public static void main(String[] args){
+		//CSVAnalyzer.writeRealConflictsCSV()
+		//CSVAnalyzer.writeFileMetricsCSV()
+		CSVAnalyzer.printMetricsByMerges()
+	}
+
+
+
+
+}

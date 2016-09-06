@@ -23,7 +23,7 @@ class BuildAndTest {
 			project.analyzeMerges()
 			
 			/*print projects report*/
-			PrintBuildAndTestAnalysis.printProjectSummary(project.computeProjectSummary())
+			PrintBuildAndTestAnalysis.printAnalyzedProjects(name)
 		}
 	}
 	
