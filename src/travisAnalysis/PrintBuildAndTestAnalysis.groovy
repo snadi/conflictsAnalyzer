@@ -20,7 +20,7 @@ class PrintBuildAndTestAnalysis {
 	
 	/*print one line for each predictor*/
 	public static void printProjectSummary(String name, String projectSummary){
-		String header = 'total_merge_scenario,merge_scenarios,conflict_predictor,' +
+		String header = 'predictor,total_merge_scenario,merge_scenarios,conflict_predictor,' +
 		 'parents_build_passed,build_passed,test_passed\n'
 		
 		File file = new File('ResultData' + File.separator + name + File.separator + 'buildAndTest' +
