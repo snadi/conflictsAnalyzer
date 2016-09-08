@@ -8,7 +8,7 @@ class BuildAndTest {
 	
 	public void run(){
 		this.setProperties()
-		File projectList = new File('projectList')
+		File projectList = new File('projectsList')
 		projectList.eachLine {
 			/*set parameters to instantiate a project object*/
 			String repo = it
@@ -23,7 +23,8 @@ class BuildAndTest {
 			project.analyzeMerges()
 			
 			/*print projects report*/
-			PrintBuildAndTestAnalysis.printAnalyzedProjects(name)
+			PrintBuildAndTestAnalysis.printProjectSummary(project.name, project.computeProjectSummary())
+			println 'Finished project ' + project.name + ' analysis'
 		}
 	}
 	
@@ -37,7 +38,7 @@ class BuildAndTest {
 		this.downloadPath = configProps.getProperty('download.path')
 	}
 	
-	public static void main(){
+	public static void main(String[] args){
 		BuildAndTest analysis = new BuildAndTest()
 		analysis.run()
 	}

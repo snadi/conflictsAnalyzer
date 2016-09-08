@@ -62,7 +62,7 @@ while (pathProjects.size > indexProject)
 	CSV.foreach(csvFilesProjetcs[indexProject], :headers => true) do |row|	
 		buildProjeto.each_build do |build|
 			Dir.chdir File.dirname(pathProjects[indexProject])
-			#puts "ID: #{build.id} - Commit : #{row[0]}"
+            #puts "ID: #{build.id} - Commit : #{row[0]}"
 			if (build.commit.sha == row[0])
 				filesConflict = %x(git diff --name-only #{build.commit.sha}^!)
 				#verificando se o commit vem de um merge cenario

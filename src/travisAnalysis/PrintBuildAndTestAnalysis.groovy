@@ -18,26 +18,19 @@ class PrintBuildAndTestAnalysis {
 		file.append(mergeSummary + '\n')
 	}
 	
-	public static void printAnalyzedProjects(String projectName){
-		File file = new File('analyzedProjects.csv')
-		file.append(projectName + '\n')
-	}
-	
-	/*print one report for each predictor*/
-	/*public static void printProjectSummary(Hashtable<String, String> projectSummary){
-				
-		for(String predictor : projectSummary.keySet()){
-			this.auxPrintProjectSummary(predictor,projectSummary)
+	/*print one line for each predictor*/
+	public static void printProjectSummary(String name, String projectSummary){
+		String header = 'total_merge_scenario,merge_scenarios,conflict_predictor,' +
+		 'parents_build_passed,build_passed,test_passed\n'
+		
+		File file = new File('ResultData' + File.separator + name + File.separator + 'buildAndTest' +
+			File.separator + 'ProjectReport.csv')
+		if(!file.exists()){
+			file.append(header)
 		}
 		
+		file.append(projectSummary)
+		
 	}
 	
-	public static void auxPrintProjectSummary (String predictor, Hashtable<String, String> projectSummary){
-		String header = 'project,merge_scenarios,conflict_predictor,' +
-		'parents_build_passed,build_passed,build_failed,parents_build_failed\n'
-		
-		File file = new File(predictor + '_projectReport.csv')
-		file.append(header)
-		file.append(projectSummary.get(predictor) + '\n')
-	}*/
 }

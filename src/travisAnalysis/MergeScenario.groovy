@@ -10,14 +10,14 @@ class MergeScenario {
 	String parent1
 	String parent2
 	String revName
-	boolean hasFSTMergeConflicts
-	boolean hasRealFSTMergeConflicts
-	boolean hasGitConflictsJava
-	boolean hasGitConflictsNonJava
+	int hasFSTMergeConflicts
+	int hasRealFSTMergeConflicts
+	int hasGitConflictsJava
+	int hasGitConflictsNonJava
 	Hashtable<String, Integer> predictors
-	boolean discarded
-	boolean buildCompiles
-	boolean testsPass
+	int discarded
+	int buildCompiles
+	int testsPass
 	
 	
 	public MergeScenario (String pName, String sha, String parent1, String parent2, String metrics, String clonePath,
@@ -26,12 +26,13 @@ class MergeScenario {
 		this.sha = sha
 		this.parent1 = parent1
 		this.parent2 = parent2
-		this.hasRealFSTMergeConflicts = hasRealFSTMergeConflicts.value
+		this.hasRealFSTMergeConflicts = hasRealFSTMergeConflicts.value ? 1:0
 		this.loadMetrics(metrics)
 		if(commitBuilds!=null){
 			this.setBuildAndTest(commitBuilds)
+			
 		}else{
-			discarded = true
+			discarded = 1
 		}
 		this.runGitMerge(extractor)
 	}
@@ -46,17 +47,17 @@ class MergeScenario {
 			String state = commitBuilds.get(buildId)
 			/*passed means that both build and tests were executed correctly*/
 			if(state.contains('passed')){
-				this.buildCompiles = true
-				this.testsPass = true
+				this.buildCompiles = 1
+				this.testsPass = 1
 				break
 			/*errored means that the build does not compile correctly*/	
 			}else if(state.contains('errored')){
-				this.buildCompiles = false
-				this.testsPass = false
+				this.buildCompiles = 0
+				this.testsPass = 0
 			/*failed means that the build compiles, but the tests are not executed correctly*/
 			}else if(state.contains('failed')){
-				this.buildCompiles = true
-				this.testsPass = false
+				this.buildCompiles = 1
+				this.testsPass = 0
 			}
 		}
 	}
@@ -67,12 +68,7 @@ class MergeScenario {
 		this.revName = m[0]
 		
 		//set hasFSTMergeConflicts
-		int fstConf = Integer.parseInt(m[1])
-		if(fstConf==1){
-			this.hasFSTMergeConflicts = true
-		}else{
-			this.hasFSTMergeConflicts = false
-		}
+		this.hasFSTMergeConflicts = Integer.parseInt(m[1])
 		
 		//set predictors
 		this.loadPredictors(metrics)
@@ -104,10 +100,10 @@ class MergeScenario {
 	public void runGitMerge(Extractor extractor){
 		ExtractorResult er = extractor.getConflictingfiles(this.parent1, this.parent2)
 		if(er.javaFilesWithConflict.size()>0){
-			this.hasGitConflictsJava = true
+			this.hasGitConflictsJava = 1
 		}
 		if(er.nonJavaFilesWithConflict.size()>0){
-			this.hasGitConflictsNonJava = true
+			this.hasGitConflictsNonJava = 1
 		}
 	}
 	
@@ -120,7 +116,7 @@ class MergeScenario {
 		',' + this.hasGitConflictsJava + ',' + this.hasGitConflictsNonJava + ',' +
 		this.discarded + ',' + this.buildCompiles + ',' + this.testsPass + ',' +
 		this.predictors.get('editSameMC') + ',' + this.predictors.get('editSameFD') +
-		this.predictors.get('ncEditSameMC') + ',' + this.predictors.get('ncEditSameFd') +
+		',' +this.predictors.get('ncEditSameMC') + ',' + this.predictors.get('ncEditSameFd') +
 		',' + this.predictors.get('editDiffMC') + ',' + this.predictors.get('editDiffEditSame') +
 		',' + this.predictors.get('editDiffAddsCall') + ',' + this.predictors.get('editDiffEditSameAddsCall')
 		
