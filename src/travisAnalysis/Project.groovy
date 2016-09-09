@@ -165,27 +165,30 @@ class Project {
 
 	public void readCSV(){
 		File resultFile = new File('TravisResults' + File.separator + this.name + 'BUILDS.csv')
-		String text = resultFile.getText()
-		String[] lines = text.split('\n')
-		/*for each lines of the resulting csv*/
-		for(int i = 1; i < lines.length; i++){
-			String[] line = lines[i].split(',')
-			String state = line[0]
-			String commit = line[1]
-			String buildId = line[2]
-			String finished_at = line[3]
-			Hashtable<String, ArrayList<String>> commitBuilds = this.travisAnalysis.get(commit)
-			if(commitBuilds == null){
-				commitBuilds = new Hashtable<String, ArrayList<String>>()
-
+		if(resultFile.exists()){
+			String text = resultFile.getText()
+			String[] lines = text.split('\n')
+			/*for each lines of the resulting csv*/
+			for(int i = 1; i < lines.length; i++){
+				String[] line = lines[i].split(',')
+				String state = line[0]
+				String commit = line[1]
+				String buildId = line[2]
+				String finished_at = line[3]
+				Hashtable<String, ArrayList<String>> commitBuilds = this.travisAnalysis.get(commit)
+				if(commitBuilds == null){
+					commitBuilds = new Hashtable<String, ArrayList<String>>()
+	
+				}
+				ArrayList<String> buildData = new ArrayList<String>()
+				buildData.add(state)
+				buildData.add(finished_at)
+				commitBuilds.put(buildId, buildData)
+				this.travisAnalysis.put(commit, commitBuilds)
+	
 			}
-			ArrayList<String> buildData = new ArrayList<String>()
-			buildData.add(state)
-			buildData.add(finished_at)
-			commitBuilds.put(buildId, buildData)
-			this.travisAnalysis.put(commit, commitBuilds)
-
 		}
+		
 	}
 
 	public void printShas(ArrayList<String> shas){
