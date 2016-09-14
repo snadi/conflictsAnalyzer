@@ -298,7 +298,7 @@ public  class Conflict {
 
 	public String [] splitConflictBody(String s){
 		String [] splitBody = {"", "", ""};
-		if(this.isMethodOrConstructor()){
+		if(this.isMethodOrConstructor() || this.nodeType.equals("EnumConstant")){
 			if(s.contains("|||||||")){
 				String[] temp = s.split("\\|\\|\\|\\|\\|\\|\\|");
 
@@ -375,6 +375,9 @@ public  class Conflict {
 		}else if(nodeType.equals("ExtendsList")){
 
 			conflictType = SSMergeConflicts.ExtendsList.toString();
+		}else if(nodeType.equals("EnumConstant")){
+			
+			conflictType = SSMergeConflicts.EditSameEnumConst.toString();
 		}
 
 		if (conflictType.equals("")){
@@ -423,7 +426,7 @@ public  class Conflict {
 	}
 
 	public boolean isInsideMethod(){
-
+		
 		boolean isInsideMethod = false;
 		
 		if(this.numberOfConflicts > 1){

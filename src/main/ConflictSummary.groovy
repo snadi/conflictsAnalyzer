@@ -48,7 +48,6 @@ public class ConflictSummary {
 		c2.setDifferentSpacing(differentSpacing)
 		c2.setConsecutiveLines(consecutiveLines)
 		c2.setFalsePositivesIntersection(falsePositivesIntersection)
-
 		return projectSummary
 
 	}

@@ -33,14 +33,15 @@ class RunStudy {
 			//set project name
 			setProjectNameAndRepo(it)
 			
-			/*1run gitminer*/ //String graphBase = runGitMiner()
-			//ArrayList<MergeCommit> listMergeCommits = runGremlinQuery(graphBase)
+			/*1run gitminer*/ 
+			String graphBase = runGitMiner()
+			ArrayList<MergeCommit> listMergeCommits = runGremlinQuery(graphBase)
 			/*2 use bases from gitminer*/ 
 			//String graphBase = this.gitminerLocation + File.separator + this.projectName + 'graph.db'
 			//ArrayList<MergeCommit> listMergeCommits = runGremlinQuery(graphBase)
 			/*3 read mergeCommits.csv sheets*/ 
-			String graphBase = this.gitminerLocation + File.separator + this.projectName + 'graph.db'
-			ArrayList<MergeCommit> listMergeCommits = this.readMergeCommitsSheets(projectsDatesFolder)
+			//String graphBase = this.gitminerLocation + File.separator + this.projectName + 'graph.db'
+			//ArrayList<MergeCommit> listMergeCommits = this.readMergeCommitsSheets(projectsDatesFolder)
 			
 			//set listMergeCommits with commits that i want to analyze separately
 			/*MergeCommit mc = new MergeCommit()
@@ -250,7 +251,7 @@ class RunStudy {
 	
 	public static void main (String[] args){
 		RunStudy study = new RunStudy()
-		String[] files= ['projectsList', 'configuration.properties', '/Users/paolaaccioly/Dropbox/experiment/oldResultData']
+		String[] files= ['projectsList', 'configuration.properties', '/Users/paolaaccioly/Documents/Doutorado/workspace_empirical/conflictsAnalyzer/ResultData']
 		//'/home/ines/Dropbox/experiment/oldResultData'
 		study.run(files)
 		

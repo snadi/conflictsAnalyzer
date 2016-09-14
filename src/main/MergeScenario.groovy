@@ -291,6 +291,7 @@ class MergeScenario implements Observer {
 		er.revisionFile = '/Users/paolaaccioly/Desktop/Teste/jdimeTests/rev.revisions'
 		MergeScenario ms = new MergeScenario(er)
 		ms.analyzeConflicts()
+		Conflict test = ms.mergeScenarioSummary.get(SSMergeConflicts.EditSameEnumConst.toString())
 		//ConflictPrinter.printBadParsedNodes(ms, 'TGM')
 		println 'hello'
 		/*Map <String,Conflict> mergeScenarioSummary = new HashMap<String, Conflict>()
