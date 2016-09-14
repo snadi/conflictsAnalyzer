@@ -80,6 +80,9 @@ public class ConflictPrinter {
 		printBadParsedNodes(mergeScenario, projectName)
 		printMergeScenarioMetrics(mergeScenario, projectName)
 		printConflictsReport(mergeScenario, projectName)
+		if(mergeScenario.hasNonJavaFilesConflict){
+			printMergeWithNonJavaFilesConflicting(projectName, mergeScenario)
+		}
 	}
 	
 	public static void printBadParsedNodes(MergeScenario mergeScenario, String projectName){
@@ -140,7 +143,12 @@ public class ConflictPrinter {
 		out.append '\n'
 		out.append(delimiter)
 	}
-
+	
+	public static void printMergeWithNonJavaFilesConflicting(String projectName, MergeScenario ms){
+		String filePath = 'ResultData' + File.separator + projectName + File.separator + 'mergeWithNonJavaFilesConflicting.csv'
+		File file = new File(filePath)
+		file.append(ms.name + '\n')
+	}
 	public static void main (String[] args){
 		ConflictPrinter.setconflictReportHeader()
 		println ConflictPrinter.getConflictReportHeader()

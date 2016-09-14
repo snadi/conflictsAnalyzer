@@ -24,6 +24,8 @@ class MergeScenario implements Observer {
 	private Map<String,Conflict> mergeScenarioSummary
 
 	private boolean hasConflicts
+	
+	private boolean hasNonJavaFilesConflict
 
 	private CompareFiles compareFiles
 	
@@ -40,7 +42,7 @@ class MergeScenario implements Observer {
 	public MergeScenario(ExtractorResult er){
 		
 		this.extractResult = er
-		
+		this.setHasNonJavaFilesConflict()
 		this.setName()
 		//this.removeVarArgs()
 		this.hasConflicts = false
@@ -48,7 +50,13 @@ class MergeScenario implements Observer {
 		this.createSameSignatureCMSummary()
 		this.setMergedFiles()
 	}
-
+	
+	public void setHasNonJavaFilesConflict(){
+		if(this.extractResult.nonJavaFilesWithConflict.size()>0){
+			this.hasNonJavaFilesConflict = true
+		}
+	}
+	
 	public void createSameSignatureCMSummary(){
 		this.sameSignatureCMSummary = ConflictSummary.initializeSameSignatureCMSummary()
 	}
