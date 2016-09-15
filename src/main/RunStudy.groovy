@@ -34,8 +34,8 @@ class RunStudy {
 			setProjectNameAndRepo(it)
 			
 			/*1run gitminer*/ 
-			String graphBase = runGitMiner()
-			ArrayList<MergeCommit> listMergeCommits = runGremlinQuery(graphBase)
+			//String graphBase = runGitMiner()
+			//ArrayList<MergeCommit> listMergeCommits = runGremlinQuery(graphBase)
 			/*2 use bases from gitminer*/ 
 			//String graphBase = this.gitminerLocation + File.separator + this.projectName + 'graph.db'
 			//ArrayList<MergeCommit> listMergeCommits = runGremlinQuery(graphBase)
@@ -56,10 +56,14 @@ class RunStudy {
 
 			
 			//create project and extractor
+			String graphBase = this.gitminerLocation + File.separator + this.projectName + 'graph.db'
 			Extractor extractor = this.createExtractor(this.projectName, graphBase)
 			Project project = new Project(this.projectName)
 			
 			//for each merge scenario, clone and run SSMerge on it
+			
+			ArrayList<MergeCommit> listMergeCommits = this.getListMergeCommit(this.projectName)
+			ConflictPrinter.printMergeCommitsList(this.projectName, listMergeCommits)
 			analyseMergeScenarios(listMergeCommits, extractor, project)
 			
 			//print project report and call R script
@@ -67,6 +71,15 @@ class RunStudy {
 			this.callRScript()
 		}
 
+	}
+	
+	private ArrayList<MergeCommit> getListMergeCommit(String projectName){
+		ArrayList<MergeCommit> result = new ArrayList<MergeCommit>()
+		String projectClonePath = this.downloadPath + File.separator + this.projectName +
+		File.separator + 'git'
+		MergeCommitsRetriever m = new MergeCommitsRetriever(projectClonePath, "")
+		result = m.retrieveMergeCommits()
+		return result
 	}
 	
 	private ArrayList<MergeCommit> readMergeCommitsSheets(String resultDataFolder){

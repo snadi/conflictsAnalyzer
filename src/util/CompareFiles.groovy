@@ -72,7 +72,8 @@ class CompareFiles {
 		File right = new File(rightFile)
 
 		if(left.exists() && base.exists() && right.exists() &&
-			left.isFile() && base.isFile() && right.isFile()){
+			left.isFile() && base.isFile() && right.isFile() &&
+			left.getAbsolutePath().endsWith('.java')){
 			this.compareFiles(left, base, right)
 		}
 

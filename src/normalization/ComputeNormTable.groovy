@@ -229,7 +229,7 @@ class ComputeNormTable {
 	public static void main(String[] args){
 		ComputeNormTable c = new ComputeNormTable()
 		c.computeTable("/Users/paolaaccioly/Documents/Doutorado/workspace_empirical/conflictsAnalyzer/projectsChanges.csv",
-				"/Users/paolaaccioly/Documents/testeConflictsAnalyzer/conflictsAnalyzer/projectsPatternData.csv")
+				"/Users/paolaaccioly/Documents/Doutorado/workspace_empirical/conflictsAnalyzer/projectsPatternData.csv")
 	
 	}
 
