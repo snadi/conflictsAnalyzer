@@ -47,9 +47,11 @@ public  class Conflict {
 	private double similarityThreshold;
 
 	private String nodeName;
+	
+	private String[] shaFamily;
 
 
-	public Conflict(FSTTerminal node, String path){
+	public Conflict(FSTTerminal node, String path, String[] shaFamily) {
 		this.body = node.getBody();
 		this.nodeName = node.getName();
 		this.nodeType = node.getType();
@@ -57,10 +59,11 @@ public  class Conflict {
 		this.countConflictsInsideMethods();
 		this.matchPattern();
 		this.retrieveFilePath(node, path);
-		this.checkFalsePositives();
+		if (this.body.contains(DIFF3MERGE_SEPARATOR))
+			this.checkFalsePositives();
 		this.causeSameSignatureCM = "";
 		this.similarityThreshold = 0.7;
-
+		this.shaFamily = shaFamily;
 	}
 
 	public Conflict (String type){
@@ -71,6 +74,17 @@ public  class Conflict {
 		return causeSameSignatureCM;
 	}
 
+	public String getChildSHA() {
+		return shaFamily[0];
+	}
+
+	public String getParent1SHA() {
+		return shaFamily[1];
+	}
+
+	public String getParent2SHA() {
+		return shaFamily[2];
+	}
 
 
 	public void setCauseSameSignatureCM(LinkedList<FSTNode> baseNodes, boolean fileAddedByBothDevs) {

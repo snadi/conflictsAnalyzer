@@ -124,6 +124,9 @@ public class ConflictPrinter {
 			for(Conflict c: mergedFile.getConflicts()){
 
 				def row = ['Conflict type: '+ c.getType() + '\n' + 
+					'Merge Commit SHA-1: ' + c.getChildSHA() + '\n' +
+					'Parent1 SHA-1: ' + c.getParent1SHA() + '\n' +
+					'Parent2 SHA-1: ' + c.getParent2SHA() + '\n' +
 					'Number of Conflicts: ' + c.getNumberOfConflicts() + '\n' +
 					'Different Spacing: ' + c.getDifferentSpacing() + '\n'  +
 					'Consecutive Lines: ' + c.getConsecutiveLines() + '\n'+ 
