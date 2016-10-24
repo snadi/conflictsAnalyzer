@@ -44,8 +44,6 @@ public class Conflict {
 	private double similarityThreshold;
 
 	private String nodeName;
-	
-	private String[] shaFamily;
 
 	private String[] shaFamily;
 
