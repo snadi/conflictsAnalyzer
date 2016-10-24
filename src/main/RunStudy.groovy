@@ -242,7 +242,7 @@ class RunStudy {
 	public void callRScript(){
 		CSVAnalyzer.writeRealConflictsCSV()
 		String propsFile = "resultsScript.r"
-		ProcessBuilder pb = new ProcessBuilder("Rscript", propsFile)
+		ProcessBuilder pb = new ProcessBuilder("/usr/local/bin/Rscript", propsFile)
 		pb.redirectOutput(ProcessBuilder.Redirect.INHERIT)
 		// Start the process.
 		try {
